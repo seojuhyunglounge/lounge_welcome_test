@@ -18,7 +18,7 @@
       -webkit-overflow-scrolling: touch;
     }
 
-    /* 1. TV 디스플레이 화면 */
+/* 1. TV 디스플레이 화면: 상단 여백을 살짝 더 주어 숨통을 틔움 */
     #tv-section {
       display: none;
       position: fixed;
@@ -30,14 +30,14 @@
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 45px 50px 45px 50px;
+      padding: 60px 50px 45px 50px; /* 위쪽 여백 45px -> 60px로 여유 확보 */
       text-align: center;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
       cursor: pointer;
     }
-
+    
     /* 배경 동영상 레이어 */
     #bg-video {
       position: fixed;
@@ -62,36 +62,35 @@
 
     .tv-layer { position: relative; z-index: 2; width: 100%; }
     
-    /* 상단 영역 (시계 + La Colonne 브랜드 헤더를 상단으로 집약) */
+/* 상단 영역: 시계와 공간명 사이 간격을 우아하게 확장 */
     .top-header-wrap {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 14px;
+      gap: 18px; /* 시계와 브랜드 사이 간격 */
     }
     .clock-box { display: flex; flex-direction: column; align-items: center; gap: 3px; }
-    .clock-time { font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; color: #d6d9e0; letter-spacing: 4px; font-weight: 400; line-height: 1; }
+    .clock-time { font-family: 'Cormorant Garamond', serif; font-size: 2.3rem; color: #d6d9e0; letter-spacing: 4px; font-weight: 400; line-height: 1; }
     .clock-date { font-size: 0.85rem; color: #858b97; letter-spacing: 3px; text-transform: uppercase; font-weight: 300; }
 
-    /* 공간명 헤더: La Colonne 더 크고 우아하게 위로 */
+    /* La Colonne 공간명: 너무 치우치지 않게 적절한 위치로 안착 */
     .brand-container {
       display: inline-flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 4px;
+      margin-top: 14px; /* 아래로 살짝 내리는 핵심 여백 */
     }
     .space-name {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 3.4rem;
+      font-size: 3.3rem;
       font-weight: 500;
       color: #dfcfb2;
       letter-spacing: 14px;
       text-transform: uppercase;
-      line-height: 1.1;
+      line-height: 1.15;
       margin-bottom: 8px;
       text-shadow: 0 4px 24px rgba(0, 0, 0, 0.9);
     }
-    /* 한 줄로 정렬된 서브태그 */
     .space-category {
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.05rem;
@@ -101,7 +100,7 @@
       text-transform: uppercase;
       padding-top: 8px;
       border-top: 1px solid rgba(201, 169, 110, 0.35);
-      white-space: nowrap; /* 줄바꿈 절대 방지 */
+      white-space: nowrap;
       display: inline-block;
       padding-left: 15px;
       padding-right: 15px;
