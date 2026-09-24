@@ -30,27 +30,27 @@
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      transition: background-image 1s ease-in-out;
       cursor: pointer;
     }
 
-    /* 배경 비디오 레이어 */
+    /* 배경 동영상 레이어 (화면 맨 뒤에 밀착) */
     #bg-video {
-      position: absolute;
-      inset: 0;
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100vw;
       height: 100vh;
       object-fit: cover;
       z-index: 0;
       display: none;
+      pointer-events: none;
     }
 
-    /* 럭셔리 다크 비네팅 오버레이 (글자 가독성 보장) */
-    #tv-section::before {
-      content: '';
-      position: absolute;
+    /* 럭셔리 다크 비네팅 오버레이 (글자 가독성을 위해 비디오 위에 덮음) */
+    #video-overlay {
+      position: fixed;
       inset: 0;
-      background: radial-gradient(circle, rgba(12, 13, 16, 0.55) 0%, rgba(8, 9, 11, 0.92) 100%);
+      background: radial-gradient(circle, rgba(12, 13, 16, 0.45) 0%, rgba(8, 9, 11, 0.9) 100%);
       z-index: 1;
       pointer-events: none;
     }
@@ -78,7 +78,7 @@
       line-height: 1.2;
       margin-bottom: 24px;
       letter-spacing: -1px;
-      text-shadow: 0 6px 30px rgba(0, 0, 0, 0.9);
+      text-shadow: 0 6px 30px rgba(0, 0, 0, 0.95);
     }
     .sub-desc { font-size: 1.7rem; color: #b8bdc9; font-weight: 300; line-height: 1.6; }
     .footer-bar { font-size: 0.95rem; color: #555a64; letter-spacing: 4px; text-transform: uppercase; }
@@ -91,7 +91,7 @@
       font-size: 0.75rem;
       padding: 5px 10px;
       border-radius: 4px;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0,0,0,0.75);
       color: #888;
       border: 1px solid #333;
     }
@@ -152,8 +152,10 @@
 
   <!-- TV 디스플레이 화면 -->
   <div id="tv-section">
-    <!-- 배경 동영상 엘리먼트 (무음/자동재생) -->
-    <video id="bg-video" autoplay loop muted playsinline></video>
+    <!-- 배경 동영상 엘리먼트 -->
+    <video id="bg-video" autoplay loop muted playsinline preload="auto"></video>
+    <!-- 비네팅 오버레이 -->
+    <div id="video-overlay"></div>
 
     <div class="tv-layer clock-box">
       <div class="clock-time" id="clock-time">00:00</div>
@@ -184,38 +186,33 @@
 
     <div class="form-group">
       <label>서브 환영 문구</label>
-      <textarea id="msg-input" rows="3" placeholder="예: 성공적인 비즈니스 시간 되시기를 바랍니다."></textarea>
+      <textarea id="msg-input" rows="3" placeholder="예: 편안하고 성공적인 시간 되시기를 바랍니다."></textarea>
     </div>
 
-    <!-- 배경 테마 (시네마틱 모션 비디오 + 정적 하이엔드 이미지) -->
+    <!-- 배경 테마 (CORS 차단 없는 다이렉트 비디오 + 프리미엄 이미지) -->
     <div class="form-group">
-      <label>배경 인테리어 테마</label>
+      <label>배경 테마 선택</label>
       <select id="bg-select">
-        <optgroup label="── 🎬 시네마틱 모션 비디오 (추천) ──">
-          <option value="https://assets.mixkit.co/videos/preview/mixkit-fire-in-a-fireplace-in-close-up-1238-large.mp4">🎬 1. 럭셔리 살롱 엠버 벽난로 (불멍)</option>
-          <option value="https://assets.mixkit.co/videos/preview/mixkit-aerial-view-of-city-traffic-at-night-42171-large.mp4">🎬 2. 펜트하우스 나이트 시티뷰</option>
-          <option value="https://assets.mixkit.co/videos/preview/mixkit-dark-surfaces-and-soft-ambient-light-40994-large.mp4">🎬 3. 다크 미니멀 앰비언트 섀도우</option>
-          <option value="https://assets.mixkit.co/videos/preview/mixkit-pouring-champagne-into-a-glass-at-a-celebration-43306-large.mp4">🎬 4. 골드 샴페인 & VIP 리셉션</option>
+        <optgroup label="── 🎬 시네마틱 모션 비디오 ──">
+          <option value="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4">🎬 1. 테스트 비디오 (재생 확인용)</option>
+          <option value="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4">🎬 2. 앰비언트 모션 뷰</option>
+          <!-- 자체 비디오 업로드 시 아래처럼 파일명만 적으시면 됩니다 -->
+          <option value="video1.mp4">🎬 3. 자체 업로드 라운지 영상 (video1.mp4)</option>
         </optgroup>
-        <optgroup label="── 🖼 하이엔드 스톤 & 건축 미학 ──">
-          <option value="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2560&q=85">5. 하이엔드 스톤 & 엠비언트 라운지</option>
-          <option value="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=2560&q=85">6. 미니멀 럭셔리 아키텍처</option>
-          <option value="https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=2560&q=85">7. 다크 마블 & 쉐도우 인테리어</option>
-        </optgroup>
-        <optgroup label="── 🖼 딥 원목 & 프라이빗 바 ──">
-          <option value="https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&w=2560&q=85">8. 클래식 딥 월넛 프라이빗 살롱</option>
-          <option value="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=2560&q=85">9. 엠버 글로우 & 하이엔드 바</option>
-          <option value="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=2560&q=85">10. 5성급 호텔 시그니처 라운지</option>
+        <optgroup label="── 🖼 하이엔드 인테리어 스틸 ──">
+          <option value="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2560&q=85">4. 하이엔드 스톤 라운지</option>
+          <option value="https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&w=2560&q=85">5. 클래식 딥 월넛 살롱</option>
+          <option value="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=2560&q=85">6. 이그제큐티브 펜트하우스</option>
         </optgroup>
       </select>
     </div>
 
-    <!-- 배경음악 (자체 저장소 파일 연결) -->
+    <!-- 배경음악 (자체 음원) -->
     <div class="form-group">
       <label>배경음악 (BGM) 선택</label>
       <select id="bgm-select">
-        <option value="Respite.mp3">1. Respite - 5 sided cube (자체 음원)</option>
-        <option value="jazz2.mp3">2. 라운지 스윙 재즈 트랙 2 (자체 음원)</option>
+        <option value="jazz1.mp3">1. Autumn Leaves 클래식 재즈 (자체 음원)</option>
+        <option value="jazz2.mp3">2. 라운지 스윙 재즈 2 (자체 음원)</option>
         <option value="none">3. 음악 끄기 (BGM Off)</option>
       </select>
     </div>
@@ -246,6 +243,7 @@
       // 1. TV 디스플레이 모드
       const tvSection = document.getElementById('tv-section');
       const bgVideo = document.getElementById('bg-video');
+      const videoOverlay = document.getElementById('video-overlay');
       const badge = document.getElementById('tv-status-badge');
       const player = document.getElementById('bgm-player');
       player.volume = 0.35;
@@ -281,7 +279,7 @@
         if (newKey === currentDataKey) return;
         currentDataKey = newKey;
 
-        // 화면 텍스트 부드럽게 페이드 전환
+        // 글자 전환
         const box = document.getElementById('center-box');
         box.style.opacity = '0';
         setTimeout(function() {
@@ -290,19 +288,25 @@
           box.style.opacity = '1';
         }, 400);
 
-        // 배경 처리: 동영상(.mp4)인지 일반 이미지인지 판별
-        const isVideo = bgUrl.toLowerCase().endsWith('.mp4') || bgUrl.includes('.mp4');
+        // 비디오 vs 이미지 판별 및 교체
+        const isVideo = bgUrl.toLowerCase().indexOf('.mp4') !== -1;
         if (isVideo) {
           tvSection.style.backgroundImage = 'none';
-          if (bgVideo.src !== bgUrl) {
+          bgVideo.style.display = 'block';
+          videoOverlay.style.display = 'block';
+
+          if (bgVideo.getAttribute('data-src') !== bgUrl) {
+            bgVideo.setAttribute('data-src', bgUrl);
             bgVideo.src = bgUrl;
-            bgVideo.style.display = 'block';
             bgVideo.load();
-            bgVideo.play().catch(console.error);
+            bgVideo.play().catch(function(e) {
+              console.log('Video autoplay waiting:', e);
+            });
           }
         } else {
           bgVideo.pause();
           bgVideo.style.display = 'none';
+          videoOverlay.style.display = 'block';
           tvSection.style.backgroundImage = "url('" + bgUrl + "')";
         }
 
@@ -345,7 +349,7 @@
           if (data && data.length > 0) {
             const item = data[0];
             let msgText = item.sub_message || '';
-            let bg = 'https://assets.mixkit.co/videos/preview/mixkit-fire-in-a-fireplace-in-close-up-1238-large.mp4';
+            let bg = 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4';
             let bgm = 'jazz1.mp3';
 
             if (msgText.indexOf('|||') !== -1) {
@@ -405,7 +409,7 @@
         if (!name) return alert('예약자 이름을 입력해 주세요.');
 
         log('전송 중...', '#ffd166');
-        const combinedMsg = (msg || '편안하고 생산적인 비즈니스 시간 되시기를 바랍니다.') + '|||' + bg + '|||' + bgm;
+        const combinedMsg = (msg || '편안하고 성공적인 시간 되시기를 바랍니다.') + '|||' + bg + '|||' + bgm;
 
         try {
           const res = await fetch(cleanUrl + '/rest/v1/welcome_screen', {
