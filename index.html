@@ -3,171 +3,242 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lounge Welcome Board</title>
+  <title>Private Lounge Welcome Screen</title>
+  <!-- 고급 세리프 및 한글 폰트 로드 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background-color: #0f1012;
+      background-color: #0b0c0e;
       color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", sans-serif;
+      font-family: "Pretendard", -apple-system, sans-serif;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      overflow: hidden;
     }
 
-    /* 상단 모드 전환 탭 (화면이 나오는지 바로 확인 가능) */
-    .nav-bar {
-      position: fixed;
-      top: 15px;
-      right: 15px;
+    /* 관리자 화면에서만 보이는 전환 버튼 (TV 화면에서는 완전 숨김) */
+    .admin-nav {
       display: flex;
-      gap: 10px;
-      z-index: 999;
+      justify-content: flex-end;
+      margin-bottom: 20px;
     }
-    .nav-btn {
-      background: #25272c;
-      color: #e0e0e0;
+    .admin-nav a {
+      background: #23252b;
+      color: #a4a8b2;
       padding: 8px 14px;
       border-radius: 8px;
       text-decoration: none;
       font-size: 0.85rem;
-      border: 1px solid #3c3f47;
+      border: 1px solid #363942;
     }
 
-    /* 1. TV 디스플레이 영역 */
+    /* ================= 1. TV 디스플레이 화면 ================= */
     #tv-section {
       display: none;
+      position: relative;
       width: 100vw;
       height: 100vh;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 60px 40px;
+      padding: 70px 50px;
       text-align: center;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      transition: background-image 1s ease-in-out;
     }
-    .clock {
-      font-size: 2.2rem;
-      color: #7b8089;
-      font-weight: 300;
-      letter-spacing: 2px;
+    /* 다크 비네팅 오버레이 */
+    #tv-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle, rgba(12, 13, 16, 0.6) 0%, rgba(8, 9, 11, 0.92) 100%);
+      z-index: 1;
     }
-    .center-content {
-      margin: auto 0;
-      transition: opacity 0.5s ease;
-    }
-    .brand {
-      font-size: 1.6rem;
-      color: #c5a880;
-      letter-spacing: 6px;
-      text-transform: uppercase;
-      margin-bottom: 25px;
-    }
-    .guest {
-      font-size: 4.8rem;
-      font-weight: 600;
-      margin-bottom: 20px;
-      letter-spacing: -1px;
-    }
-    .message {
-      font-size: 1.7rem;
-      color: #9da3ad;
-      font-weight: 300;
-    }
-    .footer {
-      font-size: 1rem;
-      color: #4a4d54;
-      letter-spacing: 3px;
+    .tv-layer {
+      position: relative;
+      z-index: 2;
     }
 
-    /* 2. 관리자 영역 */
+    .clock-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .clock-time {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3rem;
+      color: #e5e7eb;
+      letter-spacing: 4px;
+      font-weight: 400;
+    }
+    .clock-date {
+      font-size: 0.95rem;
+      color: #8b919d;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .center-box {
+      margin: auto 0;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      max-width: 950px;
+    }
+    .brand-tag {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.6rem;
+      color: #c9a96e;
+      letter-spacing: 8px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      display: inline-block;
+      border-bottom: 1px solid rgba(201, 169, 110, 0.35);
+      padding-bottom: 8px;
+    }
+    .guest-title {
+      font-size: 5rem;
+      font-weight: 600;
+      line-height: 1.2;
+      margin-bottom: 24px;
+      letter-spacing: -1px;
+      text-shadow: 0 6px 30px rgba(0, 0, 0, 0.85);
+    }
+    .sub-desc {
+      font-size: 1.7rem;
+      color: #b8bdc9;
+      font-weight: 300;
+      line-height: 1.6;
+    }
+
+    .footer-bar {
+      font-size: 0.95rem;
+      color: #555a64;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+    }
+
+    /* ================= 2. 모바일 관리자 화면 ================= */
     #admin-section {
       display: none;
-      width: 90%;
-      max-width: 440px;
-      background: #18191c;
-      border: 1px solid #2a2c33;
-      border-radius: 16px;
-      padding: 30px;
+      width: 92%;
+      max-width: 480px;
+      margin: 30px auto;
+      background: #16171b;
+      border: 1px solid #282a32;
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.6);
     }
-    .admin-header {
+    .admin-title {
       font-size: 1.3rem;
-      color: #c5a880;
-      margin-bottom: 20px;
+      color: #c9a96e;
       font-weight: 600;
+      margin-bottom: 22px;
     }
-    .input-label {
+    .form-group {
+      margin-bottom: 18px;
+    }
+    label {
       display: block;
       margin-bottom: 8px;
-      color: #8f95a0;
+      color: #9297a3;
       font-size: 0.9rem;
     }
-    input, textarea {
+    input, textarea, select {
       width: 100%;
       padding: 14px;
-      background: #23252a;
-      border: 1px solid #363942;
-      border-radius: 8px;
+      background: #212329;
+      border: 1px solid #333640;
+      border-radius: 10px;
       color: #fff;
       font-size: 1rem;
-      margin-bottom: 18px;
       outline: none;
+      font-family: inherit;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: #c9a96e;
     }
     button {
       width: 100%;
       padding: 16px;
-      background: #c5a880;
+      background: #c9a96e;
       border: none;
-      border-radius: 8px;
-      color: #111;
-      font-size: 1.05rem;
-      font-weight: bold;
+      border-radius: 10px;
+      color: #0d0e11;
+      font-size: 1.1rem;
+      font-weight: 700;
       cursor: pointer;
+      margin-top: 8px;
     }
-    #status {
+    button:active { opacity: 0.85; }
+    #status-msg {
       margin-top: 15px;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       text-align: center;
       color: #4ade80;
       display: none;
+      font-weight: 500;
     }
   </style>
 </head>
 <body>
 
-  <!-- 모드 전환 버튼 -->
-  <div class="nav-bar">
-    <a href="?view=tv" class="nav-btn">📺 TV 화면</a>
-    <a href="?view=admin" class="nav-btn">📱 관리자 화면</a>
-  </div>
-
-  <!-- TV 화면 -->
+  <!-- 1. TV 디스플레이 화면 -->
   <div id="tv-section">
-    <div class="clock" id="clock">00:00</div>
-    <div class="center-content" id="center-content">
-      <div class="brand">Private Lounge</div>
-      <div class="guest" id="guest-name">Welcome</div>
-      <div class="message" id="guest-msg">프라이빗 라운지에 오신 것을 환영합니다.</div>
+    <div class="tv-layer clock-box">
+      <div class="clock-time" id="clock-time">00:00</div>
+      <div class="clock-date" id="clock-date">SEPTEMBER 24, 2026</div>
     </div>
-    <div class="footer">EXCLUSIVE LOUNGE</div>
+
+    <div class="tv-layer center-box" id="center-box">
+      <div class="brand-tag">PRIVATE BUSINESS LOUNGE</div>
+      <div class="guest-title" id="guest-name">Welcome</div>
+      <div class="sub-desc" id="guest-msg">프라이빗 라운지에 오신 것을 환영합니다.</div>
+    </div>
+
+    <div class="tv-layer footer-bar">
+      EXCLUSIVELY RESERVED FOR YOUR SUCCESS
+    </div>
   </div>
 
-  <!-- 관리자 화면 -->
+  <!-- 2. 관리자 화면 -->
   <div id="admin-section">
-    <div class="admin-header">TV 화면 문구 변경</div>
-    <label class="input-label">예약자 / 방문자 이름</label>
-    <input type="text" id="name-input" placeholder="예: 김대표 님, 에이비씨 파트너스">
-    <label class="input-label">안내 문구</label>
-    <textarea id="msg-input" rows="3" placeholder="예: 편안하고 성공적인 시간 되시기를 바랍니다."></textarea>
-    <button onclick="saveData()">TV 화면에 즉시 반영</button>
-    <div id="status">✓ TV 화면으로 전송 완료!</div>
+    <div class="admin-nav">
+      <a href="?view=tv" target="_blank">📺 TV 화면 열기 ↗</a>
+    </div>
+
+    <div class="admin-title">TV 웰컴 보드 제어판</div>
+    
+    <div class="form-group">
+      <label>예약자 / 회사명</label>
+      <input type="text" id="name-input" placeholder="예: 김대표 님, 에이비씨 파트너스">
+    </div>
+
+    <div class="form-group">
+      <label>서브 환영 문구</label>
+      <textarea id="msg-input" rows="3" placeholder="예: 성공적인 비즈니스 시간 되시기를 바랍니다."></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>배경 인테리어 테마</label>
+      <select id="bg-select">
+        <option value="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1920&q=80">1. 다크 모던 럭셔리 라운지</option>
+        <option value="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1920&q=80">2. 웜톤 호텔 로비</option>
+        <option value="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1920&q=80">3. 마블 & 우드 인테리어</option>
+        <option value="https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=1920&q=80">4. 프라이빗 비즈니스 룸</option>
+      </select>
+    </div>
+
+    <button type="button" onclick="saveData()">TV 화면에 즉시 반영</button>
+    <div id="status-msg">✓ TV 화면에 성공적으로 반영되었습니다!</div>
   </div>
 
   <script>
     // ==============================================================
-    // ⚠️ 아래 두 줄의 따옴표 안에 아까 확인하신 URL과 Key를 넣어주세요.
-    // SUPABASE_URL 끝에 /rest/v1 이 없어야 합니다.
+    // [확인] 본인의 Supabase URL과 Key를 유지해 주세요
     // ==============================================================
     const SUPABASE_URL = 'https://jorxmazliodqnxnwctlc.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_GAU-azI_hJvms8k3Nzsyiw_PRH0NG69';
@@ -175,33 +246,45 @@
     const isTV = window.location.search.includes('view=tv');
 
     if (isTV) {
-      document.getElementById('tv-section').style.display = 'flex';
+      // TV 모드: 버튼 일체 숨김, 전체화면만 활성화
+      const tvSection = document.getElementById('tv-section');
+      tvSection.style.display = 'flex';
 
-      // 시계 작동
       function updateClock() {
         const d = new Date();
-        document.getElementById('clock').innerText = 
-          d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false });
+        document.getElementById('clock-time').innerText = 
+          d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+        document.getElementById('clock-date').innerText = 
+          d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
       }
       setInterval(updateClock, 1000);
       updateClock();
 
-      // 화면 업데이트 함수
-      function updateScreen(name, msg) {
-        const box = document.getElementById('center-content');
+      let lastContent = '';
+      function updateBoard(name, msg, bgUrl) {
+        const currentHash = name + '|' + msg + '|' + bgUrl;
+        if (currentHash === lastContent) return; // 내용이 같으면 애니메이션 생략
+        lastContent = currentHash;
+
+        const box = document.getElementById('center-box');
         box.style.opacity = '0';
+        box.style.transform = 'translateY(8px)';
+
         setTimeout(() => {
           if (name) document.getElementById('guest-name').innerText = name;
           if (msg) document.getElementById('guest-msg').innerText = msg;
+          if (bgUrl) tvSection.style.backgroundImage = `url('${bgUrl}')`;
+
           box.style.opacity = '1';
-        }, 300);
+          box.style.transform = 'translateY(0)';
+        }, 400);
       }
 
-      // Supabase 데이터 가져오기 (3초마다 자동 확인 - 가장 안정적인 폴링 방식)
-      async function fetchLatestData() {
+      // Supabase 데이터 가져오기 (캐시 방지 타임스탬프 추가)
+      async function syncTV() {
         if (!SUPABASE_URL.startsWith('http') || SUPABASE_URL.includes('여기에')) return;
         try {
-          const res = await fetch(`${SUPABASE_URL}/rest/v1/welcome_screen?id=eq.1&select=*`, {
+          const res = await fetch(`${SUPABASE_URL}/rest/v1/welcome_screen?id=eq.1&select=*&t=${Date.now()}`, {
             headers: {
               'apikey': SUPABASE_KEY,
               'Authorization': `Bearer ${SUPABASE_KEY}`
@@ -209,23 +292,63 @@
           });
           const data = await res.json();
           if (data && data[0]) {
-            updateScreen(data[0].guest_name, data[0].sub_message);
+            let msgText = data[0].sub_message || '';
+            let bg = 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1920&q=80';
+            
+            if (msgText.includes('|||')) {
+              const parts = msgText.split('|||');
+              msgText = parts[0];
+              bg = parts[1];
+            }
+            updateBoard(data[0].guest_name, msgText, bg);
           }
         } catch(e) {
           console.error(e);
         }
       }
-      fetchLatestData();
-      setInterval(fetchLatestData, 3000); // 3초마다 변경 감지
+      syncTV();
+      setInterval(syncTV, 2000); // 2초마다 자동 동기화
 
     } else {
-      // 기본은 관리자 화면 표시
+      // 관리자 모드
       document.getElementById('admin-section').style.display = 'block';
 
+      // 기존 저장되어 있던 내용 불러와서 입력창에 채워두기
+      async function loadInitialData() {
+        if (!SUPABASE_URL.startsWith('http') || SUPABASE_URL.includes('여기에')) return;
+        try {
+          const res = await fetch(`${SUPABASE_URL}/rest/v1/welcome_screen?id=eq.1&select=*&t=${Date.now()}`, {
+            headers: {
+              'apikey': SUPABASE_KEY,
+              'Authorization': `Bearer ${SUPABASE_KEY}`
+            }
+          });
+          const data = await res.json();
+          if (data && data[0]) {
+            document.getElementById('name-input').value = data[0].guest_name || '';
+            let msg = data[0].sub_message || '';
+            if (msg.includes('|||')) {
+              const parts = msg.split('|||');
+              document.getElementById('msg-input').value = parts[0];
+              document.getElementById('bg-select').value = parts[1];
+            } else {
+              document.getElementById('msg-input').value = msg;
+            }
+          }
+        } catch(e) {}
+      }
+      loadInitialData();
+
+      // 전송 버튼 함수
       async function saveData() {
         const name = document.getElementById('name-input').value.trim();
         const msg = document.getElementById('msg-input').value.trim();
-        if (!name) return alert('이름을 입력해주세요.');
+        const bg = document.getElementById('bg-select').value;
+        const status = document.getElementById('status-msg');
+
+        if (!name) return alert('예약자 이름을 입력해 주세요.');
+
+        const combinedMsg = (msg || '편안하고 성공적인 시간 되시기를 바랍니다.') + '|||' + bg;
 
         try {
           const res = await fetch(`${SUPABASE_URL}/rest/v1/welcome_screen?id=eq.1`, {
@@ -234,24 +357,24 @@
               'apikey': SUPABASE_KEY,
               'Authorization': `Bearer ${SUPABASE_KEY}`,
               'Content-Type': 'application/json',
-              'Prefer': 'return=minimal'
+              'Prefer': 'return=representation'
             },
             body: JSON.stringify({
               guest_name: name,
-              sub_message: msg || '편안하고 생산적인 시간 되시기를 바랍니다.',
+              sub_message: combinedMsg,
               updated_at: new Date()
             })
           });
 
           if (res.ok) {
-            const st = document.getElementById('status');
-            st.style.display = 'block';
-            setTimeout(() => { st.style.display = 'none'; }, 3000);
+            status.style.display = 'block';
+            setTimeout(() => { status.style.display = 'none'; }, 3000);
           } else {
-            alert('저장 실패: ' + res.statusText);
+            const errData = await res.json();
+            alert('저장 실패: ' + (errData.message || res.statusText));
           }
         } catch(e) {
-          alert('연결 에러: ' + e.message);
+          alert('통신 오류: ' + e.message);
         }
       }
     }
