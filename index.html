@@ -33,7 +33,7 @@
       cursor: pointer;
     }
 
-    /* 배경 동영상 레이어 (완전한 무음 비주얼 전용) */
+    /* 배경 동영상 레이어 (완전한 무음 전용) */
     #bg-video {
       position: fixed;
       top: 0;
@@ -60,7 +60,7 @@
     .clock-time { font-family: 'Cormorant Garamond', serif; font-size: 3rem; color: #e5e7eb; letter-spacing: 4px; }
     .clock-date { font-size: 0.95rem; color: #8b919d; letter-spacing: 3px; text-transform: uppercase; }
 
-    .center-box { margin: auto 0; transition: opacity 0.5s ease; max-width: 950px; }
+    .center-box { margin: auto 0; transition: opacity 0.5s ease; max-width: 1000px; }
     .brand-tag {
       font-family: 'Cormorant Garamond', serif;
       font-size: 1.6rem;
@@ -72,14 +72,46 @@
       border-bottom: 1px solid rgba(201, 169, 110, 0.35);
       padding-bottom: 8px;
     }
-    .guest-title {
+
+    /* 럭셔리 예약자명 타이포그래피 */
+    .guest-title-wrap {
       font-size: 5rem;
       font-weight: 600;
-      line-height: 1.2;
+      line-height: 1.25;
       margin-bottom: 24px;
       letter-spacing: -1px;
       text-shadow: 0 6px 30px rgba(0, 0, 0, 0.95);
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
     }
+
+    /* Mr. Dr. 등 영문 접두사 (우아한 세리프) */
+    .honorific-prefix {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.78em;
+      font-weight: 400;
+      color: #dfcfb2;
+      letter-spacing: 2px;
+      margin-right: 2px;
+    }
+
+    /* 메인 이름 */
+    .guest-core-name {
+      color: #ffffff;
+    }
+
+    /* 뒤에 붙는 '님' (이름보다 작고 섬세한 55% 크기) */
+    .honorific-suffix {
+      font-size: 0.55em;
+      font-weight: 300;
+      color: #d1d5db;
+      margin-left: 2px;
+      letter-spacing: 0px;
+    }
+
     .sub-desc { font-size: 1.7rem; color: #b8bdc9; font-weight: 300; line-height: 1.6; }
     .footer-bar { font-size: 0.95rem; color: #555a64; letter-spacing: 4px; text-transform: uppercase; }
 
@@ -100,7 +132,7 @@
     #admin-section {
       display: none;
       width: 92%;
-      max-width: 480px;
+      max-width: 500px;
       margin: 30px auto;
       background: #16171b;
       border: 1px solid #282a32;
@@ -121,6 +153,72 @@
       outline: none;
     }
     input:focus, textarea:focus, select:focus { border-color: #c9a96e; }
+
+    /* 토글 스위치 및 호칭 옵션 영역 */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #1f2128;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #2a2c35;
+    }
+    .toggle-label {
+      font-size: 0.92rem;
+      color: #e5e7eb;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .toggle-sub {
+      font-size: 0.75rem;
+      color: #8b919d;
+      margin-top: 2px;
+    }
+
+    /* 스위치 UI */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 46px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: #374151;
+      transition: .3s;
+      border-radius: 26px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider { background-color: #c9a96e; }
+    input:checked + .slider:before { transform: translateX(20px); }
+
+    /* 경칭 선택 인풋 그룹 */
+    .prefix-select-wrap {
+      display: none;
+      margin-bottom: 14px;
+      padding: 10px;
+      background: #1a1b22;
+      border-radius: 10px;
+      border: 1px dashed #3a3d4a;
+    }
+
     button {
       width: 100%;
       padding: 16px;
@@ -131,7 +229,7 @@
       font-size: 1.1rem;
       font-weight: 700;
       cursor: pointer;
-      margin-top: 8px;
+      margin-top: 10px;
     }
     button:active { opacity: 0.8; }
     #log-box {
@@ -152,7 +250,6 @@
 
   <!-- TV 디스플레이 화면 -->
   <div id="tv-section">
-    <!-- 비디오는 소리 트랙을 완전히 박탈 (muted 속성 필수) -->
     <video id="bg-video" autoplay loop muted playsinline preload="auto"></video>
     <div id="video-overlay"></div>
 
@@ -160,14 +257,20 @@
       <div class="clock-time" id="clock-time">00:00</div>
       <div class="clock-date" id="clock-date">--</div>
     </div>
+    
     <div class="tv-layer center-box" id="center-box">
       <div class="brand-tag">PRIVATE BUSINESS LOUNGE</div>
-      <div class="guest-title" id="guest-name">Welcome</div>
+      <!-- 예약자명 구조화 (경칭 접두사 + 메인 이름 + '님' 접미사) -->
+      <div class="guest-title-wrap">
+        <span class="honorific-prefix" id="guest-prefix"></span>
+        <span class="guest-core-name" id="guest-name">Welcome</span>
+        <span class="honorific-suffix" id="guest-suffix"></span>
+      </div>
       <div class="sub-desc" id="guest-msg">프라이빗 라운지에 오신 것을 환영합니다.</div>
     </div>
+
     <div class="tv-layer footer-bar">EXCLUSIVELY RESERVED FOR YOUR SUCCESS</div>
     <div id="tv-status-badge">동기화 대기중...</div>
-    <!-- BGM 전용 플레이어 -->
     <audio id="bgm-player" loop preload="auto"></audio>
   </div>
 
@@ -179,14 +282,51 @@
 
     <div class="admin-title">TV 웰컴 보드 설정</div>
     
+    <!-- 1. 앞자리 영문 경칭 토글 & 선택창 -->
+    <div class="toggle-row">
+      <div class="toggle-label">
+        <span>앞자리 경칭 사용 (Mr., Dr. 등)</span>
+        <span class="toggle-sub">외국인 VIP 손님 방문 시 권장</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="prefix-toggle">
+        <span class="slider"></span>
+      </label>
+    </div>
+
+    <div class="prefix-select-wrap" id="prefix-select-box">
+      <label style="margin-bottom: 6px;">영문 경칭 선택</label>
+      <select id="prefix-select">
+        <option value="Mr.">Mr. (남성)</option>
+        <option value="Ms.">Ms. (여성)</option>
+        <option value="Mrs.">Mrs. (기혼 여성)</option>
+        <option value="Dr.">Dr. (박사 / 의사 / 석학)</option>
+        <option value="Prof.">Prof. (교수)</option>
+        <option value="Sir">Sir (존칭)</option>
+      </select>
+    </div>
+
+    <!-- 2. 예약자 / 회사 본체 이름 입력창 -->
     <div class="form-group">
-      <label>예약자 / 회사명</label>
-      <input type="text" id="name-input" placeholder="예: 김대표 님, 삼정회계법인">
+      <label>예약자 본명 / 회사명</label>
+      <input type="text" id="name-input" placeholder="예: John Smith, 김대표, 삼정회계법인">
+    </div>
+
+    <!-- 3. 뒷자리 '님' 호칭 토글 -->
+    <div class="toggle-row">
+      <div class="toggle-label">
+        <span>이름 뒤 '님' 표기</span>
+        <span class="toggle-sub">이름보다 작은 크기로 섬세하게 배치</span>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="suffix-toggle" checked>
+        <span class="slider"></span>
+      </label>
     </div>
 
     <div class="form-group">
       <label>서브 환영 문구</label>
-      <textarea id="msg-input" rows="3" placeholder="예: 편안하고 성공적인 시간 되시기를 바랍니다."></textarea>
+      <textarea id="msg-input" rows="3" placeholder="예: 성공적인 비즈니스 시간 되시기를 바랍니다."></textarea>
     </div>
 
     <div class="form-group">
@@ -245,12 +385,10 @@
       const badge = document.getElementById('tv-status-badge');
       const player = document.getElementById('bgm-player');
       
-      // 핵심: 비디오는 오디오 장치를 절대 점유하지 못하도록 강제 음소거
       bgVideo.muted = true;
       bgVideo.defaultMuted = true;
       bgVideo.volume = 0;
-
-      player.volume = 0.35; // BGM 단독 출력
+      player.volume = 0.35;
 
       tvSection.style.display = 'flex';
 
@@ -267,7 +405,6 @@
       let currentDataKey = '';
       let currentBgmUrl = '';
 
-      // 클릭 시 오디오 및 비디오 동시 언락 보장
       function unlockMedia() {
         if (bgVideo.style.display === 'block' && bgVideo.paused) {
           bgVideo.play().catch(console.error);
@@ -282,21 +419,43 @@
       window.addEventListener('click', unlockMedia);
       window.addEventListener('touchstart', unlockMedia);
 
-      function updateBoard(name, msg, bgUrl, bgmUrl) {
-        const newKey = name + '|' + msg + '|' + bgUrl + '|' + bgmUrl;
+      // 보드 업데이트 함수: prefix, name, suffix 구조적 분리 적용
+      function updateBoard(prefix, name, suffix, msg, bgUrl, bgmUrl) {
+        const newKey = prefix + '|' + name + '|' + suffix + '|' + msg + '|' + bgUrl + '|' + bgmUrl;
         if (newKey === currentDataKey) return;
         currentDataKey = newKey;
 
-        // 텍스트 전환
         const box = document.getElementById('center-box');
         box.style.opacity = '0';
         setTimeout(function() {
-          if (name) document.getElementById('guest-name').innerText = name;
+          // 경칭 접두사 (Mr., Dr.)
+          const pEl = document.getElementById('guest-prefix');
+          if (prefix) {
+            pEl.innerText = prefix;
+            pEl.style.display = 'inline';
+          } else {
+            pEl.innerText = '';
+            pEl.style.display = 'none';
+          }
+
+          // 본체 이름
+          document.getElementById('guest-name').innerText = name || 'Welcome';
+
+          // 접미사 ('님')
+          const sEl = document.getElementById('guest-suffix');
+          if (suffix) {
+            sEl.innerText = suffix;
+            sEl.style.display = 'inline';
+          } else {
+            sEl.innerText = '';
+            sEl.style.display = 'none';
+          }
+
           if (msg) document.getElementById('guest-msg').innerText = msg;
           box.style.opacity = '1';
         }, 400);
 
-        // 1. 배경 처리 (비디오 vs 이미지)
+        // 배경 처리
         const isVideo = bgUrl.toLowerCase().indexOf('.mp4') !== -1;
         if (isVideo) {
           tvSection.style.backgroundImage = 'none';
@@ -306,11 +465,10 @@
           if (bgVideo.getAttribute('data-src') !== bgUrl) {
             bgVideo.setAttribute('data-src', bgUrl);
             bgVideo.src = bgUrl;
-            // 비디오 교체 시에도 무음 상태 재확인
             bgVideo.muted = true;
             bgVideo.volume = 0;
             bgVideo.load();
-            bgVideo.play().catch(e => console.log('Video autoplay wait:', e));
+            bgVideo.play().catch(e => console.log('Video play wait:', e));
           }
         } else {
           bgVideo.pause();
@@ -320,7 +478,7 @@
           tvSection.style.backgroundImage = "url('" + bgUrl + "')";
         }
 
-        // 2. BGM 처리 (비디오와 완전 독립적으로 동시 구동)
+        // BGM 처리
         if (bgmUrl !== currentBgmUrl) {
           currentBgmUrl = bgmUrl;
           if (!bgmUrl || bgmUrl === 'none') {
@@ -349,31 +507,39 @@
               'Authorization': 'Bearer ' + cleanKey
             }
           });
-          if (!res.ok) {
-            badge.innerText = '읽기 실패 (' + res.status + ')';
-            badge.style.color = '#ff6b6b';
-            return;
-          }
+          if (!res.ok) return;
 
           const data = await res.json();
           if (data && data.length > 0) {
             const item = data[0];
-            let msgText = item.sub_message || '';
+            let rawName = item.guest_name || '';
+            let rawMsg = item.sub_message || '';
+            
+            // guest_name 포맷 파싱: PREFIX:::NAME:::SUFFIX
+            let prefix = '';
+            let name = rawName;
+            let suffix = '';
+
+            if (rawName.indexOf(':::') !== -1) {
+              const nameParts = rawName.split(':::');
+              prefix = nameParts[0] || '';
+              name = nameParts[1] || '';
+              suffix = nameParts[2] || '';
+            }
+
+            let msgText = rawMsg;
             let bg = 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4';
             let bgm = 'jazz1.mp3';
 
-            if (msgText.indexOf('|||') !== -1) {
-              const parts = msgText.split('|||');
+            if (rawMsg.indexOf('|||') !== -1) {
+              const parts = rawMsg.split('|||');
               msgText = parts[0];
               bg = parts[1] || bg;
               bgm = parts[2] || bgm;
             }
-            updateBoard(item.guest_name, msgText, bg, bgm);
+            updateBoard(prefix, name, suffix, msgText, bg, bgm);
           }
-        } catch(e) {
-          badge.innerText = '통신 에러: ' + e.message;
-          badge.style.color = '#ff6b6b';
-        }
+        } catch(e) {}
       }
 
       syncTV();
@@ -382,6 +548,16 @@
     } else {
       // 2. 관리자 모드
       document.getElementById('admin-section').style.display = 'block';
+
+      const prefixToggle = document.getElementById('prefix-toggle');
+      const prefixSelectBox = document.getElementById('prefix-select-box');
+      const prefixSelect = document.getElementById('prefix-select');
+      const suffixToggle = document.getElementById('suffix-toggle');
+
+      // 토글 ON/OFF 시 셀렉트 박스 표시/숨김
+      prefixToggle.addEventListener('change', function() {
+        prefixSelectBox.style.display = this.checked ? 'block' : 'none';
+      });
 
       async function loadInitial() {
         try {
@@ -395,7 +571,30 @@
           const data = await res.json();
           if (data && data.length > 0) {
             const item = data[0];
-            document.getElementById('name-input').value = item.guest_name || '';
+            const rawName = item.guest_name || '';
+            
+            if (rawName.indexOf(':::') !== -1) {
+              const nParts = rawName.split(':::');
+              const pref = nParts[0];
+              document.getElementById('name-input').value = nParts[1] || '';
+              const suff = nParts[2];
+
+              if (pref) {
+                prefixToggle.checked = true;
+                prefixSelectBox.style.display = 'block';
+                prefixSelect.value = pref;
+              } else {
+                prefixToggle.checked = false;
+                prefixSelectBox.style.display = 'none';
+              }
+
+              suffixToggle.checked = (suff === '님');
+            } else {
+              document.getElementById('name-input').value = rawName;
+              prefixToggle.checked = false;
+              suffixToggle.checked = true;
+            }
+
             let msg = item.sub_message || '';
             if (msg.indexOf('|||') !== -1) {
               const parts = msg.split('|||');
@@ -411,12 +610,17 @@
       loadInitial();
 
       document.getElementById('save-btn').addEventListener('click', async function() {
-        const name = document.getElementById('name-input').value.trim();
+        const nameInput = document.getElementById('name-input').value.trim();
         const msg = document.getElementById('msg-input').value.trim();
         const bg = document.getElementById('bg-select').value;
         const bgm = document.getElementById('bgm-select').value;
 
-        if (!name) return alert('예약자 이름을 입력해 주세요.');
+        if (!nameInput) return alert('예약자 본명 또는 회사명을 입력해 주세요.');
+
+        // 포맷 조합: [Prefix]:::[Name]:::[Suffix]
+        const prefixVal = prefixToggle.checked ? prefixSelect.value : '';
+        const suffixVal = suffixToggle.checked ? '님' : '';
+        const combinedName = prefixVal + ':::' + nameInput + ':::' + suffixVal;
 
         log('전송 중...', '#ffd166');
         const combinedMsg = (msg || '편안하고 성공적인 시간 되시기를 바랍니다.') + '|||' + bg + '|||' + bgm;
@@ -432,7 +636,7 @@
             },
             body: JSON.stringify({
               id: 1,
-              guest_name: name,
+              guest_name: combinedName,
               sub_message: combinedMsg,
               updated_at: new Date().toISOString()
             })
