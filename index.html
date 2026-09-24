@@ -68,16 +68,26 @@
     .sub-desc { font-size: 1.7rem; color: #b8bdc9; font-weight: 300; line-height: 1.6; }
     .footer-bar { font-size: 0.95rem; color: #555a64; letter-spacing: 4px; text-transform: uppercase; }
 
-    /* TV 화면 좌측 하단 상태 배지 */
+    /* 화면 뒤에 완전히 숨겨진 오디오 전용 플레이어 */
+    #yt-hidden-player {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
     #tv-status-badge {
       position: fixed;
       bottom: 15px;
       left: 15px;
       z-index: 9999;
       font-size: 0.75rem;
-      padding: 4px 8px;
+      padding: 5px 10px;
       border-radius: 4px;
-      background: rgba(0,0,0,0.6);
+      background: rgba(0,0,0,0.7);
       color: #888;
       border: 1px solid #333;
     }
@@ -133,6 +143,8 @@
       display: none;
     }
   </style>
+  <!-- YouTube 공식 IFrame API -->
+  <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
 
@@ -149,7 +161,9 @@
     </div>
     <div class="tv-layer footer-bar">EXCLUSIVELY RESERVED FOR YOUR SUCCESS</div>
     <div id="tv-status-badge">초기화 중...</div>
-    <audio id="bgm-player" loop preload="auto"></audio>
+    
+    <!-- 숨겨진 YouTube 플레이어 컨테이너 -->
+    <div id="yt-hidden-player"></div>
   </div>
 
   <!-- 관리자 화면 -->
@@ -192,13 +206,13 @@
       </select>
     </div>
 
-    <!-- 신뢰성 높은 직접 스트리밍 CDN 음원으로 교체 -->
+    <!-- YouTube 기반 럭셔리 라운지 사운드 트랙 (차단 없음) -->
     <div class="form-group">
       <label>배경음악 (BGM) 선택</label>
       <select id="bgm-select">
-        <option value="https://ia801503.us.archive.org/15/items/chill-lounge-bgm-collection/lounge-jazz.mp3">1. 웜 피아노 & 호텔 재즈 라운지</option>
-        <option value="https://ia801503.us.archive.org/15/items/chill-lounge-bgm-collection/midnight-lounge.mp3">2. 딥 앰비언트 위스키 바</option>
-        <option value="https://ia801503.us.archive.org/15/items/chill-lounge-bgm-collection/bossa-nova.mp3">3. 잔잔한 보사노바 & 칠아웃</option>
+        <option value="jfKfPfyJRdk">1. 릴랙싱 럭셔리 라운지 & 재즈 (Lo-Fi)</option>
+        <option value="5qap5aO4i9A">2. 5성급 호텔 앰비언트 피아노</option>
+        <option value="M5QY2_8704o">3. 차분한 딥 이브닝 칠아웃</option>
         <option value="none">4. 음악 끄기 (BGM Off)</option>
       </select>
     </div>
@@ -214,6 +228,9 @@
     const SUPABASE_URL = 'https://jorxmazliodqnxnwctlc.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_GAU-azI_hJvms8k3Nzsyiw_PRH0NG69';
 
+    const cleanUrl = SUPABASE_URL.trim();
+    const cleanKey = SUPABASE_KEY.trim();
+
     const isTV = window.location.search.indexOf('view=tv') !== -1;
 
     function log(msg, color) {
@@ -225,13 +242,50 @@
       }
     }
 
+    // 유튜브 플레이어 전역 변수
+    let ytPlayer = null;
+    let ytReady = false;
+    let targetVideoId = 'jfKfPfyJRdk';
+
+    window.onYouTubeIframeAPIReady = function() {
+      ytPlayer = new YT.Player('yt-hidden-player', {
+        height: '100',
+        width: '100',
+        videoId: targetVideoId,
+        playerVars: {
+          autoplay: 1,
+          controls: 0,
+          loop: 1,
+          playlist: targetVideoId
+        },
+        events: {
+          onReady: function(event) {
+            ytReady = true;
+            event.target.setVolume(35); // 35% 은은한 볼륨
+            if (isTV && targetVideoId !== 'none') {
+              event.target.playVideo();
+            }
+          },
+          onStateChange: function(event) {
+            const badge = document.getElementById('tv-status-badge');
+            if (badge) {
+              if (event.data === YT.PlayerState.PLAYING) {
+                badge.innerText = '● BGM 정상 재생 중 🎵';
+                badge.style.color = '#4ade80';
+              } else if (event.data === YT.PlayerState.PAUSED && targetVideoId !== 'none') {
+                badge.innerText = '⚠️ 화면을 한 번 클릭해 주세요 (음악 활성화)';
+                badge.style.color = '#ffd166';
+              }
+            }
+          }
+        }
+      });
+    };
+
     if (isTV) {
       // 1. TV 디스플레이 모드
       const tvSection = document.getElementById('tv-section');
       const badge = document.getElementById('tv-status-badge');
-      const player = document.getElementById('bgm-player');
-      player.volume = 0.35; // 35% 볼륨
-
       tvSection.style.display = 'flex';
 
       function updateClock() {
@@ -244,29 +298,23 @@
       setInterval(updateClock, 1000);
       updateClock();
 
-      let currentDataKey = '';
-      let currentBgmUrl = '';
-      let audioNeedClick = false;
-
-      // 브라우저 Autoplay 차단 시: 화면 아무 곳이나 1회 클릭/터치하면 즉시 재생
-      function handleUserTouch() {
-        if (currentBgmUrl && currentBgmUrl !== 'none') {
-          player.play().then(() => {
-            badge.innerText = '● BGM 정상 재생 중';
-            badge.style.color = '#4ade80';
-            audioNeedClick = false;
-          }).catch(console.error);
+      // 화면 클릭 시 강제 재생 언락
+      function handleUserUnlock() {
+        if (ytPlayer && ytReady && targetVideoId !== 'none') {
+          ytPlayer.playVideo();
         }
       }
-      window.addEventListener('click', handleUserTouch);
-      window.addEventListener('touchstart', handleUserTouch);
+      window.addEventListener('click', handleUserUnlock);
+      window.addEventListener('touchstart', handleUserUnlock);
 
-      function updateBoard(name, msg, bgUrl, bgmUrl) {
-        const newKey = name + '|' + msg + '|' + bgUrl + '|' + bgmUrl;
+      let currentDataKey = '';
+
+      function updateBoard(name, msg, bgUrl, bgmId) {
+        const newKey = name + '|' + msg + '|' + bgUrl + '|' + bgmId;
         if (newKey === currentDataKey) return;
         currentDataKey = newKey;
 
-        // 화면 텍스트/배경 전환
+        // 화면 전환
         const box = document.getElementById('center-box');
         box.style.opacity = '0';
         setTimeout(function() {
@@ -277,34 +325,31 @@
         }, 400);
 
         // BGM 변경 처리
-        if (bgmUrl !== currentBgmUrl) {
-          currentBgmUrl = bgmUrl;
-          if (!bgmUrl || bgmUrl === 'none') {
-            player.pause();
-            badge.innerText = '● 정상 연결됨 (음악 OFF)';
-            badge.style.color = '#4ade80';
-          } else {
-            player.src = bgmUrl;
-            player.play().then(() => {
-              badge.innerText = '● 정상 연결됨 (음악 ON)';
+        if (bgmId !== targetVideoId) {
+          targetVideoId = bgmId;
+          if (ytReady && ytPlayer) {
+            if (!bgmId || bgmId === 'none') {
+              ytPlayer.stopVideo();
+              badge.innerText = '● 연결됨 (음악 OFF)';
               badge.style.color = '#4ade80';
-            }).catch(() => {
-              // 브라우저가 자동 소리를 막았을 때 배지에 안내 표시
-              badge.innerText = '● 화면을 1회 터치하면 음악이 시작됩니다';
-              badge.style.color = '#ffd166';
-              audioNeedClick = true;
-            });
+            } else {
+              ytPlayer.loadVideoById({
+                videoId: bgmId,
+                startSeconds: 0
+              });
+              ytPlayer.playVideo();
+            }
           }
         }
       }
 
       async function syncTV() {
-        if (!SUPABASE_URL.startsWith('http') || SUPABASE_URL.indexOf('여기에') !== -1) return;
+        if (!cleanUrl.startsWith('http') || cleanUrl.indexOf('여기에') !== -1) return;
         try {
-          const res = await fetch(SUPABASE_URL + '/rest/v1/welcome_screen?select=*&id=eq.1', {
+          const res = await fetch(cleanUrl + '/rest/v1/welcome_screen?select=*&id=eq.1', {
             headers: {
-              'apikey': SUPABASE_KEY,
-              'Authorization': 'Bearer ' + SUPABASE_KEY
+              'apikey': cleanKey,
+              'Authorization': 'Bearer ' + cleanKey
             }
           });
           if (!res.ok) return;
@@ -314,7 +359,7 @@
             const item = data[0];
             let msgText = item.sub_message || '';
             let bg = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2560&q=85';
-            let bgm = 'https://ia801503.us.archive.org/15/items/chill-lounge-bgm-collection/lounge-jazz.mp3';
+            let bgm = 'jfKfPfyJRdk';
 
             if (msgText.indexOf('|||') !== -1) {
               const parts = msgText.split('|||');
@@ -335,14 +380,15 @@
       document.getElementById('admin-section').style.display = 'block';
 
       async function loadInitial() {
-        if (!SUPABASE_URL.startsWith('http') || SUPABASE_URL.indexOf('여기에') !== -1) return;
+        if (!cleanUrl.startsWith('http') || cleanUrl.indexOf('여기에') !== -1) return;
         try {
-          const res = await fetch(SUPABASE_URL + '/rest/v1/welcome_screen?select=*&id=eq.1', {
+          const res = await fetch(cleanUrl + '/rest/v1/welcome_screen?select=*&id=eq.1', {
             headers: {
-              'apikey': SUPABASE_KEY,
-              'Authorization': 'Bearer ' + SUPABASE_KEY
+              'apikey': cleanKey,
+              'Authorization': 'Bearer ' + cleanKey
             }
           });
+          if (!res.ok) return;
           const data = await res.json();
           if (data && data.length > 0) {
             const item = data[0];
@@ -373,11 +419,11 @@
         const combinedMsg = (msg || '편안하고 성공적인 시간 되시기를 바랍니다.') + '|||' + bg + '|||' + bgm;
 
         try {
-          const res = await fetch(SUPABASE_URL + '/rest/v1/welcome_screen', {
+          const res = await fetch(cleanUrl + '/rest/v1/welcome_screen', {
             method: 'POST',
             headers: {
-              'apikey': SUPABASE_KEY,
-              'Authorization': 'Bearer ' + SUPABASE_KEY,
+              'apikey': cleanKey,
+              'Authorization': 'Bearer ' + cleanKey,
               'Content-Type': 'application/json',
               'Prefer': 'resolution=merge-duplicates,return=representation'
             },
