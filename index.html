@@ -13,15 +13,20 @@
       color: #ffffff;
       font-family: "Pretendard", -apple-system, sans-serif;
       min-height: 100vh;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto; /* 스마트폰 관리자 화면에서 부드러운 스크롤 허용 */
+      -webkit-overflow-scrolling: touch;
     }
 
-    /* 1. TV 디스플레이 화면 */
+    /* 1. TV 디스플레이 화면 (TV 모드에서만 화면 고정 및 스크롤바 숨김) */
     #tv-section {
       display: none;
-      position: relative;
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100vw;
       height: 100vh;
+      overflow: hidden;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
@@ -88,7 +93,7 @@
       flex-wrap: wrap;
     }
 
-    /* Mr. Dr. 등 영문 접두사 (우아한 세리프) */
+    /* Mr. Dr. 영문 접두사 (세리프) */
     .honorific-prefix {
       font-family: 'Cormorant Garamond', serif;
       font-size: 0.78em;
@@ -103,7 +108,7 @@
       color: #ffffff;
     }
 
-    /* 뒤에 붙는 '님' (이름보다 작고 섬세한 55% 크기) */
+    /* 뒤에 붙는 '님' (이름 본체 대비 55% 크기로 섬세하게 배치) */
     .honorific-suffix {
       font-size: 0.55em;
       font-weight: 300;
@@ -128,12 +133,12 @@
       border: 1px solid #333;
     }
 
-    /* 2. 관리자 화면 */
+    /* 2. 관리자 화면 (모바일 하단 여유 마진 90px 추가) */
     #admin-section {
       display: none;
       width: 92%;
       max-width: 500px;
-      margin: 30px auto;
+      margin: 30px auto 90px auto;
       background: #16171b;
       border: 1px solid #282a32;
       border-radius: 18px;
@@ -154,7 +159,7 @@
     }
     input:focus, textarea:focus, select:focus { border-color: #c9a96e; }
 
-    /* 토글 스위치 및 호칭 옵션 영역 */
+    /* 토글 스위치 영역 */
     .toggle-row {
       display: flex;
       align-items: center;
@@ -209,7 +214,6 @@
     input:checked + .slider { background-color: #c9a96e; }
     input:checked + .slider:before { transform: translateX(20px); }
 
-    /* 경칭 선택 인풋 그룹 */
     .prefix-select-wrap {
       display: none;
       margin-bottom: 14px;
@@ -260,7 +264,6 @@
     
     <div class="tv-layer center-box" id="center-box">
       <div class="brand-tag">PRIVATE BUSINESS LOUNGE</div>
-      <!-- 예약자명 구조화 (경칭 접두사 + 메인 이름 + '님' 접미사) -->
       <div class="guest-title-wrap">
         <span class="honorific-prefix" id="guest-prefix"></span>
         <span class="guest-core-name" id="guest-name">Welcome</span>
@@ -326,7 +329,7 @@
 
     <div class="form-group">
       <label>서브 환영 문구</label>
-      <textarea id="msg-input" rows="3" placeholder="예: 성공적인 비즈니스 시간 되시기를 바랍니다."></textarea>
+      <textarea id="msg-input" rows="3" placeholder="예: 편안하고 성공적인 시간 되시기를 바랍니다."></textarea>
     </div>
 
     <div class="form-group">
@@ -335,8 +338,8 @@
         <optgroup label="── 🎬 시네마틱 모션 비디오 ──">
           <option value="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4">🎬 1. 테스트 비디오 (검증용)</option>
           <option value="video1.mp4">🎬 2. 자체 업로드 라운지 영상 (video1.mp4)</option>
-          <option value="video2.mp4">🎬 3. 자체 업로드 라운지 영상 (video2.mp4)</option>
-          <option value="video3.mp4">🎬 4. 자체 업로드 라운지 영상 (video3.mp4)</option>
+          <option value="video2.mp4">🎬 2. 자체 업로드 라운지 영상 (video2.mp4)</option>
+          <option value="video3.mp4">🎬 2. 자체 업로드 라운지 영상 (video3.mp4)</option>
         </optgroup>
         <optgroup label="── 🖼 하이엔드 인테리어 스틸 ──">
           <option value="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2560&q=85">3. 하이엔드 스톤 라운지</option>
@@ -419,7 +422,6 @@
       window.addEventListener('click', unlockMedia);
       window.addEventListener('touchstart', unlockMedia);
 
-      // 보드 업데이트 함수: prefix, name, suffix 구조적 분리 적용
       function updateBoard(prefix, name, suffix, msg, bgUrl, bgmUrl) {
         const newKey = prefix + '|' + name + '|' + suffix + '|' + msg + '|' + bgUrl + '|' + bgmUrl;
         if (newKey === currentDataKey) return;
@@ -428,7 +430,6 @@
         const box = document.getElementById('center-box');
         box.style.opacity = '0';
         setTimeout(function() {
-          // 경칭 접두사 (Mr., Dr.)
           const pEl = document.getElementById('guest-prefix');
           if (prefix) {
             pEl.innerText = prefix;
@@ -438,10 +439,8 @@
             pEl.style.display = 'none';
           }
 
-          // 본체 이름
           document.getElementById('guest-name').innerText = name || 'Welcome';
 
-          // 접미사 ('님')
           const sEl = document.getElementById('guest-suffix');
           if (suffix) {
             sEl.innerText = suffix;
@@ -455,7 +454,6 @@
           box.style.opacity = '1';
         }, 400);
 
-        // 배경 처리
         const isVideo = bgUrl.toLowerCase().indexOf('.mp4') !== -1;
         if (isVideo) {
           tvSection.style.backgroundImage = 'none';
@@ -478,7 +476,6 @@
           tvSection.style.backgroundImage = "url('" + bgUrl + "')";
         }
 
-        // BGM 처리
         if (bgmUrl !== currentBgmUrl) {
           currentBgmUrl = bgmUrl;
           if (!bgmUrl || bgmUrl === 'none') {
@@ -515,7 +512,6 @@
             let rawName = item.guest_name || '';
             let rawMsg = item.sub_message || '';
             
-            // guest_name 포맷 파싱: PREFIX:::NAME:::SUFFIX
             let prefix = '';
             let name = rawName;
             let suffix = '';
@@ -546,7 +542,7 @@
       setInterval(syncTV, 1500);
 
     } else {
-      // 2. 관리자 모드
+      // 2. 모바일 관리자 모드
       document.getElementById('admin-section').style.display = 'block';
 
       const prefixToggle = document.getElementById('prefix-toggle');
@@ -554,7 +550,6 @@
       const prefixSelect = document.getElementById('prefix-select');
       const suffixToggle = document.getElementById('suffix-toggle');
 
-      // 토글 ON/OFF 시 셀렉트 박스 표시/숨김
       prefixToggle.addEventListener('change', function() {
         prefixSelectBox.style.display = this.checked ? 'block' : 'none';
       });
@@ -617,7 +612,6 @@
 
         if (!nameInput) return alert('예약자 본명 또는 회사명을 입력해 주세요.');
 
-        // 포맷 조합: [Prefix]:::[Name]:::[Suffix]
         const prefixVal = prefixToggle.checked ? prefixSelect.value : '';
         const suffixVal = suffixToggle.checked ? '님' : '';
         const combinedName = prefixVal + ':::' + nameInput + ':::' + suffixVal;
