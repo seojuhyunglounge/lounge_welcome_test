@@ -30,7 +30,7 @@
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 60px 50px 50px 50px;
+      padding: 45px 50px 45px 50px;
       text-align: center;
       background-size: cover;
       background-position: center;
@@ -55,55 +55,69 @@
     #video-overlay {
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle, rgba(12, 13, 16, 0.45) 0%, rgba(8, 9, 11, 0.92) 100%);
+      background: radial-gradient(circle, rgba(12, 13, 16, 0.42) 0%, rgba(8, 9, 11, 0.92) 100%);
       z-index: 1;
       pointer-events: none;
     }
 
-    .tv-layer { position: relative; z-index: 2; }
+    .tv-layer { position: relative; z-index: 2; width: 100%; }
     
-    /* 상단 디지털 시계 */
-    .clock-box { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-    .clock-time { font-family: 'Cormorant Garamond', serif; font-size: 2.8rem; color: #e5e7eb; letter-spacing: 4px; font-weight: 400; }
-    .clock-date { font-size: 0.9rem; color: #8b919d; letter-spacing: 3px; text-transform: uppercase; font-weight: 300; }
+    /* 상단 영역 (시계 + La Colonne 브랜드 헤더를 상단으로 집약) */
+    .top-header-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .clock-box { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .clock-time { font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; color: #d6d9e0; letter-spacing: 4px; font-weight: 400; line-height: 1; }
+    .clock-date { font-size: 0.85rem; color: #858b97; letter-spacing: 3px; text-transform: uppercase; font-weight: 300; }
 
-    /* 중앙 환영 컨테이너 */
-    .center-box { margin: auto 0; transition: opacity 0.5s ease; max-width: 1050px; }
-
-    /* 브랜드 헤더 영역 (La Colonne & 서브태그) */
+    /* 공간명 헤더: La Colonne 더 크고 우아하게 위로 */
     .brand-container {
       display: inline-flex;
       flex-direction: column;
       align-items: center;
-      margin-bottom: 36px;
+      margin-top: 4px;
     }
     .space-name {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 2.6rem;
+      font-size: 3.4rem;
       font-weight: 500;
       color: #dfcfb2;
-      letter-spacing: 12px;
+      letter-spacing: 14px;
       text-transform: uppercase;
       line-height: 1.1;
       margin-bottom: 8px;
-      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+      text-shadow: 0 4px 24px rgba(0, 0, 0, 0.9);
     }
+    /* 한 줄로 정렬된 서브태그 */
     .space-category {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 0.92rem;
+      font-size: 1.05rem;
       font-weight: 400;
-      color: #9e8a68;
-      letter-spacing: 7px;
+      color: #a89472;
+      letter-spacing: 8px;
       text-transform: uppercase;
-      padding-top: 6px;
-      border-top: 1px solid rgba(201, 169, 110, 0.28);
-      width: 100%;
-      max-width: 320px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(201, 169, 110, 0.35);
+      white-space: nowrap; /* 줄바꿈 절대 방지 */
+      display: inline-block;
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+
+    /* 화면 정중앙 VIP 웰컴 블록 (정중앙 포커스) */
+    .center-box {
+      margin: auto 0;
+      transition: opacity 0.5s ease;
+      max-width: 1100px;
+      transform: translateY(-8px); /* 시각적 완벽한 중심 보정 */
     }
 
     /* 럭셔리 예약자명 타이포그래피 */
     .guest-title-wrap {
-      font-size: 5rem;
+      font-size: 5.2rem;
       font-weight: 600;
       line-height: 1.25;
       margin-bottom: 22px;
@@ -112,7 +126,7 @@
       display: flex;
       justify-content: center;
       align-items: baseline;
-      gap: 12px;
+      gap: 14px;
       flex-wrap: wrap;
     }
 
@@ -126,10 +140,10 @@
       margin-right: 2px;
     }
 
-    /* 본체 이름 */
+    /* 메인 이름 */
     .guest-core-name { color: #ffffff; }
 
-    /* 뒤에 붙는 '님' 접미사 (55% 크기) */
+    /* 뒤에 붙는 '님' 접미사 (55% 비율) */
     .honorific-suffix {
       font-size: 0.55em;
       font-weight: 300;
@@ -139,20 +153,21 @@
     }
 
     .sub-desc { 
-      font-size: 1.65rem; 
+      font-size: 1.7rem; 
       color: #b8bdc9; 
       font-weight: 300; 
       line-height: 1.6; 
-      text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+      text-shadow: 0 2px 12px rgba(0,0,0,0.85);
     }
 
-    /* 하단 브랜드 슬로건 */
+    /* 하단 슬로건 */
     .footer-bar { 
       font-size: 0.88rem; 
       color: #555a64; 
       letter-spacing: 5px; 
       text-transform: uppercase; 
       font-weight: 300;
+      margin-bottom: 5px;
     }
 
     #tv-status-badge {
@@ -286,19 +301,20 @@
     <video id="bg-video" autoplay loop muted playsinline preload="auto"></video>
     <div id="video-overlay"></div>
 
-    <div class="tv-layer clock-box">
-      <div class="clock-time" id="clock-time">00:00</div>
-      <div class="clock-date" id="clock-date">--</div>
-    </div>
-    
-    <div class="tv-layer center-box" id="center-box">
-      <!-- 럭셔리 공간명 헤더: La Colonne & 서브태그 -->
+    <!-- 상단 레이어: 시계 + La Colonne (위쪽 집중 배치) -->
+    <div class="tv-layer top-header-wrap">
+      <div class="clock-box">
+        <div class="clock-time" id="clock-time">00:00</div>
+        <div class="clock-date" id="clock-date">--</div>
+      </div>
       <div class="brand-container">
         <div class="space-name">La Colonne</div>
         <div class="space-category">Private Business Lounge</div>
       </div>
-
-      <!-- 예약자명 -->
+    </div>
+    
+    <!-- 중앙 레이어: 예약자명 (완벽한 화면 중앙 정렬) -->
+    <div class="tv-layer center-box" id="center-box">
       <div class="guest-title-wrap">
         <span class="honorific-prefix" id="guest-prefix"></span>
         <span class="guest-core-name" id="guest-name">Welcome</span>
@@ -307,6 +323,7 @@
       <div class="sub-desc" id="guest-msg">프라이빗 라운지에 오신 것을 환영합니다.</div>
     </div>
 
+    <!-- 하단 레이어 -->
     <div class="tv-layer footer-bar">EXCLUSIVELY RESERVED FOR YOUR SUCCESS</div>
     <div id="tv-status-badge">동기화 대기중...</div>
     <audio id="bgm-player" loop preload="auto"></audio>
