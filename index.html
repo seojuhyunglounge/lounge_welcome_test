@@ -68,17 +68,6 @@
     .sub-desc { font-size: 1.7rem; color: #b8bdc9; font-weight: 300; line-height: 1.6; }
     .footer-bar { font-size: 0.95rem; color: #555a64; letter-spacing: 4px; text-transform: uppercase; }
 
-    /* 화면 뒤에 완전히 숨겨진 오디오 전용 플레이어 */
-    #yt-hidden-player {
-      position: absolute;
-      top: -9999px;
-      left: -9999px;
-      width: 1px;
-      height: 1px;
-      opacity: 0;
-      pointer-events: none;
-    }
-
     #tv-status-badge {
       position: fixed;
       bottom: 15px;
@@ -143,8 +132,6 @@
       display: none;
     }
   </style>
-  <!-- YouTube 공식 IFrame API -->
-  <script src="https://www.youtube.com/iframe_api"></script>
 </head>
 <body>
 
@@ -160,10 +147,8 @@
       <div class="sub-desc" id="guest-msg">프라이빗 라운지에 오신 것을 환영합니다.</div>
     </div>
     <div class="tv-layer footer-bar">EXCLUSIVELY RESERVED FOR YOUR SUCCESS</div>
-    <div id="tv-status-badge">초기화 중...</div>
-    
-    <!-- 숨겨진 YouTube 플레이어 컨테이너 -->
-    <div id="yt-hidden-player"></div>
+    <div id="tv-status-badge">동기화 대기중...</div>
+    <audio id="bgm-player" loop preload="auto"></audio>
   </div>
 
   <!-- 관리자 화면 -->
@@ -206,14 +191,13 @@
       </select>
     </div>
 
-    <!-- YouTube 기반 럭셔리 라운지 사운드 트랙 (차단 없음) -->
+    <!-- CORS 차단 없는 초고속 글로벌 CDN 음원 (GitHub Pages Raw CDN) -->
     <div class="form-group">
       <label>배경음악 (BGM) 선택</label>
       <select id="bgm-select">
-        <option value="jfKfPfyJRdk">1. 릴랙싱 럭셔리 라운지 & 재즈 (Lo-Fi)</option>
-        <option value="5qap5aO4i9A">2. 5성급 호텔 앰비언트 피아노</option>
-        <option value="M5QY2_8704o">3. 차분한 딥 이브닝 칠아웃</option>
-        <option value="none">4. 음악 끄기 (BGM Off)</option>
+        <option value="https://raw.githubusercontent.com/rafaelreis-hotmart/Audio-Sample-files/master/sample.mp3">1. 클래식 릴랙싱 피아노 라운지</option>
+        <option value="https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg">2. 고급 카페 & 호텔 로비 앰비언스</option>
+        <option value="none">3. 음악 끄기 (BGM Off)</option>
       </select>
     </div>
 
@@ -242,50 +226,13 @@
       }
     }
 
-    // 유튜브 플레이어 전역 변수
-    let ytPlayer = null;
-    let ytReady = false;
-    let targetVideoId = 'jfKfPfyJRdk';
-
-    window.onYouTubeIframeAPIReady = function() {
-      ytPlayer = new YT.Player('yt-hidden-player', {
-        height: '100',
-        width: '100',
-        videoId: targetVideoId,
-        playerVars: {
-          autoplay: 1,
-          controls: 0,
-          loop: 1,
-          playlist: targetVideoId
-        },
-        events: {
-          onReady: function(event) {
-            ytReady = true;
-            event.target.setVolume(35); // 35% 은은한 볼륨
-            if (isTV && targetVideoId !== 'none') {
-              event.target.playVideo();
-            }
-          },
-          onStateChange: function(event) {
-            const badge = document.getElementById('tv-status-badge');
-            if (badge) {
-              if (event.data === YT.PlayerState.PLAYING) {
-                badge.innerText = '● BGM 정상 재생 중 🎵';
-                badge.style.color = '#4ade80';
-              } else if (event.data === YT.PlayerState.PAUSED && targetVideoId !== 'none') {
-                badge.innerText = '⚠️ 화면을 한 번 클릭해 주세요 (음악 활성화)';
-                badge.style.color = '#ffd166';
-              }
-            }
-          }
-        }
-      });
-    };
-
     if (isTV) {
       // 1. TV 디스플레이 모드
       const tvSection = document.getElementById('tv-section');
       const badge = document.getElementById('tv-status-badge');
+      const player = document.getElementById('bgm-player');
+      player.volume = 0.35; // 35% 은은한 볼륨
+
       tvSection.style.display = 'flex';
 
       function updateClock() {
@@ -298,23 +245,27 @@
       setInterval(updateClock, 1000);
       updateClock();
 
-      // 화면 클릭 시 강제 재생 언락
-      function handleUserUnlock() {
-        if (ytPlayer && ytReady && targetVideoId !== 'none') {
-          ytPlayer.playVideo();
+      let currentDataKey = '';
+      let currentBgmUrl = '';
+
+      // 오디오 잠금 해제 리스너 (화면 터치/클릭 시 즉시 소리 언락)
+      function unlockAudio() {
+        if (player.src && player.paused && currentBgmUrl !== 'none') {
+          player.play().then(() => {
+            badge.innerText = '● BGM 재생 중 🎵';
+            badge.style.color = '#4ade80';
+          }).catch(console.error);
         }
       }
-      window.addEventListener('click', handleUserUnlock);
-      window.addEventListener('touchstart', handleUserUnlock);
+      window.addEventListener('click', unlockAudio);
+      window.addEventListener('touchstart', unlockAudio);
 
-      let currentDataKey = '';
-
-      function updateBoard(name, msg, bgUrl, bgmId) {
-        const newKey = name + '|' + msg + '|' + bgUrl + '|' + bgmId;
+      function updateBoard(name, msg, bgUrl, bgmUrl) {
+        const newKey = name + '|' + msg + '|' + bgUrl + '|' + bgmUrl;
         if (newKey === currentDataKey) return;
         currentDataKey = newKey;
 
-        // 화면 전환
+        // 텍스트 및 배경 전환
         const box = document.getElementById('center-box');
         box.style.opacity = '0';
         setTimeout(function() {
@@ -324,27 +275,33 @@
           box.style.opacity = '1';
         }, 400);
 
-        // BGM 변경 처리
-        if (bgmId !== targetVideoId) {
-          targetVideoId = bgmId;
-          if (ytReady && ytPlayer) {
-            if (!bgmId || bgmId === 'none') {
-              ytPlayer.stopVideo();
-              badge.innerText = '● 연결됨 (음악 OFF)';
+        // BGM 전환
+        if (bgmUrl !== currentBgmUrl) {
+          currentBgmUrl = bgmUrl;
+          if (!bgmUrl || bgmUrl === 'none') {
+            player.pause();
+            badge.innerText = '● 정상 연결됨 (음악 OFF)';
+            badge.style.color = '#4ade80';
+          } else {
+            player.src = bgmUrl;
+            player.play().then(() => {
+              badge.innerText = '● BGM 재생 중 🎵';
               badge.style.color = '#4ade80';
-            } else {
-              ytPlayer.loadVideoById({
-                videoId: bgmId,
-                startSeconds: 0
-              });
-              ytPlayer.playVideo();
-            }
+            }).catch(() => {
+              badge.innerText = '⚠️ 화면을 한 번 클릭해 주세요 (음악 켜기)';
+              badge.style.color = '#ffd166';
+            });
           }
         }
       }
 
       async function syncTV() {
-        if (!cleanUrl.startsWith('http') || cleanUrl.indexOf('여기에') !== -1) return;
+        if (!cleanUrl.startsWith('http') || cleanUrl.indexOf('여기에') !== -1) {
+          badge.innerText = 'Supabase 키 미설정';
+          badge.style.color = '#ff6b6b';
+          return;
+        }
+
         try {
           const res = await fetch(cleanUrl + '/rest/v1/welcome_screen?select=*&id=eq.1', {
             headers: {
@@ -352,14 +309,18 @@
               'Authorization': 'Bearer ' + cleanKey
             }
           });
-          if (!res.ok) return;
+          if (!res.ok) {
+            badge.innerText = '읽기 실패 (' + res.status + ')';
+            badge.style.color = '#ff6b6b';
+            return;
+          }
 
           const data = await res.json();
           if (data && data.length > 0) {
             const item = data[0];
             let msgText = item.sub_message || '';
             let bg = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2560&q=85';
-            let bgm = 'jfKfPfyJRdk';
+            let bgm = 'https://raw.githubusercontent.com/rafaelreis-hotmart/Audio-Sample-files/master/sample.mp3';
 
             if (msgText.indexOf('|||') !== -1) {
               const parts = msgText.split('|||');
@@ -369,14 +330,17 @@
             }
             updateBoard(item.guest_name, msgText, bg, bgm);
           }
-        } catch(e) {}
+        } catch(e) {
+          badge.innerText = '통신 에러: ' + e.message;
+          badge.style.color = '#ff6b6b';
+        }
       }
 
       syncTV();
       setInterval(syncTV, 1500);
 
     } else {
-      // 2. 모바일 관리자 모드
+      // 2. 관리자 모드
       document.getElementById('admin-section').style.display = 'block';
 
       async function loadInitial() {
