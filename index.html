@@ -67,6 +67,20 @@
     .sub-desc { font-size: 1.7rem; color: #b8bdc9; font-weight: 300; line-height: 1.6; }
     .footer-bar { font-size: 0.95rem; color: #555a64; letter-spacing: 4px; text-transform: uppercase; }
 
+    /* TV 화면 좌측 하단 미니 상태 표시기 (정상 연결 여부 확인용) */
+    #tv-status-badge {
+      position: fixed;
+      bottom: 15px;
+      left: 15px;
+      z-index: 9999;
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: 4px;
+      background: rgba(0,0,0,0.6);
+      color: #666;
+      border: 1px solid #333;
+    }
+
     /* 2. 관리자 화면 */
     #admin-section {
       display: none;
@@ -133,6 +147,7 @@
       <div class="sub-desc" id="guest-msg">프라이빗 라운지에 오신 것을 환영합니다.</div>
     </div>
     <div class="tv-layer footer-bar">EXCLUSIVELY RESERVED FOR YOUR SUCCESS</div>
+    <div id="tv-status-badge">동기화 대기중...</div>
   </div>
 
   <!-- 관리자 화면 -->
@@ -188,6 +203,7 @@
     if (isTV) {
       // 1. TV 디스플레이 화면
       const tvSection = document.getElementById('tv-section');
+      const badge = document.getElementById('tv-status-badge');
       tvSection.style.display = 'flex';
 
       function updateClock() {
@@ -204,7 +220,7 @@
 
       function updateBoard(name, msg, bgUrl) {
         const newKey = name + '|' + msg + '|' + bgUrl;
-        if (newKey === currentDataKey) return; // 변경 없으면 유지
+        if (newKey === currentDataKey) return;
         currentDataKey = newKey;
 
         const box = document.getElementById('center-box');
@@ -217,22 +233,34 @@
         }, 400);
       }
 
-      // TV 화면 동기화: 캐시 완전 무효화 + 최신순 1개 정렬 조회
+      // TV 동기화 함수
       async function syncTV() {
-        if (!SUPABASE_URL.startsWith('http') || SUPABASE_URL.indexOf('여기에') !== -1) return;
+        if (!SUPABASE_URL.startsWith('http') || SUPABASE_URL.indexOf('여기에') !== -1) {
+          badge.innerText = 'Supabase 키 미설정';
+          badge.style.color = '#ff6b6b';
+          return;
+        }
+
         try {
-          // 캐시 방지: order=updated_at.desc 로 최신 레코드 1건만 바로 조회
-          const res = await fetch(SUPABASE_URL + '/rest/v1/welcome_screen?select=*&order=updated_at.desc&limit=1&_nocache=' + Date.now(), {
+          const res = await fetch(SUPABASE_URL + '/rest/v1/welcome_screen?select=*&id=eq.1&t=' + Date.now(), {
             cache: 'no-store',
             headers: {
               'apikey': SUPABASE_KEY,
-              'Authorization': 'Bearer ' + SUPABASE_KEY,
-              'Cache-Control': 'no-cache, no-store, must-revalidate',
-              'Pragma': 'no-cache'
+              'Authorization': 'Bearer ' + SUPABASE_KEY
             }
           });
+
+          if (!res.ok) {
+            badge.innerText = '읽기 실패 (' + res.status + ')';
+            badge.style.color = '#ff6b6b';
+            return;
+          }
+
           const data = await res.json();
           if (data && data.length > 0) {
+            badge.innerText = '● 실시간 연결됨 (' + new Date().toLocaleTimeString() + ')';
+            badge.style.color = '#4ade80';
+
             const item = data[0];
             let msgText = item.sub_message || '';
             let bg = 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1920&q=80';
@@ -242,23 +270,27 @@
               bg = parts[1];
             }
             updateBoard(item.guest_name, msgText, bg);
+          } else {
+            badge.innerText = '데이터 없음 (테이블 확인 필요)';
+            badge.style.color = '#ffb703';
           }
         } catch(e) {
-          console.error('TV Sync Error:', e);
+          badge.innerText = '통신 에러: ' + e.message;
+          badge.style.color = '#ff6b6b';
         }
       }
+
       syncTV();
-      setInterval(syncTV, 1500); // 1.5초마다 즉각 확인
+      setInterval(syncTV, 1500); // 1.5초마다 데이터 당겨오기
 
     } else {
       // 2. 관리자 화면
       document.getElementById('admin-section').style.display = 'block';
 
-      // 기존 데이터 불러오기
       async function loadInitial() {
         if (!SUPABASE_URL.startsWith('http') || SUPABASE_URL.indexOf('여기에') !== -1) return;
         try {
-          const res = await fetch(SUPABASE_URL + '/rest/v1/welcome_screen?select=*&order=updated_at.desc&limit=1&_nocache=' + Date.now(), {
+          const res = await fetch(SUPABASE_URL + '/rest/v1/welcome_screen?select=*&id=eq.1&t=' + Date.now(), {
             cache: 'no-store',
             headers: {
               'apikey': SUPABASE_KEY,
@@ -282,23 +314,14 @@
       }
       loadInitial();
 
-      // 전송 버튼: 무조건 새 타임스탬프와 함께 DB에 반영
       document.getElementById('save-btn').addEventListener('click', async function() {
-        const nameInput = document.getElementById('name-input');
-        const msgInput = document.getElementById('msg-input');
-        const bgSelect = document.getElementById('bg-select');
+        const name = document.getElementById('name-input').value.trim();
+        const msg = document.getElementById('msg-input').value.trim();
+        const bg = document.getElementById('bg-select').value;
 
-        const name = nameInput.value.trim();
-        const msg = msgInput.value.trim();
-        const bg = bgSelect.value;
-
-        if (!name) {
-          alert('예약자 이름을 입력해 주세요.');
-          return;
-        }
+        if (!name) return alert('예약자 이름을 입력해 주세요.');
 
         log('전송 중...', '#ffd166');
-
         const combinedMsg = (msg || '편안하고 성공적인 시간 되시기를 바랍니다.') + '|||' + bg;
 
         try {
@@ -322,10 +345,10 @@
             log('✓ TV 반영 성공! (' + new Date().toLocaleTimeString() + ' 전송됨)', '#4ade80');
           } else {
             const errText = await res.text();
-            log('✗ 저장 거부됨: ' + errText, '#ff6b6b');
+            log('✗ 저장 실패: ' + errText, '#ff6b6b');
           }
         } catch(e) {
-          log('✗ 통신 오류: ' + e.message, '#ff6b6b');
+          log('✗ 오류: ' + e.message, '#ff6b6b');
         }
       });
     }
