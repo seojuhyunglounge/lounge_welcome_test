@@ -186,7 +186,7 @@
     }
 
     if (isTV) {
-      // TV 모드
+      // 1. TV 디스플레이 화면
       const tvSection = document.getElementById('tv-section');
       tvSection.style.display = 'flex';
 
@@ -200,11 +200,12 @@
       setInterval(updateClock, 1000);
       updateClock();
 
-      let lastContent = '';
+      let currentDataKey = '';
+
       function updateBoard(name, msg, bgUrl) {
-        const currentHash = name + '|' + msg + '|' + bgUrl;
-        if (currentHash === lastContent) return;
-        lastContent = currentHash;
+        const newKey = name + '|' + msg + '|' + bgUrl;
+        if (newKey === currentDataKey) return; // 변경 없으면 유지
+        currentDataKey = newKey;
 
         const box = document.getElementById('center-box');
         box.style.opacity = '0';
@@ -216,51 +217,59 @@
         }, 400);
       }
 
+      // TV 화면 동기화: 캐시 완전 무효화 + 최신순 1개 정렬 조회
       async function syncTV() {
         if (!SUPABASE_URL.startsWith('http') || SUPABASE_URL.indexOf('여기에') !== -1) return;
         try {
-          const res = await fetch(SUPABASE_URL + '/rest/v1/welcome_screen?id=eq.1&select=*&t=' + Date.now(), {
+          // 캐시 방지: order=updated_at.desc 로 최신 레코드 1건만 바로 조회
+          const res = await fetch(SUPABASE_URL + '/rest/v1/welcome_screen?select=*&order=updated_at.desc&limit=1&_nocache=' + Date.now(), {
+            cache: 'no-store',
             headers: {
               'apikey': SUPABASE_KEY,
-              'Authorization': 'Bearer ' + SUPABASE_KEY
+              'Authorization': 'Bearer ' + SUPABASE_KEY,
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              'Pragma': 'no-cache'
             }
           });
           const data = await res.json();
-          if (data && data[0]) {
-            let msgText = data[0].sub_message || '';
+          if (data && data.length > 0) {
+            const item = data[0];
+            let msgText = item.sub_message || '';
             let bg = 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1920&q=80';
             if (msgText.indexOf('|||') !== -1) {
               const parts = msgText.split('|||');
               msgText = parts[0];
               bg = parts[1];
             }
-            updateBoard(data[0].guest_name, msgText, bg);
+            updateBoard(item.guest_name, msgText, bg);
           }
         } catch(e) {
-          console.error(e);
+          console.error('TV Sync Error:', e);
         }
       }
       syncTV();
-      setInterval(syncTV, 2000);
+      setInterval(syncTV, 1500); // 1.5초마다 즉각 확인
 
     } else {
-      // 관리자 모드
+      // 2. 관리자 화면
       document.getElementById('admin-section').style.display = 'block';
 
       // 기존 데이터 불러오기
       async function loadInitial() {
         if (!SUPABASE_URL.startsWith('http') || SUPABASE_URL.indexOf('여기에') !== -1) return;
         try {
-          const res = await fetch(SUPABASE_URL + '/rest/v1/welcome_screen?id=eq.1&select=*&t=' + Date.now(), {
+          const res = await fetch(SUPABASE_URL + '/rest/v1/welcome_screen?select=*&order=updated_at.desc&limit=1&_nocache=' + Date.now(), {
+            cache: 'no-store',
             headers: {
               'apikey': SUPABASE_KEY,
               'Authorization': 'Bearer ' + SUPABASE_KEY
             }
           });
           const data = await res.json();
-          if (data && data[0]) {
-            document.getElementById('name-input').value = data[0].guest_name || '';
-            let msg = data[0].sub_message || '';
+          if (data && data.length > 0) {
+            const item = data[0];
+            document.getElementById('name-input').value = item.guest_name || '';
+            let msg = item.sub_message || '';
             if (msg.indexOf('|||') !== -1) {
               const parts = msg.split('|||');
               document.getElementById('msg-input').value = parts[0];
@@ -269,13 +278,11 @@
               document.getElementById('msg-input').value = msg;
             }
           }
-        } catch(e) {
-          log('불러오기 에러: ' + e.message, '#ff6b6b');
-        }
+        } catch(e) {}
       }
       loadInitial();
 
-      // 버튼 클릭 이벤트 리스너 (onclick 직접 바인딩 대신 안전한 방식 채택)
+      // 전송 버튼: 무조건 새 타임스탬프와 함께 DB에 반영
       document.getElementById('save-btn').addEventListener('click', async function() {
         const nameInput = document.getElementById('name-input');
         const msgInput = document.getElementById('msg-input');
@@ -312,13 +319,13 @@
           });
 
           if (res.ok) {
-            log('✓ 성공: TV 화면에 즉시 반영되었습니다!', '#4ade80');
+            log('✓ TV 반영 성공! (' + new Date().toLocaleTimeString() + ' 전송됨)', '#4ade80');
           } else {
             const errText = await res.text();
-            log('✗ 저장 실패 (' + res.status + '): ' + errText, '#ff6b6b');
+            log('✗ 저장 거부됨: ' + errText, '#ff6b6b');
           }
         } catch(e) {
-          log('✗ 연결 에러: ' + e.message, '#ff6b6b');
+          log('✗ 통신 오류: ' + e.message, '#ff6b6b');
         }
       });
     }
