@@ -166,7 +166,7 @@
 
     <div class="form-group">
       <label>서브 환영 문구</label>
-      <textarea id="msg-input" rows="3" placeholder="예: 성공적인 비즈니스 시간 되시기를 바랍니다."></textarea>
+      <textarea id="msg-input" rows="3" placeholder="예: 편안하고 생산적인 비즈니스 시간 되시기를 바랍니다."></textarea>
     </div>
 
     <div class="form-group">
@@ -191,13 +191,15 @@
       </select>
     </div>
 
-    <!-- CORS 차단 없는 초고속 글로벌 CDN 음원 (GitHub Pages Raw CDN) -->
+    <!-- 밝고 편안한 호텔 라운지 BGM 엄선 (CORS 에러 없는 고속 CDN 음원) -->
     <div class="form-group">
       <label>배경음악 (BGM) 선택</label>
       <select id="bgm-select">
-        <option value="https://raw.githubusercontent.com/rafaelreis-hotmart/Audio-Sample-files/master/sample.mp3">1. 클래식 릴랙싱 피아노 라운지</option>
-        <option value="https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg">2. 고급 카페 & 호텔 로비 앰비언스</option>
-        <option value="none">3. 음악 끄기 (BGM Off)</option>
+        <option value="https://cdn.freesound.org/previews/568/568853_7037-lq.mp3">1. 서니 보사노바 라운지 (추천 · 화사하고 편안함)</option>
+        <option value="https://cdn.freesound.org/previews/612/612610_5674468-lq.mp3">2. 소프트 어쿠스틱 브리즈 (따뜻하고 잔잔함)</option>
+        <option value="https://cdn.freesound.org/previews/518/518305_2402876-lq.mp3">3. 재지 프렌치 카페 (세련되고 경쾌한 무드)</option>
+        <option value="https://cdn.freesound.org/previews/530/530415_11861866-lq.mp3">4. 모던 칠아웃 로파이 (부드러운 대화용 비트)</option>
+        <option value="none">5. 음악 끄기 (BGM Off)</option>
       </select>
     </div>
 
@@ -207,7 +209,7 @@
 
   <script>
     // ==============================================================
-    // 사장님의 Supabase URL과 Key를 유지해 주세요
+    // 사용자 지정 Supabase 설정이 적용되었습니다
     // ==============================================================
     const SUPABASE_URL = 'https://jorxmazliodqnxnwctlc.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_GAU-azI_hJvms8k3Nzsyiw_PRH0NG69';
@@ -231,7 +233,7 @@
       const tvSection = document.getElementById('tv-section');
       const badge = document.getElementById('tv-status-badge');
       const player = document.getElementById('bgm-player');
-      player.volume = 0.35; // 35% 은은한 볼륨
+      player.volume = 0.35; // 대화를 방해하지 않는 35% 고급 라운지 음량
 
       tvSection.style.display = 'flex';
 
@@ -248,7 +250,7 @@
       let currentDataKey = '';
       let currentBgmUrl = '';
 
-      // 오디오 잠금 해제 리스너 (화면 터치/클릭 시 즉시 소리 언락)
+      // 오디오 잠금 해제 리스너 (브라우저 최초 터치/클릭 시 잠금 해제)
       function unlockAudio() {
         if (player.src && player.paused && currentBgmUrl !== 'none') {
           player.play().then(() => {
@@ -265,7 +267,7 @@
         if (newKey === currentDataKey) return;
         currentDataKey = newKey;
 
-        // 텍스트 및 배경 전환
+        // 화면 텍스트/배경 부드럽게 전환
         const box = document.getElementById('center-box');
         box.style.opacity = '0';
         setTimeout(function() {
@@ -275,7 +277,7 @@
           box.style.opacity = '1';
         }, 400);
 
-        // BGM 전환
+        // BGM 변경 시에만 재생 트랙 교체
         if (bgmUrl !== currentBgmUrl) {
           currentBgmUrl = bgmUrl;
           if (!bgmUrl || bgmUrl === 'none') {
@@ -296,12 +298,6 @@
       }
 
       async function syncTV() {
-        if (!cleanUrl.startsWith('http') || cleanUrl.indexOf('여기에') !== -1) {
-          badge.innerText = 'Supabase 키 미설정';
-          badge.style.color = '#ff6b6b';
-          return;
-        }
-
         try {
           const res = await fetch(cleanUrl + '/rest/v1/welcome_screen?select=*&id=eq.1', {
             headers: {
@@ -320,7 +316,7 @@
             const item = data[0];
             let msgText = item.sub_message || '';
             let bg = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2560&q=85';
-            let bgm = 'https://raw.githubusercontent.com/rafaelreis-hotmart/Audio-Sample-files/master/sample.mp3';
+            let bgm = 'https://cdn.freesound.org/previews/568/568853_7037-lq.mp3';
 
             if (msgText.indexOf('|||') !== -1) {
               const parts = msgText.split('|||');
@@ -340,11 +336,10 @@
       setInterval(syncTV, 1500);
 
     } else {
-      // 2. 관리자 모드
+      // 2. 모바일 관리자 모드
       document.getElementById('admin-section').style.display = 'block';
 
       async function loadInitial() {
-        if (!cleanUrl.startsWith('http') || cleanUrl.indexOf('여기에') !== -1) return;
         try {
           const res = await fetch(cleanUrl + '/rest/v1/welcome_screen?select=*&id=eq.1', {
             headers: {
@@ -380,7 +375,7 @@
         if (!name) return alert('예약자 이름을 입력해 주세요.');
 
         log('전송 중...', '#ffd166');
-        const combinedMsg = (msg || '편안하고 성공적인 시간 되시기를 바랍니다.') + '|||' + bg + '|||' + bgm;
+        const combinedMsg = (msg || '편안하고 생산적인 비즈니스 시간 되시기를 바랍니다.') + '|||' + bg + '|||' + bgm;
 
         try {
           const res = await fetch(cleanUrl + '/rest/v1/welcome_screen', {
