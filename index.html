@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Private Lounge Welcome Screen</title>
+  <title>La Colonne - Welcome Screen</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -14,11 +14,11 @@
       font-family: "Pretendard", -apple-system, sans-serif;
       min-height: 100vh;
       overflow-x: hidden;
-      overflow-y: auto; /* 스마트폰 관리자 화면에서 부드러운 스크롤 허용 */
+      overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
 
-    /* 1. TV 디스플레이 화면 (TV 모드에서만 화면 고정 및 스크롤바 숨김) */
+    /* 1. TV 디스플레이 화면 */
     #tv-section {
       display: none;
       position: fixed;
@@ -30,7 +30,7 @@
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 70px 50px;
+      padding: 60px 50px 50px 50px;
       text-align: center;
       background-size: cover;
       background-position: center;
@@ -38,7 +38,7 @@
       cursor: pointer;
     }
 
-    /* 배경 동영상 레이어 (완전한 무음 전용) */
+    /* 배경 동영상 레이어 */
     #bg-video {
       position: fixed;
       top: 0;
@@ -55,27 +55,50 @@
     #video-overlay {
       position: fixed;
       inset: 0;
-      background: radial-gradient(circle, rgba(12, 13, 16, 0.45) 0%, rgba(8, 9, 11, 0.9) 100%);
+      background: radial-gradient(circle, rgba(12, 13, 16, 0.45) 0%, rgba(8, 9, 11, 0.92) 100%);
       z-index: 1;
       pointer-events: none;
     }
 
     .tv-layer { position: relative; z-index: 2; }
-    .clock-box { display: flex; flex-direction: column; align-items: center; gap: 6px; }
-    .clock-time { font-family: 'Cormorant Garamond', serif; font-size: 3rem; color: #e5e7eb; letter-spacing: 4px; }
-    .clock-date { font-size: 0.95rem; color: #8b919d; letter-spacing: 3px; text-transform: uppercase; }
+    
+    /* 상단 디지털 시계 */
+    .clock-box { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .clock-time { font-family: 'Cormorant Garamond', serif; font-size: 2.8rem; color: #e5e7eb; letter-spacing: 4px; font-weight: 400; }
+    .clock-date { font-size: 0.9rem; color: #8b919d; letter-spacing: 3px; text-transform: uppercase; font-weight: 300; }
 
-    .center-box { margin: auto 0; transition: opacity 0.5s ease; max-width: 1000px; }
-    .brand-tag {
+    /* 중앙 환영 컨테이너 */
+    .center-box { margin: auto 0; transition: opacity 0.5s ease; max-width: 1050px; }
+
+    /* 브랜드 헤더 영역 (La Colonne & 서브태그) */
+    .brand-container {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 36px;
+    }
+    .space-name {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 1.6rem;
-      color: #c9a96e;
-      letter-spacing: 8px;
+      font-size: 2.6rem;
+      font-weight: 500;
+      color: #dfcfb2;
+      letter-spacing: 12px;
       text-transform: uppercase;
-      margin-bottom: 24px;
-      display: inline-block;
-      border-bottom: 1px solid rgba(201, 169, 110, 0.35);
-      padding-bottom: 8px;
+      line-height: 1.1;
+      margin-bottom: 8px;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+    }
+    .space-category {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.92rem;
+      font-weight: 400;
+      color: #9e8a68;
+      letter-spacing: 7px;
+      text-transform: uppercase;
+      padding-top: 6px;
+      border-top: 1px solid rgba(201, 169, 110, 0.28);
+      width: 100%;
+      max-width: 320px;
     }
 
     /* 럭셔리 예약자명 타이포그래피 */
@@ -83,7 +106,7 @@
       font-size: 5rem;
       font-weight: 600;
       line-height: 1.25;
-      margin-bottom: 24px;
+      margin-bottom: 22px;
       letter-spacing: -1px;
       text-shadow: 0 6px 30px rgba(0, 0, 0, 0.95);
       display: flex;
@@ -93,7 +116,7 @@
       flex-wrap: wrap;
     }
 
-    /* Mr. Dr. 영문 접두사 (세리프) */
+    /* 영문 경칭 접두사 (Mr., Dr.) */
     .honorific-prefix {
       font-family: 'Cormorant Garamond', serif;
       font-size: 0.78em;
@@ -103,12 +126,10 @@
       margin-right: 2px;
     }
 
-    /* 메인 이름 */
-    .guest-core-name {
-      color: #ffffff;
-    }
+    /* 본체 이름 */
+    .guest-core-name { color: #ffffff; }
 
-    /* 뒤에 붙는 '님' (이름 본체 대비 55% 크기로 섬세하게 배치) */
+    /* 뒤에 붙는 '님' 접미사 (55% 크기) */
     .honorific-suffix {
       font-size: 0.55em;
       font-weight: 300;
@@ -117,8 +138,22 @@
       letter-spacing: 0px;
     }
 
-    .sub-desc { font-size: 1.7rem; color: #b8bdc9; font-weight: 300; line-height: 1.6; }
-    .footer-bar { font-size: 0.95rem; color: #555a64; letter-spacing: 4px; text-transform: uppercase; }
+    .sub-desc { 
+      font-size: 1.65rem; 
+      color: #b8bdc9; 
+      font-weight: 300; 
+      line-height: 1.6; 
+      text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    }
+
+    /* 하단 브랜드 슬로건 */
+    .footer-bar { 
+      font-size: 0.88rem; 
+      color: #555a64; 
+      letter-spacing: 5px; 
+      text-transform: uppercase; 
+      font-weight: 300;
+    }
 
     #tv-status-badge {
       position: fixed;
@@ -133,7 +168,7 @@
       border: 1px solid #333;
     }
 
-    /* 2. 관리자 화면 (모바일 하단 여유 마진 90px 추가) */
+    /* 2. 관리자 화면 */
     #admin-section {
       display: none;
       width: 92%;
@@ -159,7 +194,6 @@
     }
     input:focus, textarea:focus, select:focus { border-color: #c9a96e; }
 
-    /* 토글 스위치 영역 */
     .toggle-row {
       display: flex;
       align-items: center;
@@ -177,13 +211,8 @@
       display: flex;
       flex-direction: column;
     }
-    .toggle-sub {
-      font-size: 0.75rem;
-      color: #8b919d;
-      margin-top: 2px;
-    }
+    .toggle-sub { font-size: 0.75rem; color: #8b919d; margin-top: 2px; }
 
-    /* 스위치 UI */
     .switch {
       position: relative;
       display: inline-block;
@@ -263,7 +292,13 @@
     </div>
     
     <div class="tv-layer center-box" id="center-box">
-      <div class="brand-tag">PRIVATE BUSINESS LOUNGE</div>
+      <!-- 럭셔리 공간명 헤더: La Colonne & 서브태그 -->
+      <div class="brand-container">
+        <div class="space-name">La Colonne</div>
+        <div class="space-category">Private Business Lounge</div>
+      </div>
+
+      <!-- 예약자명 -->
       <div class="guest-title-wrap">
         <span class="honorific-prefix" id="guest-prefix"></span>
         <span class="guest-core-name" id="guest-name">Welcome</span>
@@ -283,9 +318,9 @@
       <a href="?view=tv" target="_blank" style="color: #c9a96e; font-size: 0.85rem; text-decoration: none;">📺 TV 화면 새 창 열기 ↗</a>
     </div>
 
-    <div class="admin-title">TV 웰컴 보드 설정</div>
+    <div class="admin-title">La Colonne · 웰컴 보드 설정</div>
     
-    <!-- 1. 앞자리 영문 경칭 토글 & 선택창 -->
+    <!-- 앞자리 영문 경칭 토글 & 선택창 -->
     <div class="toggle-row">
       <div class="toggle-label">
         <span>앞자리 경칭 사용 (Mr., Dr. 등)</span>
@@ -309,13 +344,13 @@
       </select>
     </div>
 
-    <!-- 2. 예약자 / 회사 본체 이름 입력창 -->
+    <!-- 예약자 / 회사 본체 이름 입력창 -->
     <div class="form-group">
       <label>예약자 본명 / 회사명</label>
       <input type="text" id="name-input" placeholder="예: John Smith, 김대표, 삼정회계법인">
     </div>
 
-    <!-- 3. 뒷자리 '님' 호칭 토글 -->
+    <!-- 뒷자리 '님' 호칭 토글 -->
     <div class="toggle-row">
       <div class="toggle-label">
         <span>이름 뒤 '님' 표기</span>
