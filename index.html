@@ -37,7 +37,6 @@
       background-repeat: no-repeat;
     }
 
-    /* 배경 동영상 레이어 */
     #bg-video {
       position: fixed;
       top: 0;
@@ -50,7 +49,6 @@
       pointer-events: none;
     }
 
-    /* 럭셔리 다크 비네팅 오버레이 */
     #video-overlay {
       position: fixed;
       inset: 0;
@@ -61,7 +59,6 @@
 
     .tv-layer { position: relative; z-index: 2; width: 100%; }
     
-    /* 상단 레이어: 시계 + La Colonne */
     .top-header-wrap {
       display: flex;
       flex-direction: column;
@@ -104,7 +101,6 @@
       padding-right: 15px;
     }
 
-    /* 화면 중앙 VIP 웰컴 블록 */
     .center-box {
       margin: auto 0;
       transition: opacity 0.5s ease;
@@ -153,7 +149,6 @@
       text-shadow: 0 2px 12px rgba(0,0,0,0.85);
     }
 
-    /* 하단 OTT 럭셔리 런처 독 (DOCK) 바 */
     .bottom-interactive-wrap {
       display: flex;
       flex-direction: column;
@@ -232,24 +227,27 @@
     #admin-section {
       display: none;
       width: 92%;
-      max-width: 500px;
+      max-width: 520px;
       margin: 30px auto 90px auto;
+    }
+    .admin-card {
       background: #16171b;
       border: 1px solid #282a32;
       border-radius: 18px;
-      padding: 28px;
+      padding: 26px;
+      margin-bottom: 24px;
     }
-    .admin-title { font-size: 1.3rem; color: #c9a96e; font-weight: 600; margin-bottom: 22px; }
-    .form-group { margin-bottom: 18px; }
-    label { display: block; margin-bottom: 8px; color: #9297a3; font-size: 0.9rem; }
+    .admin-title { font-size: 1.25rem; color: #c9a96e; font-weight: 600; margin-bottom: 20px; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; margin-bottom: 8px; color: #9297a3; font-size: 0.88rem; }
     input, textarea, select {
       width: 100%;
-      padding: 14px;
+      padding: 13px;
       background: #212329;
       border: 1px solid #333640;
       border-radius: 10px;
       color: #fff;
-      font-size: 1rem;
+      font-size: 0.95rem;
       outline: none;
     }
     input:focus, textarea:focus, select:focus { border-color: #c9a96e; }
@@ -265,7 +263,7 @@
       border: 1px solid #2a2c35;
     }
     .toggle-label {
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       color: #e5e7eb;
       margin: 0;
       display: flex;
@@ -312,21 +310,52 @@
       border: 1px dashed #3a3d4a;
     }
 
-    button {
+    button.btn-primary {
       width: 100%;
-      padding: 16px;
+      padding: 15px;
       background: #c9a96e;
       border: none;
       border-radius: 10px;
       color: #0d0e11;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 700;
       cursor: pointer;
-      margin-top: 10px;
+      margin-top: 8px;
     }
-    button:active { opacity: 0.8; }
-    #log-box {
-      margin-top: 15px;
+    button.btn-primary:active { opacity: 0.8; }
+
+    /* 스케줄 카드 리스트 */
+    .schedule-item {
+      background: #1f2128;
+      border: 1px solid #2e323e;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .schedule-time {
+      font-size: 0.8rem;
+      color: #c9a96e;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+    .schedule-name { font-size: 1.05rem; font-weight: 600; color: #fff; }
+    .schedule-msg { font-size: 0.8rem; color: #9ca3af; margin-top: 3px; }
+    .btn-delete {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #f87171;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+
+    #log-box, #sched-log-box {
+      margin-top: 14px;
       padding: 12px;
       background: #0f1013;
       border-radius: 8px;
@@ -397,84 +426,132 @@
       <a href="?view=tv" target="_blank" style="color: #c9a96e; font-size: 0.85rem; text-decoration: none;">📺 TV 화면 새 창 열기 ↗</a>
     </div>
 
-    <div class="admin-title">La Colonne · 웰컴 보드 설정</div>
-    
-    <div class="toggle-row">
-      <div class="toggle-label">
-        <span>앞자리 경칭 사용 (Mr., Dr. 등)</span>
-        <span class="toggle-sub">외국인 VIP 손님 방문 시 권장</span>
+    <!-- 카드 1: 상시 / 수동 즉시 표출 설정 -->
+    <div class="admin-card">
+      <div class="admin-title">1. 현재 표출 (상시 / 즉시 제어)</div>
+      
+      <div class="toggle-row">
+        <div class="toggle-label">
+          <span>앞자리 경칭 사용 (Mr., Dr. 등)</span>
+          <span class="toggle-sub">외국인 VIP 손님 방문 시</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="prefix-toggle">
+          <span class="slider"></span>
+        </label>
       </div>
-      <label class="switch">
-        <input type="checkbox" id="prefix-toggle">
-        <span class="slider"></span>
-      </label>
-    </div>
 
-    <div class="prefix-select-wrap" id="prefix-select-box">
-      <label style="margin-bottom: 6px;">영문 경칭 선택</label>
-      <select id="prefix-select">
-        <option value="Mr.">Mr. (남성)</option>
-        <option value="Ms.">Ms. (여성)</option>
-        <option value="Mrs.">Mrs. (기혼 여성)</option>
-        <option value="Dr.">Dr. (박사 / 의사 / 석학)</option>
-        <option value="Prof.">Prof. (교수)</option>
-        <option value="Sir">Sir (존칭)</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label>예약자 본명 / 회사명</label>
-      <input type="text" id="name-input" placeholder="예: John Smith, 김대표, 삼정회계법인">
-    </div>
-
-    <div class="toggle-row">
-      <div class="toggle-label">
-        <span>이름 뒤 '님' 표기</span>
-        <span class="toggle-sub">이름보다 작은 크기로 섬세하게 배치</span>
+      <div class="prefix-select-wrap" id="prefix-select-box">
+        <label style="margin-bottom: 6px;">영문 경칭 선택</label>
+        <select id="prefix-select">
+          <option value="Mr.">Mr. (남성)</option>
+          <option value="Ms.">Ms. (여성)</option>
+          <option value="Mrs.">Mrs. (기혼 여성)</option>
+          <option value="Dr.">Dr. (박사 / 의사 / 석학)</option>
+          <option value="Prof.">Prof. (교수)</option>
+          <option value="Sir">Sir (존칭)</option>
+        </select>
       </div>
-      <label class="switch">
-        <input type="checkbox" id="suffix-toggle" checked>
-        <span class="slider"></span>
-      </label>
+
+      <div class="form-group">
+        <label>예약자 본명 / 회사명</label>
+        <input type="text" id="name-input" placeholder="예: John Smith, 김대표, 삼정회계법인">
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-label">
+          <span>이름 뒤 '님' 표기</span>
+          <span class="toggle-sub">이름 뒤 작고 섬세하게 배치</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="suffix-toggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label>서브 환영 문구</label>
+        <textarea id="msg-input" rows="2" placeholder="예: 편안하고 성공적인 시간 되시기를 바랍니다."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>배경 테마 선택</label>
+        <select id="bg-select">
+          <optgroup label="── 🎬 시네마틱 모션 비디오 ──">
+            <option value="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4">🎬 1. 테스트 비디오 (검증용)</option>
+            <option value="video1.mp4">🎬 2. 자체 업로드 라운지 영상 (video1.mp4)</option>
+          </optgroup>
+          <optgroup label="── 🖼 하이엔드 인테리어 스틸 ──">
+            <option value="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2560&q=85">3. 하이엔드 스톤 라운지</option>
+            <option value="https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&w=2560&q=85">4. 클래식 딥 월넛 살롱</option>
+            <option value="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=2560&q=85">5. 이그제큐티브 펜트하우스</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>배경음악 (BGM) 선택</label>
+        <select id="bgm-select">
+          <option value="jazz1.mp3">1. Autumn Leaves 클래식 재즈 (자체 음원)</option>
+          <option value="jazz2.mp3">2. 라운지 스윙 재즈 2 (자체 음원)</option>
+          <option value="none">3. 음악 끄기 (BGM Off)</option>
+        </select>
+      </div>
+
+      <button type="button" class="btn-primary" id="save-btn">TV 화면에 즉시 반영</button>
+      <div id="log-box"></div>
     </div>
 
-    <div class="form-group">
-      <label>서브 환영 문구</label>
-      <textarea id="msg-input" rows="3" placeholder="예: 편안하고 성공적인 시간 되시기를 바랍니다."></textarea>
+    <!-- 카드 2: VIP 일정 스케줄 예약 등록 -->
+    <div class="admin-card">
+      <div class="admin-title">2. VIP 예약 일정 추가 (지정 시각 자동 표출)</div>
+
+      <div style="display: flex; gap: 10px;" class="form-group">
+        <div style="flex: 1;">
+          <label>예약 시작 시각</label>
+          <input type="datetime-local" id="sched-start">
+        </div>
+        <div style="flex: 1;">
+          <label>예약 종료 시각</label>
+          <input type="datetime-local" id="sched-end">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>VIP 성함 / 행사명</label>
+        <input type="text" id="sched-name" placeholder="예: Dr. Vance, 아시아 지사장 미팅">
+      </div>
+
+      <div class="form-group">
+        <label>환영 문구</label>
+        <input type="text" id="sched-msg" value="La Colonne VIP 미팅룸에 오신 것을 환영합니다.">
+      </div>
+
+      <div class="form-group">
+        <label>배경 / BGM</label>
+        <select id="sched-bg" style="margin-bottom: 8px;">
+          <option value="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4">🎬 시네마틱 모션 비디오</option>
+          <option value="video1.mp4">🎬 자체 업로드 라운지 영상</option>
+          <option value="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2560&q=85">🖼 하이엔드 스톤 라운지</option>
+        </select>
+        <select id="sched-bgm">
+          <option value="jazz1.mp3">🎵 1. Autumn Leaves 클래식 재즈</option>
+          <option value="jazz2.mp3">🎵 2. 라운지 스윙 재즈 2</option>
+          <option value="none">🔇 음악 끄기 (BGM Off)</option>
+        </select>
+      </div>
+
+      <button type="button" class="btn-primary" id="sched-save-btn">일정에 추가하기</button>
+      <div id="sched-log-box"></div>
     </div>
 
-    <div class="form-group">
-      <label>배경 테마 선택</label>
-      <select id="bg-select">
-        <optgroup label="── 🎬 시네마틱 모션 비디오 ──">
-          <option value="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4">🎬 1. 테스트 비디오 (검증용)</option>
-          <option value="video1.mp4">🎬 2. 자체 업로드 라운지 영상 (video1.mp4)</option>
-          <option value="video2.mp4">🎬 2. 자체 업로드 라운지 영상 (video2.mp4)</option>
-          <option value="video3.mp4">🎬 2. 자체 업로드 라운지 영상 (video3.mp4)</option>
-          <option value="video4.mp4">🎬 2. 자체 업로드 라운지 영상 (video4.mp4)</option>
-          <option value="video5.mp4">🎬 2. 자체 업로드 라운지 영상 (video5.mp4)</option>
-          <option value="video6.mp4">🎬 2. 자체 업로드 라운지 영상 (video6.mp4)</option>
-          
-        </optgroup>
-        <optgroup label="── 🖼 하이엔드 인테리어 스틸 ──">
-          <option value="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2560&q=85">3. 하이엔드 스톤 라운지</option>
-          <option value="https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&w=2560&q=85">4. 클래식 딥 월넛 살롱</option>
-          <option value="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=2560&q=85">5. 이그제큐티브 펜트하우스</option>
-        </optgroup>
-      </select>
+    <!-- 카드 3: 예약 리스트 확인 및 관리 -->
+    <div class="admin-card">
+      <div class="admin-title">3. 등록된 VIP 예약 목록</div>
+      <div id="schedule-list">
+        <div style="color: #666; font-size: 0.9rem; text-align: center; padding: 20px 0;">등록된 예약이 없습니다.</div>
+      </div>
     </div>
-
-    <div class="form-group">
-      <label>배경음악 (BGM) 선택</label>
-      <select id="bgm-select">
-        <option value="jazz1.mp3">1. Autumn Leaves 클래식 재즈 (자체 음원)</option>
-        <option value="jazz2.mp3">2. 라운지 스윙 재즈 2 (자체 음원)</option>
-        <option value="none">3. 음악 끄기 (BGM Off)</option>
-      </select>
-    </div>
-
-    <button type="button" id="save-btn">TV 화면에 즉시 반영</button>
-    <div id="log-box"></div>
   </div>
 
   <script>
@@ -483,7 +560,6 @@
 
     const cleanUrl = SUPABASE_URL.trim();
     const cleanKey = SUPABASE_KEY.trim();
-
     const isTV = window.location.search.indexOf('view=tv') !== -1;
 
     function pauseBgmForApp() {
@@ -491,17 +567,10 @@
       if (p) p.pause();
     }
 
-    function log(msg, color) {
-      const box = document.getElementById('log-box');
-      if (box) {
-        box.style.display = 'block';
-        box.style.color = color || '#fff';
-        box.innerText = msg;
-      }
-    }
-
     if (isTV) {
+      // ─────────────────────────────────────────────
       // 1. TV 디스플레이 모드
+      // ─────────────────────────────────────────────
       const tvSection = document.getElementById('tv-section');
       const bgVideo = document.getElementById('bg-video');
       const videoOverlay = document.getElementById('video-overlay');
@@ -542,7 +611,7 @@
       window.addEventListener('click', unlockMedia);
       window.addEventListener('touchstart', unlockMedia);
 
-      function updateBoard(prefix, name, suffix, msg, bgUrl, bgmUrl) {
+      function updateBoard(prefix, name, suffix, msg, bgUrl, bgmUrl, isScheduled) {
         const newKey = (prefix || '') + '|' + (name || '') + '|' + (suffix || '') + '|' + (msg || '') + '|' + bgUrl + '|' + bgmUrl;
         if (newKey === currentDataKey) return;
         currentDataKey = newKey;
@@ -600,13 +669,13 @@
           currentBgmUrl = bgmUrl;
           if (!bgmUrl || bgmUrl === 'none') {
             player.pause();
-            badge.innerText = '● 정상 연결됨 (음악 OFF)';
+            badge.innerText = isScheduled ? '● [예약 스케줄 실행 중] 음악 OFF' : '● 정상 연결됨 (음악 OFF)';
             badge.style.color = '#4ade80';
           } else {
             player.src = bgmUrl;
             player.load();
             player.play().then(() => {
-              badge.innerText = '● 비디오 + BGM 동시 재생 중 🎵';
+              badge.innerText = isScheduled ? '● [예약 스케줄 실행 중] 🎵' : '● 비디오 + BGM 동시 재생 중 🎵';
               badge.style.color = '#4ade80';
             }).catch(() => {
               badge.innerText = '⚠️ 화면을 한 번 클릭해 주세요 (미디어 켜기)';
@@ -616,39 +685,65 @@
         }
       }
 
-      // 개별 정규화 컬럼 직접 동기화 (split 파싱 제거)
+      // 스마트 스케줄러: 현재 시각에 일치하는 예약이 있는지 우선 확인
       async function syncTV() {
         try {
-          const res = await fetch(cleanUrl + '/rest/v1/welcome_screen?select=*&id=eq.1', {
-            headers: {
-              'apikey': cleanKey,
-              'Authorization': 'Bearer ' + cleanKey
-            }
-          });
-          if (!res.ok) return;
+          const nowISO = new Date().toISOString();
 
-          const data = await res.json();
-          if (data && data.length > 0) {
-            const item = data[0];
-            updateBoard(
-              item.prefix || '',
-              item.guest_name || 'Welcome',
-              item.suffix || '',
-              item.sub_message || '',
-              item.bg_source || 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
-              item.bgm_source || 'jazz1.mp3'
-            );
+          // 1. 현재 시각 범위에 드는 예약이 있는지 조회
+          const schedRes = await fetch(cleanUrl + '/rest/v1/welcome_schedules?start_time=lte.' + nowISO + '&end_time=gte.' + nowISO + '&order=start_time.asc&limit=1', {
+            headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+          });
+
+          if (schedRes.ok) {
+            const schedData = await schedRes.json();
+            if (schedData && schedData.length > 0) {
+              const active = schedData[0];
+              updateBoard(
+                active.prefix || '',
+                active.guest_name,
+                active.suffix || '',
+                active.sub_message || '',
+                active.bg_source || 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+                active.bgm_source || 'jazz1.mp3',
+                true
+              );
+              return; // 예약 화면이 켜졌으므로 기본 화면 로직 패스
+            }
+          }
+
+          // 2. 진행 중인 예약이 없으면 기본 웰컴 화면(welcome_screen) 표출
+          const defRes = await fetch(cleanUrl + '/rest/v1/welcome_screen?select=*&id=eq.1', {
+            headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+          });
+          if (defRes.ok) {
+            const defData = await defRes.json();
+            if (defData && defData.length > 0) {
+              const item = defData[0];
+              updateBoard(
+                item.prefix || '',
+                item.guest_name || 'Welcome',
+                item.suffix || '',
+                item.sub_message || '',
+                item.bg_source || 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+                item.bgm_source || 'jazz1.mp3',
+                false
+              );
+            }
           }
         } catch(e) {}
       }
 
       syncTV();
-      setInterval(syncTV, 2000); // 2초 주기로 더욱 안정적으로 동기화
+      setInterval(syncTV, 2000);
 
     } else {
+      // ─────────────────────────────────────────────
       // 2. 모바일 관리자 모드
+      // ─────────────────────────────────────────────
       document.getElementById('admin-section').style.display = 'block';
 
+      // (1) 카드 1 로직: 기본 화면 로드 및 저장
       const prefixToggle = document.getElementById('prefix-toggle');
       const prefixSelectBox = document.getElementById('prefix-select-box');
       const prefixSelect = document.getElementById('prefix-select');
@@ -658,20 +753,15 @@
         prefixSelectBox.style.display = this.checked ? 'block' : 'none';
       });
 
-      // DB에서 현재 설정값 그대로 로드
       async function loadInitial() {
         try {
           const res = await fetch(cleanUrl + '/rest/v1/welcome_screen?select=*&id=eq.1', {
-            headers: {
-              'apikey': cleanKey,
-              'Authorization': 'Bearer ' + cleanKey
-            }
+            headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
           });
           if (!res.ok) return;
           const data = await res.json();
           if (data && data.length > 0) {
             const item = data[0];
-
             if (item.prefix) {
               prefixToggle.checked = true;
               prefixSelectBox.style.display = 'block';
@@ -680,7 +770,6 @@
               prefixToggle.checked = false;
               prefixSelectBox.style.display = 'none';
             }
-
             document.getElementById('name-input').value = item.guest_name || '';
             suffixToggle.checked = (item.suffix === '님');
             document.getElementById('msg-input').value = item.sub_message || '';
@@ -691,7 +780,6 @@
       }
       loadInitial();
 
-      // 개별 컬럼으로 깨끗하게 저장 (JSON 오브젝트 전송)
       document.getElementById('save-btn').addEventListener('click', async function() {
         const nameInput = document.getElementById('name-input').value.trim();
         const msg = document.getElementById('msg-input').value.trim();
@@ -700,10 +788,10 @@
 
         if (!nameInput) return alert('예약자 본명 또는 회사명을 입력해 주세요.');
 
-        const prefixVal = prefixToggle.checked ? prefixSelect.value : '';
-        const suffixVal = suffixToggle.checked ? '님' : '';
-
-        log('전송 중...', '#ffd166');
+        const logBox = document.getElementById('log-box');
+        logBox.style.display = 'block';
+        logBox.style.color = '#ffd166';
+        logBox.innerText = '전송 중...';
 
         try {
           const res = await fetch(cleanUrl + '/rest/v1/welcome_screen', {
@@ -716,9 +804,9 @@
             },
             body: JSON.stringify({
               id: 1,
-              prefix: prefixVal,
+              prefix: prefixToggle.checked ? prefixSelect.value : '',
               guest_name: nameInput,
-              suffix: suffixVal,
+              suffix: suffixToggle.checked ? '님' : '',
               sub_message: msg || '편안하고 성공적인 시간 되시기를 바랍니다.',
               bg_source: bg,
               bgm_source: bgm,
@@ -727,15 +815,136 @@
           });
 
           if (res.ok) {
-            log('✓ TV 반영 성공! (' + new Date().toLocaleTimeString() + ' 전송됨)', '#4ade80');
+            logBox.style.color = '#4ade80';
+            logBox.innerText = '✓ TV 화면에 즉시 반영되었습니다!';
           } else {
-            const errText = await res.text();
-            log('✗ 저장 실패: ' + errText, '#ff6b6b');
+            logBox.style.color = '#f87171';
+            logBox.innerText = '저장 실패';
           }
         } catch(e) {
-          log('✗ 오류: ' + e.message, '#ff6b6b');
+          logBox.style.color = '#f87171';
+          logBox.innerText = '오류: ' + e.message;
         }
       });
+
+      // (2) 카드 2 & 3 로직: VIP 예약 스케줄 추가 및 리스트 관리
+      // 기본 시작/종료 일시를 현재 시각 기준(1시간 뒤)으로 자동 세팅
+      function setDefaultScheduleTimes() {
+        const now = new Date();
+        now.setMinutes(0);
+        now.setSeconds(0);
+        const inOneHour = new Date(now.getTime() + 60 * 60 * 1000);
+        const inThreeHours = new Date(now.getTime() + 180 * 60 * 1000);
+
+        const toLocalISO = (d) => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+        document.getElementById('sched-start').value = toLocalISO(inOneHour);
+        document.getElementById('sched-end').value = toLocalISO(inThreeHours);
+      }
+      setDefaultScheduleTimes();
+
+      // 스케줄 리스트 가져오기
+      async function loadSchedules() {
+        const listContainer = document.getElementById('schedule-list');
+        try {
+          const res = await fetch(cleanUrl + '/rest/v1/welcome_schedules?select=*&order=start_time.asc', {
+            headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+          });
+          if (!res.ok) return;
+          const items = await res.json();
+          if (!items || items.length === 0) {
+            listContainer.innerHTML = '<div style="color: #666; font-size: 0.9rem; text-align: center; padding: 20px 0;">등록된 예약이 없습니다.</div>';
+            return;
+          }
+
+          let html = '';
+          items.forEach(item => {
+            const startD = new Date(item.start_time);
+            const endD = new Date(item.end_time);
+            const timeStr = `${startD.toLocaleDateString('ko-KR', {month:'numeric', day:'numeric'})} ${startD.toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit', hour12:false})} ~ ${endD.toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit', hour12:false})}`;
+
+            html += `
+              <div class="schedule-item">
+                <div>
+                  <div class="schedule-time">📅 ${timeStr}</div>
+                  <div class="schedule-name">${item.prefix ? item.prefix + ' ' : ''}${item.guest_name} ${item.suffix || ''}</div>
+                  <div class="schedule-msg">${item.sub_message}</div>
+                </div>
+                <button class="btn-delete" onclick="deleteSchedule(${item.id})">삭제</button>
+              </div>
+            `;
+          });
+          listContainer.innerHTML = html;
+        } catch(e) {}
+      }
+      loadSchedules();
+
+      // 스케줄 추가
+      document.getElementById('sched-save-btn').addEventListener('click', async function() {
+        const startVal = document.getElementById('sched-start').value;
+        const endVal = document.getElementById('sched-end').value;
+        const nameVal = document.getElementById('sched-name').value.trim();
+        const msgVal = document.getElementById('sched-msg').value.trim();
+        const bgVal = document.getElementById('sched-bg').value;
+        const bgmVal = document.getElementById('sched-bgm').value;
+        const logBox = document.getElementById('sched-log-box');
+
+        if (!startVal || !endVal) return alert('시작 및 종료 시각을 지정해 주세요.');
+        if (!nameVal) return alert('VIP 성함을 입력해 주세요.');
+        if (new Date(startVal) >= new Date(endVal)) return alert('종료 시각은 시작 시각보다 뒤여야 합니다.');
+
+        logBox.style.display = 'block';
+        logBox.style.color = '#ffd166';
+        logBox.innerText = '예약 등록 중...';
+
+        try {
+          const res = await fetch(cleanUrl + '/rest/v1/welcome_schedules', {
+            method: 'POST',
+            headers: {
+              'apikey': cleanKey,
+              'Authorization': 'Bearer ' + cleanKey,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              start_time: new Date(startVal).toISOString(),
+              end_time: new Date(endVal).toISOString(),
+              guest_name: nameVal,
+              suffix: '님',
+              sub_message: msgVal,
+              bg_source: bgVal,
+              bgm_source: bgmVal
+            })
+          });
+
+          if (res.ok) {
+            logBox.style.color = '#4ade80';
+            logBox.innerText = '✓ 예약 스케줄이 성공적으로 추가되었습니다!';
+            document.getElementById('sched-name').value = '';
+            loadSchedules();
+          } else {
+            logBox.style.color = '#f87171';
+            logBox.innerText = '등록 실패: ' + (await res.text());
+          }
+        } catch(e) {
+          logBox.style.color = '#f87171';
+          logBox.innerText = '오류: ' + e.message;
+        }
+      });
+
+      // 스케줄 삭제
+      window.deleteSchedule = async function(id) {
+        if (!confirm('이 예약 일정을 삭제하시겠습니까?')) return;
+        try {
+          const res = await fetch(cleanUrl + '/rest/v1/welcome_schedules?id=eq.' + id, {
+            method: 'DELETE',
+            headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+          });
+          if (res.ok) {
+            loadSchedules();
+          }
+        } catch(e) {
+          alert('삭제 중 오류가 발생했습니다.');
+        }
+      };
     }
   </script>
 </body>
