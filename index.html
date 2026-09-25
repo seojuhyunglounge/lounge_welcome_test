@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>La Colonne - Welcome Screen</title>
+  <title>La Colonne - Welcome Screen & Lounge Hub</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
   <style>
@@ -30,12 +30,11 @@
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      padding: 85px 50px 50px 50px; /* 상단 여백을 늘려 La Colonne를 자연스럽게 아래로 내림 */
+      padding: 75px 50px 35px 50px;
       text-align: center;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      cursor: pointer;
     }
 
     /* 배경 동영상 레이어 */
@@ -67,18 +66,17 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 20px;
+      gap: 16px;
     }
     .clock-box { display: flex; flex-direction: column; align-items: center; gap: 3px; }
     .clock-time { font-family: 'Cormorant Garamond', serif; font-size: 2.3rem; color: #d6d9e0; letter-spacing: 4px; font-weight: 400; line-height: 1; }
     .clock-date { font-size: 0.85rem; color: #858b97; letter-spacing: 3px; text-transform: uppercase; font-weight: 300; }
 
-    /* La Colonne 공간명 (좀 더 밑으로 여유롭게 이동) */
     .brand-container {
       display: inline-flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 24px;
+      margin-top: 18px;
     }
     .space-name {
       font-family: 'Cormorant Garamond', serif;
@@ -93,12 +91,12 @@
     }
     .space-category {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 1.05rem;
+      font-size: 1.02rem;
       font-weight: 400;
       color: #a89472;
       letter-spacing: 8px;
       text-transform: uppercase;
-      padding-top: 8px;
+      padding-top: 7px;
       border-top: 1px solid rgba(201, 169, 110, 0.35);
       white-space: nowrap;
       display: inline-block;
@@ -106,20 +104,19 @@
       padding-right: 15px;
     }
 
-    /* 화면 중앙 VIP 웰컴 블록 (위쪽으로 상향 이동) */
+    /* 화면 중앙 VIP 웰컴 블록 */
     .center-box {
       margin: auto 0;
       transition: opacity 0.5s ease;
       max-width: 1100px;
-      transform: translateY(-45px); /* 예약자명을 위로 확실히 올려주는 핵심 오프셋 */
+      transform: translateY(-25px);
     }
 
-    /* 럭셔리 예약자명 타이포그래피 */
     .guest-title-wrap {
       font-size: 5.2rem;
       font-weight: 600;
       line-height: 1.25;
-      margin-bottom: 22px;
+      margin-bottom: 20px;
       letter-spacing: -1px;
       text-shadow: 0 6px 30px rgba(0, 0, 0, 0.95);
       display: flex;
@@ -149,20 +146,74 @@
     }
 
     .sub-desc { 
-      font-size: 1.7rem; 
+      font-size: 1.65rem; 
       color: #b8bdc9; 
       font-weight: 300; 
       line-height: 1.6; 
       text-shadow: 0 2px 12px rgba(0,0,0,0.85);
     }
 
+    /* ─── 하단 OTT 럭셔리 런처 독 (DOCK) 바 ─── */
+    .bottom-interactive-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 10px;
+    }
+
+    .ott-dock {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      background: rgba(18, 20, 26, 0.65);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(201, 169, 110, 0.28);
+      border-radius: 50px;
+      padding: 10px 24px;
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6);
+      transition: all 0.3s ease;
+    }
+    .ott-dock:hover {
+      border-color: rgba(201, 169, 110, 0.6);
+      background: rgba(18, 20, 26, 0.85);
+    }
+
+    .ott-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 18px;
+      border-radius: 30px;
+      text-decoration: none;
+      color: #dfcfb2;
+      font-size: 0.95rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid transparent;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      outline: none;
+    }
+    /* 리모컨 포커스 및 마우스 호버 효과 */
+    .ott-btn:hover, .ott-btn:focus {
+      background: #c9a96e;
+      color: #0b0c0e;
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 6px 20px rgba(201, 169, 110, 0.4);
+      font-weight: 700;
+    }
+    .ott-btn svg { width: 20px; height: 20px; fill: currentColor; }
+
     .footer-bar { 
-      font-size: 0.88rem; 
-      color: #555a64; 
+      font-size: 0.85rem; 
+      color: #616674; 
       letter-spacing: 5px; 
       text-transform: uppercase; 
       font-weight: 300;
-      margin-bottom: 10px;
     }
 
     #tv-status-badge {
@@ -291,12 +342,12 @@
 </head>
 <body>
 
-  <!-- TV 디스플레이 화면 -->
+  <!-- 1. TV 디스플레이 화면 -->
   <div id="tv-section">
     <video id="bg-video" autoplay loop muted playsinline preload="auto"></video>
     <div id="video-overlay"></div>
 
-    <!-- 상단 레이어: 여유 있게 내려온 브랜드 헤더 -->
+    <!-- 상단 레이어 -->
     <div class="tv-layer top-header-wrap">
       <div class="clock-box">
         <div class="clock-time" id="clock-time">00:00</div>
@@ -308,7 +359,7 @@
       </div>
     </div>
     
-    <!-- 중앙 레이어: 위로 끌어올린 예약자명 -->
+    <!-- 중앙 레이어 -->
     <div class="tv-layer center-box" id="center-box">
       <div class="guest-title-wrap">
         <span class="honorific-prefix" id="guest-prefix"></span>
@@ -318,13 +369,36 @@
       <div class="sub-desc" id="guest-msg">프라이빗 라운지에 오신 것을 환영합니다.</div>
     </div>
 
-    <!-- 하단 레이어 -->
-    <div class="tv-layer footer-bar">EXCLUSIVELY RESERVED FOR YOUR SUCCESS</div>
+    <!-- 하단 레이어: 럭셔리 OTT 런처 바 & 푸터 -->
+    <div class="tv-layer bottom-interactive-wrap">
+      <div class="ott-dock">
+        <!-- 유튜브 안드로이드 앱 실행 -->
+        <a href="vnd.youtube://" class="ott-btn" onclick="pauseBgmForApp()">
+          <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          <span>YouTube</span>
+        </a>
+
+        <!-- 넷플릭스 안드로이드 앱 실행 -->
+        <a href="nflx://" class="ott-btn" onclick="pauseBgmForApp()">
+          <svg viewBox="0 0 24 24"><path d="M5.398 0v24c1.198-.12 2.392-.28 3.585-.48V8.756l5.772 14.512c1.336-.2 2.67-.442 3.998-.718V0h-3.586v15.244L9.396 0H5.398z"/></svg>
+          <span>Netflix</span>
+        </a>
+
+        <!-- 디즈니 플러스 안드로이드 앱 실행 -->
+        <a href="disneyplus://" class="ott-btn" onclick="pauseBgmForApp()">
+          <svg viewBox="0 0 24 24"><path d="M11.996 0C5.37 0 0 5.372 0 12c0 6.626 5.37 12 11.996 12C18.628 24 24 18.626 24 12c0-6.628-5.372-12-12.004-12zm-1.042 17.518c-3.136 0-5.678-2.542-5.678-5.678 0-3.138 2.542-5.68 5.678-5.68 1.488 0 2.846.574 3.864 1.512l-1.56 1.56c-.574-.548-1.336-.882-2.304-.882-1.928 0-3.488 1.56-3.488 3.49 0 1.928 1.56 3.488 3.488 3.488 1.636 0 2.686-.884 3.018-2.128h-3.018v-2.12h5.272c.074.37.112.784.112 1.258 0 3.19-2.138 5.668-5.384 5.668z"/></svg>
+          <span>Disney+</span>
+        </a>
+      </div>
+
+      <div class="footer-bar">EXCLUSIVELY RESERVED FOR YOUR SUCCESS</div>
+    </div>
+
     <div id="tv-status-badge">동기화 대기중...</div>
     <audio id="bgm-player" loop preload="auto"></audio>
   </div>
 
-  <!-- 관리자 화면 -->
+  <!-- 2. 관리자 화면 -->
   <div id="admin-section">
     <div style="text-align: right; margin-bottom: 15px;">
       <a href="?view=tv" target="_blank" style="color: #c9a96e; font-size: 0.85rem; text-decoration: none;">📺 TV 화면 새 창 열기 ↗</a>
@@ -332,7 +406,6 @@
 
     <div class="admin-title">La Colonne · 웰컴 보드 설정</div>
     
-    <!-- 앞자리 영문 경칭 토글 & 선택창 -->
     <div class="toggle-row">
       <div class="toggle-label">
         <span>앞자리 경칭 사용 (Mr., Dr. 등)</span>
@@ -356,13 +429,11 @@
       </select>
     </div>
 
-    <!-- 예약자 / 회사 본체 이름 입력창 -->
     <div class="form-group">
       <label>예약자 본명 / 회사명</label>
       <input type="text" id="name-input" placeholder="예: John Smith, 김대표, 삼정회계법인">
     </div>
 
-    <!-- 뒷자리 '님' 호칭 토글 -->
     <div class="toggle-row">
       <div class="toggle-label">
         <span>이름 뒤 '님' 표기</span>
@@ -385,12 +456,6 @@
         <optgroup label="── 🎬 시네마틱 모션 비디오 ──">
           <option value="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4">🎬 1. 테스트 비디오 (검증용)</option>
           <option value="video1.mp4">🎬 2. 자체 업로드 라운지 영상 (video1.mp4)</option>
-          <option value="video2.mp4">🎬 3. 자체 업로드 라운지 영상 (video2.mp4)</option>
-          <option value="video3.mp4">🎬 4. 자체 업로드 라운지 영상 (video3.mp4)</option>
-          <option value="video4.mp4">🎬 5. 자체 업로드 라운지 영상 (video4.mp4)</option>
-          <option value="video5.mp4">🎬 6. 자체 업로드 라운지 영상 (video5.mp4)</option>
-          <option value="video6.mp4">🎬 7. 자체 업로드 라운지 영상 (video6.mp4)</option>
-        
         </optgroup>
         <optgroup label="── 🖼 하이엔드 인테리어 스틸 ──">
           <option value="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2560&q=85">3. 하이엔드 스톤 라운지</option>
@@ -403,8 +468,8 @@
     <div class="form-group">
       <label>배경음악 (BGM) 선택</label>
       <select id="bgm-select">
-        <option value="jazz1.mp3">1. Respite (자체 음원 test-저작권free)</option>
-        <option value="Glass_and_Marble.mp3">2. Glass and Marble (자체 음원-gemini작곡)</option>
+        <option value="jazz1.mp3">1. Autumn Leaves 클래식 재즈 (자체 음원)</option>
+        <option value="jazz2.mp3">2. 라운지 스윙 재즈 2 (자체 음원)</option>
         <option value="none">3. 음악 끄기 (BGM Off)</option>
       </select>
     </div>
@@ -421,6 +486,12 @@
     const cleanKey = SUPABASE_KEY.trim();
 
     const isTV = window.location.search.indexOf('view=tv') !== -1;
+
+    // OTT 앱 실행 시 BGM 일시정지
+    function pauseBgmForApp() {
+      const p = document.getElementById('bgm-player');
+      if (p) p.pause();
+    }
 
     function log(msg, color) {
       const box = document.getElementById('log-box');
