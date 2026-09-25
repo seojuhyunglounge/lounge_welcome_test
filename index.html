@@ -54,7 +54,8 @@
       background-repeat: no-repeat;
     }
 
-    #bg-video {
+    /* ─── 듀얼 비디오 디졸브 버퍼 ─── */
+    .bg-video-layer {
       position: fixed;
       top: 0;
       left: 0;
@@ -62,8 +63,13 @@
       height: 100vh;
       object-fit: cover;
       z-index: 0;
-      display: none;
+      opacity: 0;
+      transition: opacity 1.2s cubic-bezier(0.4, 0, 0.2, 1);
       pointer-events: none;
+      will-change: opacity;
+    }
+    .bg-video-layer.active {
+      opacity: 1;
     }
 
     #video-overlay {
@@ -545,7 +551,9 @@
 
   <!-- 1. TV 디스플레이 화면 -->
   <div id="tv-section">
-    <video id="bg-video" autoplay muted playsinline preload="auto"></video>
+    <!-- 듀얼 비디오 레이어 (A / B 버퍼) -->
+    <video id="bg-video-a" class="bg-video-layer" autoplay muted playsinline preload="auto"></video>
+    <video id="bg-video-b" class="bg-video-layer" autoplay muted playsinline preload="auto"></video>
     <div id="video-overlay"></div>
 
     <div class="tv-layer top-header-wrap">
@@ -687,7 +695,6 @@
         <textarea id="msg-input" rows="2" placeholder="예: 편안하고 성공적인 시간 되시기를 바랍니다."></textarea>
       </div>
 
-      <!-- 다중 영상 연속 재생 패키지가 포함된 배경 선택창 -->
       <div class="form-group">
         <label>배경 테마 선택</label>
         <select id="bg-select">
@@ -844,7 +851,6 @@
       // 1. TV 디스플레이 모드
       // ─────────────────────────────────────────────
       const tvSection = document.getElementById('tv-section');
-      const bgVideo = document.getElementById('bg-video');
       const videoOverlay = document.getElementById('video-overlay');
       const statusDot = document.getElementById('tv-status-dot');
       const player = document.getElementById('bgm-player');
@@ -852,9 +858,14 @@
       const wifiDock = document.getElementById('wifi-dock');
       const ottDock = document.getElementById('ott-dock');
       
-      bgVideo.muted = true;
-      bgVideo.defaultMuted = true;
-      bgVideo.volume = 0;
+      // 듀얼 비디오 버퍼 객체
+      const vidA = document.getElementById('bg-video-a');
+      const vidB = document.getElementById('bg-video-b');
+      [vidA, vidB].forEach(v => {
+        v.muted = true;
+        v.defaultMuted = true;
+        v.volume = 0;
+      });
       player.volume = 0.35;
 
       tvSection.style.display = 'flex';
@@ -940,35 +951,109 @@
       let currentDataKey = '';
       let currentBgmUrl = '';
 
-      // ─── 다중 영상 플레이리스트 연속 재생 엔진 ───
+      // ─────────────────────────────────────────────────────────────
+      // 🎬 듀얼 버퍼 무봉제(Seamless) 크로스페이드 비디오 엔진
+      // ─────────────────────────────────────────────────────────────
       let videoPlaylist = [];
-      let currentVideoIndex = 0;
+      let currentPlaylistIndex = 0;
+      let activeBuffer = 'A'; // 현재 화면에 보이는 비디오 ('A' 또는 'B')
+      let transitionFired = false;
 
-      function playVideoAtIndex(idx) {
-        if (!videoPlaylist || videoPlaylist.length === 0) return;
-        currentVideoIndex = idx % videoPlaylist.length;
-        const nextSrc = videoPlaylist[currentVideoIndex];
-        
-        bgVideo.src = nextSrc;
-        bgVideo.muted = true;
-        bgVideo.volume = 0;
-        bgVideo.load();
-        bgVideo.play().catch(e => console.log('Video play wait:', e));
+      function getActiveVideo() { return activeBuffer === 'A' ? vidA : vidB; }
+      function getNextVideo() { return activeBuffer === 'A' ? vidB : vidA; }
+
+      function crossfadeToNext() {
+        if (transitionFired) return;
+        transitionFired = true;
+
+        const currentVid = getActiveVideo();
+        const nextVid = getNextVideo();
+
+        currentPlaylistIndex = (currentPlaylistIndex + 1) % videoPlaylist.length;
+        const nextSrc = videoPlaylist[currentPlaylistIndex];
+
+        // 단일 영상일 경우 자체 무한 루프
+        if (videoPlaylist.length === 1) {
+          currentVid.currentTime = 0;
+          currentVid.play().catch(console.error);
+          transitionFired = false;
+          return;
+        }
+
+        // 백그라운드 버퍼에 다음 영상 세팅 및 재생 시작
+        nextVid.src = nextSrc;
+        nextVid.currentTime = 0;
+        nextVid.load();
+
+        nextVid.play().then(() => {
+          // 크로스페이드 디졸브: 다음 영상 페이드인, 이전 영상 페이드아웃
+          nextVid.classList.add('active');
+          currentVid.classList.remove('active');
+
+          activeBuffer = (activeBuffer === 'A' ? 'B' : 'A');
+
+          // 전환 완료 후(1.2초 뒤) 이전 비디오 정지하여 리소스 절약
+          setTimeout(() => {
+            currentVid.pause();
+            currentVid.removeAttribute('src');
+            currentVid.load();
+            transitionFired = false;
+          }, 1200);
+        }).catch(err => {
+          console.log('Next video preload wait:', err);
+          transitionFired = false;
+        });
       }
 
-      // 영상 1개가 끝나면 자동으로 다음 영상 재생 (마지막 영상 끝나면 0번으로 순환)
-      bgVideo.onended = function() {
-        if (videoPlaylist.length > 1) {
-          playVideoAtIndex(currentVideoIndex + 1);
-        } else if (videoPlaylist.length === 1) {
-          bgVideo.currentTime = 0;
-          bgVideo.play().catch(e => console.log(e));
-        }
-      };
+      function attachVideoMonitor(vid) {
+        // 영상 종료 0.8초 전에 다음 영상으로 디졸브 발동 (블랙아웃 원천 차단)
+        vid.ontimeupdate = function() {
+          if (videoPlaylist.length > 1 && vid.duration > 0) {
+            const timeLeft = vid.duration - vid.currentTime;
+            if (timeLeft <= 0.8 && !transitionFired && vid.classList.contains('active')) {
+              crossfadeToNext();
+            }
+          }
+        };
+        // 만약 timeupdate를 놓치더라도 영상이 끝나면 즉시 전환
+        vid.onended = function() {
+          if (videoPlaylist.length > 1 && vid.classList.contains('active')) {
+            crossfadeToNext();
+          }
+        };
+      }
+      attachVideoMonitor(vidA);
+      attachVideoMonitor(vidB);
+
+      function startPlaylist(list) {
+        videoPlaylist = list;
+        currentPlaylistIndex = 0;
+        transitionFired = false;
+
+        vidA.src = videoPlaylist[0];
+        vidA.currentTime = 0;
+        vidA.load();
+        vidA.play().then(() => {
+          vidA.classList.add('active');
+          vidB.classList.remove('active');
+          activeBuffer = 'A';
+        }).catch(console.error);
+      }
+
+      function stopAllVideos() {
+        [vidA, vidB].forEach(v => {
+          v.pause();
+          v.removeAttribute('src');
+          v.classList.remove('active');
+          v.load();
+        });
+        videoPlaylist = [];
+      }
 
       function unlockMedia() {
-        if (bgVideo.style.display === 'block' && bgVideo.paused) {
-          bgVideo.play().catch(console.error);
+        const cur = getActiveVideo();
+        if (cur.style.display !== 'none' && cur.paused && videoPlaylist.length > 0) {
+          cur.play().catch(console.error);
         }
         if (player.src && player.paused && currentBgmUrl !== 'none') {
           player.play().then(() => {
@@ -1011,24 +1096,21 @@
           box.style.opacity = '1';
         }, 400);
 
-        // 콤마로 구분된 비디오 주소 파싱
         const bgList = (bgUrl || '').split(',').map(s => s.trim()).filter(Boolean);
         const isVideo = bgList.length > 0 && bgList[0].toLowerCase().indexOf('.mp4') !== -1;
 
         if (isVideo) {
           tvSection.style.backgroundImage = 'none';
-          bgVideo.style.display = 'block';
           videoOverlay.style.display = 'block';
 
-          // 새 플레이리스트 설정
-          videoPlaylist = bgList;
-          currentVideoIndex = 0;
-          playVideoAtIndex(0);
+          // 플레이리스트가 기존과 다르면 새 플레이리스트 가동
+          const currentPlaylistStr = videoPlaylist.join(',');
+          const newPlaylistStr = bgList.join(',');
+          if (currentPlaylistStr !== newPlaylistStr) {
+            startPlaylist(bgList);
+          }
         } else {
-          videoPlaylist = [];
-          bgVideo.pause();
-          bgVideo.removeAttribute('src');
-          bgVideo.style.display = 'none';
+          stopAllVideos();
           videoOverlay.style.display = 'block';
           tvSection.style.backgroundImage = "url('" + (bgList[0] || '') + "')";
         }
@@ -1083,7 +1165,7 @@
                 active.guest_name,
                 active.suffix || '',
                 active.sub_message || '',
-                active.bg_source || 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+                active.bg_source || 'video1.mp4,video2.mp4',
                 active.bgm_source || 'jazz1.mp3',
                 true
               );
@@ -1103,7 +1185,7 @@
                 item.guest_name || 'Welcome',
                 item.suffix || '',
                 item.sub_message || '',
-                item.bg_source || 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+                item.bg_source || 'video1.mp4,video2.mp4',
                 item.bgm_source || 'jazz1.mp3',
                 false
               );
@@ -1412,7 +1494,7 @@
           schedPrefixSelectBox.style.display = 'none';
         }
 
-        document.getElementById('sched-name').value = item.guest_name || '';
+        document.getElementById('name-input').value = item.guest_name || '';
         schedSuffixToggle.checked = (item.suffix === '님');
         document.getElementById('sched-msg').value = item.sub_message || '';
         if (item.bg_source) document.getElementById('sched-bg').value = item.bg_source;
