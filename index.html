@@ -260,7 +260,7 @@
     .qr-name { font-size: 0.76rem; color: #e5e7eb; letter-spacing: 0.5px; margin-top: 3px; }
     .qr-sub { font-size: 0.68rem; color: #8b92a0; letter-spacing: 0.3px; }
 
-    /* 좌측 하단 관리자 LED 점 (어메니티 독 옆으로 정밀 배치) */
+    /* 좌측 하단 관리자 LED 점 */
     #tv-status-dot {
       position: fixed;
       bottom: 30px;
@@ -633,7 +633,7 @@
       <a href="?view=tv" target="_blank" style="color: #c9a96e; font-size: 0.85rem; text-decoration: none;">📺 TV 화면 새 창 열기 ↗</a>
     </div>
 
-    <!-- 섹션 0: 디스플레이 공통 환경설정 -->
+    <!-- 섹션 0: 디스플레이 공통 환경설정 (날씨, Wi-Fi, 어메니티 3대 토글) -->
     <div class="admin-card" style="padding: 20px 26px; border-color: rgba(201, 169, 110, 0.4);">
       <div class="admin-title" style="font-size: 1.1rem; margin-bottom: 14px;">⚙️ 라운지 디스플레이 공통 설정</div>
       
@@ -648,13 +648,24 @@
         </label>
       </div>
 
-      <div class="toggle-row" style="margin-bottom: 0;">
+      <div class="toggle-row" style="margin-bottom: 8px;">
         <div class="toggle-label">
           <span>Guest Wi-Fi QR 위젯 표시</span>
-          <span class="toggle-sub">예약자명과 무관하게 우측 하단 QR만 즉시 On/Off</span>
+          <span class="toggle-sub">예약자명과 무관하게 우측 하단 Wi-Fi QR만 즉시 On/Off</span>
         </div>
         <label class="switch">
           <input type="checkbox" id="global-wifi-toggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row" style="margin-bottom: 0;">
+        <div class="toggle-label">
+          <span>Lounge Bar 어메니티 QR 위젯 표시</span>
+          <span class="toggle-sub">예약자명과 무관하게 좌측 하단 미니바 QR만 즉시 On/Off</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="global-amenity-toggle" checked>
           <span class="slider"></span>
         </label>
       </div>
@@ -1158,9 +1169,8 @@
       }
       initWifiQR();
 
-      // (2) 좌측 하단 어메니티/미니바 QR 코드 생성 (스마트폰 접속용 ?view=bar)
+      // (2) 좌측 하단 어메니티/미니바 QR 코드 생성 (?view=bar)
       function initAmenityQR() {
-        // 현재 호스팅된 도메인 URL 기반으로 자동 바코드 생성
         const currentOrigin = window.location.origin + window.location.pathname;
         const barUrl = currentOrigin + (currentOrigin.indexOf('?') !== -1 ? '&' : '?') + 'view=bar';
         const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=0&data=' + encodeURIComponent(barUrl);
@@ -1347,6 +1357,7 @@
         }
       }
 
+      // 전역 디스플레이 설정(날씨, Wi-Fi, 어메니티) 동기화
       async function syncGlobalSettings() {
         try {
           const res = await fetch(cleanUrl + '/rest/v1/lounge_settings?select=*&id=eq.1', {
@@ -1358,7 +1369,7 @@
               const s = data[0];
               if (weatherPill) weatherPill.style.display = (s.show_weather !== false) ? 'inline-flex' : 'none';
               if (wifiDock) wifiDock.style.display = (s.show_wifi !== false) ? 'flex' : 'none';
-              if (amenityDock) amenityDock.style.display = (s.show_wifi !== false) ? 'flex' : 'none';
+              if (amenityDock) amenityDock.style.display = (s.show_amenity !== false) ? 'flex' : 'none';
             }
           }
         } catch(e) {}
@@ -1433,6 +1444,7 @@
 
       const globalWeather = document.getElementById('global-weather-toggle');
       const globalWifi = document.getElementById('global-wifi-toggle');
+      const globalAmenity = document.getElementById('global-amenity-toggle');
 
       async function loadGlobalSettings() {
         try {
@@ -1444,6 +1456,7 @@
             if (data && data.length > 0) {
               globalWeather.checked = (data[0].show_weather !== false);
               globalWifi.checked = (data[0].show_wifi !== false);
+              globalAmenity.checked = (data[0].show_amenity !== false);
             }
           }
         } catch(e) {}
@@ -1469,6 +1482,7 @@
 
       globalWeather.addEventListener('change', () => updateGlobalSetting('show_weather', globalWeather.checked));
       globalWifi.addEventListener('change', () => updateGlobalSetting('show_wifi', globalWifi.checked));
+      globalAmenity.addEventListener('change', () => updateGlobalSetting('show_amenity', globalAmenity.checked));
 
       const prefixToggle = document.getElementById('prefix-toggle');
       const prefixSelectBox = document.getElementById('prefix-select-box');
