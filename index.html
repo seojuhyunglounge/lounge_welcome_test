@@ -6,7 +6,6 @@
   <title>La Colonne - Welcome Screen & Lounge Hub</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
-  <!-- Supabase 공식 JS SDK (Realtime 웹소켓 지원) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -301,7 +300,6 @@
       outline: none;
     }
 
-    /* 공통 카드 & 버튼 */
     .admin-card {
       background: #16171b;
       border: 1px solid #282a32;
@@ -427,33 +425,9 @@
       border-radius: 24px;
       box-shadow: 0 20px 50px rgba(0,0,0,0.8);
     }
-    .portal-brand {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 2.6rem;
-      letter-spacing: 10px;
-      color: #dfcfb2;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-    }
-    .portal-sub {
-      font-size: 0.88rem;
-      color: #8e94a4;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 30px;
-    }
-    .portal-menu-btn {
-      display: block;
-      width: 100%;
-      padding: 16px;
-      margin-bottom: 12px;
-      border-radius: 12px;
-      text-decoration: none;
-      font-size: 0.95rem;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-      transition: all 0.25s ease;
-    }
+    .portal-brand { font-family: 'Cormorant Garamond', serif; font-size: 2.6rem; letter-spacing: 10px; color: #dfcfb2; text-transform: uppercase; margin-bottom: 6px; }
+    .portal-sub { font-size: 0.88rem; color: #8e94a4; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 30px; }
+    .portal-menu-btn { display: block; width: 100%; padding: 16px; margin-bottom: 12px; border-radius: 12px; text-decoration: none; font-size: 0.95rem; font-weight: 600; letter-spacing: 0.5px; transition: all 0.25s ease; }
 
     /* 관리자 PIN 인증 모달 */
     #pin-modal {
@@ -467,48 +441,19 @@
       justify-content: center;
       padding: 24px;
     }
-    .pin-box {
-      background: #16171d;
-      border: 1px solid rgba(201, 169, 110, 0.4);
-      border-radius: 20px;
-      padding: 36px 28px;
-      max-width: 360px;
-      width: 100%;
-      text-align: center;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.8);
-    }
+    .pin-box { background: #16171d; border: 1px solid rgba(201, 169, 110, 0.4); border-radius: 20px; padding: 36px 28px; max-width: 360px; width: 100%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.8); }
 
     /* 2. 관리자 메인 화면 */
-    #admin-section {
-      display: none;
-      width: 92%;
-      max-width: 540px;
-      margin: 30px auto 90px auto;
-    }
+    #admin-section { display: none; width: 92%; max-width: 540px; margin: 30px auto 90px auto; }
 
     /* 3. 어메니티/미니바 화면 (?view=bar) */
-    #bar-section {
-      display: none;
-      width: 92%;
-      max-width: 480px;
-      margin: 30px auto 80px auto;
-    }
+    #bar-section { display: none; width: 92%; max-width: 480px; margin: 30px auto 80px auto; }
     .bar-header { text-align: center; margin-bottom: 24px; }
     .bar-brand { font-family: 'Cormorant Garamond', serif; font-size: 2.3rem; letter-spacing: 8px; color: #dfcfb2; text-transform: uppercase; }
     .bar-sub { font-size: 0.82rem; color: #8f95a5; letter-spacing: 2px; margin-top: 6px; text-transform: uppercase; }
     .admin-edit-badge { display: inline-block; background: rgba(201, 169, 110, 0.15); border: 1px solid #c9a96e; color: #dfcfb2; font-size: 0.75rem; padding: 3px 10px; border-radius: 20px; margin-top: 8px; font-weight: 600; }
 
-    .bar-item-card {
-      background: #16171d;
-      border: 1px solid #262933;
-      border-radius: 16px;
-      padding: 16px 20px;
-      margin-bottom: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-    }
+    .bar-item-card { background: #16171d; border: 1px solid #262933; border-radius: 16px; padding: 16px 20px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
     .bar-item-info { flex: 1; }
     .bar-item-info h4 { font-size: 1.02rem; font-weight: 600; color: #ffffff; margin-bottom: 4px; }
     .bar-item-info p { font-size: 0.85rem; color: #c9a96e; font-weight: 500; }
@@ -527,34 +472,10 @@
     .admin-bar-control-title { font-size: 0.95rem; font-weight: 600; color: #c9a96e; margin-bottom: 12px; }
 
     /* 4. VIP 멤버십 횟수 관리 화면 (?view=member_admin) */
-    #member-admin-section {
-      display: none;
-      width: 92%;
-      max-width: 520px;
-      margin: 30px auto 90px auto;
-    }
-    .pass-badge {
-      font-size: 1.35rem;
-      font-weight: 700;
-      color: #dfcfb2;
-      letter-spacing: -0.5px;
-    }
-    .pass-controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .btn-pass-action {
-      background: #232631;
-      border: 1px solid #3d4253;
-      color: #dfcfb2;
-      padding: 7px 14px;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
+    #member-admin-section { display: none; width: 92%; max-width: 520px; margin: 30px auto 90px auto; }
+    .pass-badge { font-size: 1.35rem; font-weight: 700; color: #dfcfb2; letter-spacing: -0.5px; }
+    .pass-controls { display: flex; align-items: center; gap: 8px; }
+    .btn-pass-action { background: #232631; border: 1px solid #3d4253; color: #dfcfb2; padding: 7px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease; }
     .btn-pass-action:hover { background: #c9a96e; color: #0b0c0e; border-color: #c9a96e; }
 
     #toast-msg {
@@ -606,7 +527,7 @@
       <div style="font-size: 0.82rem; color: #888; margin-bottom: 20px;">관리자 전용 PIN 번호를 입력하세요</div>
       <input type="password" id="admin-pin-input" maxlength="8" placeholder="PIN 입력" style="text-align: center; letter-spacing: 6px; font-size: 1.3rem; margin-bottom: 14px;">
       <button type="button" class="btn-primary" onclick="verifyAdminPin()" style="padding: 12px;">인증 확인</button>
-      <div id="pin-error-msg" style="color: #f87171; font-size: 0.8rem; margin-top: 10px; display: none;">PIN 번호가 일치하지 않습니다.</div>
+      <div id="pin-error-msg" style="color: #f87171; font-size: 0.8rem; margin-top: 10px; display: none;">PIN 번호가 일치하지 않거나 서버 연결 실패</div>
     </div>
   </div>
 
@@ -1048,10 +969,16 @@
     const SUPABASE_URL = 'https://jorxmazliodqnxnwctlc.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_GAU-azI_hJvms8k3Nzsyiw_PRH0NG69';
 
+    // 사소한 지적 반영: 계좌 정보 단일화
+    const ACCOUNT_CONFIG = {
+      bank: '국민은행',
+      num: '123456-04-123456',
+      owner: '라콜론'
+    };
+
     const cleanUrl = SUPABASE_URL.trim();
     const cleanKey = SUPABASE_KEY.trim();
 
-    // ─── 2번 보완: Supabase 클라이언트 초기화 (Realtime 채널 지원) ───
     const supabaseClient = (window.supabase && window.supabase.createClient) 
       ? window.supabase.createClient(cleanUrl, cleanKey) 
       : null;
@@ -1064,7 +991,6 @@
     const isMemberAdmin = viewParam === 'member_admin';
     const isAdmin = viewParam === 'admin';
 
-    // XSS 방어 인코딩 유틸리티
     function escapeHtml(str) {
       if (!str) return '';
       return String(str)
@@ -1094,9 +1020,22 @@
       }, 2200);
     }
 
-    // ─── 1번 보완: 서버 측 Database RPC 함수를 통한 PIN 인증 ───
+    // ─── 지적 2 반영: 관리자 전용 인증 헤더 헬퍼 ───
+    // 인증된 PIN을 헤더(x-admin-pin)에 담아 Supabase RLS가 검증하도록 함
+    function getAdminHeaders(extraHeaders = {}) {
+      const storedPin = sessionStorage.getItem('la_colonne_admin_pin') || '';
+      return {
+        'apikey': cleanKey,
+        'Authorization': 'Bearer ' + cleanKey,
+        'x-admin-pin': storedPin,
+        ...extraHeaders
+      };
+    }
+
+    // ─── 지적 1 반영: Fail-closed 방식의 엄격한 PIN 인증 (백도어 완전 제거) ───
     function requireAdminAuth(onSuccess) {
-      if (sessionStorage.getItem('la_colonne_admin_auth') === 'true') {
+      const storedPin = sessionStorage.getItem('la_colonne_admin_pin');
+      if (storedPin) {
         onSuccess();
         return;
       }
@@ -1113,7 +1052,6 @@
         if (!inputVal) return;
 
         try {
-          // 브라우저에 PIN을 보관하지 않고, Supabase 서버 RPC 함수(verify_admin_pin)에 검증 요청
           const res = await fetch(`${cleanUrl}/rest/v1/rpc/verify_admin_pin`, {
             method: 'POST',
             headers: {
@@ -1124,31 +1062,31 @@
             body: JSON.stringify({ input_pin: inputVal })
           });
 
+          if (!res.ok) throw new Error('Auth server error');
           const isValid = await res.json();
+
           if (isValid === true) {
-            sessionStorage.setItem('la_colonne_admin_auth', 'true');
+            // 올바른 PIN을 세션에 보관하여 차후 모든 관리자 API 호출 헤더에 실어 보냄
+            sessionStorage.setItem('la_colonne_admin_pin', inputVal);
             pinModal.style.display = 'none';
             onSuccess();
           } else {
+            pinError.innerText = 'PIN 번호가 일치하지 않습니다.';
             pinError.style.display = 'block';
             pinInput.value = '';
             pinInput.focus();
           }
         } catch(e) {
-          // RPC가 아직 미생성된 경우를 대비한 안전 fallback
-          if (inputVal === '7788') {
-            sessionStorage.setItem('la_colonne_admin_auth', 'true');
-            pinModal.style.display = 'none';
-            onSuccess();
-          } else {
-            pinError.style.display = 'block';
-          }
+          // 백도어 완전 제거: 실패 시 조용히 우회하지 않고 무조건 접근 차단(Fail-closed)
+          pinError.innerText = '인증 서버 연결 실패. 잠시 후 다시 시도해 주세요.';
+          pinError.style.display = 'block';
+          pinInput.value = '';
         }
       };
     }
 
     window.logoutAdmin = function() {
-      sessionStorage.removeItem('la_colonne_admin_auth');
+      sessionStorage.removeItem('la_colonne_admin_pin');
       window.location.href = window.location.pathname;
     };
 
@@ -1156,7 +1094,6 @@
     // 화면별 라우팅 처리
     // ─────────────────────────────────────────────
     if (isMemberAdmin) {
-      // 4. 전용 VIP 멤버십 횟수 관리 화면 (PIN 보호)
       requireAdminAuth(() => {
         document.getElementById('member-admin-section').style.display = 'block';
         loadMembersList();
@@ -1165,10 +1102,14 @@
       async function loadMembersList() {
         const container = document.getElementById('members-list-container');
         try {
+          // x-admin-pin 헤더를 통해 RLS 통과
           const res = await fetch(`${cleanUrl}/rest/v1/lounge_members?select=*&order=created_at.desc`, {
-            headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+            headers: getAdminHeaders()
           });
-          if (!res.ok) return;
+          if (!res.ok) {
+            container.innerHTML = '<div style="color:#f87171; text-align:center; padding:20px;">권한이 없거나 조회가 차단되었습니다 (RLS).</div>';
+            return;
+          }
           const members = await res.json();
           if (!members || members.length === 0) {
             container.innerHTML = '<div style="text-align:center; color:#888; padding:30px;">등록된 멤버십 회원이 없습니다.</div>';
@@ -1215,7 +1156,7 @@
       window.adjustPass = async function(id, delta) {
         try {
           const fetchRes = await fetch(`${cleanUrl}/rest/v1/lounge_members?id=eq.${id}&select=used_passes`, {
-            headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+            headers: getAdminHeaders()
           });
           const data = await fetchRes.json();
           if (!data || data.length === 0) return;
@@ -1225,13 +1166,15 @@
 
           const res = await fetch(`${cleanUrl}/rest/v1/lounge_members?id=eq.${id}`, {
             method: 'PATCH',
-            headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey, 'Content-Type': 'application/json' },
+            headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
             body: JSON.stringify({ used_passes: newUsed })
           });
 
           if (res.ok) {
             showToast(delta < 0 ? '✓ 1회 차감 완료' : '✓ 1회 복구 완료');
             loadMembersList();
+          } else {
+            alert('권한 오류 (RLS에 의해 차단됨)');
           }
         } catch(e) {
           alert('처리 실패: ' + e.message);
@@ -1251,7 +1194,7 @@
         try {
           const res = await fetch(`${cleanUrl}/rest/v1/lounge_members`, {
             method: 'POST',
-            headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey, 'Content-Type': 'application/json' },
+            headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
             body: JSON.stringify({
               company_name: company,
               member_code: code,
@@ -1272,7 +1215,7 @@
             document.getElementById('new-mem-total').value = '';
             loadMembersList();
           } else {
-            alert('등록 실패: 코드 중복 여부를 확인하세요.');
+            alert('등록 실패: 코드 중복 여부 또는 RLS 권한을 확인하세요.');
           }
         } catch(e) {
           alert('오류: ' + e.message);
@@ -1284,7 +1227,7 @@
         try {
           const res = await fetch(`${cleanUrl}/rest/v1/lounge_members?id=eq.${id}`, {
             method: 'DELETE',
-            headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+            headers: getAdminHeaders()
           });
           if (res.ok) {
             showToast('✓ 회원이 삭제되었습니다.');
@@ -1296,8 +1239,13 @@
       };
 
     } else if (isBar) {
-      // 3. 어메니티/미니바 화면 (?view=bar)
       document.getElementById('bar-section').style.display = 'block';
+
+      // 사소한 지적 반영: 계좌 안내 텍스트 단일화 렌더링
+      const accountEl = document.getElementById('account-text');
+      if (accountEl) {
+        accountEl.innerText = `${ACCOUNT_CONFIG.bank} ${ACCOUNT_CONFIG.num} (예금주: ${ACCOUNT_CONFIG.owner})`;
+      }
 
       if (isBarAdmin) {
         requireAdminAuth(() => {
@@ -1389,7 +1337,7 @@
         try {
           const res = await fetch(`${cleanUrl}/rest/v1/lounge_bar_items`, {
             method: 'POST',
-            headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey, 'Content-Type': 'application/json' },
+            headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
             body: JSON.stringify({ name, price, display_order: loadedItems.length + 1 })
           });
           if (res.ok) {
@@ -1410,7 +1358,7 @@
         try {
           const res = await fetch(`${cleanUrl}/rest/v1/lounge_bar_items?id=eq.${id}`, {
             method: 'PATCH',
-            headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey, 'Content-Type': 'application/json' },
+            headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
             body: JSON.stringify({ name, price })
           });
           if (res.ok) {
@@ -1425,7 +1373,7 @@
         try {
           const res = await fetch(`${cleanUrl}/rest/v1/lounge_bar_items?id=eq.${id}`, {
             method: 'DELETE',
-            headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+            headers: getAdminHeaders()
           });
           if (res.ok) {
             showToast('✓ 품목이 삭제되었습니다.');
@@ -1435,13 +1383,13 @@
       };
 
       window.copyAccount = function() {
-        const text = '123456-04-123456';
+        const text = `${ACCOUNT_CONFIG.bank} ${ACCOUNT_CONFIG.num} (예금주: ${ACCOUNT_CONFIG.owner})`;
         if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(text).then(() => {
-            showToast('✓ 계좌번호가 복사되었습니다: ' + text);
-          }).catch(() => fallbackCopy(text));
+          navigator.clipboard.writeText(ACCOUNT_CONFIG.num).then(() => {
+            showToast('✓ 계좌번호가 복사되었습니다: ' + ACCOUNT_CONFIG.num);
+          }).catch(() => fallbackCopy(ACCOUNT_CONFIG.num));
         } else {
-          fallbackCopy(text);
+          fallbackCopy(ACCOUNT_CONFIG.num);
         }
       };
 
@@ -1498,9 +1446,7 @@
       };
 
     } else if (isTV) {
-      // ─────────────────────────────────────────────
       // 1. TV 디스플레이 모드 (?view=tv)
-      // ─────────────────────────────────────────────
       const tvSection = document.getElementById('tv-section');
       const videoOverlay = document.getElementById('video-overlay');
       const statusDot = document.getElementById('tv-status-dot');
@@ -1735,7 +1681,6 @@
         const displayPrefix = (displayName === 'Guest') ? '' : (prefix || '');
         const displaySuffix = (displayName === 'Guest') ? '' : (suffix || '');
 
-        // ─── 3번 보완: 오프라인 장애 방어용 로컬 캐시 저장 ───
         try {
           localStorage.setItem('la_colonne_cached_display', JSON.stringify({
             prefix: displayPrefix,
@@ -1829,7 +1774,6 @@
             }
           }
         } catch(e) {
-          // 오프라인 fallback
           try {
             const cached = JSON.parse(localStorage.getItem('la_colonne_cached_settings'));
             if (cached) {
@@ -1897,7 +1841,6 @@
         }
       }
 
-      // ─── 3번 보완: 네트워크 단절 시 오프라인 자동 방어 ───
       function loadOfflineFallback() {
         try {
           const cached = JSON.parse(localStorage.getItem('la_colonne_cached_display'));
@@ -1907,40 +1850,26 @@
         } catch(e) {}
       }
 
-      // 최초 실행
       syncGlobalSettings();
       syncTV();
 
-      // ─── 2번 보완: Supabase Realtime 웹소켓 이벤트 구독 ───
       if (supabaseClient) {
         supabaseClient
           .channel('lounge-realtime-channel')
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'welcome_screen' }, () => {
-            console.log('⚡ Realtime: welcome_screen updated');
-            syncTV();
-          })
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'welcome_schedules' }, () => {
-            console.log('⚡ Realtime: welcome_schedules updated');
-            syncTV();
-          })
-          .on('postgres_changes', { event: '*', schema: 'public', table: 'lounge_settings' }, () => {
-            console.log('⚡ Realtime: lounge_settings updated');
-            syncGlobalSettings();
-          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'welcome_screen' }, () => syncTV())
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'welcome_schedules' }, () => syncTV())
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'lounge_settings' }, () => syncGlobalSettings())
           .subscribe((status) => {
             if (status === 'SUBSCRIBED') {
-              console.log('✓ Supabase Realtime WebSocket Connected');
               setStatusDot('#22c55e');
             }
           });
       }
 
-      // 백그라운드 헬스체크 보조 (2초 Polling 대신 60초 안전 타이머로 대폭 완화)
       setInterval(syncGlobalSettings, 60000);
       setInterval(syncTV, 60000);
 
     } else if (isAdmin) {
-      // 2. 모바일 관리자 기본 모드 (?view=admin, PIN 인증 필수)
       requireAdminAuth(() => {
         document.getElementById('admin-section').style.display = 'block';
         initAdminControls();
@@ -1972,7 +1901,7 @@
           try {
             await fetch(cleanUrl + '/rest/v1/lounge_settings?id=eq.1', {
               method: 'PATCH',
-              headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey, 'Content-Type': 'application/json' },
+              headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
               body: JSON.stringify({ [field]: val, updated_at: new Date().toISOString() })
             });
           } catch(e) {}
@@ -2023,7 +1952,7 @@
           try {
             await fetch(cleanUrl + '/rest/v1/welcome_history', {
               method: 'POST',
-              headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey, 'Content-Type': 'application/json' },
+              headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
               body: JSON.stringify({
                 event_type: eventType,
                 visit_date: visitDate || new Date().toISOString(),
@@ -2080,7 +2009,7 @@
 
                 await fetch(cleanUrl + '/rest/v1/welcome_schedules?id=eq.' + currentVip.id, {
                   method: 'PATCH',
-                  headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey, 'Content-Type': 'application/json' },
+                  headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
                   body: JSON.stringify({ end_time: new Date(Date.now() - 1000).toISOString() })
                 });
                 loadSchedules();
@@ -2093,12 +2022,10 @@
 
             const res = await fetch(cleanUrl + '/rest/v1/welcome_screen', {
               method: 'POST',
-              headers: {
-                'apikey': cleanKey,
-                'Authorization': 'Bearer ' + cleanKey,
+              headers: getAdminHeaders({
                 'Content-Type': 'application/json',
                 'Prefer': 'resolution=merge-duplicates,return=representation'
-              },
+              }),
               body: JSON.stringify({
                 id: 1,
                 prefix: prefixVal,
@@ -2117,7 +2044,7 @@
               recordHistory('즉시 반영', prefixVal, nameInput, suffixVal, msg, bg, bgm);
             } else {
               logBox.style.color = '#f87171';
-              logBox.innerText = '저장 실패';
+              logBox.innerText = '저장 실패 (RLS 권한 거부)';
             }
           } catch(e) {
             logBox.style.color = '#f87171';
@@ -2188,8 +2115,10 @@
               const endD = new Date(item.end_time);
               const timeStr = `${startD.toLocaleDateString('ko-KR', {month:'numeric', day:'numeric'})} ${startD.toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit', hour12:false})} ~ ${endD.toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit', hour12:false})}`;
               const itemDataEscaped = encodeURIComponent(JSON.stringify(item));
+              const encodedGuestName = encodeURIComponent(item.guest_name || '');
               const isNowActive = (nowTime >= (startD.getTime() - 5 * 60 * 1000) && nowTime <= endD.getTime());
 
+              // ─── 지적 3 반영: triggerScheduleNow 인자를 encodeURIComponent로 안전하게 전달 ───
               html += `
                 <div class="schedule-item" style="${isNowActive ? 'border-color: rgba(201,169,110,0.6); background: #1c1a17;' : ''}">
                   <div>
@@ -2198,7 +2127,7 @@
                     <div class="schedule-msg">${escapeHtml(item.sub_message)}</div>
                   </div>
                   <div class="action-btn-group">
-                    ${!isNowActive ? `<button class="btn-trigger-now" onclick="triggerScheduleNow(${item.id}, '${escapeHtml(item.guest_name)}')">지금 입장 (즉시 표출)</button>` : `<button class="btn-trigger-now" style="background: rgba(239,68,68,0.15); border-color:#f87171; color:#f87171;" onclick="deleteSchedule(${item.id}, true)">조기 퇴실 (일정 즉시 종료)</button>`}
+                    ${!isNowActive ? `<button class="btn-trigger-now" onclick="triggerScheduleNow(${item.id}, '${encodedGuestName}')">지금 입장 (즉시 표출)</button>` : `<button class="btn-trigger-now" style="background: rgba(239,68,68,0.15); border-color:#f87171; color:#f87171;" onclick="deleteSchedule(${item.id}, true)">조기 퇴실 (일정 즉시 종료)</button>`}
                     <button class="btn-edit" onclick="editSchedule('${itemDataEscaped}')">수정</button>
                     <button class="btn-delete" onclick="deleteSchedule(${item.id}, false)">삭제</button>
                   </div>
@@ -2210,7 +2139,8 @@
         }
         loadSchedules();
 
-        window.triggerScheduleNow = async function(id, guestName) {
+        window.triggerScheduleNow = async function(id, encodedGuestName) {
+          const guestName = decodeURIComponent(encodedGuestName);
           try {
             const nowObj = new Date();
             const nowISO = nowObj.toISOString();
@@ -2235,7 +2165,7 @@
 
                 await fetch(cleanUrl + '/rest/v1/welcome_schedules?id=eq.' + currentActive.id, {
                   method: 'PATCH',
-                  headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey, 'Content-Type': 'application/json' },
+                  headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
                   body: JSON.stringify({ end_time: new Date(Date.now() - 1000).toISOString() })
                 });
               } else {
@@ -2245,13 +2175,15 @@
 
             const res = await fetch(cleanUrl + '/rest/v1/welcome_schedules?id=eq.' + id, {
               method: 'PATCH',
-              headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey, 'Content-Type': 'application/json' },
+              headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
               body: JSON.stringify({ start_time: new Date().toISOString() })
             });
 
             if (res.ok) {
               alert(`✓ [${guestName}] 님의 예약 화면이 TV에 즉시 표출되었습니다.`);
               loadSchedules();
+            } else {
+              alert('표출 실패: RLS 권한 거부');
             }
           } catch(e) {}
         };
@@ -2321,13 +2253,13 @@
             if (editingScheduleId) {
               res = await fetch(cleanUrl + '/rest/v1/welcome_schedules?id=eq.' + editingScheduleId, {
                 method: 'PATCH',
-                headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey, 'Content-Type': 'application/json' },
+                headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
                 body: JSON.stringify(payload)
               });
             } else {
               res = await fetch(cleanUrl + '/rest/v1/welcome_schedules', {
                 method: 'POST',
-                headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey, 'Content-Type': 'application/json' },
+                headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
                 body: JSON.stringify(payload)
               });
             }
@@ -2340,6 +2272,9 @@
               }
               cancelEditSchedule();
               loadSchedules();
+            } else {
+              logBox.style.color = '#f87171';
+              logBox.innerText = '저장 실패 (RLS 권한 거부)';
             }
           } catch(e) {}
         });
@@ -2354,11 +2289,13 @@
           try {
             const res = await fetch(cleanUrl + '/rest/v1/welcome_schedules?id=eq.' + id, {
               method: 'DELETE',
-              headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+              headers: getAdminHeaders()
             });
             if (res.ok) {
               if (editingScheduleId === id) cancelEditSchedule();
               loadSchedules();
+            } else {
+              alert('삭제 실패: RLS 권한 거부');
             }
           } catch(e) {}
         };
@@ -2436,7 +2373,7 @@
           try {
             const res = await fetch(`${cleanUrl}/rest/v1/welcome_history?id=eq.${id}`, {
               method: 'DELETE',
-              headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+              headers: getAdminHeaders()
             });
             if (res.ok) loadHistory(currentHistPage);
           } catch(e) {}
@@ -2468,7 +2405,7 @@
           const listEl = document.getElementById('orders-list');
           try {
             const res = await fetch(cleanUrl + '/rest/v1/lounge_bar_orders?select=*&order=created_at.desc&limit=15', {
-              headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+              headers: getAdminHeaders()
             });
             if (!res.ok) return;
             const orders = await res.json();
@@ -2510,7 +2447,7 @@
           try {
             await fetch(cleanUrl + '/rest/v1/lounge_bar_orders?id=eq.' + id, {
               method: 'PATCH',
-              headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey, 'Content-Type': 'application/json' },
+              headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
               body: JSON.stringify({ payment_status: '확인 완료' })
             });
             loadOrders();
@@ -2522,14 +2459,13 @@
           try {
             await fetch(cleanUrl + '/rest/v1/lounge_bar_orders?id=eq.' + id, {
               method: 'DELETE',
-              headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+              headers: getAdminHeaders()
             });
             loadOrders();
           } catch(e) {}
         };
       }
     } else {
-      // 기본 접속자는 안내 포털로 직행
       document.getElementById('guest-portal-section').style.display = 'block';
     }
   </script>
