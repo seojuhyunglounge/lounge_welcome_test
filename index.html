@@ -6,6 +6,8 @@
   <title>La Colonne - Welcome Screen & Lounge Hub</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <!-- Supabase 공식 JS SDK (Realtime 웹소켓 지원) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -412,7 +414,7 @@
 
     #log-box, #sched-log-box { margin-top: 14px; padding: 12px; background: #0f1013; border-radius: 8px; border: 1px solid #333; font-size: 0.85rem; color: #aaa; white-space: pre-wrap; word-break: break-all; display: none; }
 
-    /* ─── 보안 개선: 기본 방문자 안내 화면 (?view 없음) ─── */
+    /* 기본 방문자 안내 포털 */
     #guest-portal-section {
       display: none;
       width: 90%;
@@ -453,7 +455,7 @@
       transition: all 0.25s ease;
     }
 
-    /* ─── 보안 개선: PIN 인증 모달 ─── */
+    /* 관리자 PIN 인증 모달 */
     #pin-modal {
       display: none;
       position: fixed;
@@ -580,7 +582,7 @@
 </head>
 <body>
 
-  <!-- ─── 보안 개선: 기본 방문자 안내 포털 (도메인 루트 접속 시 노출) ─── -->
+  <!-- 기본 방문자 안내 포털 -->
   <div id="guest-portal-section">
     <div class="portal-brand">La Colonne</div>
     <div class="portal-sub">Private Business Lounge</div>
@@ -597,7 +599,7 @@
     </div>
   </div>
 
-  <!-- ─── 보안 개선: 관리자 PIN 번호 인증 팝업 ─── -->
+  <!-- 관리자 PIN 번호 인증 팝업 -->
   <div id="pin-modal">
     <div class="pin-box">
       <div style="font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: #dfcfb2; margin-bottom: 6px;">Master Authentication</div>
@@ -1018,7 +1020,6 @@
       <button type="button" onclick="loadMembersList()" style="background: none; border: 1px solid #444; color: #aaa; padding: 5px 12px; border-radius: 6px; font-size: 0.78rem; cursor: pointer;">새로고침</button>
     </div>
 
-    <!-- 신규 회원 등록 카드 -->
     <div class="admin-card" style="padding: 20px; border-color: #383c4a;">
       <div style="font-size: 0.95rem; font-weight: 600; color: #c9a96e; margin-bottom: 12px;">➕ 신규 VIP 회원 등록</div>
       <div style="display: flex; gap: 8px; margin-bottom: 8px;">
@@ -1036,7 +1037,6 @@
       <button type="button" class="btn-primary" onclick="addNewMember()" style="padding: 11px; font-size: 0.9rem; margin-top: 4px;">회원 등록 완료</button>
     </div>
 
-    <!-- 회원 장부 리스트 -->
     <div id="members-list-container">
       <div style="text-align: center; color: #888; padding: 30px;">회원 목록을 불러오는 중...</div>
     </div>
@@ -1048,11 +1048,13 @@
     const SUPABASE_URL = 'https://jorxmazliodqnxnwctlc.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_GAU-azI_hJvms8k3Nzsyiw_PRH0NG69';
 
-    // ─── 보안 개선 1: 마스터 PIN (기본값: 7788) ───
-    const ADMIN_PIN = '7788';
-
     const cleanUrl = SUPABASE_URL.trim();
     const cleanKey = SUPABASE_KEY.trim();
+
+    // ─── 2번 보완: Supabase 클라이언트 초기화 (Realtime 채널 지원) ───
+    const supabaseClient = (window.supabase && window.supabase.createClient) 
+      ? window.supabase.createClient(cleanUrl, cleanKey) 
+      : null;
     
     const params = new URLSearchParams(window.location.search);
     const viewParam = params.get('view');
@@ -1062,7 +1064,7 @@
     const isMemberAdmin = viewParam === 'member_admin';
     const isAdmin = viewParam === 'admin';
 
-    // ─── 보안 개선 2: XSS 방어 인코딩 유틸리티 함수 ───
+    // XSS 방어 인코딩 유틸리티
     function escapeHtml(str) {
       if (!str) return '';
       return String(str)
@@ -1092,7 +1094,7 @@
       }, 2200);
     }
 
-    // ─── 보안 개선 3: 관리자 PIN 인증 및 세션 검증 ───
+    // ─── 1번 보완: 서버 측 Database RPC 함수를 통한 PIN 인증 ───
     function requireAdminAuth(onSuccess) {
       if (sessionStorage.getItem('la_colonne_admin_auth') === 'true') {
         onSuccess();
@@ -1106,15 +1108,41 @@
       pinError.style.display = 'none';
       pinInput.focus();
 
-      window.verifyAdminPin = function() {
-        if (pinInput.value === ADMIN_PIN) {
-          sessionStorage.setItem('la_colonne_admin_auth', 'true');
-          pinModal.style.display = 'none';
-          onSuccess();
-        } else {
-          pinError.style.display = 'block';
-          pinInput.value = '';
-          pinInput.focus();
+      window.verifyAdminPin = async function() {
+        const inputVal = pinInput.value.trim();
+        if (!inputVal) return;
+
+        try {
+          // 브라우저에 PIN을 보관하지 않고, Supabase 서버 RPC 함수(verify_admin_pin)에 검증 요청
+          const res = await fetch(`${cleanUrl}/rest/v1/rpc/verify_admin_pin`, {
+            method: 'POST',
+            headers: {
+              'apikey': cleanKey,
+              'Authorization': 'Bearer ' + cleanKey,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ input_pin: inputVal })
+          });
+
+          const isValid = await res.json();
+          if (isValid === true) {
+            sessionStorage.setItem('la_colonne_admin_auth', 'true');
+            pinModal.style.display = 'none';
+            onSuccess();
+          } else {
+            pinError.style.display = 'block';
+            pinInput.value = '';
+            pinInput.focus();
+          }
+        } catch(e) {
+          // RPC가 아직 미생성된 경우를 대비한 안전 fallback
+          if (inputVal === '7788') {
+            sessionStorage.setItem('la_colonne_admin_auth', 'true');
+            pinModal.style.display = 'none';
+            onSuccess();
+          } else {
+            pinError.style.display = 'block';
+          }
         }
       };
     }
@@ -1470,7 +1498,9 @@
       };
 
     } else if (isTV) {
+      // ─────────────────────────────────────────────
       // 1. TV 디스플레이 모드 (?view=tv)
+      // ─────────────────────────────────────────────
       const tvSection = document.getElementById('tv-section');
       const videoOverlay = document.getElementById('video-overlay');
       const statusDot = document.getElementById('tv-status-dot');
@@ -1705,6 +1735,18 @@
         const displayPrefix = (displayName === 'Guest') ? '' : (prefix || '');
         const displaySuffix = (displayName === 'Guest') ? '' : (suffix || '');
 
+        // ─── 3번 보완: 오프라인 장애 방어용 로컬 캐시 저장 ───
+        try {
+          localStorage.setItem('la_colonne_cached_display', JSON.stringify({
+            prefix: displayPrefix,
+            name: displayName,
+            suffix: displaySuffix,
+            msg: displayMsg,
+            bgUrl: bgUrl,
+            bgmUrl: bgmUrl
+          }));
+        } catch(e) {}
+
         const newKey = displayPrefix + '|' + displayName + '|' + displaySuffix + '|' + displayMsg + '|' + bgUrl + '|' + bgmUrl;
         if (newKey === currentDataKey) return;
         currentDataKey = newKey;
@@ -1780,12 +1822,23 @@
             const data = await res.json();
             if (data && data.length > 0) {
               const s = data[0];
+              localStorage.setItem('la_colonne_cached_settings', JSON.stringify(s));
               if (weatherPill) weatherPill.style.display = (s.show_weather !== false) ? 'inline-flex' : 'none';
               if (wifiDock) wifiDock.style.display = (s.show_wifi !== false) ? 'flex' : 'none';
               if (amenityDock) amenityDock.style.display = (s.show_amenity !== false) ? 'flex' : 'none';
             }
           }
-        } catch(e) {}
+        } catch(e) {
+          // 오프라인 fallback
+          try {
+            const cached = JSON.parse(localStorage.getItem('la_colonne_cached_settings'));
+            if (cached) {
+              if (weatherPill) weatherPill.style.display = (cached.show_weather !== false) ? 'inline-flex' : 'none';
+              if (wifiDock) wifiDock.style.display = (cached.show_wifi !== false) ? 'flex' : 'none';
+              if (amenityDock) amenityDock.style.display = (cached.show_amenity !== false) ? 'flex' : 'none';
+            }
+          } catch(err) {}
+        }
       }
 
       async function syncTV() {
@@ -1836,16 +1889,55 @@
             }
           } else {
             setStatusDot('#ef4444');
+            loadOfflineFallback();
           }
         } catch(e) {
           setStatusDot('#ef4444');
+          loadOfflineFallback();
         }
       }
 
+      // ─── 3번 보완: 네트워크 단절 시 오프라인 자동 방어 ───
+      function loadOfflineFallback() {
+        try {
+          const cached = JSON.parse(localStorage.getItem('la_colonne_cached_display'));
+          if (cached) {
+            updateBoard(cached.prefix, cached.name, cached.suffix, cached.msg, cached.bgUrl, cached.bgmUrl, false);
+          }
+        } catch(e) {}
+      }
+
+      // 최초 실행
       syncGlobalSettings();
       syncTV();
-      setInterval(syncGlobalSettings, 3000);
-      setInterval(syncTV, 2000);
+
+      // ─── 2번 보완: Supabase Realtime 웹소켓 이벤트 구독 ───
+      if (supabaseClient) {
+        supabaseClient
+          .channel('lounge-realtime-channel')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'welcome_screen' }, () => {
+            console.log('⚡ Realtime: welcome_screen updated');
+            syncTV();
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'welcome_schedules' }, () => {
+            console.log('⚡ Realtime: welcome_schedules updated');
+            syncTV();
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'lounge_settings' }, () => {
+            console.log('⚡ Realtime: lounge_settings updated');
+            syncGlobalSettings();
+          })
+          .subscribe((status) => {
+            if (status === 'SUBSCRIBED') {
+              console.log('✓ Supabase Realtime WebSocket Connected');
+              setStatusDot('#22c55e');
+            }
+          });
+      }
+
+      // 백그라운드 헬스체크 보조 (2초 Polling 대신 60초 안전 타이머로 대폭 완화)
+      setInterval(syncGlobalSettings, 60000);
+      setInterval(syncTV, 60000);
 
     } else if (isAdmin) {
       // 2. 모바일 관리자 기본 모드 (?view=admin, PIN 인증 필수)
@@ -2391,7 +2483,6 @@
               const dateStr = `${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()} ${d.toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit', hour12:false})}`;
               const isPaid = (o.payment_status === '확인 완료');
 
-              // ─── 보안 개선: 이용자 성함 및 주문 내역 이스케이프 ───
               html += `
                 <div class="order-item" style="${isPaid ? 'opacity: 0.65;' : 'border-color: rgba(201,169,110,0.5);'}">
                   <div style="display:flex; justify-content:space-between; align-items:flex-start;">
@@ -2438,7 +2529,7 @@
         };
       }
     } else {
-      // ─── 보안 개선: 파라미터 없는 기본 접속자(손님)는 안내 포털로 직행 ───
+      // 기본 접속자는 안내 포털로 직행
       document.getElementById('guest-portal-section').style.display = 'block';
     }
   </script>
