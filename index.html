@@ -2344,13 +2344,31 @@
 
         window.deleteHistory = async function(id) {
           if (!confirm('이 VIP 히스토리 기록을 영구 삭제하시겠습니까?')) return;
+          const token = sessionStorage.getItem('la_colonne_admin_token') || '';
+
           try {
-            const res = await fetch(`${cleanUrl}/rest/v1/welcome_history?id=eq.${id}`, {
-              method: 'DELETE',
-              headers: getAdminHeaders()
+            const res = await fetch(`${cleanUrl}/rest/v1/rpc/delete_admin_history`, {
+              method: 'POST',
+              headers: {
+                'apikey': cleanKey,
+                'Authorization': 'Bearer ' + cleanKey,
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                p_token: token,
+                p_id: id
+              })
             });
-            if (res.ok) loadHistory(currentHistPage);
-          } catch(e) {}
+
+            const ok = await res.json();
+            if (ok === true) {
+              loadHistory(currentHistPage);
+            } else {
+              alert('삭제 권한이 없습니다.');
+            }
+          } catch(e) {
+            alert('삭제 오류: ' + e.message);
+          }
         };
 
         window.applyHistory = function(encodedData) {
