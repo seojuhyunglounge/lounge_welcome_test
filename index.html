@@ -118,6 +118,7 @@
       font-size: 0.78rem;
       letter-spacing: 1px;
       margin-top: 2px;
+      transition: opacity 0.5s ease;
     }
 
     .brand-container {
@@ -209,6 +210,7 @@
       margin-bottom: 10px;
     }
 
+    /* ─── 스마트 OTT 독: 평상시 25% 대기, 조작 시 100% 활성 ─── */
     .ott-dock {
       display: flex;
       align-items: center;
@@ -221,11 +223,15 @@
       border-radius: 50px;
       padding: 10px 24px;
       box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6);
-      transition: all 0.3s ease;
+      opacity: 0.25; /* 기본 대기 상태: 배경에 자연스럽게 녹아듦 */
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+      transform: translateY(6px);
     }
-    .ott-dock:hover {
-      border-color: rgba(201, 169, 110, 0.6);
-      background: rgba(18, 20, 26, 0.85);
+    .ott-dock.active, .ott-dock:hover, .ott-dock:focus-within {
+      opacity: 1; /* 조작 시 선명하게 활성화 */
+      transform: translateY(0);
+      border-color: rgba(201, 169, 110, 0.65);
+      background: rgba(18, 20, 26, 0.88);
     }
 
     .ott-btn {
@@ -262,7 +268,7 @@
       font-weight: 300;
     }
 
-    /* 우측 하단 럭셔리 라운지 Wi-Fi QR 위젯 */
+    /* 우측 하단 라운지 Wi-Fi QR 위젯 */
     #wifi-dock {
       position: fixed;
       bottom: 25px;
@@ -279,6 +285,7 @@
       padding: 10px 14px;
       box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65);
       text-align: left;
+      transition: opacity 0.5s ease;
     }
     #wifi-qr-img {
       width: 58px;
@@ -313,7 +320,7 @@
       letter-spacing: 0.3px;
     }
 
-    /* ─── 좌측 하단: 관리자 전용 미니멀 LED 상태 도트 ─── */
+    /* 좌측 하단: 관리자 전용 미니멀 LED 상태 도트 */
     #tv-status-dot {
       position: fixed;
       bottom: 20px;
@@ -322,8 +329,8 @@
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: #eab308; /* 기본값: 연결 대기(황색) */
-      opacity: 0.45; /* 손님 시선에 거슬리지 않도록 은은하게 처리 */
+      background: #eab308;
+      opacity: 0.45;
       transition: background-color 0.4s ease, opacity 0.4s ease;
       pointer-events: none;
     }
@@ -529,7 +536,8 @@
     </div>
 
     <div class="tv-layer bottom-interactive-wrap">
-      <div class="ott-dock">
+      <!-- 조작 시에만 또렷해지는 인터랙티브 독 -->
+      <div class="ott-dock" id="ott-dock">
         <a href="vnd.youtube://" class="ott-btn" onclick="pauseBgmForApp()">
           <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
           <span>YouTube</span>
@@ -616,6 +624,29 @@
       <div class="form-group">
         <label>서브 환영 문구</label>
         <textarea id="msg-input" rows="2" placeholder="예: 편안하고 성공적인 시간 되시기를 바랍니다."></textarea>
+      </div>
+
+      <!-- 새로 추가된 화면 요소 On/Off 토글 (미니멀 모드 제어) -->
+      <div class="toggle-row">
+        <div class="toggle-label">
+          <span>실시간 날씨 위젯 표시</span>
+          <span class="toggle-sub">끄면 시계와 날짜만 심플하게 표시</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="weather-toggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-label">
+          <span>Guest Wi-Fi QR 위젯 표시</span>
+          <span class="toggle-sub">끄면 우측 하단 QR 카드를 숨김</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="wifi-toggle" checked>
+          <span class="slider"></span>
+        </label>
       </div>
 
       <div class="form-group">
@@ -767,6 +798,9 @@
       const videoOverlay = document.getElementById('video-overlay');
       const statusDot = document.getElementById('tv-status-dot');
       const player = document.getElementById('bgm-player');
+      const weatherPill = document.getElementById('weather-pill');
+      const wifiDock = document.getElementById('wifi-dock');
+      const ottDock = document.getElementById('ott-dock');
       
       bgVideo.muted = true;
       bgVideo.defaultMuted = true;
@@ -778,6 +812,24 @@
       function setStatusDot(color) {
         if (statusDot) statusDot.style.backgroundColor = color;
       }
+
+      // ─── 스마트 OTT 독: 리모컨/마우스 조작 시 8초간 활성화 ───
+      let ottTimer = null;
+      function wakeOttDock() {
+        if (ottDock) {
+          ottDock.classList.add('active');
+          clearTimeout(ottTimer);
+          ottTimer = setTimeout(() => {
+            // 포커스가 버튼에 머물러 있지 않을 때만 은은하게 숨김
+            if (!ottDock.contains(document.activeElement)) {
+              ottDock.classList.remove('active');
+            }
+          }, 8000);
+        }
+      }
+      window.addEventListener('keydown', wakeOttDock);
+      window.addEventListener('mousemove', wakeOttDock);
+      window.addEventListener('touchstart', wakeOttDock);
 
       // (1) 실시간 시계 & 새벽 04:00 자동 메모리 리프레시
       let lastReloadDate = '';
@@ -845,17 +897,21 @@
         }
         if (player.src && player.paused && currentBgmUrl !== 'none') {
           player.play().then(() => {
-            setStatusDot('#22c55e'); // 녹색 정상
+            setStatusDot('#22c55e');
           }).catch(console.error);
         }
       }
       window.addEventListener('click', unlockMedia);
       window.addEventListener('touchstart', unlockMedia);
 
-      function updateBoard(prefix, name, suffix, msg, bgUrl, bgmUrl, isScheduled) {
-        const newKey = (prefix || '') + '|' + (name || '') + '|' + (suffix || '') + '|' + (msg || '') + '|' + bgUrl + '|' + bgmUrl;
+      function updateBoard(prefix, name, suffix, msg, bgUrl, bgmUrl, isScheduled, showWeather, showWifi) {
+        const newKey = (prefix || '') + '|' + (name || '') + '|' + (suffix || '') + '|' + (msg || '') + '|' + bgUrl + '|' + bgmUrl + '|' + showWeather + '|' + showWifi;
         if (newKey === currentDataKey) return;
         currentDataKey = newKey;
+
+        // 위젯 On/Off 부드러운 반영
+        if (weatherPill) weatherPill.style.display = (showWeather !== false) ? 'inline-flex' : 'none';
+        if (wifiDock) wifiDock.style.display = (showWifi !== false) ? 'flex' : 'none';
 
         const box = document.getElementById('center-box');
         box.style.opacity = '0';
@@ -910,14 +966,14 @@
           currentBgmUrl = bgmUrl;
           if (!bgmUrl || bgmUrl === 'none') {
             player.pause();
-            setStatusDot('#22c55e'); // 음악 OFF여도 정상 녹색
+            setStatusDot('#22c55e');
           } else {
             player.src = bgmUrl;
             player.load();
             player.play().then(() => {
-              setStatusDot('#22c55e'); // 녹색 정상
+              setStatusDot('#22c55e');
             }).catch(() => {
-              setStatusDot('#eab308'); // 황색: 클릭 필요 (미디어 정책)
+              setStatusDot('#eab308');
             });
           }
         }
@@ -927,7 +983,7 @@
         try {
           const nowISO = new Date().toISOString();
 
-          // 1. 현재 시각 범위에 드는 예약이 있는지 조회
+          // 1. 예약 일정 체크
           const schedRes = await fetch(cleanUrl + '/rest/v1/welcome_schedules?start_time=lte.' + nowISO + '&end_time=gte.' + nowISO + '&order=start_time.asc&limit=1', {
             headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
           });
@@ -943,13 +999,15 @@
                 active.sub_message || '',
                 active.bg_source || 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
                 active.bgm_source || 'jazz1.mp3',
+                true,
+                true,
                 true
               );
               return;
             }
           }
 
-          // 2. 진행 중인 예약이 없으면 기본 웰컴 화면 표출
+          // 2. 기본 상시 화면 표출
           const defRes = await fetch(cleanUrl + '/rest/v1/welcome_screen?select=*&id=eq.1', {
             headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
           });
@@ -964,14 +1022,16 @@
                 item.sub_message || '',
                 item.bg_source || 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
                 item.bgm_source || 'jazz1.mp3',
-                false
+                false,
+                item.show_weather !== false,
+                item.show_wifi !== false
               );
             }
           } else {
-            setStatusDot('#ef4444'); // 적색: 서버 응답 오류
+            setStatusDot('#ef4444');
           }
         } catch(e) {
-          setStatusDot('#ef4444'); // 적색: 네트워크 단절
+          setStatusDot('#ef4444');
         }
       }
 
@@ -984,11 +1044,12 @@
       // ─────────────────────────────────────────────
       document.getElementById('admin-section').style.display = 'block';
 
-      // (1) 카드 1: 즉시 표출 설정
       const prefixToggle = document.getElementById('prefix-toggle');
       const prefixSelectBox = document.getElementById('prefix-select-box');
       const prefixSelect = document.getElementById('prefix-select');
       const suffixToggle = document.getElementById('suffix-toggle');
+      const weatherToggle = document.getElementById('weather-toggle');
+      const wifiToggle = document.getElementById('wifi-toggle');
 
       prefixToggle.addEventListener('change', function() {
         prefixSelectBox.style.display = this.checked ? 'block' : 'none';
@@ -1016,6 +1077,10 @@
             document.getElementById('msg-input').value = item.sub_message || '';
             if (item.bg_source) document.getElementById('bg-select').value = item.bg_source;
             if (item.bgm_source) document.getElementById('bgm-select').value = item.bgm_source;
+            
+            // On/Off 토글 복원
+            weatherToggle.checked = (item.show_weather !== false);
+            wifiToggle.checked = (item.show_wifi !== false);
           }
         } catch(e) {}
       }
@@ -1078,6 +1143,8 @@
               sub_message: msg || '편안하고 성공적인 시간 되시기를 바랍니다.',
               bg_source: bg,
               bgm_source: bgm,
+              show_weather: weatherToggle.checked,
+              show_wifi: wifiToggle.checked,
               updated_at: new Date().toISOString()
             })
           });
