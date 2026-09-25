@@ -220,7 +220,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 16px;
+      gap: 14px;
       background: rgba(18, 20, 26, 0.65);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
@@ -323,6 +323,107 @@
       opacity: 0.45;
       transition: background-color 0.4s ease, opacity 0.4s ease;
       pointer-events: none;
+    }
+
+    /* ─── 스마트폰 캐스트/에어플레이 안내 모달 팝업 ─── */
+    #cast-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: rgba(8, 9, 12, 0.78);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    #cast-modal.show {
+      display: flex;
+      opacity: 1;
+    }
+    .cast-dialog {
+      background: #15171e;
+      border: 1px solid rgba(201, 169, 110, 0.45);
+      border-radius: 24px;
+      padding: 42px 48px;
+      max-width: 680px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
+      position: relative;
+    }
+    .cast-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem;
+      color: #dfcfb2;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .cast-subtitle {
+      font-size: 0.95rem;
+      color: #9ba1b0;
+      letter-spacing: 0.5px;
+      margin-bottom: 30px;
+    }
+    .cast-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 32px;
+      text-align: left;
+    }
+    .cast-col {
+      background: #1c1e27;
+      border: 1px solid #2e323e;
+      border-radius: 14px;
+      padding: 20px;
+    }
+    .cast-col-title {
+      font-size: 1.05rem;
+      color: #ffffff;
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cast-col-title span.tag {
+      font-size: 0.72rem;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(201, 169, 110, 0.15);
+      color: #dfcfb2;
+      border: 1px solid rgba(201, 169, 110, 0.35);
+    }
+    .cast-step {
+      font-size: 0.85rem;
+      color: #c4c8d3;
+      line-height: 1.6;
+      margin-bottom: 6px;
+    }
+    .cast-step b { color: #dfcfb2; font-weight: 600; }
+    .btn-modal-close {
+      background: #c9a96e;
+      color: #0b0c0e;
+      border: none;
+      padding: 12px 36px;
+      border-radius: 30px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    .btn-modal-close:hover, .btn-modal-close:focus {
+      background: #e5c382;
+      transform: scale(1.04);
+      box-shadow: 0 4px 18px rgba(201, 169, 110, 0.4);
     }
 
     /* 2. 관리자 화면 */
@@ -498,7 +599,7 @@
       background: rgba(201, 169, 110, 0.15);
       border: 1px solid rgba(201, 169, 110, 0.4);
       color: #dfcfb2;
-      padding: 7px 12px;
+      padding: 8px 12px;
       border-radius: 8px;
       font-size: 0.8rem;
       cursor: pointer;
@@ -606,6 +707,12 @@
           <svg viewBox="0 0 24 24"><path d="M14.752 9.697c-.36-.048-1.543-.134-2.618.322-1.348.574-2.22 1.547-2.316 2.585-.102 1.106.669 1.94 1.83 1.986 1.48.06 2.87-.732 3.104-1.782.02-.09.027-.183.024-.275a2.53 2.53 0 0 0-.024-.836zm-3.08 3.733c-.563-.035-.865-.367-.822-.84.049-.533.565-1.127 1.341-1.503.74-.36 1.637-.417 2.023-.393-.162 1.41-1.353 2.662-2.542 2.736zm10.744-2.023c-.347-.282-1.89-1.285-4.22-1.31-2.45-.027-4.996 1.125-6.73 3.064-1.548 1.732-2.185 3.864-1.745 5.845.42 1.888 1.848 3.208 3.722 3.435 2.557.31 5.347-.946 7.027-3.18 1.418-1.886 1.996-4.148 1.614-6.223a6.83 6.83 0 0 0-.668-1.631zm-6.208 8.01c-1.378 1.833-3.66 2.863-5.748 2.61-1.534-.186-2.7-1.266-3.044-2.813-.36-1.623.16-3.367 1.425-4.783 1.42-1.59 3.5-2.534 5.507-2.512 1.91.02 3.17.842 3.45 1.07.313 1.697-.156 4.542-1.59 6.428zM9.416 9.475C6.18 6.57 3.03 7.828 2.378 8.163c-.22.113-.31.378-.204.602.106.224.37.318.595.213.062-.03 2.664-1.183 5.467 1.127.202.167.502.14.67-.063.166-.202.14-.502-.062-.67-.328-.27-.674-.536-1.042-.782.72-.08 1.464-.09 2.22-.016.26.026.495-.164.52-.426a.434.434 0 0 0-.42-.475c-.244-.02-.486-.024-.726-.016zm-5.068 5.75c.197.168.495.14.664-.056.168-.198.14-.495-.056-.665C3.39 13.176 2.057 11.23 2.01 8.92c-.004-.262-.22-.47-.482-.465-.262.004-.47.22-.465.482.055 2.64 1.585 4.86 3.285 6.288z"/></svg>
           <span>Disney+</span>
         </a>
+
+        <!-- 4번째 신규 추가: 스마트폰 무선 화면 전송(AirPlay/Cast) 안내 버튼 -->
+        <button type="button" class="ott-btn" id="cast-trigger-btn" onclick="openCastModal()">
+          <svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zm-10-7h9v6h-9z"/></svg>
+          <span>✦ Cast / AirPlay</span>
+        </button>
       </div>
 
       <div class="footer-bar">EXCLUSIVELY RESERVED FOR YOUR SUCCESS</div>
@@ -617,6 +724,38 @@
         <div class="wifi-tag">Guest Wi-Fi</div>
         <div class="wifi-name" id="wifi-name-display">La_Colonne_VIP</div>
         <div class="wifi-sub">스캔 시 자동 연결</div>
+      </div>
+    </div>
+
+    <!-- 미러링 안내 팝업 모달 -->
+    <div id="cast-modal" onclick="closeCastModal(event)">
+      <div class="cast-dialog" onclick="event.stopPropagation()">
+        <div class="cast-title">Phone Mirroring & Cast</div>
+        <div class="cast-subtitle">개인 스마트폰의 영상과 프레젠테이션을 TV 화면으로 감상하세요.</div>
+        
+        <div class="cast-grid">
+          <div class="cast-col">
+            <div class="cast-col-title">
+              <span>Apple iPhone / iPad</span>
+              <span class="tag">AirPlay</span>
+            </div>
+            <div class="cast-step">1. <b>Guest Wi-Fi</b>에 먼저 연결합니다.</div>
+            <div class="cast-step">2. 제어센터를 내려 <b>[화면 미러링]</b>을 터치합니다.</div>
+            <div class="cast-step">3. 목록에서 <b>'La Colonne'</b>를 선택하세요.</div>
+          </div>
+
+          <div class="cast-col">
+            <div class="cast-col-title">
+              <span>Android / OTT Apps</span>
+              <span class="tag">Chromecast</span>
+            </div>
+            <div class="cast-step">1. <b>Guest Wi-Fi</b>에 연결합니다.</div>
+            <div class="cast-step">2. 티빙, 웨이브, 유튜브 등 앱 상단의 <b>[전송 아이콘 ⛶]</b> 터치</div>
+            <div class="cast-step">3. 갤러리 영상은 <b>[Smart View]</b>로 연결됩니다.</div>
+          </div>
+        </div>
+
+        <button type="button" class="btn-modal-close" onclick="closeCastModal()">확인 (닫기)</button>
       </div>
     </div>
 
@@ -815,7 +954,7 @@
       <div id="sched-log-box"></div>
     </div>
 
-    <!-- 카드 3: 예약 대기열 (원클릭 조기 입장 + 수정 + 삭제 완비) -->
+    <!-- 카드 3: 예약 대기열 -->
     <div class="admin-card">
       <div class="admin-title">3. 등록된 VIP 예약 대기열 (진행/예정 일정만 표시)</div>
       <div id="schedule-list">
@@ -867,6 +1006,7 @@
       const weatherPill = document.getElementById('weather-pill');
       const wifiDock = document.getElementById('wifi-dock');
       const ottDock = document.getElementById('ott-dock');
+      const castModal = document.getElementById('cast-modal');
       
       const vidA = document.getElementById('bg-video-a');
       const vidB = document.getElementById('bg-video-b');
@@ -890,7 +1030,7 @@
           ottDock.classList.add('active');
           clearTimeout(ottTimer);
           ottTimer = setTimeout(() => {
-            if (!ottDock.contains(document.activeElement)) {
+            if (!ottDock.contains(document.activeElement) && (!castModal || !castModal.classList.contains('show'))) {
               ottDock.classList.remove('active');
             }
           }, 8000);
@@ -899,6 +1039,29 @@
       window.addEventListener('keydown', wakeOttDock);
       window.addEventListener('mousemove', wakeOttDock);
       window.addEventListener('touchstart', wakeOttDock);
+
+      // ─── 캐스트/에어플레이 모달 제어 ───
+      window.openCastModal = function() {
+        castModal.classList.add('show');
+        const closeBtn = castModal.querySelector('.btn-modal-close');
+        if (closeBtn) closeBtn.focus();
+      };
+
+      window.closeCastModal = function(e) {
+        if (e && e.target !== castModal && !e.target.classList.contains('btn-modal-close')) return;
+        castModal.classList.remove('show');
+        const triggerBtn = document.getElementById('cast-trigger-btn');
+        if (triggerBtn) triggerBtn.focus();
+      };
+
+      // 리모컨 Back / ESC 키 누르면 모달 닫기
+      window.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' || e.key === 'GoBack' || e.keyCode === 27 || e.keyCode === 10009 || e.keyCode === 4) {
+          if (castModal && castModal.classList.contains('show')) {
+            castModal.classList.remove('show');
+          }
+        }
+      });
 
       // (1) 실시간 시계 & 새벽 04:00 자동 새로고침
       let lastReloadDate = '';
@@ -1180,7 +1343,7 @@
             }
           }
 
-          // 2. 진행 중인 예약이 없을 때: 기본 상시 화면(welcome_screen) 또는 빈 값(Guest 기본값) 표출
+          // 2. 진행 중인 예약이 없을 때: 기본 상시 화면 또는 Guest 기본값 표출
           const defRes = await fetch(cleanUrl + '/rest/v1/welcome_screen?select=*&id=eq.1', {
             headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
           });
@@ -1319,7 +1482,6 @@
         } catch(e) {}
       }
 
-      // 1번 카드: 상시 즉시 표출 제어
       document.getElementById('save-btn').addEventListener('click', async function() {
         const rawName = document.getElementById('name-input').value.trim();
         const nameInput = rawName || 'Guest';
@@ -1410,7 +1572,6 @@
         }
       });
 
-      // 2. VIP 일정 스케줄 예약 등록 / 수정
       let editingScheduleId = null;
 
       const schedPrefixToggle = document.getElementById('sched-prefix-toggle');
