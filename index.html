@@ -227,7 +227,7 @@
     #admin-section {
       display: none;
       width: 92%;
-      max-width: 520px;
+      max-width: 540px;
       margin: 30px auto 90px auto;
     }
     .admin-card {
@@ -324,7 +324,8 @@
     }
     button.btn-primary:active { opacity: 0.8; }
 
-    .schedule-item {
+    /* 리스트 및 히스토리 아이템 */
+    .schedule-item, .history-item {
       background: #1f2128;
       border: 1px solid #2e323e;
       border-radius: 12px;
@@ -333,16 +334,18 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 12px;
     }
-    .schedule-time {
+    .schedule-time, .history-time {
       font-size: 0.8rem;
       color: #c9a96e;
       letter-spacing: 0.5px;
       margin-bottom: 4px;
       font-weight: 600;
     }
-    .schedule-name { font-size: 1.05rem; font-weight: 600; color: #fff; }
-    .schedule-msg { font-size: 0.8rem; color: #9ca3af; margin-top: 3px; }
+    .schedule-name, .history-name { font-size: 1.05rem; font-weight: 600; color: #fff; }
+    .schedule-msg, .history-msg { font-size: 0.8rem; color: #9ca3af; margin-top: 3px; }
+    
     .btn-delete {
       background: rgba(239, 68, 68, 0.15);
       border: 1px solid rgba(239, 68, 68, 0.35);
@@ -351,6 +354,28 @@
       border-radius: 8px;
       font-size: 0.8rem;
       cursor: pointer;
+      flex-shrink: 0;
+    }
+    .btn-reuse {
+      background: rgba(201, 169, 110, 0.15);
+      border: 1px solid rgba(201, 169, 110, 0.4);
+      color: #dfcfb2;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .btn-reuse:hover { background: #c9a96e; color: #0b0c0e; font-weight: 600; }
+
+    .tag-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #2a2e3d;
+      color: #93c5fd;
+      margin-bottom: 4px;
     }
 
     #log-box, #sched-log-box {
@@ -501,7 +526,7 @@
       <div id="log-box"></div>
     </div>
 
-    <!-- 카드 2: VIP 일정 스케줄 예약 등록 (경칭 및 '님' 토글 추가 완료) -->
+    <!-- 카드 2: VIP 일정 스케줄 예약 등록 -->
     <div class="admin-card">
       <div class="admin-title">2. VIP 예약 일정 추가 (지정 시각 자동 표출)</div>
 
@@ -516,7 +541,6 @@
         </div>
       </div>
 
-      <!-- 스케줄용 앞자리 경칭 토글 -->
       <div class="toggle-row">
         <div class="toggle-label">
           <span>앞자리 경칭 사용 (Mr., Dr. 등)</span>
@@ -545,7 +569,6 @@
         <input type="text" id="sched-name" placeholder="예: Julian Vance, 김대표, 삼정회계법인">
       </div>
 
-      <!-- 스케줄용 '님' 토글 -->
       <div class="toggle-row">
         <div class="toggle-label">
           <span>이름 뒤 '님' 표기</span>
@@ -583,11 +606,23 @@
 
     <!-- 카드 3: 예약 리스트 확인 및 관리 -->
     <div class="admin-card">
-      <div class="admin-title">3. 등록된 VIP 예약 목록</div>
+      <div class="admin-title">3. 등록된 VIP 예약 대기열</div>
       <div id="schedule-list">
         <div style="color: #666; font-size: 0.9rem; text-align: center; padding: 20px 0;">등록된 예약이 없습니다.</div>
       </div>
     </div>
+
+    <!-- 카드 4: VIP 방문 히스토리 아카이브 -->
+    <div class="admin-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+        <div class="admin-title" style="margin-bottom: 0;">4. VIP 히스토리 아카이브</div>
+        <button type="button" onclick="loadHistory()" style="background: none; border: 1px solid #444; color: #aaa; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;">새로고침</button>
+      </div>
+      <div id="history-list">
+        <div style="color: #666; font-size: 0.9rem; text-align: center; padding: 20px 0;">히스토리가 비어 있습니다.</div>
+      </div>
+    </div>
+
   </div>
 
   <script>
@@ -774,7 +809,7 @@
       // 2. 모바일 관리자 모드
       document.getElementById('admin-section').style.display = 'block';
 
-      // (1) 카드 1 로직: 즉시 표출 설정
+      // (1) 카드 1: 즉시 표출 설정
       const prefixToggle = document.getElementById('prefix-toggle');
       const prefixSelectBox = document.getElementById('prefix-select-box');
       const prefixSelect = document.getElementById('prefix-select');
@@ -811,6 +846,31 @@
       }
       loadInitial();
 
+      // 히스토리 자동 기록 보조 함수
+      async function recordHistory(eventType, prefix, name, suffix, msg, bg, bgm, visitDate) {
+        try {
+          await fetch(cleanUrl + '/rest/v1/welcome_history', {
+            method: 'POST',
+            headers: {
+              'apikey': cleanKey,
+              'Authorization': 'Bearer ' + cleanKey,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              event_type: eventType,
+              visit_date: visitDate || new Date().toISOString(),
+              prefix: prefix || '',
+              guest_name: name,
+              suffix: suffix || '',
+              sub_message: msg || '',
+              bg_source: bg,
+              bgm_source: bgm
+            })
+          });
+          loadHistory(); // 저장 후 히스토리 즉시 갱신
+        } catch(e) {}
+      }
+
       document.getElementById('save-btn').addEventListener('click', async function() {
         const nameInput = document.getElementById('name-input').value.trim();
         const msg = document.getElementById('msg-input').value.trim();
@@ -818,6 +878,9 @@
         const bgm = document.getElementById('bgm-select').value;
 
         if (!nameInput) return alert('예약자 본명 또는 회사명을 입력해 주세요.');
+
+        const prefixVal = prefixToggle.checked ? prefixSelect.value : '';
+        const suffixVal = suffixToggle.checked ? '님' : '';
 
         const logBox = document.getElementById('log-box');
         logBox.style.display = 'block';
@@ -835,9 +898,9 @@
             },
             body: JSON.stringify({
               id: 1,
-              prefix: prefixToggle.checked ? prefixSelect.value : '',
+              prefix: prefixVal,
               guest_name: nameInput,
-              suffix: suffixToggle.checked ? '님' : '',
+              suffix: suffixVal,
               sub_message: msg || '편안하고 성공적인 시간 되시기를 바랍니다.',
               bg_source: bg,
               bgm_source: bgm,
@@ -848,6 +911,8 @@
           if (res.ok) {
             logBox.style.color = '#4ade80';
             logBox.innerText = '✓ TV 화면에 즉시 반영되었습니다!';
+            // 히스토리에 자동 누적
+            recordHistory('즉시 반영', prefixVal, nameInput, suffixVal, msg, bg, bgm);
           } else {
             logBox.style.color = '#f87171';
             logBox.innerText = '저장 실패';
@@ -858,7 +923,7 @@
         }
       });
 
-      // (2) 카드 2 & 3 로직: VIP 예약 스케줄 (경칭/님 토글 제어)
+      // (2) 카드 2: VIP 일정 스케줄 등록
       const schedPrefixToggle = document.getElementById('sched-prefix-toggle');
       const schedPrefixSelectBox = document.getElementById('sched-prefix-select-box');
       const schedPrefixSelect = document.getElementById('sched-prefix-select');
@@ -959,6 +1024,9 @@
           if (res.ok) {
             logBox.style.color = '#4ade80';
             logBox.innerText = '✓ 예약 스케줄이 성공적으로 추가되었습니다!';
+            // 히스토리에 예약으로 누적 기록
+            recordHistory('예약 일정', prefixVal, nameVal, suffixVal, msgVal, bgVal, bgmVal, new Date(startVal).toISOString());
+
             document.getElementById('sched-name').value = '';
             schedPrefixToggle.checked = false;
             schedPrefixSelectBox.style.display = 'none';
@@ -975,7 +1043,7 @@
       });
 
       window.deleteSchedule = async function(id) {
-        if (!confirm('이 예약 일정을 삭제하시겠습니까?')) return;
+        if (!confirm('이 예약 일정을 삭제하시겠습니까? (히스토리 아카이브에는 안전하게 보존됩니다)')) return;
         try {
           const res = await fetch(cleanUrl + '/rest/v1/welcome_schedules?id=eq.' + id, {
             method: 'DELETE',
@@ -987,6 +1055,65 @@
         } catch(e) {
           alert('삭제 중 오류가 발생했습니다.');
         }
+      };
+
+      // (3) 카드 4: VIP 히스토리 목록 불러오기 & 원클릭 재사용
+      window.loadHistory = async function() {
+        const histContainer = document.getElementById('history-list');
+        try {
+          const res = await fetch(cleanUrl + '/rest/v1/welcome_history?select=*&order=visit_date.desc&limit=20', {
+            headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+          });
+          if (!res.ok) return;
+          const items = await res.json();
+          if (!items || items.length === 0) {
+            histContainer.innerHTML = '<div style="color: #666; font-size: 0.9rem; text-align: center; padding: 20px 0;">히스토리가 비어 있습니다.</div>';
+            return;
+          }
+
+          let html = '';
+          items.forEach(h => {
+            const vDate = new Date(h.visit_date);
+            const dateStr = `${vDate.getFullYear()}.${vDate.getMonth()+1}.${vDate.getDate()} (${vDate.toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit', hour12:false})})`;
+            const itemDataEscaped = encodeURIComponent(JSON.stringify(h));
+
+            html += `
+              <div class="history-item">
+                <div>
+                  <span class="tag-badge">${h.event_type || '방문'}</span>
+                  <div class="history-time">${dateStr}</div>
+                  <div class="history-name">${h.prefix ? h.prefix + ' ' : ''}${h.guest_name}${h.suffix ? ' ' + h.suffix : ''}</div>
+                  <div class="history-msg">${h.sub_message || '-'}</div>
+                </div>
+                <button class="btn-reuse" onclick="applyHistory('${itemDataEscaped}')">불러오기</button>
+              </div>
+            `;
+          });
+          histContainer.innerHTML = html;
+        } catch(e) {}
+      };
+      loadHistory();
+
+      // 히스토리 항목 클릭 시 1번 폼에 쏙 채워주기
+      window.applyHistory = function(encodedData) {
+        const data = JSON.parse(decodeURIComponent(encodedData));
+        if (data.prefix) {
+          prefixToggle.checked = true;
+          prefixSelectBox.style.display = 'block';
+          prefixSelect.value = data.prefix;
+        } else {
+          prefixToggle.checked = false;
+          prefixSelectBox.style.display = 'none';
+        }
+
+        document.getElementById('name-input').value = data.guest_name || '';
+        suffixToggle.checked = (data.suffix === '님');
+        document.getElementById('msg-input').value = data.sub_message || '';
+        if (data.bg_source) document.getElementById('bg-select').value = data.bg_source;
+        if (data.bgm_source) document.getElementById('bgm-select').value = data.bgm_source;
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        alert(`[${data.guest_name}] 님의 기존 방문 설정이 상단 폼에 채워졌습니다. 확인 후 [TV 화면에 즉시 반영]을 누르시면 됩니다.`);
       };
     }
   </script>
