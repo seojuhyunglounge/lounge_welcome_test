@@ -253,7 +253,7 @@
     .ott-btn:hover, .ott-btn:focus {
       background: #c9a96e;
       color: #0b0c0e;
-      transform: translateY(-2px scale(1.04));
+      transform: translateY(-2px) scale(1.04);
       box-shadow: 0 6px 20px rgba(201, 169, 110, 0.4);
       font-weight: 700;
     }
@@ -473,7 +473,6 @@
       margin-bottom: 4px;
     }
 
-    /* 히스토리 페이지네이션 컨트롤러 */
     .pagination-bar {
       display: flex;
       justify-content: space-between;
@@ -551,8 +550,9 @@
           <span>Netflix</span>
         </a>
 
+        <!-- 수정된 정통 Disney+ 아치 및 로고 실루엣 아이콘 -->
         <a href="disneyplus://" class="ott-btn" onclick="pauseBgmForApp()">
-          <svg viewBox="0 0 24 24"><path d="M14.752 9.697c-.36-.048-1.543-.134-2.618.322-1.348.574-2.22 1.547-2.316 2.585-.102 1.106.669 1.94 1.83 1.986 1.48.06 2.87-.732 3.104-1.782.02-.09.027-.183.024-.275a2.53 2.53 0 0 0-.024-.836zm-3.08 3.733c-.563-.035-.865-.367-.822-.84.049-.533.565-1.127 1.341-1.503.74-.36 1.637-.417 2.023-.393-.162 1.41-1.353 2.662-2.542 2.736zm10.744-2.023c-.347-.282-1.89-1.285-4.22-1.31-2.45-.027-4.996 1.125-6.73 3.064-1.548 1.732-2.185 3.864-1.745 5.845.42 1.888 1.848 3.208 3.722 3.435 2.557.31 5.347-.946 7.027-3.18 1.418-1.886 1.996-4.148 1.614-6.223a6.83 6.83 0 0 0-.668-1.631zm-6.208 8.01c-1.378 1.833-3.66 2.863-5.748 2.61-1.534-.186-2.7-1.266-3.044-2.813-.36-1.623.16-3.367 1.425-4.783 1.42-1.59 3.5-2.534 5.507-2.512 1.91.02 3.17.842 3.45 1.07.313 1.697-.156 4.542-1.59 6.428zM9.416 9.475C6.18 6.57 3.03 7.828 2.378 8.163c-.22.113-.31.378-.204.602.106.224.37.318.595.213.062-.03 2.664-1.183 5.467 1.127.202.167.502.14.67-.063.166-.202.14-.502-.062-.67-.328-.27-.674-.536-1.042-.782.72-.08 1.464-.09 2.22-.016.26.026.495-.164.52-.426a.434.434 0 0 0-.42-.475c-.244-.02-.486-.024-.726-.016zm-5.068 5.75c.197.168.495.14.664-.056.168-.198.14-.495-.056-.665C3.39 13.176 2.057 11.23 2.01 8.92c-.004-.262-.22-.47-.482-.465-.262.004-.47.22-.465.482.055 2.64 1.585 4.86 3.285 6.288z"/></svg><svg viewBox="0 0 24 24"><path d="M14.752 9.697c-.36-.048-1.543-.134-2.618.322-1.348.574-2.22 1.547-2.316 2.585-.102 1.106.669 1.94 1.83 1.986 1.48.06 2.87-.732 3.104-1.782.02-.09.027-.183.024-.275a2.53 2.53 0 0 0-.024-.836zm-3.08 3.733c-.563-.035-.865-.367-.822-.84.049-.533.565-1.127 1.341-1.503.74-.36 1.637-.417 2.023-.393-.162 1.41-1.353 2.662-2.542 2.736zm10.744-2.023c-.347-.282-1.89-1.285-4.22-1.31-2.45-.027-4.996 1.125-6.73 3.064-1.548 1.732-2.185 3.864-1.745 5.845.42 1.888 1.848 3.208 3.722 3.435 2.557.31 5.347-.946 7.027-3.18 1.418-1.886 1.996-4.148 1.614-6.223a6.83 6.83 0 0 0-.668-1.631zm-6.208 8.01c-1.378 1.833-3.66 2.863-5.748 2.61-1.534-.186-2.7-1.266-3.044-2.813-.36-1.623.16-3.367 1.425-4.783 1.42-1.59 3.5-2.534 5.507-2.512 1.91.02 3.17.842 3.45 1.07.313 1.697-.156 4.542-1.59 6.428zM9.416 9.475C6.18 6.57 3.03 7.828 2.378 8.163c-.22.113-.31.378-.204.602.106.224.37.318.595.213.062-.03 2.664-1.183 5.467 1.127.202.167.502.14.67-.063.166-.202.14-.502-.062-.67-.328-.27-.674-.536-1.042-.782.72-.08 1.464-.09 2.22-.016.26.026.495-.164.52-.426a.434.434 0 0 0-.42-.475c-.244-.02-.486-.024-.726-.016zm-5.068 5.75c.197.168.495.14.664-.056.168-.198.14-.495-.056-.665C3.39 13.176 2.057 11.23 2.01 8.92c-.004-.262-.22-.47-.482-.465-.262.004-.47.22-.465.482.055 2.64 1.585 4.86 3.285 6.288z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M14.752 9.697c-.36-.048-1.543-.134-2.618.322-1.348.574-2.22 1.547-2.316 2.585-.102 1.106.669 1.94 1.83 1.986 1.48.06 2.87-.732 3.104-1.782.02-.09.027-.183.024-.275a2.53 2.53 0 0 0-.024-.836zm-3.08 3.733c-.563-.035-.865-.367-.822-.84.049-.533.565-1.127 1.341-1.503.74-.36 1.637-.417 2.023-.393-.162 1.41-1.353 2.662-2.542 2.736zm10.744-2.023c-.347-.282-1.89-1.285-4.22-1.31-2.45-.027-4.996 1.125-6.73 3.064-1.548 1.732-2.185 3.864-1.745 5.845.42 1.888 1.848 3.208 3.722 3.435 2.557.31 5.347-.946 7.027-3.18 1.418-1.886 1.996-4.148 1.614-6.223a6.83 6.83 0 0 0-.668-1.631zm-6.208 8.01c-1.378 1.833-3.66 2.863-5.748 2.61-1.534-.186-2.7-1.266-3.044-2.813-.36-1.623.16-3.367 1.425-4.783 1.42-1.59 3.5-2.534 5.507-2.512 1.91.02 3.17.842 3.45 1.07.313 1.697-.156 4.542-1.59 6.428zM9.416 9.475C6.18 6.57 3.03 7.828 2.378 8.163c-.22.113-.31.378-.204.602.106.224.37.318.595.213.062-.03 2.664-1.183 5.467 1.127.202.167.502.14.67-.063.166-.202.14-.502-.062-.67-.328-.27-.674-.536-1.042-.782.72-.08 1.464-.09 2.22-.016.26.026.495-.164.52-.426a.434.434 0 0 0-.42-.475c-.244-.02-.486-.024-.726-.016zm-5.068 5.75c.197.168.495.14.664-.056.168-.198.14-.495-.056-.665C3.39 13.176 2.057 11.23 2.01 8.92c-.004-.262-.22-.47-.482-.465-.262.004-.47.22-.465.482.055 2.64 1.585 4.86 3.285 6.288z"/></svg>
           <span>Disney+</span>
         </a>
       </div>
@@ -560,7 +560,6 @@
       <div class="footer-bar">EXCLUSIVELY RESERVED FOR YOUR SUCCESS</div>
     </div>
 
-    <!-- 우측 하단 Wi-Fi QR 코드 독 -->
     <div id="wifi-dock">
       <img id="wifi-qr-img" alt="Wi-Fi QR" src="">
       <div class="wifi-text-wrap">
@@ -570,7 +569,6 @@
       </div>
     </div>
 
-    <!-- 좌측 하단 관리자 전용 미니멀 LED 상태 도트 -->
     <div id="tv-status-dot" title="System Status Indicator"></div>
     <audio id="bgm-player" loop preload="auto"></audio>
   </div>
@@ -581,7 +579,7 @@
       <a href="?view=tv" target="_blank" style="color: #c9a96e; font-size: 0.85rem; text-decoration: none;">📺 TV 화면 새 창 열기 ↗</a>
     </div>
 
-    <!-- 섹션 0: 디스플레이 공통 환경설정 (즉시 단독 토글) -->
+    <!-- 섹션 0: 디스플레이 공통 환경설정 -->
     <div class="admin-card" style="padding: 20px 26px; border-color: rgba(201, 169, 110, 0.4);">
       <div class="admin-title" style="font-size: 1.1rem; margin-bottom: 14px;">⚙️ 라운지 디스플레이 공통 설정</div>
       
@@ -762,11 +760,11 @@
       <div id="sched-log-box"></div>
     </div>
 
-    <!-- 카드 3: 예약 대기열 (종료 시각 지난 것은 자동 숨김 처리) -->
+    <!-- 카드 3: 예약 대기열 -->
     <div class="admin-card">
       <div class="admin-title">3. 등록된 VIP 예약 대기열 (진행/예정 일정만 표시)</div>
       <div id="schedule-list">
-        <div style="color: #666; font-size: 0.9rem; text-align: center; padding: 20px 0;">등록된 예약이 없습니다.</div>
+        <div style="color: #666; font-size: 0.9rem; text-align: center; padding: 20px 0;">현재 대기 중인 미래 예약 일정이 없습니다.</div>
       </div>
     </div>
 
@@ -781,7 +779,6 @@
         <div style="color: #666; font-size: 0.9rem; text-align: center; padding: 20px 0;">히스토리가 비어 있습니다.</div>
       </div>
 
-      <!-- 페이징 컨트롤 바 -->
       <div class="pagination-bar" id="history-pagination" style="display: none;">
         <button class="page-btn" id="hist-prev-btn" onclick="changeHistPage(-1)">← 이전 5개</button>
         <span class="page-indicator" id="hist-page-num">1 / 1</span>
@@ -805,9 +802,7 @@
     }
 
     if (isTV) {
-      // ─────────────────────────────────────────────
       // 1. TV 디스플레이 모드
-      // ─────────────────────────────────────────────
       const tvSection = document.getElementById('tv-section');
       const bgVideo = document.getElementById('bg-video');
       const videoOverlay = document.getElementById('video-overlay');
@@ -828,7 +823,6 @@
         if (statusDot) statusDot.style.backgroundColor = color;
       }
 
-      // 스마트 OTT 독 조작 감지
       let ottTimer = null;
       function wakeOttDock() {
         if (ottDock) {
@@ -845,7 +839,6 @@
       window.addEventListener('mousemove', wakeOttDock);
       window.addEventListener('touchstart', wakeOttDock);
 
-      // (1) 실시간 시계 & 새벽 04:00 자동 새로고침
       let lastReloadDate = '';
       function updateClock() {
         const d = new Date();
@@ -864,7 +857,6 @@
       setInterval(updateClock, 1000);
       updateClock();
 
-      // (2) 부산 실시간 날씨 위젯
       async function updateWeather() {
         try {
           const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=35.1796&longitude=129.0756&current_weather=true');
@@ -891,7 +883,6 @@
       updateWeather();
       setInterval(updateWeather, 1800000);
 
-      // (3) 우측 하단 Wi-Fi QR 코드
       const WIFI_SSID = 'La_Colonne_VIP';
       const WIFI_PW = 'welcome2026';
       function initWifiQR() {
@@ -989,7 +980,6 @@
         }
       }
 
-      // 전역 디스플레이 설정(날씨, Wi-Fi) 독립 동기화
       async function syncGlobalSettings() {
         try {
           const res = await fetch(cleanUrl + '/rest/v1/lounge_settings?select=*&id=eq.1', {
@@ -1006,12 +996,10 @@
         } catch(e) {}
       }
 
-      // 메인 TV 데이터 동기화
       async function syncTV() {
         try {
           const nowISO = new Date().toISOString();
 
-          // 1. 현재 진행 중인 예약 확인
           const schedRes = await fetch(cleanUrl + '/rest/v1/welcome_schedules?start_time=lte.' + nowISO + '&end_time=gte.' + nowISO + '&order=start_time.asc&limit=1', {
             headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
           });
@@ -1033,7 +1021,6 @@
             }
           }
 
-          // 2. 상시 기본 화면
           const defRes = await fetch(cleanUrl + '/rest/v1/welcome_screen?select=*&id=eq.1', {
             headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
           });
@@ -1061,16 +1048,13 @@
 
       syncGlobalSettings();
       syncTV();
-      setInterval(syncGlobalSettings, 3000); // 3초 주기 환경설정 체크
-      setInterval(syncTV, 2000); // 2초 주기 본문 체크
+      setInterval(syncGlobalSettings, 3000);
+      setInterval(syncTV, 2000);
 
     } else {
-      // ─────────────────────────────────────────────
       // 2. 모바일 관리자 모드
-      // ─────────────────────────────────────────────
       document.getElementById('admin-section').style.display = 'block';
 
-      // (0) 전역 디스플레이 설정 (즉시 독립 저장)
       const globalWeather = document.getElementById('global-weather-toggle');
       const globalWifi = document.getElementById('global-wifi-toggle');
 
@@ -1110,7 +1094,6 @@
       globalWeather.addEventListener('change', () => updateGlobalSetting('show_weather', globalWeather.checked));
       globalWifi.addEventListener('change', () => updateGlobalSetting('show_wifi', globalWifi.checked));
 
-      // (1) 카드 1 로직: 상시 즉시 표출
       const prefixToggle = document.getElementById('prefix-toggle');
       const prefixSelectBox = document.getElementById('prefix-select-box');
       const prefixSelect = document.getElementById('prefix-select');
@@ -1167,7 +1150,7 @@
               bgm_source: bgm
             })
           });
-          loadHistory(1); // 1페이지로 리프레시
+          loadHistory(1);
         } catch(e) {}
       }
 
@@ -1222,7 +1205,6 @@
         }
       });
 
-      // (2) 카드 2: VIP 일정 스케줄 등록
       const schedPrefixToggle = document.getElementById('sched-prefix-toggle');
       const schedPrefixSelectBox = document.getElementById('sched-prefix-select-box');
       const schedPrefixSelect = document.getElementById('sched-prefix-select');
@@ -1245,7 +1227,6 @@
       }
       setDefaultScheduleTimes();
 
-      // (3) 카드 3: 지난 예약 자동 숨김 (종료 시각 >= 현재 시각인 것만 조회)
       async function loadSchedules() {
         const listContainer = document.getElementById('schedule-list');
         try {
@@ -1357,7 +1338,6 @@
         }
       };
 
-      // (4) 카드 4: VIP 히스토리 아카이브 (5개 단위 스마트 페이징)
       let currentHistPage = 1;
       const HIST_PAGE_SIZE = 5;
 
@@ -1368,7 +1348,6 @@
         const offset = (currentHistPage - 1) * HIST_PAGE_SIZE;
 
         try {
-          // 전체 개수 및 5개 슬라이스 동시 요청
           const res = await fetch(`${cleanUrl}/rest/v1/welcome_history?select=*&order=visit_date.desc&limit=${HIST_PAGE_SIZE}&offset=${offset}`, {
             headers: { 
               'apikey': cleanKey, 
@@ -1412,7 +1391,6 @@
           });
           histContainer.innerHTML = html;
 
-          // 페이징 바 제어
           const totalPages = Math.ceil(totalCount / HIST_PAGE_SIZE) || 1;
           paginationBar.style.display = (totalCount > HIST_PAGE_SIZE) ? 'flex' : 'none';
           document.getElementById('hist-page-num').innerText = `${currentHistPage} / ${totalPages}`;
