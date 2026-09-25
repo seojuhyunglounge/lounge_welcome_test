@@ -6,6 +6,7 @@
   <title>La Colonne - Welcome Screen & Lounge Hub</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <!-- Supabase 공식 JS SDK (Realtime 웹소켓 지원) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -917,7 +918,7 @@
 
       <div class="account-box">
         <div style="font-weight: 600; color:#dfcfb2; margin-bottom: 4px;">입금 계좌 안내</div>
-        <div id="account-text">국민은행 123456-04-123456 (예금주: 라콜론)</div>
+        <div id="account-text"></div>
         <button type="button" onclick="copyAccount()" style="margin-top: 8px; background: none; border: 1px solid #555; color: #aaa; padding: 4px 8px; border-radius: 4px; font-size: 0.72rem; cursor: pointer;">계좌번호 복사</button>
       </div>
 
@@ -969,7 +970,7 @@
     const SUPABASE_URL = 'https://jorxmazliodqnxnwctlc.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_GAU-azI_hJvms8k3Nzsyiw_PRH0NG69';
 
-    // 사소한 지적 반영: 계좌 정보 단일화
+    // 계좌 안내 단일 상수
     const ACCOUNT_CONFIG = {
       bank: '국민은행',
       num: '123456-04-123456',
@@ -991,6 +992,7 @@
     const isMemberAdmin = viewParam === 'member_admin';
     const isAdmin = viewParam === 'admin';
 
+    // XSS 방어 인코딩 유틸리티
     function escapeHtml(str) {
       if (!str) return '';
       return String(str)
@@ -1020,22 +1022,21 @@
       }, 2200);
     }
 
-    // ─── 지적 2 반영: 관리자 전용 인증 헤더 헬퍼 ───
-    // 인증된 PIN을 헤더(x-admin-pin)에 담아 Supabase RLS가 검증하도록 함
+    // ─── 토큰 기반 관리자 전용 인증 헤더 ───
     function getAdminHeaders(extraHeaders = {}) {
-      const storedPin = sessionStorage.getItem('la_colonne_admin_pin') || '';
+      const storedToken = sessionStorage.getItem('la_colonne_admin_token') || '';
       return {
         'apikey': cleanKey,
         'Authorization': 'Bearer ' + cleanKey,
-        'x-admin-pin': storedPin,
+        'x-admin-token': storedToken,
         ...extraHeaders
       };
     }
 
-    // ─── 지적 1 반영: Fail-closed 방식의 엄격한 PIN 인증 (백도어 완전 제거) ───
-function requireAdminAuth(onSuccess) {
-      const storedPin = sessionStorage.getItem('la_colonne_admin_pin');
-      if (storedPin) {
+    // ─── Brute-force 방어 및 12시간 세션 토큰 수령 로직 (Fail-closed) ───
+    function requireAdminAuth(onSuccess) {
+      const storedToken = sessionStorage.getItem('la_colonne_admin_token');
+      if (storedToken) {
         onSuccess();
         return;
       }
@@ -1065,8 +1066,8 @@ function requireAdminAuth(onSuccess) {
           if (!res.ok) throw new Error('Auth server error');
           const result = await res.json();
 
-          if (result.success === true) {
-            sessionStorage.setItem('la_colonne_admin_pin', inputVal);
+          if (result.success === true && result.token) {
+            sessionStorage.setItem('la_colonne_admin_token', result.token);
             pinModal.style.display = 'none';
             onSuccess();
           } else {
@@ -1089,7 +1090,7 @@ function requireAdminAuth(onSuccess) {
     }
 
     window.logoutAdmin = function() {
-      sessionStorage.removeItem('la_colonne_admin_pin');
+      sessionStorage.removeItem('la_colonne_admin_token');
       window.location.href = window.location.pathname;
     };
 
@@ -1105,7 +1106,6 @@ function requireAdminAuth(onSuccess) {
       async function loadMembersList() {
         const container = document.getElementById('members-list-container');
         try {
-          // x-admin-pin 헤더를 통해 RLS 통과
           const res = await fetch(`${cleanUrl}/rest/v1/lounge_members?select=*&order=created_at.desc`, {
             headers: getAdminHeaders()
           });
@@ -1244,7 +1244,6 @@ function requireAdminAuth(onSuccess) {
     } else if (isBar) {
       document.getElementById('bar-section').style.display = 'block';
 
-      // 사소한 지적 반영: 계좌 안내 텍스트 단일화 렌더링
       const accountEl = document.getElementById('account-text');
       if (accountEl) {
         accountEl.innerText = `${ACCOUNT_CONFIG.bank} ${ACCOUNT_CONFIG.num} (예금주: ${ACCOUNT_CONFIG.owner})`;
@@ -2121,7 +2120,6 @@ function requireAdminAuth(onSuccess) {
               const encodedGuestName = encodeURIComponent(item.guest_name || '');
               const isNowActive = (nowTime >= (startD.getTime() - 5 * 60 * 1000) && nowTime <= endD.getTime());
 
-              // ─── 지적 3 반영: triggerScheduleNow 인자를 encodeURIComponent로 안전하게 전달 ───
               html += `
                 <div class="schedule-item" style="${isNowActive ? 'border-color: rgba(201,169,110,0.6); background: #1c1a17;' : ''}">
                   <div>
