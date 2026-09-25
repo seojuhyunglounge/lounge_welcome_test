@@ -54,7 +54,7 @@
       background-repeat: no-repeat;
     }
 
-    /* ─── 듀얼 비디오 디졸브 버퍼 ─── */
+    /* 듀얼 비디오 디졸브 버퍼 */
     .bg-video-layer {
       position: fixed;
       top: 0;
@@ -847,9 +847,7 @@
     }
 
     if (isTV) {
-      // ─────────────────────────────────────────────
       // 1. TV 디스플레이 모드
-      // ─────────────────────────────────────────────
       const tvSection = document.getElementById('tv-section');
       const videoOverlay = document.getElementById('video-overlay');
       const statusDot = document.getElementById('tv-status-dot');
@@ -858,7 +856,6 @@
       const wifiDock = document.getElementById('wifi-dock');
       const ottDock = document.getElementById('ott-dock');
       
-      // 듀얼 비디오 버퍼 객체
       const vidA = document.getElementById('bg-video-a');
       const vidB = document.getElementById('bg-video-b');
       [vidA, vidB].forEach(v => {
@@ -874,7 +871,6 @@
         if (statusDot) statusDot.style.backgroundColor = color;
       }
 
-      // 스마트 OTT 독 조작 감지
       let ottTimer = null;
       function wakeOttDock() {
         if (ottDock) {
@@ -891,7 +887,6 @@
       window.addEventListener('mousemove', wakeOttDock);
       window.addEventListener('touchstart', wakeOttDock);
 
-      // (1) 실시간 시계 & 새벽 04:00 자동 새로고침
       let lastReloadDate = '';
       function updateClock() {
         const d = new Date();
@@ -910,7 +905,6 @@
       setInterval(updateClock, 1000);
       updateClock();
 
-      // (2) 부산 실시간 날씨 위젯
       async function updateWeather() {
         try {
           const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=35.1796&longitude=129.0756&current_weather=true');
@@ -937,7 +931,6 @@
       updateWeather();
       setInterval(updateWeather, 1800000);
 
-      // (3) 우측 하단 Wi-Fi QR 코드
       const WIFI_SSID = 'La_Colonne_VIP';
       const WIFI_PW = 'welcome2026';
       function initWifiQR() {
@@ -951,12 +944,9 @@
       let currentDataKey = '';
       let currentBgmUrl = '';
 
-      // ─────────────────────────────────────────────────────────────
-      // 🎬 듀얼 버퍼 무봉제(Seamless) 크로스페이드 비디오 엔진
-      // ─────────────────────────────────────────────────────────────
       let videoPlaylist = [];
       let currentPlaylistIndex = 0;
-      let activeBuffer = 'A'; // 현재 화면에 보이는 비디오 ('A' 또는 'B')
+      let activeBuffer = 'A';
       let transitionFired = false;
 
       function getActiveVideo() { return activeBuffer === 'A' ? vidA : vidB; }
@@ -972,7 +962,6 @@
         currentPlaylistIndex = (currentPlaylistIndex + 1) % videoPlaylist.length;
         const nextSrc = videoPlaylist[currentPlaylistIndex];
 
-        // 단일 영상일 경우 자체 무한 루프
         if (videoPlaylist.length === 1) {
           currentVid.currentTime = 0;
           currentVid.play().catch(console.error);
@@ -980,19 +969,16 @@
           return;
         }
 
-        // 백그라운드 버퍼에 다음 영상 세팅 및 재생 시작
         nextVid.src = nextSrc;
         nextVid.currentTime = 0;
         nextVid.load();
 
         nextVid.play().then(() => {
-          // 크로스페이드 디졸브: 다음 영상 페이드인, 이전 영상 페이드아웃
           nextVid.classList.add('active');
           currentVid.classList.remove('active');
 
           activeBuffer = (activeBuffer === 'A' ? 'B' : 'A');
 
-          // 전환 완료 후(1.2초 뒤) 이전 비디오 정지하여 리소스 절약
           setTimeout(() => {
             currentVid.pause();
             currentVid.removeAttribute('src');
@@ -1006,7 +992,6 @@
       }
 
       function attachVideoMonitor(vid) {
-        // 영상 종료 0.8초 전에 다음 영상으로 디졸브 발동 (블랙아웃 원천 차단)
         vid.ontimeupdate = function() {
           if (videoPlaylist.length > 1 && vid.duration > 0) {
             const timeLeft = vid.duration - vid.currentTime;
@@ -1015,7 +1000,6 @@
             }
           }
         };
-        // 만약 timeupdate를 놓치더라도 영상이 끝나면 즉시 전환
         vid.onended = function() {
           if (videoPlaylist.length > 1 && vid.classList.contains('active')) {
             crossfadeToNext();
@@ -1103,7 +1087,6 @@
           tvSection.style.backgroundImage = 'none';
           videoOverlay.style.display = 'block';
 
-          // 플레이리스트가 기존과 다르면 새 플레이리스트 가동
           const currentPlaylistStr = videoPlaylist.join(',');
           const newPlaylistStr = bgList.join(',');
           if (currentPlaylistStr !== newPlaylistStr) {
@@ -1204,9 +1187,7 @@
       setInterval(syncTV, 2000);
 
     } else {
-      // ─────────────────────────────────────────────
       // 2. 모바일 관리자 모드
-      // ─────────────────────────────────────────────
       document.getElementById('admin-section').style.display = 'block';
 
       const globalWeather = document.getElementById('global-weather-toggle');
@@ -1477,6 +1458,7 @@
       }
       loadSchedules();
 
+      // [수정] 버튼 클릭 시 폼에 기존 데이터 채우기 (sched-name 정상 매핑 완료)
       window.editSchedule = function(encodedData) {
         const item = JSON.parse(decodeURIComponent(encodedData));
         editingScheduleId = item.id;
@@ -1494,7 +1476,8 @@
           schedPrefixSelectBox.style.display = 'none';
         }
 
-        document.getElementById('name-input').value = item.guest_name || '';
+        // 2번 예약 카드 성함 필드에 정확하게 채움
+        document.getElementById('sched-name').value = item.guest_name || '';
         schedSuffixToggle.checked = (item.suffix === '님');
         document.getElementById('sched-msg').value = item.sub_message || '';
         if (item.bg_source) document.getElementById('sched-bg').value = item.bg_source;
