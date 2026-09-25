@@ -153,7 +153,7 @@
       text-shadow: 0 2px 12px rgba(0,0,0,0.85);
     }
 
-    /* ─── 하단 OTT 럭셔리 런처 독 (DOCK) 바 ─── */
+    /* 하단 OTT 럭셔리 런처 독 (DOCK) 바 */
     .bottom-interactive-wrap {
       display: flex;
       flex-direction: column;
@@ -198,7 +198,6 @@
       cursor: pointer;
       outline: none;
     }
-    /* 리모컨 포커스 및 마우스 호버 효과 */
     .ott-btn:hover, .ott-btn:focus {
       background: #c9a96e;
       color: #0b0c0e;
@@ -347,7 +346,6 @@
     <video id="bg-video" autoplay loop muted playsinline preload="auto"></video>
     <div id="video-overlay"></div>
 
-    <!-- 상단 레이어 -->
     <div class="tv-layer top-header-wrap">
       <div class="clock-box">
         <div class="clock-time" id="clock-time">00:00</div>
@@ -359,7 +357,6 @@
       </div>
     </div>
     
-    <!-- 중앙 레이어 -->
     <div class="tv-layer center-box" id="center-box">
       <div class="guest-title-wrap">
         <span class="honorific-prefix" id="guest-prefix"></span>
@@ -369,22 +366,18 @@
       <div class="sub-desc" id="guest-msg">프라이빗 라운지에 오신 것을 환영합니다.</div>
     </div>
 
-    <!-- 하단 레이어: 럭셔리 OTT 런처 바 & 푸터 -->
     <div class="tv-layer bottom-interactive-wrap">
       <div class="ott-dock">
-        <!-- 유튜브 안드로이드 앱 실행 -->
         <a href="vnd.youtube://" class="ott-btn" onclick="pauseBgmForApp()">
           <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
           <span>YouTube</span>
         </a>
 
-        <!-- 넷플릭스 안드로이드 앱 실행 -->
         <a href="nflx://" class="ott-btn" onclick="pauseBgmForApp()">
           <svg viewBox="0 0 24 24"><path d="M5.398 0v24c1.198-.12 2.392-.28 3.585-.48V8.756l5.772 14.512c1.336-.2 2.67-.442 3.998-.718V0h-3.586v15.244L9.396 0H5.398z"/></svg>
           <span>Netflix</span>
         </a>
 
-        <!-- 디즈니 플러스 안드로이드 앱 실행 -->
         <a href="disneyplus://" class="ott-btn" onclick="pauseBgmForApp()">
           <svg viewBox="0 0 24 24"><path d="M11.996 0C5.37 0 0 5.372 0 12c0 6.626 5.37 12 11.996 12C18.628 24 24 18.626 24 12c0-6.628-5.372-12-12.004-12zm-1.042 17.518c-3.136 0-5.678-2.542-5.678-5.678 0-3.138 2.542-5.68 5.678-5.68 1.488 0 2.846.574 3.864 1.512l-1.56 1.56c-.574-.548-1.336-.882-2.304-.882-1.928 0-3.488 1.56-3.488 3.49 0 1.928 1.56 3.488 3.488 3.488 1.636 0 2.686-.884 3.018-2.128h-3.018v-2.12h5.272c.074.37.112.784.112 1.258 0 3.19-2.138 5.668-5.384 5.668z"/></svg>
           <span>Disney+</span>
@@ -456,6 +449,12 @@
         <optgroup label="── 🎬 시네마틱 모션 비디오 ──">
           <option value="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4">🎬 1. 테스트 비디오 (검증용)</option>
           <option value="video1.mp4">🎬 2. 자체 업로드 라운지 영상 (video1.mp4)</option>
+          <option value="video2.mp4">🎬 2. 자체 업로드 라운지 영상 (video2.mp4)</option>
+          <option value="video3.mp4">🎬 2. 자체 업로드 라운지 영상 (video3.mp4)</option>
+          <option value="video4.mp4">🎬 2. 자체 업로드 라운지 영상 (video4.mp4)</option>
+          <option value="video5.mp4">🎬 2. 자체 업로드 라운지 영상 (video5.mp4)</option>
+          <option value="video6.mp4">🎬 2. 자체 업로드 라운지 영상 (video6.mp4)</option>
+          
         </optgroup>
         <optgroup label="── 🖼 하이엔드 인테리어 스틸 ──">
           <option value="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2560&q=85">3. 하이엔드 스톤 라운지</option>
@@ -487,7 +486,6 @@
 
     const isTV = window.location.search.indexOf('view=tv') !== -1;
 
-    // OTT 앱 실행 시 BGM 일시정지
     function pauseBgmForApp() {
       const p = document.getElementById('bgm-player');
       if (p) p.pause();
@@ -545,7 +543,7 @@
       window.addEventListener('touchstart', unlockMedia);
 
       function updateBoard(prefix, name, suffix, msg, bgUrl, bgmUrl) {
-        const newKey = prefix + '|' + name + '|' + suffix + '|' + msg + '|' + bgUrl + '|' + bgmUrl;
+        const newKey = (prefix || '') + '|' + (name || '') + '|' + (suffix || '') + '|' + (msg || '') + '|' + bgUrl + '|' + bgmUrl;
         if (newKey === currentDataKey) return;
         currentDataKey = newKey;
 
@@ -618,6 +616,7 @@
         }
       }
 
+      // 개별 정규화 컬럼 직접 동기화 (split 파싱 제거)
       async function syncTV() {
         try {
           const res = await fetch(cleanUrl + '/rest/v1/welcome_screen?select=*&id=eq.1', {
@@ -631,37 +630,20 @@
           const data = await res.json();
           if (data && data.length > 0) {
             const item = data[0];
-            let rawName = item.guest_name || '';
-            let rawMsg = item.sub_message || '';
-            
-            let prefix = '';
-            let name = rawName;
-            let suffix = '';
-
-            if (rawName.indexOf(':::') !== -1) {
-              const nameParts = rawName.split(':::');
-              prefix = nameParts[0] || '';
-              name = nameParts[1] || '';
-              suffix = nameParts[2] || '';
-            }
-
-            let msgText = rawMsg;
-            let bg = 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4';
-            let bgm = 'jazz1.mp3';
-
-            if (rawMsg.indexOf('|||') !== -1) {
-              const parts = rawMsg.split('|||');
-              msgText = parts[0];
-              bg = parts[1] || bg;
-              bgm = parts[2] || bgm;
-            }
-            updateBoard(prefix, name, suffix, msgText, bg, bgm);
+            updateBoard(
+              item.prefix || '',
+              item.guest_name || 'Welcome',
+              item.suffix || '',
+              item.sub_message || '',
+              item.bg_source || 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+              item.bgm_source || 'jazz1.mp3'
+            );
           }
         } catch(e) {}
       }
 
       syncTV();
-      setInterval(syncTV, 1500);
+      setInterval(syncTV, 2000); // 2초 주기로 더욱 안정적으로 동기화
 
     } else {
       // 2. 모바일 관리자 모드
@@ -676,6 +658,7 @@
         prefixSelectBox.style.display = this.checked ? 'block' : 'none';
       });
 
+      // DB에서 현재 설정값 그대로 로드
       async function loadInitial() {
         try {
           const res = await fetch(cleanUrl + '/rest/v1/welcome_screen?select=*&id=eq.1', {
@@ -688,44 +671,27 @@
           const data = await res.json();
           if (data && data.length > 0) {
             const item = data[0];
-            const rawName = item.guest_name || '';
-            
-            if (rawName.indexOf(':::') !== -1) {
-              const nParts = rawName.split(':::');
-              const pref = nParts[0];
-              document.getElementById('name-input').value = nParts[1] || '';
-              const suff = nParts[2];
 
-              if (pref) {
-                prefixToggle.checked = true;
-                prefixSelectBox.style.display = 'block';
-                prefixSelect.value = pref;
-              } else {
-                prefixToggle.checked = false;
-                prefixSelectBox.style.display = 'none';
-              }
-
-              suffixToggle.checked = (suff === '님');
+            if (item.prefix) {
+              prefixToggle.checked = true;
+              prefixSelectBox.style.display = 'block';
+              prefixSelect.value = item.prefix;
             } else {
-              document.getElementById('name-input').value = rawName;
               prefixToggle.checked = false;
-              suffixToggle.checked = true;
+              prefixSelectBox.style.display = 'none';
             }
 
-            let msg = item.sub_message || '';
-            if (msg.indexOf('|||') !== -1) {
-              const parts = msg.split('|||');
-              document.getElementById('msg-input').value = parts[0];
-              document.getElementById('bg-select').value = parts[1];
-              if (parts[2]) document.getElementById('bgm-select').value = parts[2];
-            } else {
-              document.getElementById('msg-input').value = msg;
-            }
+            document.getElementById('name-input').value = item.guest_name || '';
+            suffixToggle.checked = (item.suffix === '님');
+            document.getElementById('msg-input').value = item.sub_message || '';
+            if (item.bg_source) document.getElementById('bg-select').value = item.bg_source;
+            if (item.bgm_source) document.getElementById('bgm-select').value = item.bgm_source;
           }
         } catch(e) {}
       }
       loadInitial();
 
+      // 개별 컬럼으로 깨끗하게 저장 (JSON 오브젝트 전송)
       document.getElementById('save-btn').addEventListener('click', async function() {
         const nameInput = document.getElementById('name-input').value.trim();
         const msg = document.getElementById('msg-input').value.trim();
@@ -736,10 +702,8 @@
 
         const prefixVal = prefixToggle.checked ? prefixSelect.value : '';
         const suffixVal = suffixToggle.checked ? '님' : '';
-        const combinedName = prefixVal + ':::' + nameInput + ':::' + suffixVal;
 
         log('전송 중...', '#ffd166');
-        const combinedMsg = (msg || '편안하고 성공적인 시간 되시기를 바랍니다.') + '|||' + bg + '|||' + bgm;
 
         try {
           const res = await fetch(cleanUrl + '/rest/v1/welcome_screen', {
@@ -752,8 +716,12 @@
             },
             body: JSON.stringify({
               id: 1,
-              guest_name: combinedName,
-              sub_message: combinedMsg,
+              prefix: prefixVal,
+              guest_name: nameInput,
+              suffix: suffixVal,
+              sub_message: msg || '편안하고 성공적인 시간 되시기를 바랍니다.',
+              bg_source: bg,
+              bgm_source: bgm,
               updated_at: new Date().toISOString()
             })
           });
