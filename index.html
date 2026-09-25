@@ -451,6 +451,8 @@
       cursor: pointer;
       flex-shrink: 0;
     }
+    .btn-delete:hover { background: rgba(239, 68, 68, 0.28); }
+
     .btn-reuse {
       background: rgba(201, 169, 110, 0.15);
       border: 1px solid rgba(201, 169, 110, 0.4);
@@ -462,6 +464,13 @@
       flex-shrink: 0;
     }
     .btn-reuse:hover { background: #c9a96e; color: #0b0c0e; font-weight: 600; }
+
+    .history-btn-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
 
     .tag-badge {
       display: inline-block;
@@ -550,7 +559,6 @@
           <span>Netflix</span>
         </a>
 
-        <!-- 수정된 정통 Disney+ 아치 및 로고 실루엣 아이콘 -->
         <a href="disneyplus://" class="ott-btn" onclick="pauseBgmForApp()">
           <svg viewBox="0 0 24 24"><path d="M14.752 9.697c-.36-.048-1.543-.134-2.618.322-1.348.574-2.22 1.547-2.316 2.585-.102 1.106.669 1.94 1.83 1.986 1.48.06 2.87-.732 3.104-1.782.02-.09.027-.183.024-.275a2.53 2.53 0 0 0-.024-.836zm-3.08 3.733c-.563-.035-.865-.367-.822-.84.049-.533.565-1.127 1.341-1.503.74-.36 1.637-.417 2.023-.393-.162 1.41-1.353 2.662-2.542 2.736zm10.744-2.023c-.347-.282-1.89-1.285-4.22-1.31-2.45-.027-4.996 1.125-6.73 3.064-1.548 1.732-2.185 3.864-1.745 5.845.42 1.888 1.848 3.208 3.722 3.435 2.557.31 5.347-.946 7.027-3.18 1.418-1.886 1.996-4.148 1.614-6.223a6.83 6.83 0 0 0-.668-1.631zm-6.208 8.01c-1.378 1.833-3.66 2.863-5.748 2.61-1.534-.186-2.7-1.266-3.044-2.813-.36-1.623.16-3.367 1.425-4.783 1.42-1.59 3.5-2.534 5.507-2.512 1.91.02 3.17.842 3.45 1.07.313 1.697-.156 4.542-1.59 6.428zM9.416 9.475C6.18 6.57 3.03 7.828 2.378 8.163c-.22.113-.31.378-.204.602.106.224.37.318.595.213.062-.03 2.664-1.183 5.467 1.127.202.167.502.14.67-.063.166-.202.14-.502-.062-.67-.328-.27-.674-.536-1.042-.782.72-.08 1.464-.09 2.22-.016.26.026.495-.164.52-.426a.434.434 0 0 0-.42-.475c-.244-.02-.486-.024-.726-.016zm-5.068 5.75c.197.168.495.14.664-.056.168-.198.14-.495-.056-.665C3.39 13.176 2.057 11.23 2.01 8.92c-.004-.262-.22-.47-.482-.465-.262.004-.47.22-.465.482.055 2.64 1.585 4.86 3.285 6.288z"/></svg>
           <span>Disney+</span>
@@ -767,7 +775,7 @@
       </div>
     </div>
 
-    <!-- 카드 4: VIP 히스토리 아카이브 (5개 단위 페이징) -->
+    <!-- 카드 4: VIP 히스토리 아카이브 (개별 삭제 지원) -->
     <div class="admin-card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
         <div class="admin-title" style="margin-bottom: 0;">4. VIP 히스토리 아카이브</div>
@@ -1337,6 +1345,7 @@
         }
       };
 
+      // ─── VIP 히스토리 아카이브 (개별 삭제 지원) ───
       let currentHistPage = 1;
       const HIST_PAGE_SIZE = 5;
 
@@ -1365,6 +1374,11 @@
 
           const items = await res.json();
           if (!items || items.length === 0) {
+            // 현재 페이지에 아이템이 없고 이전 페이지가 있다면 이전 페이지로 이동
+            if (currentHistPage > 1) {
+              loadHistory(currentHistPage - 1);
+              return;
+            }
             histContainer.innerHTML = '<div style="color: #666; font-size: 0.9rem; text-align: center; padding: 20px 0;">히스토리가 비어 있습니다.</div>';
             paginationBar.style.display = 'none';
             return;
@@ -1384,7 +1398,10 @@
                   <div class="history-name">${h.prefix ? h.prefix + ' ' : ''}${h.guest_name}${h.suffix ? ' ' + h.suffix : ''}</div>
                   <div class="history-msg">${h.sub_message || '-'}</div>
                 </div>
-                <button class="btn-reuse" onclick="applyHistory('${itemDataEscaped}')">불러오기</button>
+                <div class="history-btn-group">
+                  <button class="btn-reuse" onclick="applyHistory('${itemDataEscaped}')">불러오기</button>
+                  <button class="btn-delete" onclick="deleteHistory(${h.id})">삭제</button>
+                </div>
               </div>
             `;
           });
@@ -1403,6 +1420,1495 @@
       window.changeHistPage = function(delta) {
         currentHistPage += delta;
         loadHistory(currentHistPage);
+      };
+
+      // 히스토리 개별 삭제 함수
+      window.deleteHistory = async function(id) {
+        if (!confirm('이 VIP 히스토리 기록을 영구 삭제하시겠습니까?')) return;
+        try {
+          const res = await fetch(`${cleanUrl}/rest/v1/welcome_history?id=eq.${id}`, {
+            method: 'DELETE',
+            headers: { 
+              'apikey': cleanKey, 
+              'Authorization': 'Bearer ' + cleanKey 
+            }
+          });
+          if (res.ok) {
+            loadHistory(currentHistPage);
+          } else {
+            alert('삭제에 실패했습니다.');
+          }
+        } catch(e) {
+          alert('오류가 발생했습니다: ' + e.message);
+        }
+      };
+
+      window.applyHistory = function(encodedData) {
+        const data = JSON.parse(decodeURIComponent(encodedData));
+        if (data.prefix) {
+          prefixToggle.checked = true;
+          prefixSelectBox.style.display = 'block';
+          prefixSelect.value = data.prefix;
+        } else {
+          prefixToggle.checked = false;
+          prefixSelectBox.style.display = 'none';
+        }
+
+        document.getElementById('name-input').value = data.guest_name || '';
+        suffixToggle.checked = (data.suffix === '님');
+        document.getElementById('msg-input').value = data.sub_message || '';
+        if (data.bg_source) document.getElementById('bg-select').value = data.bg_source;
+        if (data.bgm_source) document.getElementById('bgm-select').value = data.bgm_source;
+
+        window.scrollTo({ top: 120, behavior: 'smooth' });
+        alert(`[${data.guest_name}] 님의 기존 방문 설정이 상시 표출 폼에 채워졌습니다. 확인 후 [TV 화면에 즉시 반영]을 누르시면 됩니다.`);
+      };
+    }
+  </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Colonne - Welcome Screen & Lounge Hub</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #0b0c0e;
+      color: #ffffff;
+      font-family: "Pretendard", -apple-system, sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* 번인 방지 픽셀 시프트 */
+    @keyframes pixelShiftTop {
+      0%   { transform: translate(0px, 0px); }
+      25%  { transform: translate(1.5px, -1.5px); }
+      50%  { transform: translate(-1px, 1.5px); }
+      75%  { transform: translate(1.5px, 1px); }
+      100% { transform: translate(0px, 0px); }
+    }
+
+    @keyframes pixelShiftCenter {
+      0%   { transform: translate(0px, -25px); }
+      25%  { transform: translate(-1.5px, -23.5px); }
+      50%  { transform: translate(1.5px, -26px); }
+      75%  { transform: translate(-1px, -24px); }
+      100% { transform: translate(0px, -25px); }
+    }
+
+    /* 1. TV 디스플레이 화면 */
+    #tv-section {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 60px 50px 35px 50px;
+      text-align: center;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    #bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: 0;
+      display: none;
+      pointer-events: none;
+    }
+
+    #video-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle, rgba(12, 13, 16, 0.42) 0%, rgba(8, 9, 11, 0.92) 100%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .tv-layer { position: relative; z-index: 2; width: 100%; }
+    
+    .top-header-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      animation: pixelShiftTop 480s ease-in-out infinite;
+    }
+    
+    .clock-box { 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      gap: 6px; 
+    }
+    .clock-time { 
+      font-family: 'Cormorant Garamond', serif; 
+      font-size: 2.35rem; 
+      color: #e2e5eb; 
+      letter-spacing: 4px; 
+      font-weight: 400; 
+      line-height: 1; 
+    }
+    .clock-date {
+      font-size: 0.85rem;
+      color: #949aa7;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-weight: 300;
+    }
+    
+    .weather-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 12px;
+      border-radius: 20px;
+      background: rgba(201, 169, 110, 0.1);
+      border: 1px solid rgba(201, 169, 110, 0.28);
+      color: #dfcfb2;
+      font-size: 0.78rem;
+      letter-spacing: 1px;
+      margin-top: 2px;
+      transition: opacity 0.5s ease;
+    }
+
+    .brand-container {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .space-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.3rem;
+      font-weight: 500;
+      color: #dfcfb2;
+      letter-spacing: 14px;
+      text-transform: uppercase;
+      line-height: 1.15;
+      margin-bottom: 8px;
+      text-shadow: 0 4px 24px rgba(0, 0, 0, 0.9);
+    }
+    .space-category {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.02rem;
+      font-weight: 400;
+      color: #a89472;
+      letter-spacing: 8px;
+      text-transform: uppercase;
+      padding-top: 7px;
+      border-top: 1px solid rgba(201, 169, 110, 0.35);
+      white-space: nowrap;
+      display: inline-block;
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+
+    .center-box {
+      margin: auto 0;
+      transition: opacity 0.5s ease;
+      max-width: 1100px;
+      transform: translateY(-25px);
+      animation: pixelShiftCenter 600s ease-in-out infinite;
+    }
+
+    .guest-title-wrap {
+      font-size: 5.2rem;
+      font-weight: 600;
+      line-height: 1.25;
+      margin-bottom: 20px;
+      letter-spacing: -1px;
+      text-shadow: 0 6px 30px rgba(0, 0, 0, 0.95);
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .honorific-prefix {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.78em;
+      font-weight: 400;
+      color: #dfcfb2;
+      letter-spacing: 2px;
+      margin-right: 2px;
+    }
+
+    .guest-core-name { color: #ffffff; }
+
+    .honorific-suffix {
+      font-size: 0.55em;
+      font-weight: 300;
+      color: #d1d5db;
+      margin-left: 2px;
+      letter-spacing: 0px;
+    }
+
+    .sub-desc { 
+      font-size: 1.65rem; 
+      color: #b8bdc9; 
+      font-weight: 300; 
+      line-height: 1.6; 
+      text-shadow: 0 2px 12px rgba(0,0,0,0.85);
+    }
+
+    .bottom-interactive-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 10px;
+    }
+
+    .ott-dock {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      background: rgba(18, 20, 26, 0.65);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(201, 169, 110, 0.28);
+      border-radius: 50px;
+      padding: 10px 24px;
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6);
+      opacity: 0.25;
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+      transform: translateY(6px);
+    }
+    .ott-dock.active, .ott-dock:hover, .ott-dock:focus-within {
+      opacity: 1;
+      transform: translateY(0);
+      border-color: rgba(201, 169, 110, 0.65);
+      background: rgba(18, 20, 26, 0.88);
+    }
+
+    .ott-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 18px;
+      border-radius: 30px;
+      text-decoration: none;
+      color: #dfcfb2;
+      font-size: 0.95rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid transparent;
+      transition: all 0.25s ease;
+      cursor: pointer;
+      outline: none;
+    }
+    .ott-btn:hover, .ott-btn:focus {
+      background: #c9a96e;
+      color: #0b0c0e;
+      transform: translateY(-2px) scale(1.04);
+      box-shadow: 0 6px 20px rgba(201, 169, 110, 0.4);
+      font-weight: 700;
+    }
+    .ott-btn svg { width: 20px; height: 20px; fill: currentColor; }
+
+    .footer-bar { 
+      font-size: 0.85rem; 
+      color: #616674; 
+      letter-spacing: 5px; 
+      text-transform: uppercase; 
+      font-weight: 300;
+    }
+
+    #wifi-dock {
+      position: fixed;
+      bottom: 25px;
+      right: 30px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(18, 20, 26, 0.72);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(201, 169, 110, 0.32);
+      border-radius: 14px;
+      padding: 10px 14px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65);
+      text-align: left;
+      transition: opacity 0.5s ease;
+    }
+    #wifi-qr-img {
+      width: 58px;
+      height: 58px;
+      border-radius: 6px;
+      background: #ffffff;
+      padding: 3px;
+    }
+    .wifi-text-wrap { display: flex; flex-direction: column; gap: 2px; }
+    .wifi-tag {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      color: #dfcfb2;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-weight: 600;
+      line-height: 1;
+    }
+    .wifi-name { font-size: 0.76rem; color: #e5e7eb; letter-spacing: 0.5px; margin-top: 3px; }
+    .wifi-sub { font-size: 0.68rem; color: #8b92a0; letter-spacing: 0.3px; }
+
+    #tv-status-dot {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 9999;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #eab308;
+      opacity: 0.45;
+      transition: background-color 0.4s ease, opacity 0.4s ease;
+      pointer-events: none;
+    }
+
+    /* 2. 관리자 화면 */
+    #admin-section {
+      display: none;
+      width: 92%;
+      max-width: 540px;
+      margin: 30px auto 90px auto;
+    }
+    .admin-card {
+      background: #16171b;
+      border: 1px solid #282a32;
+      border-radius: 18px;
+      padding: 26px;
+      margin-bottom: 24px;
+    }
+    .admin-title { font-size: 1.25rem; color: #c9a96e; font-weight: 600; margin-bottom: 20px; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; margin-bottom: 8px; color: #9297a3; font-size: 0.88rem; }
+    input, textarea, select {
+      width: 100%;
+      padding: 13px;
+      background: #212329;
+      border: 1px solid #333640;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+    }
+    input:focus, textarea:focus, select:focus { border-color: #c9a96e; }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #1f2128;
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      border: 1px solid #2a2c35;
+    }
+    .toggle-label {
+      font-size: 0.9rem;
+      color: #e5e7eb;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .toggle-sub { font-size: 0.75rem; color: #8b919d; margin-top: 2px; }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 46px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: #374151;
+      transition: .3s;
+      border-radius: 26px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider { background-color: #c9a96e; }
+    input:checked + .slider:before { transform: translateX(20px); }
+
+    .prefix-select-wrap {
+      display: none;
+      margin-bottom: 14px;
+      padding: 10px;
+      background: #1a1b22;
+      border-radius: 10px;
+      border: 1px dashed #3a3d4a;
+    }
+
+    button.btn-primary {
+      width: 100%;
+      padding: 15px;
+      background: #c9a96e;
+      border: none;
+      border-radius: 10px;
+      color: #0d0e11;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    button.btn-primary:active { opacity: 0.8; }
+
+    .schedule-item, .history-item {
+      background: #1f2128;
+      border: 1px solid #2e323e;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .schedule-time, .history-time {
+      font-size: 0.8rem;
+      color: #c9a96e;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+    .schedule-name, .history-name { font-size: 1.05rem; font-weight: 600; color: #fff; }
+    .schedule-msg, .history-msg { font-size: 0.8rem; color: #9ca3af; margin-top: 3px; }
+    
+    .btn-delete {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #f87171;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .btn-delete:hover { background: rgba(239, 68, 68, 0.28); }
+
+    .btn-reuse {
+      background: rgba(201, 169, 110, 0.15);
+      border: 1px solid rgba(201, 169, 110, 0.4);
+      color: #dfcfb2;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .btn-reuse:hover { background: #c9a96e; color: #0b0c0e; font-weight: 600; }
+
+    .history-btn-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .tag-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #2a2e3d;
+      color: #93c5fd;
+      margin-bottom: 4px;
+    }
+
+    .pagination-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid #282a32;
+    }
+    .page-btn {
+      background: #212329;
+      border: 1px solid #333640;
+      color: #c9a96e;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+    .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .page-indicator { font-size: 0.82rem; color: #888; letter-spacing: 1px; }
+
+    #log-box, #sched-log-box {
+      margin-top: 14px;
+      padding: 12px;
+      background: #0f1013;
+      border-radius: 8px;
+      border: 1px solid #333;
+      font-size: 0.85rem;
+      color: #aaa;
+      white-space: pre-wrap;
+      word-break: break-all;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. TV 디스플레이 화면 -->
+  <div id="tv-section">
+    <video id="bg-video" autoplay loop muted playsinline preload="auto"></video>
+    <div id="video-overlay"></div>
+
+    <div class="tv-layer top-header-wrap">
+      <div class="clock-box">
+        <div class="clock-time" id="clock-time">00:00</div>
+        <div class="clock-date" id="clock-date">--</div>
+        <div class="weather-pill" id="weather-pill">
+          <span id="weather-icon">🌤</span>
+          <span id="weather-text">Busan --°C</span>
+        </div>
+      </div>
+      <div class="brand-container">
+        <div class="space-name">La Colonne</div>
+        <div class="space-category">Private Business Lounge</div>
+      </div>
+    </div>
+    
+    <div class="tv-layer center-box" id="center-box">
+      <div class="guest-title-wrap">
+        <span class="honorific-prefix" id="guest-prefix"></span>
+        <span class="guest-core-name" id="guest-name">Welcome</span>
+        <span class="honorific-suffix" id="guest-suffix"></span>
+      </div>
+      <div class="sub-desc" id="guest-msg">프라이빗 라운지에 오신 것을 환영합니다.</div>
+    </div>
+
+    <div class="tv-layer bottom-interactive-wrap">
+      <div class="ott-dock" id="ott-dock">
+        <a href="vnd.youtube://" class="ott-btn" onclick="pauseBgmForApp()">
+          <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          <span>YouTube</span>
+        </a>
+
+        <a href="nflx://" class="ott-btn" onclick="pauseBgmForApp()">
+          <svg viewBox="0 0 24 24"><path d="M5.398 0v24c1.198-.12 2.392-.28 3.585-.48V8.756l5.772 14.512c1.336-.2 2.67-.442 3.998-.718V0h-3.586v15.244L9.396 0H5.398z"/></svg>
+          <span>Netflix</span>
+        </a>
+
+        <a href="disneyplus://" class="ott-btn" onclick="pauseBgmForApp()">
+          <svg viewBox="0 0 24 24"><path d="M14.752 9.697c-.36-.048-1.543-.134-2.618.322-1.348.574-2.22 1.547-2.316 2.585-.102 1.106.669 1.94 1.83 1.986 1.48.06 2.87-.732 3.104-1.782.02-.09.027-.183.024-.275a2.53 2.53 0 0 0-.024-.836zm-3.08 3.733c-.563-.035-.865-.367-.822-.84.049-.533.565-1.127 1.341-1.503.74-.36 1.637-.417 2.023-.393-.162 1.41-1.353 2.662-2.542 2.736zm10.744-2.023c-.347-.282-1.89-1.285-4.22-1.31-2.45-.027-4.996 1.125-6.73 3.064-1.548 1.732-2.185 3.864-1.745 5.845.42 1.888 1.848 3.208 3.722 3.435 2.557.31 5.347-.946 7.027-3.18 1.418-1.886 1.996-4.148 1.614-6.223a6.83 6.83 0 0 0-.668-1.631zm-6.208 8.01c-1.378 1.833-3.66 2.863-5.748 2.61-1.534-.186-2.7-1.266-3.044-2.813-.36-1.623.16-3.367 1.425-4.783 1.42-1.59 3.5-2.534 5.507-2.512 1.91.02 3.17.842 3.45 1.07.313 1.697-.156 4.542-1.59 6.428zM9.416 9.475C6.18 6.57 3.03 7.828 2.378 8.163c-.22.113-.31.378-.204.602.106.224.37.318.595.213.062-.03 2.664-1.183 5.467 1.127.202.167.502.14.67-.063.166-.202.14-.502-.062-.67-.328-.27-.674-.536-1.042-.782.72-.08 1.464-.09 2.22-.016.26.026.495-.164.52-.426a.434.434 0 0 0-.42-.475c-.244-.02-.486-.024-.726-.016zm-5.068 5.75c.197.168.495.14.664-.056.168-.198.14-.495-.056-.665C3.39 13.176 2.057 11.23 2.01 8.92c-.004-.262-.22-.47-.482-.465-.262.004-.47.22-.465.482.055 2.64 1.585 4.86 3.285 6.288z"/></svg>
+          <span>Disney+</span>
+        </a>
+      </div>
+
+      <div class="footer-bar">EXCLUSIVELY RESERVED FOR YOUR SUCCESS</div>
+    </div>
+
+    <div id="wifi-dock">
+      <img id="wifi-qr-img" alt="Wi-Fi QR" src="">
+      <div class="wifi-text-wrap">
+        <div class="wifi-tag">Guest Wi-Fi</div>
+        <div class="wifi-name" id="wifi-name-display">La_Colonne_VIP</div>
+        <div class="wifi-sub">스캔 시 자동 연결</div>
+      </div>
+    </div>
+
+    <div id="tv-status-dot" title="System Status Indicator"></div>
+    <audio id="bgm-player" loop preload="auto"></audio>
+  </div>
+
+  <!-- 2. 관리자 화면 -->
+  <div id="admin-section">
+    <div style="text-align: right; margin-bottom: 15px;">
+      <a href="?view=tv" target="_blank" style="color: #c9a96e; font-size: 0.85rem; text-decoration: none;">📺 TV 화면 새 창 열기 ↗</a>
+    </div>
+
+    <!-- 섹션 0: 디스플레이 공통 환경설정 -->
+    <div class="admin-card" style="padding: 20px 26px; border-color: rgba(201, 169, 110, 0.4);">
+      <div class="admin-title" style="font-size: 1.1rem; margin-bottom: 14px;">⚙️ 라운지 디스플레이 공통 설정</div>
+      
+      <div class="toggle-row" style="margin-bottom: 8px;">
+        <div class="toggle-label">
+          <span>실시간 날씨 위젯 표시</span>
+          <span class="toggle-sub">예약자명과 무관하게 상단 날씨 배지만 즉시 On/Off</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="global-weather-toggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row" style="margin-bottom: 0;">
+        <div class="toggle-label">
+          <span>Guest Wi-Fi QR 위젯 표시</span>
+          <span class="toggle-sub">예약자명과 무관하게 우측 하단 QR만 즉시 On/Off</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="global-wifi-toggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- 카드 1: 상시 / 수동 즉시 표출 설정 -->
+    <div class="admin-card">
+      <div class="admin-title">1. 상시 / 즉시 표출 제어</div>
+      
+      <div class="toggle-row">
+        <div class="toggle-label">
+          <span>앞자리 경칭 사용 (Mr., Dr. 등)</span>
+          <span class="toggle-sub">외국인 VIP 손님 방문 시</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="prefix-toggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="prefix-select-wrap" id="prefix-select-box">
+        <label style="margin-bottom: 6px;">영문 경칭 선택</label>
+        <select id="prefix-select">
+          <option value="Mr.">Mr. (남성)</option>
+          <option value="Ms.">Ms. (여성)</option>
+          <option value="Mrs.">Mrs. (기혼 여성)</option>
+          <option value="Dr.">Dr. (박사 / 의사 / 석학)</option>
+          <option value="Prof.">Prof. (교수)</option>
+          <option value="Sir">Sir (존칭)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>예약자 본명 / 회사명</label>
+        <input type="text" id="name-input" placeholder="예: John Smith, 김대표, 삼정회계법인">
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-label">
+          <span>이름 뒤 '님' 표기</span>
+          <span class="toggle-sub">이름 뒤 작고 섬세하게 배치</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="suffix-toggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label>서브 환영 문구</label>
+        <textarea id="msg-input" rows="2" placeholder="예: 편안하고 성공적인 시간 되시기를 바랍니다."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>배경 테마 선택</label>
+        <select id="bg-select">
+          <optgroup label="── 🎬 시네마틱 모션 비디오 ──">
+            <option value="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4">🎬 1. 테스트 비디오 (검증용)</option>
+            <option value="video1.mp4">🎬 2. 자체 업로드 라운지 영상 (video1.mp4)</option>
+          </optgroup>
+          <optgroup label="── 🖼 하이엔드 인테리어 스틸 ──">
+            <option value="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2560&q=85">3. 하이엔드 스톤 라운지</option>
+            <option value="https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&w=2560&q=85">4. 클래식 딥 월넛 살롱</option>
+            <option value="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=2560&q=85">5. 이그제큐티브 펜트하우스</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>배경음악 (BGM) 선택</label>
+        <select id="bgm-select">
+          <option value="jazz1.mp3">1. Autumn Leaves 클래식 재즈 (자체 음원)</option>
+          <option value="jazz2.mp3">2. 라운지 스윙 재즈 2 (자체 음원)</option>
+          <option value="none">3. 음악 끄기 (BGM Off)</option>
+        </select>
+      </div>
+
+      <button type="button" class="btn-primary" id="save-btn">TV 화면에 즉시 반영</button>
+      <div id="log-box"></div>
+    </div>
+
+    <!-- 카드 2: VIP 일정 스케줄 예약 등록 -->
+    <div class="admin-card">
+      <div class="admin-title">2. VIP 예약 일정 추가 (지정 시각 자동 표출)</div>
+
+      <div class="form-group">
+        <label>예약 시작 시각</label>
+        <input type="datetime-local" id="sched-start">
+      </div>
+
+      <div class="form-group">
+        <label>예약 종료 시각</label>
+        <input type="datetime-local" id="sched-end">
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-label">
+          <span>앞자리 경칭 사용 (Mr., Dr. 등)</span>
+          <span class="toggle-sub">외국인 VIP 손님 방문 시</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="sched-prefix-toggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="prefix-select-wrap" id="sched-prefix-select-box">
+        <label style="margin-bottom: 6px;">영문 경칭 선택</label>
+        <select id="sched-prefix-select">
+          <option value="Mr.">Mr. (남성)</option>
+          <option value="Ms.">Ms. (여성)</option>
+          <option value="Mrs.">Mrs. (기혼 여성)</option>
+          <option value="Dr.">Dr. (박사 / 의사 / 석학)</option>
+          <option value="Prof.">Prof. (교수)</option>
+          <option value="Sir">Sir (존칭)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>VIP 본명 / 회사명</label>
+        <input type="text" id="sched-name" placeholder="예: Julian Vance, 김대표, 삼정회계법인">
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-label">
+          <span>이름 뒤 '님' 표기</span>
+          <span class="toggle-sub">이름 뒤 작고 섬세하게 배치</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="sched-suffix-toggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label>환영 문구</label>
+        <input type="text" id="sched-msg" value="La Colonne VIP 미팅룸에 오신 것을 환영합니다.">
+      </div>
+
+      <div class="form-group">
+        <label>배경 / BGM</label>
+        <select id="sched-bg" style="margin-bottom: 8px;">
+          <option value="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4">🎬 시네마틱 모션 비디오</option>
+          <option value="video1.mp4">🎬 자체 업로드 라운지 영상</option>
+          <option value="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2560&q=85">🖼 하이엔드 스톤 라운지</option>
+          <option value="https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&w=2560&q=85">🖼 클래식 딥 월넛 살롱</option>
+        </select>
+        <select id="sched-bgm">
+          <option value="jazz1.mp3">🎵 1. Autumn Leaves 클래식 재즈</option>
+          <option value="jazz2.mp3">🎵 2. 라운지 스윙 재즈 2</option>
+          <option value="none">🔇 음악 끄기 (BGM Off)</option>
+        </select>
+      </div>
+
+      <button type="button" class="btn-primary" id="sched-save-btn">일정에 추가하기</button>
+      <div id="sched-log-box"></div>
+    </div>
+
+    <!-- 카드 3: 예약 대기열 -->
+    <div class="admin-card">
+      <div class="admin-title">3. 등록된 VIP 예약 대기열 (진행/예정 일정만 표시)</div>
+      <div id="schedule-list">
+        <div style="color: #666; font-size: 0.9rem; text-align: center; padding: 20px 0;">현재 대기 중인 미래 예약 일정이 없습니다.</div>
+      </div>
+    </div>
+
+    <!-- 카드 4: VIP 히스토리 아카이브 (개별 삭제 지원) -->
+    <div class="admin-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+        <div class="admin-title" style="margin-bottom: 0;">4. VIP 히스토리 아카이브</div>
+        <button type="button" onclick="loadHistory(1)" style="background: none; border: 1px solid #444; color: #aaa; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;">새로고침</button>
+      </div>
+      
+      <div id="history-list">
+        <div style="color: #666; font-size: 0.9rem; text-align: center; padding: 20px 0;">히스토리가 비어 있습니다.</div>
+      </div>
+
+      <div class="pagination-bar" id="history-pagination" style="display: none;">
+        <button class="page-btn" id="hist-prev-btn" onclick="changeHistPage(-1)">← 이전 5개</button>
+        <span class="page-indicator" id="hist-page-num">1 / 1</span>
+        <button class="page-btn" id="hist-next-btn" onclick="changeHistPage(1)">다음 5개 →</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://jorxmazliodqnxnwctlc.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_GAU-azI_hJvms8k3Nzsyiw_PRH0NG69';
+
+    const cleanUrl = SUPABASE_URL.trim();
+    const cleanKey = SUPABASE_KEY.trim();
+    const isTV = window.location.search.indexOf('view=tv') !== -1;
+
+    function pauseBgmForApp() {
+      const p = document.getElementById('bgm-player');
+      if (p) p.pause();
+    }
+
+    if (isTV) {
+      // 1. TV 디스플레이 모드
+      const tvSection = document.getElementById('tv-section');
+      const bgVideo = document.getElementById('bg-video');
+      const videoOverlay = document.getElementById('video-overlay');
+      const statusDot = document.getElementById('tv-status-dot');
+      const player = document.getElementById('bgm-player');
+      const weatherPill = document.getElementById('weather-pill');
+      const wifiDock = document.getElementById('wifi-dock');
+      const ottDock = document.getElementById('ott-dock');
+      
+      bgVideo.muted = true;
+      bgVideo.defaultMuted = true;
+      bgVideo.volume = 0;
+      player.volume = 0.35;
+
+      tvSection.style.display = 'flex';
+
+      function setStatusDot(color) {
+        if (statusDot) statusDot.style.backgroundColor = color;
+      }
+
+      let ottTimer = null;
+      function wakeOttDock() {
+        if (ottDock) {
+          ottDock.classList.add('active');
+          clearTimeout(ottTimer);
+          ottTimer = setTimeout(() => {
+            if (!ottDock.contains(document.activeElement)) {
+              ottDock.classList.remove('active');
+            }
+          }, 8000);
+        }
+      }
+      window.addEventListener('keydown', wakeOttDock);
+      window.addEventListener('mousemove', wakeOttDock);
+      window.addEventListener('touchstart', wakeOttDock);
+
+      let lastReloadDate = '';
+      function updateClock() {
+        const d = new Date();
+        document.getElementById('clock-time').innerText = 
+          d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+        document.getElementById('clock-date').innerText = 
+          d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+        const todayStr = d.toDateString();
+        if (d.getHours() === 4 && d.getMinutes() === 0 && lastReloadDate !== todayStr) {
+          lastReloadDate = todayStr;
+          console.log('Daily memory cleanup reload');
+          window.location.reload();
+        }
+      }
+      setInterval(updateClock, 1000);
+      updateClock();
+
+      async function updateWeather() {
+        try {
+          const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=35.1796&longitude=129.0756&current_weather=true');
+          if (!res.ok) return;
+          const data = await res.json();
+          if (data && data.current_weather) {
+            const temp = Math.round(data.current_weather.temperature);
+            const code = data.current_weather.weathercode;
+            
+            let icon = '☀️';
+            let label = 'Clear';
+            if (code === 1 || code === 2) { icon = '🌤'; label = 'Partly Cloudy'; }
+            else if (code === 3) { icon = '☁️'; label = 'Overcast'; }
+            else if ([45, 48].includes(code)) { icon = '🌫'; label = 'Foggy'; }
+            else if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) { icon = '🌧'; label = 'Rain'; }
+            else if ([71, 73, 75, 85, 86].includes(code)) { icon = '❄️'; label = 'Snow'; }
+            else if ([95, 96, 99].includes(code)) { icon = '⛈'; label = 'Storm'; }
+
+            document.getElementById('weather-icon').innerText = icon;
+            document.getElementById('weather-text').innerText = `Busan ${temp}°C · ${label}`;
+          }
+        } catch(e) {}
+      }
+      updateWeather();
+      setInterval(updateWeather, 1800000);
+
+      const WIFI_SSID = 'La_Colonne_VIP';
+      const WIFI_PW = 'welcome2026';
+      function initWifiQR() {
+        document.getElementById('wifi-name-display').innerText = WIFI_SSID;
+        const wifiPayload = `WIFI:T:WPA;S:${WIFI_SSID};P:${WIFI_PW};;`;
+        const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=0&data=' + encodeURIComponent(wifiPayload);
+        document.getElementById('wifi-qr-img').src = qrUrl;
+      }
+      initWifiQR();
+
+      let currentDataKey = '';
+      let currentBgmUrl = '';
+
+      function unlockMedia() {
+        if (bgVideo.style.display === 'block' && bgVideo.paused) {
+          bgVideo.play().catch(console.error);
+        }
+        if (player.src && player.paused && currentBgmUrl !== 'none') {
+          player.play().then(() => {
+            setStatusDot('#22c55e');
+          }).catch(console.error);
+        }
+      }
+      window.addEventListener('click', unlockMedia);
+      window.addEventListener('touchstart', unlockMedia);
+
+      function updateBoard(prefix, name, suffix, msg, bgUrl, bgmUrl, isScheduled) {
+        const newKey = (prefix || '') + '|' + (name || '') + '|' + (suffix || '') + '|' + (msg || '') + '|' + bgUrl + '|' + bgmUrl;
+        if (newKey === currentDataKey) return;
+        currentDataKey = newKey;
+
+        const box = document.getElementById('center-box');
+        box.style.opacity = '0';
+        setTimeout(function() {
+          const pEl = document.getElementById('guest-prefix');
+          if (prefix) {
+            pEl.innerText = prefix;
+            pEl.style.display = 'inline';
+          } else {
+            pEl.innerText = '';
+            pEl.style.display = 'none';
+          }
+
+          document.getElementById('guest-name').innerText = name || 'Welcome';
+
+          const sEl = document.getElementById('guest-suffix');
+          if (suffix) {
+            sEl.innerText = suffix;
+            sEl.style.display = 'inline';
+          } else {
+            sEl.innerText = '';
+            sEl.style.display = 'none';
+          }
+
+          if (msg) document.getElementById('guest-msg').innerText = msg;
+          box.style.opacity = '1';
+        }, 400);
+
+        const isVideo = bgUrl.toLowerCase().indexOf('.mp4') !== -1;
+        if (isVideo) {
+          tvSection.style.backgroundImage = 'none';
+          bgVideo.style.display = 'block';
+          videoOverlay.style.display = 'block';
+
+          if (bgVideo.getAttribute('data-src') !== bgUrl) {
+            bgVideo.setAttribute('data-src', bgUrl);
+            bgVideo.src = bgUrl;
+            bgVideo.muted = true;
+            bgVideo.volume = 0;
+            bgVideo.load();
+            bgVideo.play().catch(e => console.log('Video play wait:', e));
+          }
+        } else {
+          bgVideo.pause();
+          bgVideo.removeAttribute('src');
+          bgVideo.style.display = 'none';
+          videoOverlay.style.display = 'block';
+          tvSection.style.backgroundImage = "url('" + bgUrl + "')";
+        }
+
+        if (bgmUrl !== currentBgmUrl) {
+          currentBgmUrl = bgmUrl;
+          if (!bgmUrl || bgmUrl === 'none') {
+            player.pause();
+            setStatusDot('#22c55e');
+          } else {
+            player.src = bgmUrl;
+            player.load();
+            player.play().then(() => {
+              setStatusDot('#22c55e');
+            }).catch(() => {
+              setStatusDot('#eab308');
+            });
+          }
+        }
+      }
+
+      async function syncGlobalSettings() {
+        try {
+          const res = await fetch(cleanUrl + '/rest/v1/lounge_settings?select=*&id=eq.1', {
+            headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.length > 0) {
+              const s = data[0];
+              if (weatherPill) weatherPill.style.display = (s.show_weather !== false) ? 'inline-flex' : 'none';
+              if (wifiDock) wifiDock.style.display = (s.show_wifi !== false) ? 'flex' : 'none';
+            }
+          }
+        } catch(e) {}
+      }
+
+      async function syncTV() {
+        try {
+          const nowISO = new Date().toISOString();
+
+          const schedRes = await fetch(cleanUrl + '/rest/v1/welcome_schedules?start_time=lte.' + nowISO + '&end_time=gte.' + nowISO + '&order=start_time.asc&limit=1', {
+            headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+          });
+
+          if (schedRes.ok) {
+            const schedData = await schedRes.json();
+            if (schedData && schedData.length > 0) {
+              const active = schedData[0];
+              updateBoard(
+                active.prefix || '',
+                active.guest_name,
+                active.suffix || '',
+                active.sub_message || '',
+                active.bg_source || 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+                active.bgm_source || 'jazz1.mp3',
+                true
+              );
+              return;
+            }
+          }
+
+          const defRes = await fetch(cleanUrl + '/rest/v1/welcome_screen?select=*&id=eq.1', {
+            headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+          });
+          if (defRes.ok) {
+            const defData = await defRes.json();
+            if (defData && defData.length > 0) {
+              const item = defData[0];
+              updateBoard(
+                item.prefix || '',
+                item.guest_name || 'Welcome',
+                item.suffix || '',
+                item.sub_message || '',
+                item.bg_source || 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',
+                item.bgm_source || 'jazz1.mp3',
+                false
+              );
+            }
+          } else {
+            setStatusDot('#ef4444');
+          }
+        } catch(e) {
+          setStatusDot('#ef4444');
+        }
+      }
+
+      syncGlobalSettings();
+      syncTV();
+      setInterval(syncGlobalSettings, 3000);
+      setInterval(syncTV, 2000);
+
+    } else {
+      // 2. 모바일 관리자 모드
+      document.getElementById('admin-section').style.display = 'block';
+
+      const globalWeather = document.getElementById('global-weather-toggle');
+      const globalWifi = document.getElementById('global-wifi-toggle');
+
+      async function loadGlobalSettings() {
+        try {
+          const res = await fetch(cleanUrl + '/rest/v1/lounge_settings?select=*&id=eq.1', {
+            headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.length > 0) {
+              globalWeather.checked = (data[0].show_weather !== false);
+              globalWifi.checked = (data[0].show_wifi !== false);
+            }
+          }
+        } catch(e) {}
+      }
+      loadGlobalSettings();
+
+      async function updateGlobalSetting(field, val) {
+        try {
+          await fetch(cleanUrl + '/rest/v1/lounge_settings?id=eq.1', {
+            method: 'PATCH',
+            headers: {
+              'apikey': cleanKey,
+              'Authorization': 'Bearer ' + cleanKey,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              [field]: val,
+              updated_at: new Date().toISOString()
+            })
+          });
+        } catch(e) {}
+      }
+
+      globalWeather.addEventListener('change', () => updateGlobalSetting('show_weather', globalWeather.checked));
+      globalWifi.addEventListener('change', () => updateGlobalSetting('show_wifi', globalWifi.checked));
+
+      const prefixToggle = document.getElementById('prefix-toggle');
+      const prefixSelectBox = document.getElementById('prefix-select-box');
+      const prefixSelect = document.getElementById('prefix-select');
+      const suffixToggle = document.getElementById('suffix-toggle');
+
+      prefixToggle.addEventListener('change', function() {
+        prefixSelectBox.style.display = this.checked ? 'block' : 'none';
+      });
+
+      async function loadInitial() {
+        try {
+          const res = await fetch(cleanUrl + '/rest/v1/welcome_screen?select=*&id=eq.1', {
+            headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+          });
+          if (!res.ok) return;
+          const data = await res.json();
+          if (data && data.length > 0) {
+            const item = data[0];
+            if (item.prefix) {
+              prefixToggle.checked = true;
+              prefixSelectBox.style.display = 'block';
+              prefixSelect.value = item.prefix;
+            } else {
+              prefixToggle.checked = false;
+              prefixSelectBox.style.display = 'none';
+            }
+            document.getElementById('name-input').value = item.guest_name || '';
+            suffixToggle.checked = (item.suffix === '님');
+            document.getElementById('msg-input').value = item.sub_message || '';
+            if (item.bg_source) document.getElementById('bg-select').value = item.bg_source;
+            if (item.bgm_source) document.getElementById('bgm-select').value = item.bgm_source;
+          }
+        } catch(e) {}
+      }
+      loadInitial();
+
+      async function recordHistory(eventType, prefix, name, suffix, msg, bg, bgm, visitDate) {
+        try {
+          await fetch(cleanUrl + '/rest/v1/welcome_history', {
+            method: 'POST',
+            headers: {
+              'apikey': cleanKey,
+              'Authorization': 'Bearer ' + cleanKey,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              event_type: eventType,
+              visit_date: visitDate || new Date().toISOString(),
+              prefix: prefix || '',
+              guest_name: name,
+              suffix: suffix || '',
+              sub_message: msg || '',
+              bg_source: bg,
+              bgm_source: bgm
+            })
+          });
+          loadHistory(1);
+        } catch(e) {}
+      }
+
+      document.getElementById('save-btn').addEventListener('click', async function() {
+        const nameInput = document.getElementById('name-input').value.trim();
+        const msg = document.getElementById('msg-input').value.trim();
+        const bg = document.getElementById('bg-select').value;
+        const bgm = document.getElementById('bgm-select').value;
+
+        if (!nameInput) return alert('예약자 본명 또는 회사명을 입력해 주세요.');
+
+        const prefixVal = prefixToggle.checked ? prefixSelect.value : '';
+        const suffixVal = suffixToggle.checked ? '님' : '';
+
+        const logBox = document.getElementById('log-box');
+        logBox.style.display = 'block';
+        logBox.style.color = '#ffd166';
+        logBox.innerText = '전송 중...';
+
+        try {
+          const res = await fetch(cleanUrl + '/rest/v1/welcome_screen', {
+            method: 'POST',
+            headers: {
+              'apikey': cleanKey,
+              'Authorization': 'Bearer ' + cleanKey,
+              'Content-Type': 'application/json',
+              'Prefer': 'resolution=merge-duplicates,return=representation'
+            },
+            body: JSON.stringify({
+              id: 1,
+              prefix: prefixVal,
+              guest_name: nameInput,
+              suffix: suffixVal,
+              sub_message: msg || '편안하고 성공적인 시간 되시기를 바랍니다.',
+              bg_source: bg,
+              bgm_source: bgm,
+              updated_at: new Date().toISOString()
+            })
+          });
+
+          if (res.ok) {
+            logBox.style.color = '#4ade80';
+            logBox.innerText = '✓ TV 화면에 즉시 반영되었습니다!';
+            recordHistory('즉시 반영', prefixVal, nameInput, suffixVal, msg, bg, bgm);
+          } else {
+            logBox.style.color = '#f87171';
+            logBox.innerText = '저장 실패';
+          }
+        } catch(e) {
+          logBox.style.color = '#f87171';
+          logBox.innerText = '오류: ' + e.message;
+        }
+      });
+
+      const schedPrefixToggle = document.getElementById('sched-prefix-toggle');
+      const schedPrefixSelectBox = document.getElementById('sched-prefix-select-box');
+      const schedPrefixSelect = document.getElementById('sched-prefix-select');
+      const schedSuffixToggle = document.getElementById('sched-suffix-toggle');
+
+      schedPrefixToggle.addEventListener('change', function() {
+        schedPrefixSelectBox.style.display = this.checked ? 'block' : 'none';
+      });
+
+      function setDefaultScheduleTimes() {
+        const now = new Date();
+        now.setMinutes(0);
+        now.setSeconds(0);
+        const inOneHour = new Date(now.getTime() + 60 * 60 * 1000);
+        const inThreeHours = new Date(now.getTime() + 180 * 60 * 1000);
+
+        const toLocalISO = (d) => new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+        document.getElementById('sched-start').value = toLocalISO(inOneHour);
+        document.getElementById('sched-end').value = toLocalISO(inThreeHours);
+      }
+      setDefaultScheduleTimes();
+
+      async function loadSchedules() {
+        const listContainer = document.getElementById('schedule-list');
+        try {
+          const nowISO = new Date().toISOString();
+          const res = await fetch(cleanUrl + '/rest/v1/welcome_schedules?end_time=gte.' + nowISO + '&order=start_time.asc', {
+            headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+          });
+          if (!res.ok) return;
+          const items = await res.json();
+          if (!items || items.length === 0) {
+            listContainer.innerHTML = '<div style="color: #666; font-size: 0.9rem; text-align: center; padding: 20px 0;">현재 대기 중인 미래 예약 일정이 없습니다.</div>';
+            return;
+          }
+
+          let html = '';
+          items.forEach(item => {
+            const startD = new Date(item.start_time);
+            const endD = new Date(item.end_time);
+            const timeStr = `${startD.toLocaleDateString('ko-KR', {month:'numeric', day:'numeric'})} ${startD.toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit', hour12:false})} ~ ${endD.toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit', hour12:false})}`;
+
+            html += `
+              <div class="schedule-item">
+                <div>
+                  <div class="schedule-time">📅 ${timeStr}</div>
+                  <div class="schedule-name">${item.prefix ? item.prefix + ' ' : ''}${item.guest_name}${item.suffix ? ' ' + item.suffix : ''}</div>
+                  <div class="schedule-msg">${item.sub_message}</div>
+                </div>
+                <button class="btn-delete" onclick="deleteSchedule(${item.id})">삭제</button>
+              </div>
+            `;
+          });
+          listContainer.innerHTML = html;
+        } catch(e) {}
+      }
+      loadSchedules();
+
+      document.getElementById('sched-save-btn').addEventListener('click', async function() {
+        const startVal = document.getElementById('sched-start').value;
+        const endVal = document.getElementById('sched-end').value;
+        const nameVal = document.getElementById('sched-name').value.trim();
+        const msgVal = document.getElementById('sched-msg').value.trim();
+        const bgVal = document.getElementById('sched-bg').value;
+        const bgmVal = document.getElementById('sched-bgm').value;
+        const logBox = document.getElementById('sched-log-box');
+
+        if (!startVal || !endVal) return alert('시작 및 종료 시각을 지정해 주세요.');
+        if (!nameVal) return alert('VIP 성함을 입력해 주세요.');
+        if (new Date(startVal) >= new Date(endVal)) return alert('종료 시각은 시작 시각보다 뒤여야 합니다.');
+
+        const prefixVal = schedPrefixToggle.checked ? schedPrefixSelect.value : '';
+        const suffixVal = schedSuffixToggle.checked ? '님' : '';
+
+        logBox.style.display = 'block';
+        logBox.style.color = '#ffd166';
+        logBox.innerText = '예약 등록 중...';
+
+        try {
+          const res = await fetch(cleanUrl + '/rest/v1/welcome_schedules', {
+            method: 'POST',
+            headers: {
+              'apikey': cleanKey,
+              'Authorization': 'Bearer ' + cleanKey,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              start_time: new Date(startVal).toISOString(),
+              end_time: new Date(endVal).toISOString(),
+              prefix: prefixVal,
+              guest_name: nameVal,
+              suffix: suffixVal,
+              sub_message: msgVal,
+              bg_source: bgVal,
+              bgm_source: bgmVal
+            })
+          });
+
+          if (res.ok) {
+            logBox.style.color = '#4ade80';
+            logBox.innerText = '✓ 예약 스케줄이 성공적으로 추가되었습니다!';
+            recordHistory('예약 일정', prefixVal, nameVal, suffixVal, msgVal, bgVal, bgmVal, new Date(startVal).toISOString());
+
+            document.getElementById('sched-name').value = '';
+            schedPrefixToggle.checked = false;
+            schedPrefixSelectBox.style.display = 'none';
+            schedSuffixToggle.checked = true;
+            loadSchedules();
+          } else {
+            logBox.style.color = '#f87171';
+            logBox.innerText = '등록 실패: ' + (await res.text());
+          }
+        } catch(e) {
+          logBox.style.color = '#f87171';
+          logBox.innerText = '오류: ' + e.message;
+        }
+      });
+
+      window.deleteSchedule = async function(id) {
+        if (!confirm('이 예약 일정을 취소/삭제하시겠습니까? (히스토리 아카이브에는 안전하게 보존됩니다)')) return;
+        try {
+          const res = await fetch(cleanUrl + '/rest/v1/welcome_schedules?id=eq.' + id, {
+            method: 'DELETE',
+            headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+          });
+          if (res.ok) {
+            loadSchedules();
+          }
+        } catch(e) {
+          alert('삭제 중 오류가 발생했습니다.');
+        }
+      };
+
+      // ─── VIP 히스토리 아카이브 (개별 삭제 지원) ───
+      let currentHistPage = 1;
+      const HIST_PAGE_SIZE = 5;
+
+      window.loadHistory = async function(page) {
+        if (page) currentHistPage = page;
+        const histContainer = document.getElementById('history-list');
+        const paginationBar = document.getElementById('history-pagination');
+        const offset = (currentHistPage - 1) * HIST_PAGE_SIZE;
+
+        try {
+          const res = await fetch(`${cleanUrl}/rest/v1/welcome_history?select=*&order=visit_date.desc&limit=${HIST_PAGE_SIZE}&offset=${offset}`, {
+            headers: { 
+              'apikey': cleanKey, 
+              'Authorization': 'Bearer ' + cleanKey,
+              'Prefer': 'count=exact'
+            }
+          });
+          if (!res.ok) return;
+
+          const countHeader = res.headers.get('content-range');
+          let totalCount = 0;
+          if (countHeader) {
+            const parts = countHeader.split('/');
+            if (parts.length > 1) totalCount = parseInt(parts[1], 10) || 0;
+          }
+
+          const items = await res.json();
+          if (!items || items.length === 0) {
+            // 현재 페이지에 아이템이 없고 이전 페이지가 있다면 이전 페이지로 이동
+            if (currentHistPage > 1) {
+              loadHistory(currentHistPage - 1);
+              return;
+            }
+            histContainer.innerHTML = '<div style="color: #666; font-size: 0.9rem; text-align: center; padding: 20px 0;">히스토리가 비어 있습니다.</div>';
+            paginationBar.style.display = 'none';
+            return;
+          }
+
+          let html = '';
+          items.forEach(h => {
+            const vDate = new Date(h.visit_date);
+            const dateStr = `${vDate.getFullYear()}.${vDate.getMonth()+1}.${vDate.getDate()} (${vDate.toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit', hour12:false})})`;
+            const itemDataEscaped = encodeURIComponent(JSON.stringify(h));
+
+            html += `
+              <div class="history-item">
+                <div>
+                  <span class="tag-badge">${h.event_type || '방문'}</span>
+                  <div class="history-time">${dateStr}</div>
+                  <div class="history-name">${h.prefix ? h.prefix + ' ' : ''}${h.guest_name}${h.suffix ? ' ' + h.suffix : ''}</div>
+                  <div class="history-msg">${h.sub_message || '-'}</div>
+                </div>
+                <div class="history-btn-group">
+                  <button class="btn-reuse" onclick="applyHistory('${itemDataEscaped}')">불러오기</button>
+                  <button class="btn-delete" onclick="deleteHistory(${h.id})">삭제</button>
+                </div>
+              </div>
+            `;
+          });
+          histContainer.innerHTML = html;
+
+          const totalPages = Math.ceil(totalCount / HIST_PAGE_SIZE) || 1;
+          paginationBar.style.display = (totalCount > HIST_PAGE_SIZE) ? 'flex' : 'none';
+          document.getElementById('hist-page-num').innerText = `${currentHistPage} / ${totalPages}`;
+          document.getElementById('hist-prev-btn').disabled = (currentHistPage <= 1);
+          document.getElementById('hist-next-btn').disabled = (currentHistPage >= totalPages);
+
+        } catch(e) {}
+      };
+      loadHistory(1);
+
+      window.changeHistPage = function(delta) {
+        currentHistPage += delta;
+        loadHistory(currentHistPage);
+      };
+
+      // 히스토리 개별 삭제 함수
+      window.deleteHistory = async function(id) {
+        if (!confirm('이 VIP 히스토리 기록을 영구 삭제하시겠습니까?')) return;
+        try {
+          const res = await fetch(`${cleanUrl}/rest/v1/welcome_history?id=eq.${id}`, {
+            method: 'DELETE',
+            headers: { 
+              'apikey': cleanKey, 
+              'Authorization': 'Bearer ' + cleanKey 
+            }
+          });
+          if (res.ok) {
+            loadHistory(currentHistPage);
+          } else {
+            alert('삭제에 실패했습니다.');
+          }
+        } catch(e) {
+          alert('오류가 발생했습니다: ' + e.message);
+        }
       };
 
       window.applyHistory = function(encodedData) {
