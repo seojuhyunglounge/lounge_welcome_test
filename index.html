@@ -324,7 +324,6 @@
     }
     button.btn-primary:active { opacity: 0.8; }
 
-    /* 스케줄 카드 리스트 */
     .schedule-item {
       background: #1f2128;
       border: 1px solid #2e323e;
@@ -426,7 +425,7 @@
       <a href="?view=tv" target="_blank" style="color: #c9a96e; font-size: 0.85rem; text-decoration: none;">📺 TV 화면 새 창 열기 ↗</a>
     </div>
 
-    <!-- 카드 1: 상시 / 수동 즉시 표출 설정 -->
+    <!-- 카드 1: 현재 표출 (상시 / 즉시 제어) -->
     <div class="admin-card">
       <div class="admin-title">1. 현재 표출 (상시 / 즉시 제어)</div>
       
@@ -502,7 +501,7 @@
       <div id="log-box"></div>
     </div>
 
-    <!-- 카드 2: VIP 일정 스케줄 예약 등록 -->
+    <!-- 카드 2: VIP 일정 스케줄 예약 등록 (경칭 및 '님' 토글 추가 완료) -->
     <div class="admin-card">
       <div class="admin-title">2. VIP 예약 일정 추가 (지정 시각 자동 표출)</div>
 
@@ -517,9 +516,45 @@
         </div>
       </div>
 
+      <!-- 스케줄용 앞자리 경칭 토글 -->
+      <div class="toggle-row">
+        <div class="toggle-label">
+          <span>앞자리 경칭 사용 (Mr., Dr. 등)</span>
+          <span class="toggle-sub">외국인 VIP 손님 방문 시</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="sched-prefix-toggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="prefix-select-wrap" id="sched-prefix-select-box">
+        <label style="margin-bottom: 6px;">영문 경칭 선택</label>
+        <select id="sched-prefix-select">
+          <option value="Mr.">Mr. (남성)</option>
+          <option value="Ms.">Ms. (여성)</option>
+          <option value="Mrs.">Mrs. (기혼 여성)</option>
+          <option value="Dr.">Dr. (박사 / 의사 / 석학)</option>
+          <option value="Prof.">Prof. (교수)</option>
+          <option value="Sir">Sir (존칭)</option>
+        </select>
+      </div>
+
       <div class="form-group">
-        <label>VIP 성함 / 행사명</label>
-        <input type="text" id="sched-name" placeholder="예: Dr. Vance, 아시아 지사장 미팅">
+        <label>VIP 본명 / 회사명</label>
+        <input type="text" id="sched-name" placeholder="예: Julian Vance, 김대표, 삼정회계법인">
+      </div>
+
+      <!-- 스케줄용 '님' 토글 -->
+      <div class="toggle-row">
+        <div class="toggle-label">
+          <span>이름 뒤 '님' 표기</span>
+          <span class="toggle-sub">이름 뒤 작고 섬세하게 배치</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="sched-suffix-toggle" checked>
+          <span class="slider"></span>
+        </label>
       </div>
 
       <div class="form-group">
@@ -533,6 +568,7 @@
           <option value="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4">🎬 시네마틱 모션 비디오</option>
           <option value="video1.mp4">🎬 자체 업로드 라운지 영상</option>
           <option value="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2560&q=85">🖼 하이엔드 스톤 라운지</option>
+          <option value="https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&w=2560&q=85">🖼 클래식 딥 월넛 살롱</option>
         </select>
         <select id="sched-bgm">
           <option value="jazz1.mp3">🎵 1. Autumn Leaves 클래식 재즈</option>
@@ -568,9 +604,7 @@
     }
 
     if (isTV) {
-      // ─────────────────────────────────────────────
       // 1. TV 디스플레이 모드
-      // ─────────────────────────────────────────────
       const tvSection = document.getElementById('tv-section');
       const bgVideo = document.getElementById('bg-video');
       const videoOverlay = document.getElementById('video-overlay');
@@ -685,7 +719,6 @@
         }
       }
 
-      // 스마트 스케줄러: 현재 시각에 일치하는 예약이 있는지 우선 확인
       async function syncTV() {
         try {
           const nowISO = new Date().toISOString();
@@ -708,11 +741,11 @@
                 active.bgm_source || 'jazz1.mp3',
                 true
               );
-              return; // 예약 화면이 켜졌으므로 기본 화면 로직 패스
+              return;
             }
           }
 
-          // 2. 진행 중인 예약이 없으면 기본 웰컴 화면(welcome_screen) 표출
+          // 2. 진행 중인 예약이 없으면 기본 웰컴 화면 표출
           const defRes = await fetch(cleanUrl + '/rest/v1/welcome_screen?select=*&id=eq.1', {
             headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
           });
@@ -738,12 +771,10 @@
       setInterval(syncTV, 2000);
 
     } else {
-      // ─────────────────────────────────────────────
       // 2. 모바일 관리자 모드
-      // ─────────────────────────────────────────────
       document.getElementById('admin-section').style.display = 'block';
 
-      // (1) 카드 1 로직: 기본 화면 로드 및 저장
+      // (1) 카드 1 로직: 즉시 표출 설정
       const prefixToggle = document.getElementById('prefix-toggle');
       const prefixSelectBox = document.getElementById('prefix-select-box');
       const prefixSelect = document.getElementById('prefix-select');
@@ -827,8 +858,16 @@
         }
       });
 
-      // (2) 카드 2 & 3 로직: VIP 예약 스케줄 추가 및 리스트 관리
-      // 기본 시작/종료 일시를 현재 시각 기준(1시간 뒤)으로 자동 세팅
+      // (2) 카드 2 & 3 로직: VIP 예약 스케줄 (경칭/님 토글 제어)
+      const schedPrefixToggle = document.getElementById('sched-prefix-toggle');
+      const schedPrefixSelectBox = document.getElementById('sched-prefix-select-box');
+      const schedPrefixSelect = document.getElementById('sched-prefix-select');
+      const schedSuffixToggle = document.getElementById('sched-suffix-toggle');
+
+      schedPrefixToggle.addEventListener('change', function() {
+        schedPrefixSelectBox.style.display = this.checked ? 'block' : 'none';
+      });
+
       function setDefaultScheduleTimes() {
         const now = new Date();
         now.setMinutes(0);
@@ -842,7 +881,6 @@
       }
       setDefaultScheduleTimes();
 
-      // 스케줄 리스트 가져오기
       async function loadSchedules() {
         const listContainer = document.getElementById('schedule-list');
         try {
@@ -866,7 +904,7 @@
               <div class="schedule-item">
                 <div>
                   <div class="schedule-time">📅 ${timeStr}</div>
-                  <div class="schedule-name">${item.prefix ? item.prefix + ' ' : ''}${item.guest_name} ${item.suffix || ''}</div>
+                  <div class="schedule-name">${item.prefix ? item.prefix + ' ' : ''}${item.guest_name}${item.suffix ? ' ' + item.suffix : ''}</div>
                   <div class="schedule-msg">${item.sub_message}</div>
                 </div>
                 <button class="btn-delete" onclick="deleteSchedule(${item.id})">삭제</button>
@@ -878,7 +916,6 @@
       }
       loadSchedules();
 
-      // 스케줄 추가
       document.getElementById('sched-save-btn').addEventListener('click', async function() {
         const startVal = document.getElementById('sched-start').value;
         const endVal = document.getElementById('sched-end').value;
@@ -891,6 +928,9 @@
         if (!startVal || !endVal) return alert('시작 및 종료 시각을 지정해 주세요.');
         if (!nameVal) return alert('VIP 성함을 입력해 주세요.');
         if (new Date(startVal) >= new Date(endVal)) return alert('종료 시각은 시작 시각보다 뒤여야 합니다.');
+
+        const prefixVal = schedPrefixToggle.checked ? schedPrefixSelect.value : '';
+        const suffixVal = schedSuffixToggle.checked ? '님' : '';
 
         logBox.style.display = 'block';
         logBox.style.color = '#ffd166';
@@ -907,8 +947,9 @@
             body: JSON.stringify({
               start_time: new Date(startVal).toISOString(),
               end_time: new Date(endVal).toISOString(),
+              prefix: prefixVal,
               guest_name: nameVal,
-              suffix: '님',
+              suffix: suffixVal,
               sub_message: msgVal,
               bg_source: bgVal,
               bgm_source: bgmVal
@@ -919,6 +960,9 @@
             logBox.style.color = '#4ade80';
             logBox.innerText = '✓ 예약 스케줄이 성공적으로 추가되었습니다!';
             document.getElementById('sched-name').value = '';
+            schedPrefixToggle.checked = false;
+            schedPrefixSelectBox.style.display = 'none';
+            schedSuffixToggle.checked = true;
             loadSchedules();
           } else {
             logBox.style.color = '#f87171';
@@ -930,7 +974,6 @@
         }
       });
 
-      // 스케줄 삭제
       window.deleteSchedule = async function(id) {
         if (!confirm('이 예약 일정을 삭제하시겠습니까?')) return;
         try {
