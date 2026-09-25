@@ -1161,6 +1161,7 @@
         } catch(e) {}
       }
 
+      // ─── [TV 화면에 즉시 반영] 버튼 (현재 진행 중인 예약 일정 감지 안전장치) ───
       document.getElementById('save-btn').addEventListener('click', async function() {
         const nameInput = document.getElementById('name-input').value.trim();
         const msg = document.getElementById('msg-input').value.trim();
@@ -1169,15 +1170,55 @@
 
         if (!nameInput) return alert('예약자 본명 또는 회사명을 입력해 주세요.');
 
-        const prefixVal = prefixToggle.checked ? prefixSelect.value : '';
-        const suffixVal = suffixToggle.checked ? '님' : '';
-
         const logBox = document.getElementById('log-box');
         logBox.style.display = 'block';
         logBox.style.color = '#ffd166';
-        logBox.innerText = '전송 중...';
+        logBox.innerText = '상태 확인 중...';
 
         try {
+          // 1. 현재 시각에 실행 중인 예약 일정이 있는지 먼저 확인
+          const nowISO = new Date().toISOString();
+          const checkSchedRes = await fetch(cleanUrl + '/rest/v1/welcome_schedules?start_time=lte.' + nowISO + '&end_time=gte.' + nowISO + '&limit=1', {
+            headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+          });
+
+          if (checkSchedRes.ok) {
+            const activeSched = await checkSchedRes.json();
+            if (activeSched && activeSched.length > 0) {
+              const currentVip = activeSched[0];
+              const vipTitle = (currentVip.prefix ? currentVip.prefix + ' ' : '') + currentVip.guest_name + (currentVip.suffix ? ' ' + currentVip.suffix : '');
+              
+              const confirmed = confirm(
+                `⚠️ [주의] 현재 라운지 TV에 "${vipTitle}" 님의 VIP 예약 화면이 표출 중입니다!\n\n` +
+                `지금 즉시 반영하시면 현재 진행 중인 예약 화면이 강제 종료되고 입력하신 내용으로 즉시 바뀝니다.\n\n` +
+                `정말로 계속 진행하시겠습니까?`
+              );
+
+              if (!confirmed) {
+                logBox.style.color = '#888';
+                logBox.innerText = '반영이 취소되었습니다. 현재 예약 일정이 계속 유지됩니다.';
+                return;
+              }
+
+              // 관리자가 승인한 경우, 현재 진행 중인 예약의 end_time을 과거로 당겨 즉시 종료 처리
+              await fetch(cleanUrl + '/rest/v1/welcome_schedules?id=eq.' + currentVip.id, {
+                method: 'PATCH',
+                headers: {
+                  'apikey': cleanKey,
+                  'Authorization': 'Bearer ' + cleanKey,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ end_time: new Date(Date.now() - 1000).toISOString() })
+              });
+              loadSchedules(); // 대기열 갱신
+            }
+          }
+
+          // 2. 즉시 반영 데이터 저장
+          logBox.innerText = '전송 중...';
+          const prefixVal = prefixToggle.checked ? prefixSelect.value : '';
+          const suffixVal = suffixToggle.checked ? '님' : '';
+
           const res = await fetch(cleanUrl + '/rest/v1/welcome_screen', {
             method: 'POST',
             headers: {
@@ -1345,7 +1386,6 @@
         }
       };
 
-      // ─── VIP 히스토리 아카이브 (개별 삭제 지원) ───
       let currentHistPage = 1;
       const HIST_PAGE_SIZE = 5;
 
@@ -1374,7 +1414,6 @@
 
           const items = await res.json();
           if (!items || items.length === 0) {
-            // 현재 페이지에 아이템이 없고 이전 페이지가 있다면 이전 페이지로 이동
             if (currentHistPage > 1) {
               loadHistory(currentHistPage - 1);
               return;
@@ -1422,7 +1461,6 @@
         loadHistory(currentHistPage);
       };
 
-      // 히스토리 개별 삭제 함수
       window.deleteHistory = async function(id) {
         if (!confirm('이 VIP 히스토리 기록을 영구 삭제하시겠습니까?')) return;
         try {
@@ -2629,6 +2667,7 @@
         } catch(e) {}
       }
 
+      // ─── [TV 화면에 즉시 반영] 버튼 (현재 진행 중인 예약 일정 감지 안전장치) ───
       document.getElementById('save-btn').addEventListener('click', async function() {
         const nameInput = document.getElementById('name-input').value.trim();
         const msg = document.getElementById('msg-input').value.trim();
@@ -2637,15 +2676,55 @@
 
         if (!nameInput) return alert('예약자 본명 또는 회사명을 입력해 주세요.');
 
-        const prefixVal = prefixToggle.checked ? prefixSelect.value : '';
-        const suffixVal = suffixToggle.checked ? '님' : '';
-
         const logBox = document.getElementById('log-box');
         logBox.style.display = 'block';
         logBox.style.color = '#ffd166';
-        logBox.innerText = '전송 중...';
+        logBox.innerText = '상태 확인 중...';
 
         try {
+          // 1. 현재 시각에 실행 중인 예약 일정이 있는지 먼저 확인
+          const nowISO = new Date().toISOString();
+          const checkSchedRes = await fetch(cleanUrl + '/rest/v1/welcome_schedules?start_time=lte.' + nowISO + '&end_time=gte.' + nowISO + '&limit=1', {
+            headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+          });
+
+          if (checkSchedRes.ok) {
+            const activeSched = await checkSchedRes.json();
+            if (activeSched && activeSched.length > 0) {
+              const currentVip = activeSched[0];
+              const vipTitle = (currentVip.prefix ? currentVip.prefix + ' ' : '') + currentVip.guest_name + (currentVip.suffix ? ' ' + currentVip.suffix : '');
+              
+              const confirmed = confirm(
+                `⚠️ [주의] 현재 라운지 TV에 "${vipTitle}" 님의 VIP 예약 화면이 표출 중입니다!\n\n` +
+                `지금 즉시 반영하시면 현재 진행 중인 예약 화면이 강제 종료되고 입력하신 내용으로 즉시 바뀝니다.\n\n` +
+                `정말로 계속 진행하시겠습니까?`
+              );
+
+              if (!confirmed) {
+                logBox.style.color = '#888';
+                logBox.innerText = '반영이 취소되었습니다. 현재 예약 일정이 계속 유지됩니다.';
+                return;
+              }
+
+              // 관리자가 승인한 경우, 현재 진행 중인 예약의 end_time을 과거로 당겨 즉시 종료 처리
+              await fetch(cleanUrl + '/rest/v1/welcome_schedules?id=eq.' + currentVip.id, {
+                method: 'PATCH',
+                headers: {
+                  'apikey': cleanKey,
+                  'Authorization': 'Bearer ' + cleanKey,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ end_time: new Date(Date.now() - 1000).toISOString() })
+              });
+              loadSchedules(); // 대기열 갱신
+            }
+          }
+
+          // 2. 즉시 반영 데이터 저장
+          logBox.innerText = '전송 중...';
+          const prefixVal = prefixToggle.checked ? prefixSelect.value : '';
+          const suffixVal = suffixToggle.checked ? '님' : '';
+
           const res = await fetch(cleanUrl + '/rest/v1/welcome_screen', {
             method: 'POST',
             headers: {
@@ -2813,7 +2892,6 @@
         }
       };
 
-      // ─── VIP 히스토리 아카이브 (개별 삭제 지원) ───
       let currentHistPage = 1;
       const HIST_PAGE_SIZE = 5;
 
@@ -2842,7 +2920,6 @@
 
           const items = await res.json();
           if (!items || items.length === 0) {
-            // 현재 페이지에 아이템이 없고 이전 페이지가 있다면 이전 페이지로 이동
             if (currentHistPage > 1) {
               loadHistory(currentHistPage - 1);
               return;
@@ -2890,7 +2967,6 @@
         loadHistory(currentHistPage);
       };
 
-      // 히스토리 개별 삭제 함수
       window.deleteHistory = async function(id) {
         if (!confirm('이 VIP 히스토리 기록을 영구 삭제하시겠습니까?')) return;
         try {
