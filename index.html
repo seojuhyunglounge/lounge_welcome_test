@@ -2178,21 +2178,35 @@ const uPrefixToggle = document.getElementById('u-prefix-toggle');
           uPrefixSelectBox.style.display = this.checked ? 'block' : 'none';
         });
 
-        // 폼 입력값 추출 공통 헬퍼
+// [추가] 회원 선택 시 이름 입력칸이 비어있으면 회원 이름을 기본값 힌트로 안내
+        document.getElementById('u-member-select').addEventListener('change', function() {
+          const selOpt = this.options[this.selectedIndex];
+          const memName = (selOpt && this.value) ? selOpt.getAttribute('data-name') : '';
+          const nameInput = document.getElementById('u-name-input');
+          if (memName) {
+            nameInput.placeholder = `미입력 시 회원명 '${memName}' 표출`;
+          } else {
+            nameInput.placeholder = "비워둘 시 기본값 'Guest' 표출";
+          }
+        });
+        
+// 폼 입력값 추출 공통 헬퍼 (회원 선택 시 이름 미입력 fallback 적용)
         function getUnifiedFormData() {
           const rawName = document.getElementById('u-name-input').value.trim();
-          const name = rawName || 'Guest';
-          const msg = document.getElementById('u-msg-input').value.trim() || '라 콜론에 오신 것을 환영합니다.';
-          const prefix = (name === 'Guest') ? '' : (uPrefixToggle.checked ? uPrefixSelect.value : '');
-          const suffix = (name === 'Guest') ? '' : (uSuffixToggle.checked ? '님' : '');
-          const bg = document.getElementById('u-bg-select').value;
-          const bgm = document.getElementById('u-bgm-select').value;
-
           const memSelect = document.getElementById('u-member-select');
           const selOpt = memSelect ? memSelect.options[memSelect.selectedIndex] : null;
           const memberId = selOpt ? selOpt.value : '';
           const memberCode = (selOpt && memberId) ? selOpt.getAttribute('data-code') : '';
           const memberName = (selOpt && memberId) ? selOpt.getAttribute('data-name') : '';
+
+          // 이름이 비어있으면: 연동된 회원 이름 우선 적용 -> 그것도 없으면 'Guest'
+          const name = rawName || (memberName ? memberName : 'Guest');
+
+          const msg = document.getElementById('u-msg-input').value.trim() || '라 콜론에 오신 것을 환영합니다.';
+          const prefix = (name === 'Guest') ? '' : (uPrefixToggle.checked ? uPrefixSelect.value : '');
+          const suffix = (name === 'Guest') ? '' : (uSuffixToggle.checked ? '님' : '');
+          const bg = document.getElementById('u-bg-select').value;
+          const bgm = document.getElementById('u-bgm-select').value;
 
           return { name, msg, prefix, suffix, bg, bgm, memberId, memberCode, memberName };
         }
