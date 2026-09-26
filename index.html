@@ -2126,11 +2126,12 @@
                 cardEl.style.borderColor = '#eab308';
                 badgeEl.style.background = 'rgba(234, 179, 8, 0.2)';
                 badgeEl.style.color = '#fde047';
-                badgeEl.innerText = '● 수동 즉시 표출 중';
+                const memInfo = d.member_name ? ` (회원: ${d.member_code || ''} ${d.member_name})` : '';
+                badgeEl.innerText = '● 수동 즉시 표출 중' + (d.member_name ? ' [회원]' : '');
                 if (resetBtn) resetBtn.style.display = 'block';
 
                 titleEl.innerText = `${d.prefix ? d.prefix + ' ' : ''}${d.guest_name}${d.suffix ? ' ' + d.suffix : ''}`;
-                descEl.innerText = `문구: "${d.sub_message}" (상시 유지 모드)`;
+                descEl.innerText = `문구: "${d.sub_message}"${memInfo}`;
                 return;
               }
             }
@@ -2244,6 +2245,17 @@
         const uSuffixToggle = document.getElementById('u-suffix-toggle');
         const uLogBox = document.getElementById('unified-log-box');
 
+        // [신규] 시작 시각 입력 시 1세션(3시간) 자동 계산하여 종료 시각 채우기
+        document.getElementById('u-sched-start').addEventListener('change', function() {
+          const startVal = this.value;
+          if (!startVal) return;
+          const endInput = document.getElementById('u-sched-end');
+          const d = new Date(startVal);
+          d.setHours(d.getHours() + 3); // 3시간 추가
+          const toLocalISO = (dt) => new Date(dt.getTime() - dt.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+          endInput.value = toLocalISO(d);
+        });
+        
         uPrefixToggle.addEventListener('change', function() {
           uPrefixSelectBox.style.display = this.checked ? 'block' : 'none';
         });
@@ -2322,6 +2334,8 @@
                 sub_message: f.msg,
                 bg_source: f.bg,
                 bgm_source: f.bgm,
+                member_code: f.memberCode || '',
+                member_name: f.memberName || '',
                 updated_at: new Date().toISOString()
               })
             });
@@ -2666,15 +2680,20 @@
 
           // 회원 연동 선택 매핑
           const memSelect = document.getElementById('u-member-select');
-          if (memSelect && data.member_code) {
-            for (let i = 0; i < memSelect.options.length; i++) {
-              if (memSelect.options[i].getAttribute('data-code') === data.member_code) {
-                memSelect.selectedIndex = i;
-                break;
+          if (memSelect) {
+            memSelect.value = ''; // 우선 기본 초기화
+            if (data.member_code) {
+              for (let i = 0; i < memSelect.options.length; i++) {
+                if (memSelect.options[i].getAttribute('data-code') === data.member_code) {
+                  memSelect.selectedIndex = i;
+                  break;
+                }
               }
             }
+            // 회원 변경 이벤트 강제 트리거 (placeholder 안내 갱신)
+            memSelect.dispatchEvent(new Event('change'));
           }
-
+          
           document.getElementById('unified-control-card').scrollIntoView({ behavior: 'smooth' });
           alert(`[${data.guest_name}] 님의 방문 설정이 상단 통합 제어 폼에 채워졌습니다.`);
         };
