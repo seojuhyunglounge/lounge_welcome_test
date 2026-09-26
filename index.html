@@ -87,32 +87,18 @@
     .sub-desc { font-size: 1.65rem; color: #b8bdc9; font-weight: 300; line-height: 1.6; text-shadow: 0 2px 12px rgba(0,0,0,0.85); }
 
     .bottom-interactive-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; margin-bottom: 10px; }
-    .ott-dock { display: flex; align-items: center; justify-content: center; gap: 14px; background: rgba(18, 20, 26, 0.65); backdrop-filter: blur(16px); border: 1px solid rgba(201, 169, 110, 0.28); border-radius: 50px; padding: 10px 24px; box-shadow: 0 10px 35px rgba(0, 0, 0, 0.6); opacity: 0.25; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); transform: translateY(6px); }
-    .ott-dock.active, .ott-dock:hover, .ott-dock:focus-within { opacity: 1; transform: translateY(0); border-color: rgba(201, 169, 110, 0.65); background: rgba(18, 20, 26, 0.88); }
-    .ott-btn { display: flex; align-items: center; gap: 10px; padding: 8px 18px; border-radius: 30px; text-decoration: none; color: #dfcfb2; font-size: 0.95rem; font-weight: 500; background: rgba(255, 255, 255, 0.04); transition: all 0.25s ease; cursor: pointer; border: none; }
-    .ott-btn:hover, .ott-btn:focus { background: #c9a96e; color: #0b0c0e; transform: translateY(-2px) scale(1.04); font-weight: 700; }
-    .ott-btn svg { width: 20px; height: 20px; fill: currentColor; }
     .footer-bar { font-size: 0.85rem; color: #616674; letter-spacing: 5px; text-transform: uppercase; font-weight: 300; }
 
-    #wifi-dock, #amenity-dock { position: fixed; bottom: 25px; z-index: 10; display: flex; align-items: center; gap: 12px; background: rgba(18, 20, 26, 0.72); backdrop-filter: blur(14px); border: 1px solid rgba(201, 169, 110, 0.32); border-radius: 14px; padding: 10px 14px; }
-    #wifi-dock { right: 30px; } #amenity-dock { left: 30px; }
+    #wifi-dock, #amenity-dock, #ott-dock { position: fixed; bottom: 25px; z-index: 10; display: flex; align-items: center; gap: 12px; background: rgba(18, 20, 26, 0.72); backdrop-filter: blur(14px); border: 1px solid rgba(201, 169, 110, 0.32); border-radius: 14px; padding: 10px 14px; }
+    #wifi-dock { right: 30px; } 
+    #amenity-dock { left: 30px; }
+    #ott-dock { left: 50%; transform: translateX(-50%); display: none; } /* 토글용 OTT/Cast QR 독 */
+    
     .qr-img-box { width: 58px; height: 58px; border-radius: 6px; background: #ffffff; padding: 3px; }
     .qr-tag { font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; color: #dfcfb2; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600; }
     .qr-name { font-size: 0.76rem; color: #e5e7eb; margin-top: 3px; }
     .qr-sub { font-size: 0.68rem; color: #8b92a0; }
     #tv-status-dot { position: fixed; bottom: 30px; left: 14px; z-index: 9999; width: 6px; height: 6px; border-radius: 50%; background: #22c55e; opacity: 0.6; pointer-events: none; }
-
-    /* ─── 캐스트 모달 ─── */
-    #cast-modal { display: none; position: fixed; inset: 0; z-index: 99999; background: rgba(8, 9, 12, 0.78); backdrop-filter: blur(20px); align-items: center; justify-content: center; padding: 24px; opacity: 0; transition: opacity 0.4s ease; }
-    #cast-modal.show { display: flex; opacity: 1; }
-    .cast-dialog { background: #15171e; border: 1px solid rgba(201, 169, 110, 0.45); border-radius: 24px; padding: 42px 48px; max-width: 680px; width: 100%; text-align: center; }
-    .cast-title { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; color: #dfcfb2; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
-    .cast-subtitle { font-size: 0.95rem; color: #9ba1b0; margin-bottom: 30px; }
-    .cast-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 32px; text-align: left; }
-    .cast-col { background: #1c1e27; border: 1px solid #2e323e; border-radius: 14px; padding: 20px; }
-    .cast-col-title { font-size: 1.05rem; color: #fff; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-    .cast-step { font-size: 0.85rem; color: #c4c8d3; line-height: 1.6; margin-bottom: 6px; }
-    .cast-step b { color: #dfcfb2; }
 
     /* ─── 공통 관리자 카드 & UI 위젯 ─── */
     .admin-card { background: #16171b; border: 1px solid #282a32; border-radius: 18px; padding: 24px; margin-bottom: 22px; }
@@ -239,24 +225,6 @@
     </div>
 
     <div class="tv-layer bottom-interactive-wrap">
-      <div class="ott-dock" id="ott-dock">
-        <a href="vnd.youtube://" class="ott-btn" onclick="pauseBgmForApp()">
-          <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-          <span>YouTube</span>
-        </a>
-        <a href="nflx://" class="ott-btn" onclick="pauseBgmForApp()">
-          <svg viewBox="0 0 24 24"><path d="M5.398 0v24c1.198-.12 2.392-.28 3.585-.48V8.756l5.772 14.512c1.336-.2 2.67-.442 3.998-.718V0h-3.586v15.244L9.396 0H5.398z"/></svg>
-          <span>Netflix</span>
-        </a>
-        <a href="disneyplus://" class="ott-btn" onclick="pauseBgmForApp()">
-          <svg viewBox="0 0 24 24"><path d="M14.752 9.697c-.36-.048-1.543-.134-2.618.322-1.348.574-2.22 1.547-2.316 2.585-.102 1.106.669 1.94 1.83 1.986 1.48.06 2.87-.732 3.104-1.782.02-.09.027-.183.024-.275a2.53 2.53 0 0 0-.024-.836zm-3.08 3.733c-.563-.035-.865-.367-.822-.84.049-.533.565-1.127 1.341-1.503.74-.36 1.637-.417 2.023-.393-.162 1.41-1.353 2.662-2.542 2.736zm10.744-2.023c-.347-.282-1.89-1.285-4.22-1.31-2.45-.027-4.996 1.125-6.73 3.064-1.548 1.732-2.185 3.864-1.745 5.845.42 1.888 1.848 3.208 3.722 3.435 2.557.31 5.347-.946 7.027-3.18 1.418-1.886 1.996-4.148 1.614-6.223a6.83 6.83 0 0 0-.668-1.631zm-6.208 8.01c-1.378 1.833-3.66 2.863-5.748 2.61-1.534-.186-2.7-1.266-3.044-2.813-.36-1.623.16-3.367 1.425-4.783 1.42-1.59 3.5-2.534 5.507-2.512 1.91.02 3.17.842 3.45 1.07.313 1.697-.156 4.542-1.59 6.428zM9.416 9.475C6.18 6.57 3.03 7.828 2.378 8.163c-.22.113-.31.378-.204.602.106.224.37.318.595.213.062-.03 2.664-1.183 5.467 1.127.202.167.502.14.67-.063.166-.202.14-.502-.062-.67-.328-.27-.674-.536-1.042-.782.72-.08 1.464-.09 2.22-.016.26.026.495-.164.52-.426a.434.434 0 0 0-.42-.475c-.244-.02-.486-.024-.726-.016zm-5.068 5.75c.197.168.495.14.664-.056.168-.198.14-.495-.056-.665C3.39 13.176 2.057 11.23 2.01 8.92c-.004-.262-.22-.47-.482-.465-.262.004-.47.22-.465.482.055 2.64 1.585 4.86 3.285 6.288z"/></svg>
-          <span>Disney+</span>
-        </a>
-        <button type="button" class="ott-btn" id="cast-trigger-btn" onclick="openCastModal()">
-          <svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H3V5h18v14zm-10-7h9v6h-9z"/></svg>
-          <span>✦ Cast / AirPlay</span>
-        </button>
-      </div>
       <div class="footer-bar">EXCLUSIVELY RESERVED FOR YOUR SUCCESS</div>
     </div>
 
@@ -278,25 +246,13 @@
       </div>
     </div>
 
-    <div id="cast-modal" onclick="closeCastModal(event)">
-      <div class="cast-dialog" onclick="event.stopPropagation()">
-        <div class="cast-title">Phone Mirroring & Cast</div>
-        <div class="cast-subtitle">개인 스마트폰의 영상과 프레젠테이션을 TV 화면으로 감상하세요.</div>
-        <div class="cast-grid">
-          <div class="cast-col">
-            <div class="cast-col-title"><span>Apple iPhone / iPad</span><span class="tag-badge badge-gold">AirPlay</span></div>
-            <div class="cast-step">1. <b>Guest Wi-Fi</b>에 먼저 연결합니다.</div>
-            <div class="cast-step">2. 제어센터를 내려 <b>[화면 미러링]</b> 터치</div>
-            <div class="cast-step">3. <b>'La Colonne'</b>를 선택하세요.</div>
-          </div>
-          <div class="cast-col">
-            <div class="cast-col-title"><span>Android / OTT Apps</span><span class="tag-badge badge-gold">Chromecast</span></div>
-            <div class="cast-step">1. <b>Guest Wi-Fi</b>에 연결합니다.</div>
-            <div class="cast-step">2. 앱 상단의 <b>[전송 아이콘 ⛶]</b> 터치</div>
-            <div class="cast-step">3. 갤러리 영상은 <b>[Smart View]</b> 연결</div>
-          </div>
-        </div>
-        <button type="button" class="btn-primary" style="max-width: 200px; border-radius: 30px;" onclick="closeCastModal()">확인 (닫기)</button>
+    <!-- 토글형 OTT/Cast QR 독 (관리자 설정으로 켜고 끔) -->
+    <div id="ott-dock">
+      <img id="ott-qr-img" class="qr-img-box" alt="OTT QR" src="">
+      <div>
+        <div class="qr-tag">Smart TV Cast</div>
+        <div class="qr-name">YouTube & Netflix</div>
+        <div class="qr-sub">스캔 시 미러링 가이드</div>
       </div>
     </div>
 
@@ -333,7 +289,7 @@
       <div id="occupancy-desc" style="font-size: 0.84rem; color: #94a3b8;">디스플레이 상태를 동기화하고 있습니다.</div>
     </div>
     
-    <!-- 공통 온오프 설정 -->
+    <!-- 공통 온오프 설정 (OTT 위젯 토글 추가) -->
     <div class="admin-card" style="padding: 18px 22px; border-color: rgba(201, 169, 110, 0.4);">
       <div class="admin-title" style="font-size: 1rem; margin-bottom: 12px;">⚙️ 라운지 디스플레이 공통 설정</div>
       <div class="toggle-row">
@@ -344,9 +300,13 @@
         <div class="toggle-label"><span>Guest Wi-Fi QR 위젯 표시</span><span class="toggle-sub">우측 하단 Wi-Fi QR On/Off</span></div>
         <label class="switch"><input type="checkbox" id="global-wifi-toggle"><span class="slider"></span></label>
       </div>
-      <div class="toggle-row" style="margin-bottom: 0;">
+      <div class="toggle-row">
         <div class="toggle-label"><span>Lounge Bar 어메니티 QR 표시</span><span class="toggle-sub">좌측 하단 미니바 QR On/Off</span></div>
         <label class="switch"><input type="checkbox" id="global-amenity-toggle"><span class="slider"></span></label>
+      </div>
+      <div class="toggle-row" style="margin-bottom: 0;">
+        <div class="toggle-label"><span>OTT / Cast 가이드 QR 표시</span><span class="toggle-sub">하단 중앙 OTT 가이드 QR On/Off</span></div>
+        <label class="switch"><input type="checkbox" id="global-ott-toggle"><span class="slider"></span></label>
       </div>
     </div>
 
@@ -1077,7 +1037,6 @@
         let finalStart = checkedSlots[0].dataset.start;
         let finalEnd = checkedSlots[checkedSlots.length - 1].dataset.end;
 
-        // 관리자 커스텀 예약 포함 이중 충돌 방지 검사
         try {
           const checkRes = await apiCall(`welcome_schedules?start_time=lt.${finalEnd}&end_time=gt.${finalStart}&select=id,guest_name`);
           const conflicts = checkRes.ok ? await checkRes.json() : [];
@@ -1414,27 +1373,12 @@
     // ─────────────────────────────────────────────
     } else if (isTV) {
       const tvSection = document.getElementById('tv-section');
-      const [vidA, vidB, player, dot, castModal] = ['bg-video-a','bg-video-b','bgm-player','tv-status-dot','cast-modal'].map(id => document.getElementById(id));
+      const [vidA, vidB, player, dot] = ['bg-video-a','bg-video-b','bgm-player','tv-status-dot'].map(id => document.getElementById(id));
       [vidA, vidB].forEach(v => { v.muted = true; v.volume = 0; });
       player.volume = 0.35; tvSection.style.display = 'flex';
 
       let currentDataKey = '', currentBgmUrl = '', videoPlaylist = [], currentPlaylistIdx = 0, activeBuf = 'A', isFired = false;
       const setDot = c => dot.style.backgroundColor = c;
-
-      let ottTimer = null;
-      const wakeOtt = () => {
-        const dock = document.getElementById('ott-dock');
-        if (dock) { dock.classList.add('active'); clearTimeout(ottTimer); ottTimer = setTimeout(() => dock.classList.remove('active'), 8000); }
-      };
-      ['keydown', 'mousemove', 'touchstart'].forEach(e => window.addEventListener(e, wakeOtt));
-      window.openCastModal = () => { castModal.classList.add('show'); };
-      window.closeCastModal = () => { castModal.classList.remove('show'); };
-
-      window.addEventListener('keydown', e => {
-        if (['Escape', 'GoBack'].includes(e.key) || [27, 10009, 4].includes(e.keyCode)) {
-          if (castModal && castModal.classList.contains('show')) closeCastModal();
-        }
-      });
 
       let lastReload = '';
       function updateClock() {
@@ -1462,6 +1406,7 @@
       const makeQR = (id, data) => document.getElementById(id).src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=0&data=' + encodeURIComponent(data);
       makeQR('wifi-qr-img', 'WIFI:T:WPA;S:La_Colonne_VIP;P:welcome2026;;');
       makeQR('amenity-qr-img', `${location.origin}${location.pathname}?view=bar`);
+      makeQR('ott-qr-img', `${location.origin}${location.pathname}?view=booking`); // 예시 가이드 링크
 
       function crossfade() {
         if (isFired || videoPlaylist.length <= 1) return;
@@ -1555,6 +1500,7 @@
               document.getElementById('weather-pill').style.display = s.show_weather !== false ? 'inline-flex' : 'none';
               document.getElementById('wifi-dock').style.display = s.show_wifi !== false ? 'flex' : 'none';
               document.getElementById('amenity-dock').style.display = s.show_amenity !== false ? 'flex' : 'none';
+              document.getElementById('ott-dock').style.display = s.show_ott === true ? 'flex' : 'none'; // 관리자 토글 반영
             }
           }
         } catch(e) {}
@@ -1591,18 +1537,21 @@
                 document.getElementById('global-weather-toggle').checked = (s.show_weather !== false);
                 document.getElementById('global-wifi-toggle').checked = (s.show_wifi !== false);
                 document.getElementById('global-amenity-toggle').checked = (s.show_amenity !== false);
+                document.getElementById('global-ott-toggle').checked = (s.show_ott === true);
               }
             }
           } catch(e) {}
         }
         loadGlobalSettings();
 
-        ['weather', 'wifi', 'amenity'].forEach(key => {
+        ['weather', 'wifi', 'amenity', 'ott'].forEach(key => {
           const el = document.getElementById(`global-${key}-toggle`);
-          el.onchange = () => apiCall('lounge_settings?id=eq.1', 'PATCH', { 
-            [`show_${key}`]: el.checked,
-            updated_at: new Date().toISOString()
-          });
+          if (el) {
+            el.onchange = () => apiCall('lounge_settings?id=eq.1', 'PATCH', { 
+              [`show_${key}`]: el.checked,
+              updated_at: new Date().toISOString()
+            });
+          }
         });
 
         async function loadMembers() {
@@ -1730,7 +1679,6 @@
           const f = getFormData();
           if (!f.name || f.name === 'Guest') return alert('VIP 성함을 입력하세요.');
 
-          // 양방향 충돌 방지: 실제 고객 예약(guest_name !== '[CLOSED_BLOCK]')과 겹치는지 엄격 검사
           const cRes = await apiCall(`welcome_schedules?end_time=gte.${new Date().toISOString()}&select=id,guest_name,start_time,end_time`);
           const existing = cRes.ok ? await cRes.json() : [];
           for (const ex of existing) {
