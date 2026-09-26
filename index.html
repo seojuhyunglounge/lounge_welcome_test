@@ -206,7 +206,7 @@
     }
 
     #admin-section { display: none; width: 92%; max-width: 540px; margin: 30px auto 90px auto; }
-    #guest-portal-section, #member-client-section, #booking-section, #my-booking-section { display: none; width: 90%; max-width: 440px; margin: 60px auto 80px auto; text-align: center; }
+    #guest-portal-section, #member-client-section, #booking-section, #my-booking-section, #block-admin-section { display: none; width: 90%; max-width: 440px; margin: 60px auto 80px auto; text-align: center; }
     #bar-section { display: none; width: 92%; max-width: 480px; margin: 30px auto 80px auto; }
     #member-admin-section { display: none; width: 92%; max-width: 520px; margin: 30px auto 90px auto; }
 
@@ -351,9 +351,10 @@
   <!-- [화면 3] 라운지 관리자 메인 허브 (?view=admin) -->
   <div id="admin-section">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
-      <div style="display: flex; gap: 12px;">
+      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
         <a href="?view=bar&admin=1" style="color: #93c5fd; font-size: 0.85rem; text-decoration: none; font-weight: 500;">🍸 어메니티 편집</a>
-        <a href="?view=member_admin" style="color: #dfcfb2; font-size: 0.85rem; text-decoration: none; font-weight: 600;">💳 VIP 멤버십 횟수 관리</a>
+        <a href="?view=member_admin" style="color: #dfcfb2; font-size: 0.85rem; text-decoration: none; font-weight: 600;">💳 멤버십 횟수 관리</a>
+        <a href="?view=block_admin" style="color: #f87171; font-size: 0.85rem; text-decoration: none; font-weight: 600;">🔒 예약 불가일 캘린더 관리 ↗</a>
       </div>
       <div style="display:flex; gap:10px; align-items:center;">
         <button type="button" onclick="logoutAdmin()" style="background:none; border:1px solid #444; color:#aaa; padding:4px 8px; border-radius:6px; font-size:0.75rem; cursor:pointer;">로그아웃</button>
@@ -390,30 +391,6 @@
       <div class="toggle-row" style="margin-bottom: 0;">
         <div class="toggle-label"><span>Lounge Bar 어메니티 QR 표시</span><span class="toggle-sub">좌측 하단 미니바 QR On/Off</span></div>
         <label class="switch"><input type="checkbox" id="global-amenity-toggle"><span class="slider"></span></label>
-      </div>
-    </div>
-
-    <!-- 관리자 광역 블록 관리 카드 -->
-    <div class="admin-card" style="border-color: #ef4444; background: #161315;">
-      <div class="admin-title" style="color: #f87171; margin-bottom: 10px;">🔒 예약 불가일 (광역 블록) 관리</div>
-      <div style="font-size: 0.82rem; color: #9ca3af; line-height: 1.5; margin-bottom: 16px;">
-        라운지 휴무, 내부 정비, 또는 개인 일정으로 손님용 웹 예약을 차단할 날짜와 단위를 선택하세요.
-      </div>
-      <div class="form-group">
-        <label>기준 날짜 선택</label>
-        <input type="date" id="block-target-date" style="border-color: #7f1d1d;">
-      </div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
-        <button type="button" class="btn-secondary" onclick="applyBulkBlock('day')" style="border-color: #ef4444; color: #fca5a5;">📅 선택한 '일(Day)' 통째 차단</button>
-        <button type="button" class="btn-secondary" onclick="applyBulkBlock('week')" style="border-color: #ef4444; color: #fca5a5;">🗓 선택한 날짜 '주(Week)' 차단</button>
-      </div>
-      <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-        <button type="button" class="btn-secondary" onclick="applyBulkBlock('month')" style="flex: 1; border-color: #ef4444; color: #fca5a5;">🗂 선택한 '월(Month)' 차단</button>
-        <button type="button" class="btn-secondary" onclick="clearBlockForDate()" style="flex: 1; border-color: #374151; color: #9ca3af;">🧹 선택일 블록 해제</button>
-      </div>
-      <div style="font-size: 0.8rem; font-weight: 600; color: #dfcfb2; margin-bottom: 8px;">현재 등록된 활성 블록 목록</div>
-      <div id="blocked-slots-list" style="max-height: 140px; overflow-y: auto; background: #0f1014; border-radius: 8px; padding: 8px; font-size: 0.78rem; color: #9ca3af;">
-        불러오는 중...
       </div>
     </div>
 
@@ -531,6 +508,30 @@
     </div>
   </div>
 
+  <!-- [화면 9] 관리자 캘린더형 예약 불가일(블록) 관리 페이지 (?view=block_admin) -->
+  <div id="block-admin-section">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+      <div>
+        <a href="?view=admin" style="color: #94a3b8; font-size: 0.82rem; text-decoration: none; display: inline-block; margin-bottom: 4px;">← 라운지 관리 홈</a>
+        <h2 style="font-size: 1.2rem; color: #f87171; font-weight: 600;">🔒 예약 불가일 캘린더 관리</h2>
+      </div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <button type="button" class="page-btn" onclick="changeCalendarMonth(-1)">◀</button>
+        <span id="cal-month-title" style="font-size: 0.95rem; font-weight: 600; color: #dfcfb2;">2026년 10월</span>
+        <button type="button" class="page-btn" onclick="changeCalendarMonth(1)">▶</button>
+      </div>
+    </div>
+
+    <div class="admin-card" style="padding: 16px; border-color: #7f1d1d; background: #151315; text-align: left;">
+      <div style="font-size: 0.8rem; color: #9ca3af; margin-bottom: 12px; line-height: 1.4;">
+        • 날짜별로 <b>[1부/2부/3부]</b>를 직접 터치해 마감하거나, 우측 <b>[일괄]</b> 체크로 하루를 통째로 차단할 수 있습니다.
+      </div>
+      <div id="calendar-grid-container" style="display: flex; flex-direction: column; gap: 8px;">
+        <!-- 동적 캘린더 매트릭스 -->
+      </div>
+    </div>
+  </div>
+
   <!-- [화면 4] 어메니티/미니바 체크아웃 (?view=bar) -->
   <div id="bar-section">
     <div style="text-align: center; margin-bottom: 20px;">
@@ -562,7 +563,7 @@
         <button type="button" onclick="copyAccount()" style="margin-top: 6px; background: none; border: 1px solid #555; color: #aaa; padding: 3px 8px; border-radius: 4px; font-size: 0.72rem; cursor: pointer;">계좌번호 복사</button>
       </div>
       <div class="form-group" style="text-align: left; margin-bottom: 12px;">
-        <label style="font-size: 0.8rem;">이용자 성함 (선택)</label>
+        <label style="font-size: 0.80rem;">이용자 성함 (선택)</label>
         <input type="text" id="bar-guest-name" placeholder="성함 또는 회사명 입력">
       </div>
       <button type="button" class="btn-primary" onclick="submitBarOrder()" id="btn-submit-bar">이용 내역 전송 및 입금 완료</button>
@@ -697,9 +698,9 @@
     const ACCOUNT_CONFIG = { bank: '국민은행', num: '123456-04-123456', owner: '라콜론' };
     const params = new URLSearchParams(window.location.search);
     const viewParam = params.get('view');
-    const [isTV, isBar, isBarAdmin, isMemberAdmin, isMemberClient, isBooking, isMyBooking, isAdmin] = [
+    const [isTV, isBar, isBarAdmin, isMemberAdmin, isMemberClient, isBooking, isMyBooking, isBlockAdmin, isAdmin] = [
       viewParam === 'tv', viewParam === 'bar', viewParam === 'bar' && params.get('admin') === '1',
-      viewParam === 'member_admin', viewParam === 'member', viewParam === 'booking', viewParam === 'my_booking', viewParam === 'admin'
+      viewParam === 'member_admin', viewParam === 'member', viewParam === 'booking', viewParam === 'my_booking', viewParam === 'block_admin', viewParam === 'admin'
     ];
 
     function fmtDate(dInput, type) {
@@ -783,11 +784,127 @@
     window.logoutAdmin = () => { sessionStorage.removeItem('la_colonne_admin_token'); location.href = location.pathname; };
 
     // ─────────────────────────────────────────────
+    // [화면 9] 관리자 캘린더형 예약 불가일(블록) 관리 페이지 (?view=block_admin)
+    // ─────────────────────────────────────────────
+    if (isBlockAdmin) {
+      requireAdminAuth(() => {
+        document.getElementById('block-admin-section').style.display = 'block';
+        initBlockCalendar();
+      });
+
+      let calYear = new Date().getFullYear();
+      let calMonth = new Date().getMonth(); // 0~11
+
+      window.changeCalendarMonth = function(delta) {
+        calMonth += delta;
+        if (calMonth > 11) { calMonth = 0; calYear++; }
+        else if (calMonth < 0) { calMonth = 11; calYear--; }
+        initBlockCalendar();
+      };
+
+      async function initBlockCalendar() {
+        document.getElementById('cal-month-title').innerText = `${calYear}년 ${calMonth + 1}월`;
+        const container = document.getElementById('calendar-grid-container');
+        container.innerHTML = '<div style="text-align:center; color:#888; padding:20px;">일정을 불러오는 중...</div>';
+
+        const firstDay = new Date(calYear, calMonth, 1);
+        const lastDay = new Date(calYear, calMonth + 1, 0);
+        const startDateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-01T00:00:00`;
+        const endDateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(lastDay.getDate()).padStart(2,'0')}T23:59:59`;
+
+        try {
+          const res = await apiCall(`welcome_schedules?start_time=gte.${startDateStr}&start_time=lte.${endDateStr}&select=id,start_time,end_time,guest_name`);
+          const schedules = res.ok ? await res.json() : [];
+
+          let html = '';
+          for (let d = 1; d <= lastDay.getDate(); d++) {
+            const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            const s1Iso = `${dateStr}T10:00:00`;
+            const s2Iso = `${dateStr}T14:00:00`;
+            const s3Iso = `${dateStr}T18:00:00`;
+
+            const b1 = schedules.find(s => s.start_time.startsWith(dateStr + 'T10:00'));
+            const b2 = schedules.find(s => s.start_time.startsWith(dateStr + 'T14:00'));
+            const b3 = schedules.find(s => s.start_time.startsWith(dateStr + 'T18:00'));
+
+            const isAllBlocked = (b1 && b2 && b3);
+
+            html += `
+              <div style="background: #1c1e27; border: 1px solid #2e323e; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <div style="font-weight: 600; font-size: 0.88rem; color: #dfcfb2; min-width: 75px;">
+                  ${calMonth+1}월 ${d}일
+                </div>
+                <div style="display: flex; gap: 6px; align-items: center;">
+                  <button type="button" class="page-btn" style="background: ${b1 ? '#7f1d1d' : '#212329'}; color: ${b1 ? '#fca5a5' : '#c9a96e'}; font-size: 0.74rem; padding: 4px 8px;" onclick="toggleBlockSession('${dateStr}T10:00:00', '${dateStr}T13:00:00', ${b1 ? b1.id : null})">1부</button>
+                  <button type="button" class="page-btn" style="background: ${b2 ? '#7f1d1d' : '#212329'}; color: ${b2 ? '#fca5a5' : '#c9a96e'}; font-size: 0.74rem; padding: 4px 8px;" onclick="toggleBlockSession('${dateStr}T14:00:00', '${dateStr}T17:00:00', ${b2 ? b2.id : null})">2부</button>
+                  <button type="button" class="page-btn" style="background: ${b3 ? '#7f1d1d' : '#212329'}; color: ${b3 ? '#fca5a5' : '#c9a96e'}; font-size: 0.74rem; padding: 4px 8px;" onclick="toggleBlockSession('${dateStr}T18:00:00', '${dateStr}T21:00:00', ${b3 ? b3.id : null})">3부</button>
+                  <button type="button" class="page-btn" style="background: ${isAllBlocked ? '#ef4444' : '#2a2c35'}; color: ${isAllBlocked ? '#000' : '#d1d5db'}; font-size: 0.74rem; padding: 4px 10px; font-weight: 600;" onclick="toggleDayBlock('${dateStr}', ${isAllBlocked})">일괄차단</button>
+                </div>
+              </div>`;
+          }
+          container.innerHTML = html;
+        } catch(e) {
+          container.innerHTML = '<div style="color:#f87171; text-align:center;">캘린더 로드 실패</div>';
+        }
+      }
+
+      window.toggleBlockSession = async function(startISO, endISO, existingId) {
+        try {
+          if (existingId) {
+            await apiCall(`welcome_schedules?id=eq.${existingId}`, 'DELETE');
+            showToast('✓ 블록 해제됨');
+          } else {
+            await apiCall('welcome_schedules', 'POST', {
+              start_time: startISO,
+              end_time: endISO,
+              guest_name: '[CLOSED_BLOCK]',
+              sub_message: '관리자 마감',
+              prefix: '', suffix: '', bg_source: '', bgm_source: '', member_code: '', member_name: '', pin_code: '0000'
+            });
+            showToast('✓ 세션 차단됨');
+          }
+          initBlockCalendar();
+        } catch(e) { alert('처리 실패'); }
+      };
+
+      window.toggleDayBlock = async function(dateStr, isCurrentlyAll) {
+        try {
+          if (isCurrentlyAll) {
+            // 해당일 모든 블록 해제
+            const res = await apiCall(`welcome_schedules?guest_name=eq.[CLOSED_BLOCK]&start_time=gte.${dateStr}T00:00:00&start_time=lte.${dateStr}T23:59:59`);
+            const blocks = res.ok ? await res.json() : [];
+            for (const b of blocks) {
+              await apiCall(`welcome_schedules?id=eq.${b.id}`, 'DELETE');
+            }
+            showToast('✓ 해당일 일괄 차단 해제');
+          } else {
+            // 1, 2, 3부 모두 블록 추가
+            const slots = [
+              { start: `${dateStr}T10:00:00`, end: `${dateStr}T13:00:00` },
+              { start: `${dateStr}T14:00:00`, end: `${dateStr}T17:00:00` },
+              { start: `${dateStr}T18:00:00`, end: `${dateStr}T21:00:00` }
+            ];
+            for (const s of slots) {
+              await apiCall('welcome_schedules', 'POST', {
+                start_time: s.start,
+                end_time: s.end,
+                guest_name: '[CLOSED_BLOCK]',
+                sub_message: '관리자 마감',
+                prefix: '', suffix: '', bg_source: '', bgm_source: '', member_code: '', member_name: '', pin_code: '0000'
+              });
+            }
+            showToast('✓ 해당일 하루 통째 차단 완료');
+          }
+          initBlockCalendar();
+        } catch(e) { alert('처리 실패'); }
+      };
+
+    // ─────────────────────────────────────────────
     // [화면 7] 손님용 라운지 이용 예약 신청 (?view=booking)
     // ─────────────────────────────────────────────
-    if (isBooking) {
+    } else if (isBooking) {
       document.getElementById('booking-section').style.display = 'block';
-      const todayStr = new Date().toISOString().slice(0, 10);
+      const todayStr = new Date().toLocaleDateString('en-CA'); // 로컬 날짜 기준 YYYY-MM-DD
       document.getElementById('book-date').value = todayStr;
       document.getElementById('book-date').min = todayStr;
 
@@ -807,11 +924,17 @@
           const sRes = await apiCall(`welcome_schedules?start_time=gte.${dateVal}T00:00:00&start_time=lte.${dateVal}T23:59:59&select=start_time,end_time`);
           const existing = sRes.ok ? await sRes.json() : [];
 
+          const nowKST = new Date();
+
           let html = '';
           SESSIONS.forEach(sess => {
             const sessStartISO = `${dateVal}T${sess.start}:00`;
             const sessEndISO = `${dateVal}T${sess.end}:00`;
-            const isBlocked = existing.some(ex => sessStartISO < ex.end_time && sessEndISO > ex.start_time);
+            
+            // 타임존 오차 없이 정확한 KST 비교를 위한 객체 생성
+            const sessStartTime = new Date(sessStartISO);
+            const isPast = sessStartTime < nowKST; // 이미 지난 시간대인지 판별
+            const isBlocked = isPast || existing.some(ex => sessStartISO < ex.end_time && sessEndISO > ex.start_time);
 
             html += `
               <label style="display: flex; align-items: center; justify-content: space-between; background: ${isBlocked ? '#1a1214' : '#212329'}; border: 1px solid ${isBlocked ? '#7f1d1d' : '#333640'}; border-radius: 10px; padding: 12px 14px; cursor: ${isBlocked ? 'not-allowed' : 'pointer'}; opacity: ${isBlocked ? '0.6' : '1'};">
@@ -819,7 +942,7 @@
                   <input type="checkbox" name="book-slot" value="${sess.id}" data-start="${sessStartISO}" data-end="${sessEndISO}" ${isBlocked ? 'disabled' : ''} style="width: 18px; height: 18px; accent-color: #c9a96e;">
                   <div>
                     <div style="font-weight: 600; font-size: 0.9rem; color: ${isBlocked ? '#f87171' : '#fff'};">${sess.name} (${sess.start} ~ ${sess.end})</div>
-                    <div style="font-size: 0.72rem; color: #888; margin-top: 2px;">${isBlocked ? '🔒 관리자 마감 또는 예약 불가' : '✨ 이용 가능'}</div>
+                    <div style="font-size: 0.72rem; color: #888; margin-top: 2px;">${isPast ? '⏰ 이미 지난 시간대' : isBlocked ? '🔒 예약 불가' : '✨ 이용 가능'}</div>
                   </div>
                 </div>
                 <span class="tag-badge ${isBlocked ? 'badge-blue' : 'badge-gold'}" style="background: ${isBlocked ? '#7f1d1d' : ''}; color: ${isBlocked ? '#fca5a5' : ''};">${isBlocked ? '예약 마감' : '선택 가능'}</span>
@@ -857,7 +980,6 @@
         try {
           errEl.innerText = '예약 신청 접수 중...'; errEl.style.display = 'block';
 
-          // 보안 RPC 함수 호출
           const res = await apiCall('rpc/submit_customer_booking', 'POST', {
             p_name: name,
             p_phone: phone,
@@ -897,7 +1019,6 @@
         if (!phone || !pin) return (errEl.innerText = '연락처와 PIN 번호 4자리를 모두 입력하세요.', errEl.style.display = 'block');
 
         try {
-          // 일치하는 PIN과 예약 조회 (고객 전화번호 기반 또는 스케줄 조인)
           const res = await apiCall(`welcome_schedules?pin_code=eq.${pin}&end_time=gte.${new Date().toISOString()}&order=start_time.asc`);
           const bookings = res.ok ? await res.json() : [];
           
@@ -1393,102 +1514,6 @@
         }
         loadMembers();
 
-        const blockDateIn = document.getElementById('block-target-date');
-        blockDateIn.value = new Date().toISOString().slice(0, 10);
-
-        window.loadBlockedSlots = async function() {
-          const listEl = document.getElementById('blocked-slots-list');
-          try {
-            const res = await apiCall(`welcome_schedules?guest_name=eq.[CLOSED_BLOCK]&end_time=gte.${new Date().toISOString()}&order=start_time.asc`);
-            const blocks = res.ok ? await res.json() : [];
-            if (!blocks.length) return (listEl.innerHTML = '<div style="padding: 6px; text-align: center;">등록된 활성 블록이 없습니다.</div>');
-            let html = '';
-            blocks.forEach(b => {
-              html += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 6px; border-bottom: 1px solid #1a1c24;">
-                <span>🔒 ${fmtDate(b.start_time)} ~ ${fmtDate(b.end_time, 'time')}</span>
-                <button type="button" onclick="removeBlock(${b.id})" style="background:none; border:none; color:#f87171; cursor:pointer; font-size:0.75rem;">[해제]</button>
-              </div>`;
-            });
-            listEl.innerHTML = html;
-          } catch(e) { listEl.innerHTML = '블록 로드 실패'; }
-        };
-        loadBlockedSlots();
-
-        window.applyBulkBlock = async function(mode) {
-          const dVal = blockDateIn.value;
-          if (!dVal) return alert('기준 날짜를 선택하세요.');
-
-          let startList = [];
-          const targetDate = new Date(dVal);
-
-          if (mode === 'day') {
-            startList.push(`${dVal}T10:00:00`, `${dVal}T14:00:00`, `${dVal}T18:00:00`);
-          } else if (mode === 'week') {
-            const dayOfWeek = targetDate.getDay() || 7;
-            const monday = new Date(targetDate);
-            monday.setDate(targetDate.getDate() - dayOfWeek + 1);
-            for (let i = 0; i < 7; i++) {
-              const cur = new Date(monday);
-              cur.setDate(monday.getDate() + i);
-              const cStr = cur.toISOString().slice(0, 10);
-              startList.push(`${cStr}T10:00:00`, `${cStr}T14:00:00`, `${cStr}T18:00:00`);
-            }
-          } else if (mode === 'month') {
-            const year = targetDate.getFullYear();
-            const month = targetDate.getMonth();
-            const lastDay = new Date(year, month + 1, 0).getDate();
-            for (let d = 1; d <= lastDay; d++) {
-              const cStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-              startList.push(`${cStr}T10:00:00`, `${cStr}T14:00:00`, `${cStr}T18:00:00`);
-            }
-          }
-
-          if (!confirm(`선택한 조건(${mode.toUpperCase()})에 따라 총 ${startList.length}개의 세션 타임이 예약 불가로 차단됩니다. 진행하시겠습니까?`)) return;
-
-          try {
-            for (const st of startList) {
-              const dt = new Date(st);
-              let endH = dt.getHours() + 3;
-              dt.setHours(endH);
-              const enStr = dt.toISOString();
-
-              await apiCall('welcome_schedules', 'POST', {
-                start_time: st,
-                end_time: enStr,
-                guest_name: '[CLOSED_BLOCK]',
-                sub_message: '관리자 마감',
-                prefix: '', suffix: '', bg_source: '', bgm_source: '', member_code: '', member_name: '', pin_code: '0000'
-              });
-            }
-            showToast('✓ 광역 블록 적용 완료');
-            loadBlockedSlots();
-          } catch(e) {
-            alert('블록 처리 중 오류가 발생했습니다.');
-          }
-        };
-
-        window.removeBlock = async function(id) {
-          try {
-            await apiCall(`welcome_schedules?id=eq.${id}`, 'DELETE');
-            showToast('✓ 블록 해제 완료');
-            loadBlockedSlots();
-          } catch(e) { alert('해제 실패'); }
-        };
-
-        window.clearBlockForDate = async function() {
-          const dVal = blockDateIn.value;
-          if (!dVal || !confirm(`${dVal} 날짜에 등록된 모든 관리자 블록을 해제하시겠습니까?`)) return;
-          try {
-            const res = await apiCall(`welcome_schedules?guest_name=eq.[CLOSED_BLOCK]&start_time=gte.${dVal}T00:00:00&start_time=lte.${dVal}T23:59:59`);
-            const blocks = res.ok ? await res.json() : [];
-            for (const b of blocks) {
-              await apiCall(`welcome_schedules?id=eq.${b.id}`, 'DELETE');
-            }
-            showToast('✓ 해당일 블록 일괄 해제 완료');
-            loadBlockedSlots();
-          } catch(e) { alert('해제 실패'); }
-        };
-
         async function updateStatus() {
           const [badge, title, desc, card, btn] = ['occupancy-badge','occupancy-title','occupancy-desc','current-occupancy-card','btn-force-guest'].map(id => document.getElementById(id));
           try {
@@ -1517,7 +1542,7 @@
               badge.className = 'tag-badge badge-gold'; badge.innerText = `● 수동 표출 중`;
               btn.style.display = 'block';
               title.innerText = `${d.prefix ? d.prefix+' ' : ''}${d.guest_name}${d.suffix ? ' '+d.suffix : ''}`;
-              desc.innerText = `문구: "${d.sub_message}"${d.member_name ? ` (회원: ${d.member_code}${d.member_name})` : ''}`;
+              desc.innerText = `문구: "${d.sub_message}"${d.member_name ? ` (회원: ${d.member_code} ${d.member_name})` : ''}`;
               return;
             }
 
