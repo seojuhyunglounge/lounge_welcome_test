@@ -350,7 +350,7 @@
       </div>
     </div>
 
-    <!-- 통합 제어 카드: 환영 디스플레이 & 예약 일정 설정 -->
+    <!-- 카드 1: 환영 디스플레이 표출 & 예약 제어 -->
     <div class="admin-card" id="unified-control-card">
       <div class="admin-title" id="unified-card-title">1. VIP 디스플레이 표출 & 예약 제어</div>
 
@@ -434,16 +434,19 @@
       <div id="unified-log-box" style="margin-top: 10px; font-size: 0.84rem; display: none;"></div>
     </div>
 
-    <!-- 카드 3: 예약 대기열 -->
+    <!-- 카드 2: 예약 대기열 (퀵 리프레시 버튼 추가) -->
     <div class="admin-card">
-      <div class="admin-title">3. 등록된 VIP 예약 대기열 (진행/예정 일정)</div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <div class="admin-title" style="margin-bottom: 0;">2. 등록된 VIP 예약 대기열</div>
+        <button type="button" onclick="loadSchedules()" title="목록 새로고침" style="background: none; border: 1px solid #444; color: #c9a96e; padding: 3px 10px; border-radius: 6px; font-size: 0.74rem; cursor: pointer;">🔄 새로고침</button>
+      </div>
       <div id="schedule-list"><div style="color: #666; font-size: 0.85rem; text-align: center; padding: 15px 0;">대기 일정이 없습니다.</div></div>
     </div>
 
-    <!-- 카드 4: 히스토리 아카이브 -->
+    <!-- 카드 3: 히스토리 아카이브 -->
     <div class="admin-card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <div class="admin-title" style="margin-bottom: 0;">4. VIP 히스토리 아카이브</div>
+        <div class="admin-title" style="margin-bottom: 0;">3. VIP 히스토리 아카이브</div>
         <button type="button" onclick="loadHistory(1)" style="background: none; border: 1px solid #444; color: #aaa; padding: 3px 8px; border-radius: 6px; font-size: 0.74rem; cursor: pointer;">새로고침</button>
       </div>
       <div id="history-list"><div style="color: #666; font-size: 0.85rem; text-align: center; padding: 15px 0;">히스토리가 비어 있습니다.</div></div>
@@ -454,10 +457,10 @@
       </div>
     </div>
 
-    <!-- 카드 5: 미니바 정산 내역 -->
+    <!-- 카드 4: 미니바 정산 내역 -->
     <div class="admin-card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-        <div class="admin-title" style="margin-bottom: 0;">5. 어메니티 & 미니바 정산 내역</div>
+        <div class="admin-title" style="margin-bottom: 0;">4. 어메니티 & 미니바 정산 내역</div>
         <button type="button" onclick="loadOrders()" style="background: none; border: 1px solid #444; color: #aaa; padding: 3px 8px; border-radius: 6px; font-size: 0.74rem; cursor: pointer;">새로고침</button>
       </div>
       <div id="orders-list"><div style="color: #666; font-size: 0.85rem; text-align: center; padding: 15px 0;">이용 내역이 없습니다.</div></div>
@@ -481,17 +484,14 @@
     <div class="admin-card" style="padding: 16px; border-color: rgba(201, 169, 110, 0.4); background: #161412; text-align: left;">
       <div style="font-size: 0.78rem; color: #b8aba0; margin-bottom: 12px; line-height: 1.5;">
         • <b style="color:#dfcfb2;">날짜 숫자</b> 터치: 하루(1~3부) 통째 마감/오픈 토글<br>
-        • 각 <b style="color:#dfcfb2;">컬러 바</b> 터치: 해당 부 개별 토글 (<span style="color:#c9a96e;">■</span> 예약가능 / <span style="color:#4e342e;">■</span> 마감 / <span style="color:#3b82f6;">■</span> 고객예약)<br>
+        • 각 <b style="color:#dfcfb2;">컬러 바</b> 터치: 해당 부 개별 토글 (<span style="color:#f4f1ea;">■</span> 예약가능 / <span style="color:#3d2c22;">■</span> 마감 / <span style="color:#3b82f6;">■</span> 고객예약)<br>
         • 상단 <b style="color:#dfcfb2;">월 타이틀</b> 터치: 해당 월 전체 일괄 토글
       </div>
       
-      <!-- 구글 캘린더 스타일 7열 격자 (하이엔드 브라운/베이지 톤) -->
       <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 0.78rem; color: #9c8e80; margin-bottom: 8px; font-weight: 600;">
         <div style="color: #e57373;">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div style="color: #64b5f6;">토</div>
       </div>
-      <div id="calendar-grid-container" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;">
-        <!-- 동적 캘린더 매트릭스 -->
-      </div>
+      <div id="calendar-grid-container" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;"></div>
     </div>
   </div>
 
@@ -548,7 +548,7 @@
         </div>
       </div>
       <div style="font-size: 0.76rem; color: #b8aba0; margin-bottom: 10px;">
-        • <span style="color:#c9a96e;">■</span> 예약 가능일(숫자 터치 시 세부 세션 선택)
+        • <span style="color:#f4f1ea;">■</span> 예약 가능일 (숫자 터치 시 세부 세션 선택)
       </div>
       <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 0.78rem; color: #9c8e80; margin-bottom: 6px; font-weight: 600;">
         <div style="color: #e57373;">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div style="color: #64b5f6;">토</div>
@@ -813,34 +813,39 @@
             const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
             const isPastDay = dateStr < todayStr;
 
-            const b1 = schedules.find(s => s.start_time.startsWith(dateStr + 'T10:00'));
-            const b2 = schedules.find(s => s.start_time.startsWith(dateStr + 'T14:00'));
-            const b3 = schedules.find(s => s.start_time.startsWith(dateStr + 'T18:00'));
+            const getSessionStatus = (sessStartH, sessEndH) => {
+              const sessStartISO = `${dateStr}T${String(sessStartH).padStart(2,'0')}:00:00`;
+              const sessEndISO = `${dateStr}T${String(sessEndH).padStart(2,'0')}:00:00`;
+              const sDate = new Date(sessStartISO);
+              const eDate = new Date(sessEndISO);
 
-            const isS1Past = isPastDay || (dateStr === todayStr && nowKST >= new Date(`${dateStr}T13:00:00`));
-            const isS2Past = isPastDay || (dateStr === todayStr && nowKST >= new Date(`${dateStr}T17:00:00`));
-            const isS3Past = isPastDay || (dateStr === todayStr && nowKST >= new Date(`${dateStr}T21:00:00`));
+              const isPast = isPastDay || (dateStr === todayStr && nowKST >= eDate);
+              if (isPast) return { color: '#2a2624', isPast: true, record: null };
 
-            const getBarColor = (b, isPast) => {
-              if (isPast) return '#2a2624';
-              if (!b) return '#f4f1ea'; // Open (상아색)
-              if (b.guest_name === '[CLOSED_BLOCK]') return '#3d2c22'; // Blocked (에스프레소 브라운)
-              return '#2b3a42'; // Booked (클래식 네이비)
+              const matched = schedules.find(s => {
+                const exStart = new Date(s.start_time);
+                const exEnd = new Date(s.end_time);
+                return sDate < exEnd && eDate > exStart;
+              });
+
+              if (!matched) return { color: '#f4f1ea', isPast: false, record: null }; // Open (상아색)
+              if (matched.guest_name === '[CLOSED_BLOCK]') return { color: '#3d2c22', isPast: false, record: matched }; // Blocked (브라운)
+              return { color: '#3b82f6', isPast: false, record: matched }; // Booked (네이비)
             };
 
-            const c1 = getBarColor(b1, isS1Past);
-            const c2 = getBarColor(b2, isS2Past);
-            const c3 = getBarColor(b3, isS3Past);
+            const s1 = getSessionStatus(10, 13);
+            const s2 = getSessionStatus(14, 17);
+            const s3 = getSessionStatus(18, 21);
 
             html += `
               <div style="background: ${isPastDay ? '#141210' : '#1c1917'}; border: 1px solid ${isPastDay ? '#222' : '#322d28'}; border-radius: 8px; padding: 6px; display: flex; flex-direction: column; justify-content: space-between; min-height: 85px; opacity: ${isPastDay ? '0.45' : '1'};">
-                <div style="font-size: 0.82rem; font-weight: 600; color: ${isPastDay ? '#555' : '#dfcfb2'}; cursor: ${isPastDay ? 'default' : 'pointer'}; text-align: center;" ${isPastDay ? '' : `onclick="toggleDayBlock('${dateStr}')" title="터치 시 하루 통째 토글"`}>
+                <div style="font-size: 0.82rem; font-weight: 600; color: ${isPastDay ? '#555' : '#dfcfb2'}; text-align: center;">
                   ${d}
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 3px;">
-                  <div style="background: ${c1}; height: 8px; border-radius: 3px; cursor: pointer;" onclick="handleBarClick('${dateStr}T10:00:00', '${dateStr}T13:00:00', ${b1 ? b1.id : null}, '${b1 ? b1.guest_name : ''}', ${isS1Past})" title="1부 토글"></div>
-                  <div style="background: ${c2}; height: 8px; border-radius: 3px; cursor: pointer;" onclick="handleBarClick('${dateStr}T14:00:00', '${dateStr}T17:00:00', ${b2 ? b2.id : null}, '${b2 ? b2.guest_name : ''}', ${isS2Past})" title="2부 토글"></div>
-                  <div style="background: ${c3}; height: 8px; border-radius: 3px; cursor: pointer;" onclick="handleBarClick('${dateStr}T18:00:00', '${dateStr}T21:00:00', ${b3 ? b3.id : null}, '${b3 ? b3.guest_name : ''}', ${isS3Past})" title="3부 토글"></div>
+                  <div style="background: ${s1.color}; height: 8px; border-radius: 3px; cursor: pointer;" onclick="handleBarClick('${dateStr}T10:00:00', '${dateStr}T13:00:00', ${s1.record ? s1.record.id : null}, '${s1.record ? s1.record.guest_name : ''}', ${s1.isPast})" title="1부 토글"></div>
+                  <div style="background: ${s2.color}; height: 8px; border-radius: 3px; cursor: pointer;" onclick="handleBarClick('${dateStr}T14:00:00', '${dateStr}T17:00:00', ${s2.record ? s2.record.id : null}, '${s2.record ? s2.record.guest_name : ''}', ${s2.isPast})" title="2부 토글"></div>
+                  <div style="background: ${s3.color}; height: 8px; border-radius: 3px; cursor: pointer;" onclick="handleBarClick('${dateStr}T18:00:00', '${dateStr}T21:00:00', ${s3.record ? s3.record.id : null}, '${s3.record ? s3.record.guest_name : ''}', ${s3.isPast})" title="3부 토글"></div>
                 </div>
               </div>`;
           }
@@ -867,42 +872,6 @@
               sub_message: '관리자 마감', prefix: '', suffix: '', bg_source: '', bgm_source: '', member_code: '', member_name: '', pin_code: '0000'
             });
             showToast('✓ 세션 마감 완료 (브라운)');
-          }
-          initBlockCalendar();
-        } catch(e) { alert('처리 실패'); }
-      };
-
-      window.toggleDayBlock = async function(dateStr) {
-        const nowKST = new Date();
-        const todayStr = nowKST.toLocaleDateString('en-CA');
-        if (dateStr < todayStr) return alert('⚠️ 지나간 날짜는 차단할 수 없습니다.');
-
-        try {
-          const res = await apiCall(`welcome_schedules?start_time=gte.${dateStr}T00:00:00&start_time=lte.${dateStr}T23:59:59&select=id,guest_name,start_time,end_time`);
-          const existing = res.ok ? await res.json() : [];
-
-          const hasRealBooking = existing.some(ex => ex.guest_name !== '[CLOSED_BLOCK]');
-          if (hasRealBooking) return alert('⚠️ 해당일에 이미 실제 고객 예약이 존재하여 일괄 차단이 불가합니다.');
-
-          const blocks = existing.filter(ex => ex.guest_name === '[CLOSED_BLOCK]');
-          if (blocks.length === 3) {
-            for (const b of blocks) await apiCall(`welcome_schedules?id=eq.${b.id}`, 'DELETE');
-            showToast('✓ 해당일 전체 오픈 완료');
-          } else {
-            for (const b of blocks) await apiCall(`welcome_schedules?id=eq.${b.id}`, 'DELETE');
-            const slots = [
-              { start: `${dateStr}T10:00:00`, end: `${dateStr}T13:00:00` },
-              { start: `${dateStr}T14:00:00`, end: `${dateStr}T17:00:00` },
-              { start: `${dateStr}T18:00:00`, end: `${dateStr}T21:00:00` }
-            ];
-            for (const s of slots) {
-              if (dateStr === todayStr && new Date(s.end) <= nowKST) continue;
-              await apiCall('welcome_schedules', 'POST', {
-                start_time: s.start, end_time: s.end, guest_name: '[CLOSED_BLOCK]',
-                sub_message: '관리자 마감', prefix: '', suffix: '', bg_source: '', bgm_source: '', member_code: '', member_name: '', pin_code: '0000'
-              });
-            }
-            showToast('✓ 해당일 하루 통째 마감 완료');
           }
           initBlockCalendar();
         } catch(e) { alert('처리 실패'); }
@@ -993,22 +962,31 @@
             const dateStr = `${bookYear}-${String(bookMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
             const isPastDay = dateStr < todayStr;
 
-            const b1 = schedules.find(s => s.start_time.startsWith(dateStr + 'T10:00'));
-            const b2 = schedules.find(s => s.start_time.startsWith(dateStr + 'T14:00'));
-            const b3 = schedules.find(s => s.start_time.startsWith(dateStr + 'T18:00'));
+            const checkFullDayBlock = () => {
+              if (isPastDay) return true;
+              const sSlots = [
+                { s: new Date(`${dateStr}T10:00:00`), e: new Date(`${dateStr}T13:00:00`) },
+                { s: new Date(`${dateStr}T14:00:00`), e: new Date(`${dateStr}T17:00:00`) },
+                { s: new Date(`${dateStr}T18:00:00`), e: new Date(`${dateStr}T21:00:00`) }
+              ];
+              return sSlots.every(slot => {
+                if (dateStr === todayStr && nowKST >= slot.e) return true;
+                return schedules.some(ex => {
+                  const exS = new Date(ex.start_time);
+                  const exE = new Date(ex.end_time);
+                  return slot.s < exE && slot.e > exS;
+                });
+              });
+            };
 
-            const isS1Past = isPastDay || (dateStr === todayStr && nowKST >= new Date(`${dateStr}T13:00:00`));
-            const isS2Past = isPastDay || (dateStr === todayStr && nowKST >= new Date(`${dateStr}T17:00:00`));
-            const isS3Past = isPastDay || (dateStr === todayStr && nowKST >= new Date(`${dateStr}T21:00:00`));
-
-            const isFullyBlocked = (b1 && isS1Past || b1) && (b2 && isS2Past || b2) && (b3 && isS3Past || b3) || (isS1Past && isS2Past && isS3Past);
+            const isFullyBlocked = checkFullDayBlock();
 
             html += `
               <div onclick="${isFullyBlocked ? '' : `selectBookingDate('${dateStr}')`}" style="background: ${isFullyBlocked ? '#141210' : '#1c1917'}; border: 1px solid ${selectedDateStr === dateStr ? '#c9a96e' : '#322d28'}; border-radius: 8px; padding: 6px; display: flex; flex-direction: column; justify-content: space-between; min-height: 75px; cursor: ${isFullyBlocked ? 'not-allowed' : 'pointer'}; opacity: ${isFullyBlocked ? '0.4' : '1'};">
                 <div style="font-size: 0.82rem; font-weight: 600; color: ${isFullyBlocked ? '#555' : '#dfcfb2'}; text-align: center;">
                   ${d}
                 </div>
-                <div style="font-size: 0.68rem; text-align: center; color: ${isFullyBlocked ? '#e57373' : '#c9a96e'}; font-weight: 600;">
+                <div style="font-size: 0.68rem; text-align: center; color: ${isFullyBlocked ? '#e57373' : '#f4f1ea'}; font-weight: 600;">
                   ${isFullyBlocked ? '마감' : '예약가능'}
                 </div>
               </div>`;
@@ -1031,9 +1009,9 @@
         container.innerHTML = '<div style="color:#888; font-size:0.8rem;">세션 확인 중...</div>';
 
         const SESSIONS = [
-          { id: 1, name: '1부 (오전)', start: '10:00', end: '13:00' },
-          { id: 2, name: '2부 (오후)', start: '14:00', end: '17:00' },
-          { id: 3, name: '3부 (저녁)', start: '18:00', end: '21:00' }
+          { id: 1, name: '1부 (오전)', start: '10:00', end: '13:00', startH: 10, endH: 13 },
+          { id: 2, name: '2부 (오후)', start: '14:00', end: '17:00', startH: 14, endH: 17 },
+          { id: 3, name: '3부 (저녁)', start: '18:00', end: '21:00', startH: 18, endH: 21 }
         ];
 
         try {
@@ -1043,10 +1021,19 @@
 
           let html = '';
           SESSIONS.forEach(sess => {
-            const sessStartISO = `${dateStr}T${sess.start}:00`;
-            const sessEndISO = `${dateStr}T${sess.end}:00`;
-            const isPast = new Date(sessStartISO) < nowKST;
-            const isBlocked = isPast || existing.some(ex => sessStartISO < ex.end_time && sessEndISO > ex.start_time);
+            const sessStartISO = `${dateStr}T${String(sess.startH).padStart(2,'0')}:00:00`;
+            const sessEndISO = `${dateStr}T${String(sess.endH).padStart(2,'0')}:00:00`;
+            const sDate = new Date(sessStartISO);
+            const eDate = new Date(sessEndISO);
+
+            const isPast = (dateStr < todayStr) || (dateStr === todayStr && nowKST >= eDate);
+            const isOverlapped = existing.some(ex => {
+              const exS = new Date(ex.start_time);
+              const exE = new Date(ex.end_time);
+              return sDate < exE && eDate > exS;
+            });
+
+            const isBlocked = isPast || isOverlapped;
 
             html += `
               <label style="display: flex; align-items: center; justify-content: space-between; background: ${isBlocked ? '#1a1214' : '#212329'}; border: 1px solid ${isBlocked ? '#7f1d1d' : '#333640'}; border-radius: 10px; padding: 10px 12px; cursor: ${isBlocked ? 'not-allowed' : 'pointer'}; opacity: ${isBlocked ? '0.5' : '1'};">
@@ -1059,7 +1046,7 @@
           });
           container.innerHTML = html;
         } catch(e) {
-          container.innerHTML = '<div style="color:#f87171; font-size:0.8rem;">세션 로드 실패</div>';
+          container.innerHTML = '<div style="color:#f87171; font-size:0.80rem;">세션 로드 실패</div>';
         }
       };
 
@@ -1089,6 +1076,16 @@
 
         let finalStart = checkedSlots[0].dataset.start;
         let finalEnd = checkedSlots[checkedSlots.length - 1].dataset.end;
+
+        // 관리자 커스텀 예약 포함 이중 충돌 방지 검사
+        try {
+          const checkRes = await apiCall(`welcome_schedules?start_time=lt.${finalEnd}&end_time=gt.${finalStart}&select=id,guest_name`);
+          const conflicts = checkRes.ok ? await checkRes.json() : [];
+          if (conflicts.length > 0) {
+            const hasReal = conflicts.some(c => c.guest_name !== '[CLOSED_BLOCK]');
+            return (errEl.innerText = hasReal ? '⚠️ 이미 해당 시간대에 확정된 고객 예약이 존재합니다.' : '⚠️ 해당 시간대는 이미 관리자에 의해 마감되었습니다.', errEl.style.display = 'block');
+          }
+        } catch(e) {}
 
         try {
           errEl.innerText = '예약 신청 접수 중...'; errEl.style.display = 'block';
@@ -1733,12 +1730,15 @@
           const f = getFormData();
           if (!f.name || f.name === 'Guest') return alert('VIP 성함을 입력하세요.');
 
+          // 양방향 충돌 방지: 실제 고객 예약(guest_name !== '[CLOSED_BLOCK]')과 겹치는지 엄격 검사
           const cRes = await apiCall(`welcome_schedules?end_time=gte.${new Date().toISOString()}&select=id,guest_name,start_time,end_time`);
           const existing = cRes.ok ? await cRes.json() : [];
           for (const ex of existing) {
             if (editingId && ex.id === editingId) continue;
             if (nStart < new Date(ex.end_time) && nEnd > new Date(ex.start_time)) {
-              return alert(`⚠️ [${ex.guest_name === '[CLOSED_BLOCK]' ? '관리자 마감' : ex.guest_name}] 님의 일정과 중복됩니다!`);
+              if (ex.guest_name !== '[CLOSED_BLOCK]') {
+                return alert(`⚠️ [고객 예약 충돌]\n\n해당 시간대에 이미 확정된 고객 예약('${ex.guest_name}' 님)이 존재하여 등록할 수 없습니다.`);
+              }
             }
           }
 
