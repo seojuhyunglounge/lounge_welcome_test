@@ -89,15 +89,15 @@
     .bottom-interactive-wrap { display: flex; flex-direction: column; align-items: center; gap: 16px; margin-bottom: 10px; }
     .footer-bar { font-size: 0.85rem; color: #616674; letter-spacing: 5px; text-transform: uppercase; font-weight: 300; }
 
-    #wifi-dock, #amenity-dock, #ott-dock { position: fixed; bottom: 25px; z-index: 10; display: flex; align-items: center; gap: 12px; background: rgba(18, 20, 26, 0.72); backdrop-filter: blur(14px); border: 1px solid rgba(201, 169, 110, 0.32); border-radius: 14px; padding: 10px 14px; }
-    #wifi-dock { right: 30px; } 
-    #amenity-dock { left: 30px; }
-    #ott-dock { left: 50%; transform: translateX(-50%); display: none; } /* 토글 연동 */
+    #wifi-dock, #amenity-dock, #ott-dock { position: fixed; bottom: 25px; z-index: 10; display: flex; align-items: center; gap: 10px; background: rgba(18, 20, 26, 0.72); backdrop-filter: blur(14px); border: 1px solid rgba(201, 169, 110, 0.32); border-radius: 14px; padding: 8px 12px; }
+    #wifi-dock { right: 25px; } 
+    #amenity-dock { left: 25px; }
+    #ott-dock { left: 50%; transform: translateX(-50%); display: none; }
 
-    .qr-img-box { width: 58px; height: 58px; border-radius: 6px; background: #ffffff; padding: 3px; }
-    .qr-tag { font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; color: #dfcfb2; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600; }
-    .qr-name { font-size: 0.76rem; color: #e5e7eb; margin-top: 3px; }
-    .qr-sub { font-size: 0.68rem; color: #8b92a0; }
+    .qr-img-box { width: 48px; height: 48px; border-radius: 6px; background: #ffffff; padding: 2px; }
+    .qr-tag { font-family: 'Cormorant Garamond', serif; font-size: 0.85rem; color: #dfcfb2; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
+    .qr-name { font-size: 0.72rem; color: #e5e7eb; margin-top: 2px; }
+    .qr-sub { font-size: 0.64rem; color: #8b92a0; }
     #tv-status-dot { position: fixed; bottom: 30px; left: 14px; z-index: 9999; width: 6px; height: 6px; border-radius: 50%; background: #22c55e; opacity: 0.6; pointer-events: none; }
 
     /* ─── 공통 관리자 카드 & UI 위젯 ─── */
@@ -246,7 +246,7 @@
       </div>
     </div>
 
-    <!-- 토글형 OTT/Cast QR 독 (관리자 설정 연동) -->
+    <!-- 토글형 OTT/Cast QR 독 -->
     <div id="ott-dock">
       <img id="ott-qr-img" class="qr-img-box" alt="OTT QR" src="">
       <div>
@@ -289,7 +289,7 @@
       <div id="occupancy-desc" style="font-size: 0.84rem; color: #94a3b8;">디스플레이 상태를 동기화하고 있습니다.</div>
     </div>
     
-    <!-- 공통 온오프 설정 (OTT 위젯 토글 포함) -->
+    <!-- 공통 온오프 설정 -->
     <div class="admin-card" style="padding: 18px 22px; border-color: rgba(201, 169, 110, 0.4);">
       <div class="admin-title" style="font-size: 1rem; margin-bottom: 12px;">⚙️ 라운지 디스플레이 공통 설정</div>
       <div class="toggle-row">
@@ -394,7 +394,7 @@
       <div id="unified-log-box" style="margin-top: 10px; font-size: 0.84rem; display: none;"></div>
     </div>
 
-    <!-- 카드 2: 예약 대기열 (퀵 리프레시 버튼 추가) -->
+    <!-- 카드 2: 예약 대기열 -->
     <div class="admin-card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
         <div class="admin-title" style="margin-bottom: 0;">2. 등록된 VIP 예약 대기열</div>
@@ -657,6 +657,15 @@
       return `${d.getMonth()+1}.${d.getDate()} ${fmtDate(d, 'time')}`;
     }
 
+    // 비로그인 손님도 안전하게 조회할 수 있도록 기본 퍼블릭 헤더 제공
+    function getPublicHeaders(extra = {}) {
+      return { 
+        'apikey': cleanKey, 
+        'Authorization': 'Bearer ' + cleanKey,
+        ...extra 
+      };
+    }
+
     function getAdminHeaders(extra = {}) {
       const token = sessionStorage.getItem('la_colonne_admin_token') || '';
       return { 
@@ -668,7 +677,8 @@
     }
 
     async function apiCall(endpoint, method = 'GET', body = null, extraHeaders = {}) {
-      const opt = { method, headers: getAdminHeaders(extraHeaders) };
+      const headers = (isAdmin || isBlockAdmin || isBarAdmin || isMemberAdmin) ? getAdminHeaders(extraHeaders) : getPublicHeaders(extraHeaders);
+      const opt = { method, headers };
       if (body) {
         opt.headers['Content-Type'] = 'application/json';
         opt.body = JSON.stringify(body);
@@ -788,9 +798,9 @@
                 return sDate < exEnd && eDate > exStart;
               });
 
-              if (!matched) return { color: '#f4f1ea', isPast: false, record: null }; // Open (상아색)
-              if (matched.guest_name === '[CLOSED_BLOCK]') return { color: '#3d2c22', isPast: false, record: matched }; // Blocked (브라운)
-              return { color: '#3b82f6', isPast: false, record: matched }; // Booked (네이비)
+              if (!matched) return { color: '#f4f1ea', isPast: false, record: null };
+              if (matched.guest_name === '[CLOSED_BLOCK]') return { color: '#3d2c22', isPast: false, record: matched };
+              return { color: '#3b82f6', isPast: false, record: matched };
             };
 
             const s1 = getSessionStatus(10, 13);
@@ -966,7 +976,7 @@
         document.getElementById('book-form-panel').scrollIntoView({ behavior: 'smooth' });
 
         const container = document.getElementById('book-slots-container');
-        container.innerHTML = '<div style="color:#888; font-size:0.8rem;">세션 확인 중...</div>';
+        container.innerHTML = '<div style="color:#888; font-size:0.8rem; text-align:center; padding:10px;">세션 확인 중...</div>';
 
         const SESSIONS = [
           { id: 1, name: '1부 (오전)', start: '10:00', end: '13:00', startH: 10, endH: 13 },
@@ -978,6 +988,7 @@
           const res = await apiCall(`welcome_schedules?start_time=gte.${dateStr}T00:00:00&start_time=lte.${dateStr}T23:59:59&select=start_time,end_time`);
           const existing = res.ok ? await res.json() : [];
           const nowKST = new Date();
+          const todayStr = nowKST.toLocaleDateString('en-CA');
 
           let html = '';
           SESSIONS.forEach(sess => {
@@ -1006,7 +1017,7 @@
           });
           container.innerHTML = html;
         } catch(e) {
-          container.innerHTML = '<div style="color:#f87171; font-size:0.80rem;">세션 로드 실패</div>';
+          container.innerHTML = '<div style="color:#f87171; font-size:0.8rem; text-align:center;">세션 로드 실패 (다시 시도해주세요)</div>';
         }
       };
 
