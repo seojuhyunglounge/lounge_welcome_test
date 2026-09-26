@@ -470,32 +470,6 @@
     .btn-pass-action { background: #232631; border: 1px solid #3d4253; color: #dfcfb2; padding: 7px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease; }
     .btn-pass-action:hover { background: #c9a96e; color: #0b0c0e; border-color: #c9a96e; }
 
-    /* 5. 손님용 멤버십 패스 확인 화면 (?view=member) */
-    #member-client-section { display: none; width: 90%; max-width: 440px; margin: 40px auto 80px auto; text-align: center; }
-    .pass-card-ui {
-      background: radial-gradient(circle at top right, #252834 0%, #15161c 100%);
-      border: 1px solid rgba(201, 169, 110, 0.4);
-      border-radius: 20px;
-      padding: 30px 24px;
-      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
-      text-align: left;
-      margin-top: 20px;
-      position: relative;
-      overflow: hidden;
-    }
-    .pass-card-ui::after {
-      content: "LA COLONNE";
-      position: absolute;
-      right: -20px;
-      bottom: -15px;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 4.5rem;
-      font-weight: 700;
-      color: rgba(201, 169, 110, 0.04);
-      pointer-events: none;
-      letter-spacing: 4px;
-    }
-
     #toast-msg {
       position: fixed;
       bottom: 40px;
@@ -521,6 +495,7 @@
 </head>
 <body>
 
+  <!-- 손님용 기본 허브 포털 화면 -->
   <div id="guest-portal-section">
     <div class="portal-brand">La Colonne</div>
     <div class="portal-sub">Private Business Lounge</div>
@@ -530,10 +505,6 @@
 
     <a href="?view=bar" class="portal-menu-btn" style="background: #c9a96e; color: #0b0c0e;">
       🍷 어메니티 & 미니바 셀프 정산
-    </a>
-
-    <a href="?view=member" class="portal-menu-btn" style="background: #1f2128; border: 1px solid #333846; color: #dfcfb2;">
-      💳 VIP 멤버십 세션 패스 잔여 확인
     </a>
 
     <div style="margin-top: 36px; padding-top: 20px; border-top: 1px dashed #262933;">
@@ -982,27 +953,6 @@
     </div>
   </div>
 
-  <!-- 5. 손님용 멤버십 패스 확인 화면 (?view=member) -->
-  <div id="member-client-section">
-    <div class="portal-brand" style="font-size: 2.2rem;">La Colonne</div>
-    <div class="portal-sub">VIP Membership Session Pass</div>
-
-    <div class="admin-card" id="member-login-card" style="text-align: left; margin-top: 20px;">
-      <div class="form-group">
-        <label>등록된 휴대폰 번호</label>
-        <input type="tel" id="client-phone-input" placeholder="010-0000-0000" style="padding: 12px;">
-      </div>
-      <div class="form-group">
-        <label>VIP 전용 PIN 코드 (4자리)</label>
-        <input type="password" id="client-pin-input" maxlength="6" placeholder="PIN 입력" style="padding: 12px; letter-spacing: 4px;">
-      </div>
-      <button type="button" class="btn-primary" onclick="queryMemberPass()">내 멤버십 패스 조회</button>
-      <div id="client-login-error" style="color: #f87171; font-size: 0.82rem; margin-top: 10px; display: none; text-align: center;"></div>
-    </div>
-
-    <div id="member-pass-result" style="display: none;"></div>
-  </div>
-
   <div id="toast-msg"></div>
 
   <script>
@@ -1028,7 +978,6 @@
     const isBar = viewParam === 'bar';
     const isBarAdmin = isBar && params.get('admin') === '1';
     const isMemberAdmin = viewParam === 'member_admin';
-    const isMemberClient = viewParam === 'member';
     const isAdmin = viewParam === 'admin';
 
     function escapeHtml(str) {
@@ -1133,77 +1082,7 @@
     // ─────────────────────────────────────────────
     // 화면별 라우팅 처리
     // ─────────────────────────────────────────────
-    if (isMemberClient) {
-      // 5. 손님용 멤버십 패스 확인 화면 (?view=member)
-      document.getElementById('member-client-section').style.display = 'block';
-
-      window.queryMemberPass = async function() {
-        const phone = document.getElementById('client-phone-input').value.trim();
-        const pin = document.getElementById('client-pin-input').value.trim();
-        const errEl = document.getElementById('client-login-error');
-        const resEl = document.getElementById('member-pass-result');
-        errEl.style.display = 'none';
-
-        if (!phone || !pin) {
-          errEl.innerText = '연락처와 PIN 코드를 모두 입력해 주세요.';
-          errEl.style.display = 'block';
-          return;
-        }
-
-        try {
-          // [핵심 보완] 손님용 본인 확인 보안 RPC 호출
-          const res = await fetch(`${cleanUrl}/rest/v1/rpc/verify_member_login`, {
-            method: 'POST',
-            headers: {
-              'apikey': cleanKey,
-              'Authorization': 'Bearer ' + cleanKey,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ p_phone: phone, p_pin: pin })
-          });
-
-          if (!res.ok) throw new Error('조회 서버 통신 실패');
-          const data = await res.json();
-
-          if (!data || data.length === 0) {
-            errEl.innerText = '등록된 회원 연락처 또는 PIN 코드가 일치하지 않습니다.';
-            errEl.style.display = 'block';
-            resEl.style.display = 'none';
-            return;
-          }
-
-          const m = data[0];
-          const total = parseInt(m.total_passes, 10) || 0;
-          const used = parseInt(m.used_passes, 10) || 0;
-          const remain = Math.max(0, total - used);
-
-          resEl.innerHTML = `
-            <div class="pass-card-ui">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-                <span class="tag-badge" style="background: rgba(201,169,110,0.15); color:#dfcfb2; border: 1px solid rgba(201,169,110,0.35); font-weight:600;">${escapeHtml(m.tier || 'Black Edition')}</span>
-                <span style="font-size:0.8rem; color:#888; letter-spacing:1px;">${escapeHtml(m.member_code)}</span>
-              </div>
-              <div style="font-size:1.45rem; font-weight:700; color:#fff; margin-bottom:4px;">${escapeHtml(m.company_name)} 님</div>
-              <div style="font-size:0.82rem; color:#a1a1aa; margin-bottom:24px;">유효기간: ~ ${escapeHtml(m.expire_date)} 까지</div>
-              
-              <div style="background: rgba(0,0,0,0.35); border-radius:12px; padding:16px 20px; display:flex; justify-content:space-between; align-items:baseline;">
-                <span style="font-size:0.95rem; color:#cbd5e1;">잔여 프라이빗 세션</span>
-                <div>
-                  <span style="font-size:2.2rem; font-weight:700; color:#dfcfb2;">${remain}</span>
-                  <span style="font-size:1rem; color:#888;"> / ${total}회</span>
-                </div>
-              </div>
-              <div style="font-size:0.75rem; color:#71717a; margin-top:12px; text-align:right;">(1회 이용 = 3시간 프라이빗 룸 대관)</div>
-            </div>
-          `;
-          resEl.style.display = 'block';
-        } catch(e) {
-          errEl.innerText = '인증 서버 연결에 실패했습니다: ' + e.message;
-          errEl.style.display = 'block';
-        }
-      };
-
-    } else if (isMemberAdmin) {
+    if (isMemberAdmin) {
       requireAdminAuth(() => {
         document.getElementById('member-admin-section').style.display = 'block';
         loadMembersList();
