@@ -2168,6 +2168,30 @@
         globalWifi.addEventListener('change', () => updateGlobalSetting('show_wifi', globalWifi.checked));
         globalAmenity.addEventListener('change', () => updateGlobalSetting('show_amenity', globalAmenity.checked));
 
+// [복원] VIP 히스토리 아카이브 기록 함수
+        async function recordHistory(eventType, prefix, name, suffix, msg, bg, bgm, visitDate) {
+          if (!name || name === 'Guest') return;
+          try {
+            const res = await fetch(cleanUrl + '/rest/v1/welcome_history', {
+              method: 'POST',
+              headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
+              body: JSON.stringify({
+                event_type: eventType,
+                visit_date: visitDate || new Date().toISOString(),
+                prefix: prefix || '',
+                guest_name: name,
+                suffix: suffix || '',
+                sub_message: msg || '',
+                bg_source: bg,
+                bgm_source: bgm
+              })
+            });
+            if (res.ok && window.loadHistory) {
+              loadHistory(1);
+            }
+          } catch(e) {}
+        }
+        
 const uPrefixToggle = document.getElementById('u-prefix-toggle');
         const uPrefixSelectBox = document.getElementById('u-prefix-select-box');
         const uPrefixSelect = document.getElementById('u-prefix-select');
