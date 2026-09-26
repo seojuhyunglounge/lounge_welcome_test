@@ -173,7 +173,6 @@
       cursor: pointer;
     }
 
-    /* 배지 텍스트 세로 줄바꿈 방지 */
     .tag-badge {
       display: inline-block;
       font-size: 0.68rem;
@@ -194,7 +193,6 @@
     .page-btn { background: #212329; border: 1px solid #333640; color: #c9a96e; padding: 5px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; }
     .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-    /* 모바일 달력 입력창 레이아웃 */
     .sched-datetime-grid {
       display: flex;
       flex-direction: column;
@@ -350,18 +348,19 @@
 
   <!-- [화면 3] 관리자 메인 허브 (?view=admin) -->
   <div id="admin-section">
+    <!-- 동일 탭 이동 링크 및 TV 새 창 열기 -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
       <div style="display: flex; gap: 12px;">
-        <a href="?view=bar&admin=1" target="_blank" style="color: #93c5fd; font-size: 0.85rem; text-decoration: none;">🍸 어메니티 편집 ↗</a>
-        <a href="?view=member_admin" target="_blank" style="color: #dfcfb2; font-size: 0.85rem; text-decoration: none; font-weight: 600;">💳 VIP 멤버십 횟수 관리 ↗</a>
+        <a href="?view=bar&admin=1" style="color: #93c5fd; font-size: 0.85rem; text-decoration: none; font-weight: 500;">🍸 어메니티 편집</a>
+        <a href="?view=member_admin" style="color: #dfcfb2; font-size: 0.85rem; text-decoration: none; font-weight: 600;">💳 VIP 멤버십 횟수 관리</a>
       </div>
       <div style="display:flex; gap:10px; align-items:center;">
         <button type="button" onclick="logoutAdmin()" style="background:none; border:1px solid #444; color:#aaa; padding:4px 8px; border-radius:6px; font-size:0.75rem; cursor:pointer;">로그아웃</button>
-        <a href="?view=tv" target="_blank" style="color: #c9a96e; font-size: 0.85rem; text-decoration: none;">📺 TV 화면 새 창 열기 ↗</a>
+        <a href="?view=tv" target="_blank" style="color: #c9a96e; font-size: 0.85rem; text-decoration: none;">📺 TV 새 창 ↗</a>
       </div>
     </div>
 
-    <!-- LIVE 모니터 카드 (모바일 정렬 개선 & 간결한 퇴실 버튼) -->
+    <!-- LIVE 모니터 카드 -->
     <div class="admin-card" id="current-occupancy-card" style="border: 1px solid #3b82f6; background: #131722; padding: 18px 20px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
         <div style="font-size: 0.76rem; font-weight: 700; color: #93c5fd; letter-spacing: 0.5px;">● LIVE OCCUPANCY</div>
@@ -376,7 +375,7 @@
       <div id="occupancy-desc" style="font-size: 0.84rem; color: #94a3b8;">디스플레이 상태를 동기화하고 있습니다.</div>
     </div>
     
-    <!-- 공통 온오프 설정 (토글 상태 완벽 유지) -->
+    <!-- 공통 온오프 설정 -->
     <div class="admin-card" style="padding: 18px 22px; border-color: rgba(201, 169, 110, 0.4);">
       <div class="admin-title" style="font-size: 1rem; margin-bottom: 12px;">⚙️ 라운지 디스플레이 공통 설정</div>
       <div class="toggle-row">
@@ -455,7 +454,6 @@
         </select>
       </div>
 
-      <!-- 모바일 최적화: 시작/종료 시각 1열 스택 배치 (찌그러짐 해결) -->
       <div style="background: #1a1c24; border: 1px dashed #34394a; border-radius: 12px; padding: 14px; margin-bottom: 16px;">
         <div style="font-size: 0.85rem; font-weight: 600; color: #93c5fd; margin-bottom: 10px;">📅 예약 일정 지정 (즉시 표출 시 비워두세요)</div>
         <div class="sched-datetime-grid">
@@ -513,7 +511,11 @@
     <div style="text-align: center; margin-bottom: 20px;">
       <div class="portal-brand" style="font-size: 2.2rem;">La Colonne</div>
       <div class="portal-sub">Honesty Bar & Amenities</div>
-      <div id="admin-mode-indicator" style="display: none;"><span class="tag-badge badge-gold">⚙️ 관리자 모드: 편집 가능</span></div>
+      <!-- 관리자 모드 복귀 링크 -->
+      <div id="admin-mode-indicator" style="display: none; margin-top: 8px;">
+        <a href="?view=admin" style="color: #94a3b8; font-size: 0.82rem; text-decoration: none; margin-right: 8px;">← 라운지 관리 홈</a>
+        <span class="tag-badge badge-gold">⚙️ 관리자 편집 모드</span>
+      </div>
     </div>
 
     <div id="admin-bar-control-card" style="display: none; background: #181a22; border: 1px solid #333846; border-radius: 14px; padding: 16px; margin-bottom: 18px;">
@@ -548,6 +550,7 @@
   <div id="member-admin-section">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
       <div>
+        <a href="?view=admin" style="color: #94a3b8; font-size: 0.82rem; text-decoration: none; display: inline-block; margin-bottom: 4px;">← 라운지 관리 홈</a>
         <h2 style="font-size: 1.2rem; color: #dfcfb2; font-weight: 600;">VIP 멤버십 횟수 관리</h2>
         <div style="font-size: 0.78rem; color: #888;">기본 1회 = 3시간 프라이빗 세션</div>
       </div>
@@ -1096,7 +1099,7 @@
       function initAdmin() {
         let cachedMembers = [], currentSchedId = null, editingId = null;
 
-        // [버그 수정 1] 공통 토글 상태 불러와서 스위치 완벽 유지
+        // 공통 토글 상태 불러와서 스위치 완벽 유지
         async function loadGlobalSettings() {
           try {
             const res = await apiCall('lounge_settings?select=*&id=eq.1');
@@ -1113,7 +1116,6 @@
         }
         loadGlobalSettings();
 
-        // 토글 변경 시 DB 즉시 저장
         ['weather', 'wifi', 'amenity'].forEach(key => {
           const el = document.getElementById(`global-${key}-toggle`);
           el.onchange = () => apiCall('lounge_settings?id=eq.1', 'PATCH', { 
@@ -1136,7 +1138,7 @@
         }
         loadMembers();
 
-        // [버그 수정 4] LIVE 상태창 표시 및 간결한 퇴실 버튼 정렬
+        // LIVE 상태창 표시 및 간결한 퇴실 버튼 정렬
         async function updateStatus() {
           const [badge, title, desc, card, btn] = ['occupancy-badge','occupancy-title','occupancy-desc','current-occupancy-card','btn-force-guest'].map(id => document.getElementById(id));
           try {
@@ -1380,7 +1382,7 @@
           document.getElementById('u-prefix-select-box').style.display = 'none';
         };
 
-        // ─── VIP 히스토리 아카이브 (배지 찌그러짐 방지) ───
+        // ─── VIP 히스토리 아카이브 ───
         let histPage = 1;
         const HIST_PAGE_SIZE = 5;
 
