@@ -678,6 +678,18 @@
       </div>
     </div>
 
+    <!-- [신규] 실시간 라운지 점유 & 디스플레이 상태 모니터 -->
+    <div class="admin-card" id="current-occupancy-card" style="border: 1px solid #3b82f6; background: #131722; padding: 20px 24px; margin-bottom: 20px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div style="font-size: 0.8rem; font-weight: 700; color: #93c5fd; letter-spacing: 1px; text-transform: uppercase;">
+          ● LIVE OCCUPANCY & DISPLAY STATUS
+        </div>
+        <span id="occupancy-badge" style="font-size: 0.72rem; padding: 3px 8px; border-radius: 12px; background: rgba(59, 130, 246, 0.2); color: #93c5fd; font-weight: 600;">상태 확인 중...</span>
+      </div>
+      <div id="occupancy-title" style="font-size: 1.35rem; font-weight: 700; color: #ffffff; margin-bottom: 4px;">--</div>
+      <div id="occupancy-desc" style="font-size: 0.85rem; color: #94a3b8;">디스플레이 상태를 동기화하고 있습니다.</div>
+    </div>
+    
     <div class="admin-card" style="padding: 20px 26px; border-color: rgba(201, 169, 110, 0.4);">
       <div class="admin-title" style="font-size: 1.1rem; margin-bottom: 14px;">⚙️ 라운지 디스플레이 공통 설정</div>
       
@@ -830,7 +842,14 @@
           <option value="Sir">Sir (존칭)</option>
         </select>
       </div>
-
+      
+      <div class="form-group">
+        <label>VIP 멤버십 회원 연동 (선택)</label>
+        <select id="sched-member-select" style="border-color: #3b4252;">
+          <option value="">-- 일반 대관 / 비회원 (선택 안 함) --</option>
+        </select>
+      </div>
+      
       <div class="form-group">
         <label>VIP 본명 / 회사명</label>
         <input type="text" id="sched-name" placeholder="예: Julian Vance, 김대표, 삼정회계법인">
@@ -2084,6 +2103,97 @@
       });
 
       function initAdminControls() {
+        let cachedAdminMembers = [];
+
+        // 멤버십 회원 목록 불러와서 예약 등록 드롭다운에 채우기
+        async function populateMemberDropdown() {
+          const selectEl = document.getElementById('sched-member-select');
+          if (!selectEl) return;
+          const token = sessionStorage.getItem('la_colonne_admin_token') || '';
+          try {
+            const res = await fetch(`${cleanUrl}/rest/v1/rpc/get_admin_members`, {
+              method: 'POST',
+              headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ p_token: token })
+            });
+            if (!res.ok) return;
+            cachedAdminMembers = await res.json();
+            let optHtml = '<option value="">-- 일반 대관 / 비회원 (선택 안 함) --</option>';
+            cachedAdminMembers.forEach(m => {
+              const remain = Math.max(0, (parseInt(m.total_passes, 10) || 0) - (parseInt(m.used_passes, 10) || 0));
+              optHtml += `<option value="${m.id}" data-code="${escapeHtml(m.member_code)}" data-name="${escapeHtml(m.company_name)}">[${escapeHtml(m.member_code)}] ${escapeHtml(m.company_name)} (잔여 ${remain}회)</option>`;
+            });
+            selectEl.innerHTML = optHtml;
+          } catch(e) {}
+        }
+        populateMemberDropdown();
+
+        // [실시간 라운지 점유 & 표출 상태 갱신]
+        async function updateLiveOccupancyStatus() {
+          const badgeEl = document.getElementById('occupancy-badge');
+          const titleEl = document.getElementById('occupancy-title');
+          const descEl = document.getElementById('occupancy-desc');
+          const cardEl = document.getElementById('current-occupancy-card');
+          if (!badgeEl || !titleEl) return;
+
+          try {
+            const nowISO = new Date().toISOString();
+            const fiveMinLaterISO = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+
+            // 1. 현재 진행 중인 예약 스케줄이 있는지 확인
+            const schedRes = await fetch(cleanUrl + '/rest/v1/welcome_schedules?start_time=lte.' + fiveMinLaterISO + '&end_time=gte.' + nowISO + '&order=start_time.asc&limit=1', {
+              headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+            });
+
+            if (schedRes.ok) {
+              const scheds = await schedRes.json();
+              if (scheds && scheds.length > 0) {
+                const s = scheds[0];
+                const endD = new Date(s.end_time);
+                const remainMin = Math.max(0, Math.round((endD.getTime() - Date.now()) / 60000));
+                const memInfo = s.member_name ? ` (회원: ${s.member_code || ''} ${s.member_name})` : '';
+
+                cardEl.style.borderColor = '#22c55e';
+                badgeEl.style.background = 'rgba(34, 197, 94, 0.2)';
+                badgeEl.style.color = '#4ade80';
+                badgeEl.innerText = `● 예약 일정 표출 중 (종료까지 ${remainMin}분 남음)`;
+
+                titleEl.innerText = `${s.prefix ? s.prefix + ' ' : ''}${s.guest_name}${s.suffix ? ' ' + s.suffix : ''}`;
+                descEl.innerText = `문구: "${s.sub_message}"${memInfo}`;
+                return;
+              }
+            }
+
+            // 2. 스케줄이 없다면 상시(즉시) 표출 레코드 확인
+            const defRes = await fetch(cleanUrl + '/rest/v1/welcome_screen?select=*&id=eq.1', {
+              headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
+            });
+            if (defRes.ok) {
+              const defs = await defRes.json();
+              if (defs && defs.length > 0 && defs[0].guest_name && defs[0].guest_name !== 'Guest') {
+                const d = defs[0];
+                cardEl.style.borderColor = '#eab308';
+                badgeEl.style.background = 'rgba(234, 179, 8, 0.2)';
+                badgeEl.style.color = '#fde047';
+                badgeEl.innerText = '● 수동 즉시 표출 중';
+                titleEl.innerText = `${d.prefix ? d.prefix + ' ' : ''}${d.guest_name}${d.suffix ? ' ' + d.suffix : ''}`;
+                descEl.innerText = `문구: "${d.sub_message}" (상시 유지 모드)`;
+                return;
+              }
+            }
+
+            // 3. 둘 다 없으면 빈 공간 (기본 대기 화면)
+            cardEl.style.borderColor = '#334155';
+            badgeEl.style.background = 'rgba(100, 116, 139, 0.2)';
+            badgeEl.style.color = '#94a3b8';
+            badgeEl.innerText = '○ 빈 공간 (대기 중)';
+            titleEl.innerText = 'Guest (기본 라운지 화면)';
+            descEl.innerText = '현재 활성화된 손님 일정이 없으며 기본 환영 영상이 대기 중입니다.';
+          } catch(e) {}
+        }
+        updateLiveOccupancyStatus();
+        setInterval(updateLiveOccupancyStatus, 4000);
+        
         const globalWeather = document.getElementById('global-weather-toggle');
         const globalWifi = document.getElementById('global-wifi-toggle');
         const globalAmenity = document.getElementById('global-amenity-toggle');
@@ -2444,6 +2554,12 @@
           logBox.style.color = '#ffd166';
           logBox.innerText = editingScheduleId ? '일정 수정 중...' : '예약 등록 중...';
 
+
+          const memSelect = document.getElementById('sched-member-select');
+          const selOpt = memSelect ? memSelect.options[memSelect.selectedIndex] : null;
+          const memCode = (selOpt && selOpt.value) ? selOpt.getAttribute('data-code') : '';
+          const memName = (selOpt && selOpt.value) ? selOpt.getAttribute('data-name') : '';
+
           const payload = {
             start_time: new Date(startVal).toISOString(),
             end_time: new Date(endVal).toISOString(),
@@ -2452,7 +2568,9 @@
             suffix: suffixVal,
             sub_message: msgVal || '라 콜론에 오신 것을 환영합니다.',
             bg_source: bgVal,
-            bgm_source: bgmVal
+            bgm_source: bgmVal,
+            member_code: memCode,
+            member_name: memName
           };
 
           try {
