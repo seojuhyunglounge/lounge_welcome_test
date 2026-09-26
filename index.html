@@ -1258,7 +1258,6 @@
           });
           container.innerHTML = html;
 
-          // 다음 LC- 번호 자동 계산하여 입력칸에 안내
           let maxNum = 9000;
           members.forEach(m => {
             const match = (m.member_code || '').match(/LC-(\d+)/i);
@@ -2335,6 +2334,7 @@
           uLogBox.innerText = '처리 중...';
 
           try {
+            let sessionDeducted = false;
             if (f.memberId) {
               if (confirm(`[${f.memberCode}] ${f.memberName} 회원의 세션 패스를 1회 차감하시겠습니까?`)) {
                 const token = sessionStorage.getItem('la_colonne_admin_token') || '';
@@ -2346,6 +2346,7 @@
 
                 const adjOk = await adjRes.json();
                 if (adjOk === true) {
+                  sessionDeducted = true;
                   showToast('✓ 회원 세션 1회 차감 완료');
                   populateMemberDropdown();
                 } else {
@@ -2382,8 +2383,18 @@
               recordHistory('즉시 반영', f.prefix, f.name, f.suffix, f.msg, f.bg, f.bgm, null, f.memberCode, f.memberName);
               if (window.updateLiveOccupancyStatus) updateLiveOccupancyStatus();
             } else {
+              // 롤백 안전장치: 표출 저장이 실패했을 때 세션 복구
+              if (sessionDeducted && f.memberId) {
+                const token = sessionStorage.getItem('la_colonne_admin_token') || '';
+                await fetch(`${cleanUrl}/rest/v1/rpc/adjust_admin_member_pass`, {
+                  method: 'POST',
+                  headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey, 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ p_token: token, p_id: parseInt(f.memberId, 10), p_delta: 1 })
+                });
+                populateMemberDropdown();
+              }
               uLogBox.style.color = '#f87171';
-              uLogBox.innerText = '저장 실패';
+              uLogBox.innerText = '저장 실패: 세션이 복구되었습니다.';
             }
           } catch(e) {
             uLogBox.style.color = '#f87171';
@@ -2391,7 +2402,7 @@
           }
         });
 
-        // [동작 2] 📅 예약 일정 추가 / 수정 버튼 클릭 시 (시간대 중복 방지 검증 탑재)
+        // [동작 2] 📅 예약 일정 추가 / 수정 버튼 클릭 시 (선차감 + 시간대 중복 방지 검증)
         let editingScheduleId = null;
 
         document.getElementById('btn-action-sched').addEventListener('click', async function() {
@@ -2421,25 +2432,48 @@
           uLogBox.innerText = '시간대 중복 검증 중...';
 
           try {
-            // [중복 방지 검사] 기존 예약 일정들과 시간대가 겹치는지 체크
-            const checkRes = await fetch(cleanUrl + '/rest/v1/welcome_schedules?select=id,guest_name,start_time,end_time', {
+            // [중복 방지 검사] 현재 시각 이후의 예약 일정들과 시간대가 겹치는지 체크
+            const nowISO = new Date().toISOString();
+            const checkRes = await fetch(cleanUrl + '/rest/v1/welcome_schedules?end_time=gte.' + nowISO + '&select=id,guest_name,start_time,end_time', {
               headers: getAdminHeaders()
             });
             if (checkRes.ok) {
               const allScheds = await checkRes.json();
               for (const ex of allScheds) {
-                // 수정 중일 때는 자기 자신과의 충돌은 제외
                 if (editingScheduleId && ex.id === editingScheduleId) continue;
 
                 const exStart = new Date(ex.start_time);
                 const exEnd = new Date(ex.end_time);
 
-                // 두 시간 구간이 겹치는지 판별하는 표준 공식: (A_start < B_end) && (A_end > B_start)
                 if (newStart < exEnd && newEnd > exStart) {
                   const formatTime = (d) => `${d.getMonth()+1}/${d.getDate()} ${d.toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit', hour12:false})}`;
                   alert(`⚠️ 예약 시간대가 기존 일정과 중복됩니다!\n\n이미 등록된 [${ex.guest_name} 님]의 일정(${formatTime(exStart)} ~ ${formatTime(exEnd)})과 겹칩니다.\n시간을 다시 확인해 주세요.`);
                   uLogBox.style.color = '#f87171';
                   uLogBox.innerText = '취소됨: 예약 시간대 중복';
+                  return;
+                }
+              }
+            }
+
+            // 신규 예약 일정 등록 시 회원 세션 1회 선차감 처리
+            let sessionDeducted = false;
+            if (!editingScheduleId && f.memberId) {
+              if (confirm(`[${f.memberCode}] ${f.memberName} 회원의 세션 패스를 1회 선차감하시겠습니까?`)) {
+                const token = sessionStorage.getItem('la_colonne_admin_token') || '';
+                const adjRes = await fetch(`${cleanUrl}/rest/v1/rpc/adjust_admin_member_pass`, {
+                  method: 'POST',
+                  headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey, 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ p_token: token, p_id: parseInt(f.memberId, 10), p_delta: -1 })
+                });
+
+                const adjOk = await adjRes.json();
+                if (adjOk === true) {
+                  sessionDeducted = true;
+                  showToast('✓ 회원 세션 1회 선차감 완료');
+                  populateMemberDropdown();
+                } else {
+                  alert('⚠️ 회원 세션 차감에 실패했습니다. (관리자 인증 만료 또는 잔여 횟수 부족)');
+                  uLogBox.innerText = '취소됨: 세션 차감 실패';
                   return;
                 }
               }
@@ -2485,8 +2519,18 @@
               loadSchedules();
               if (window.updateLiveOccupancyStatus) updateLiveOccupancyStatus();
             } else {
+              // 롤백 안전장치: 예약 저장 실패 시 세션 복구
+              if (sessionDeducted && f.memberId) {
+                const token = sessionStorage.getItem('la_colonne_admin_token') || '';
+                await fetch(`${cleanUrl}/rest/v1/rpc/adjust_admin_member_pass`, {
+                  method: 'POST',
+                  headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey, 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ p_token: token, p_id: parseInt(f.memberId, 10), p_delta: 1 })
+                });
+                populateMemberDropdown();
+              }
               uLogBox.style.color = '#f87171';
-              uLogBox.innerText = '저장 실패';
+              uLogBox.innerText = '저장 실패: 세션이 복구되었습니다.';
             }
           } catch(e) {
             uLogBox.style.color = '#f87171';
@@ -2578,7 +2622,6 @@
               const memberTag = s.member_name ? `<span style="background: rgba(201, 169, 110, 0.15); border: 1px solid rgba(201, 169, 110, 0.4); color: #dfcfb2; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">💳 ${escapeHtml(s.member_code || '')} ${escapeHtml(s.member_name)}</span>` : '';
               const itemEscaped = encodeURIComponent(JSON.stringify(s));
 
-              // 현재 TV에 진행 중인 일정인지 여부 판별
               const isCurrentActive = (currentActiveScheduleId && currentActiveScheduleId === s.id);
 
               html += `
@@ -2593,7 +2636,7 @@
                   </div>
                   <div class="action-btn-group">
                     <button class="btn-edit" onclick="editSchedule('${itemEscaped}')">수정</button>
-                    <button class="btn-delete" onclick="deleteSchedule(${s.id}, ${isCurrentActive})">
+                    <button class="btn-delete" onclick="deleteSchedule(${s.id}, ${isCurrentActive}, '${escapeHtml(s.member_code || '')}', '${escapeHtml(s.member_name || '')}')">
                       ${isCurrentActive ? '🚪 퇴실/종료' : '취소/삭제'}
                     </button>
                   </div>
@@ -2605,8 +2648,8 @@
         }
         loadSchedules();
 
-        // [개선] 대기열 삭제 시 현재 진행 중인 일정이면 퇴실 처리 및 화면 초기화
-        window.deleteSchedule = async function(id, isCurrentlyRunning) {
+        // [개선] 대기열 삭제 시 현재 진행 중이면 퇴실 처리 + 노쇼 여부에 따른 세션 복구 분기
+        window.deleteSchedule = async function(id, isCurrentlyRunning, memberCode, memberName) {
           let confirmMsg = '이 예약 일정을 취소/삭제하시겠습니까? (히스토리 아카이브에는 안전하게 보존됩니다)';
           if (isCurrentlyRunning) {
             confirmMsg = '⚠️ 현재 TV 화면에 진행 중인 일정입니다!\n\n지금 삭제하면 손님이 [조기 퇴실] 처리되며, TV 화면이 즉시 기본 대기 화면(Guest)으로 복귀합니다.\n진행하시겠습니까?';
@@ -2615,14 +2658,37 @@
           if (!confirm(confirmMsg)) return;
 
           try {
-            // 1. 스케줄 삭제
+            // 회원 연동 일정인 경우: 복구(환불)할지, 노쇼/위약 차감 유지할지 선택
+            if (memberCode && memberName) {
+              const refundConfirm = confirm(
+                `[멤버십 패스 복구 안내]\n\n취소되는 예약에 연동된 [${memberCode} ${memberName}] 회원의 세션 패스 1회를 복구(환불)하시겠습니까?\n\n• [확인] : 1회 환불 복구\n• [취소] : 노쇼/위약 처리 (차감 유지)`
+              );
+
+              if (refundConfirm) {
+                // 회원 ID 탐색 후 1회 복구(+1)
+                const targetMember = cachedAdminMembers.find(m => m.member_code === memberCode);
+                if (targetMember) {
+                  const token = sessionStorage.getItem('la_colonne_admin_token') || '';
+                  await fetch(`${cleanUrl}/rest/v1/rpc/adjust_admin_member_pass`, {
+                    method: 'POST',
+                    headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ p_token: token, p_id: targetMember.id, p_delta: 1 })
+                  });
+                  showToast(`✓ [${memberCode}] 회원 세션 1회 복구 완료`);
+                  populateMemberDropdown();
+                }
+              } else {
+                showToast(`ℹ️ 노쇼/위약 처리: 세션 차감이 유지되었습니다.`);
+              }
+            }
+
+            // 스케줄 삭제
             const res = await fetch(cleanUrl + '/rest/v1/welcome_schedules?id=eq.' + id, {
               method: 'DELETE',
               headers: getAdminHeaders()
             });
 
             if (res.ok) {
-              // 2. 만약 방금 삭제한 일정이 현재 TV에 표출 중이던 일정이라면 TV 화면을 Guest로 리셋
               if (isCurrentlyRunning || currentActiveScheduleId === id) {
                 await fetch(cleanUrl + '/rest/v1/welcome_screen', {
                   method: 'POST',
@@ -2790,7 +2856,6 @@
           if (data.bg_source) document.getElementById('u-bg-select').value = data.bg_source;
           if (data.bgm_source) document.getElementById('u-bgm-select').value = data.bgm_source;
 
-          // 회원 연동 선택 매핑
           const memSelect = document.getElementById('u-member-select');
           if (memSelect) {
             memSelect.value = '';
