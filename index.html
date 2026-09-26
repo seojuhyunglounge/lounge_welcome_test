@@ -19,7 +19,6 @@
       -webkit-overflow-scrolling: touch;
     }
 
-    /* ─── 애니메이션 ─── */
     @keyframes pixelShiftTop {
       0%, 100% { transform: translate(0px, 0px); }
       25% { transform: translate(1.5px, -1.5px); }
@@ -33,7 +32,6 @@
       75% { transform: translate(-1px, -24px); }
     }
 
-    /* ─── TV 디스플레이 레이아웃 ─── */
     #tv-section {
       display: none;
       position: fixed;
@@ -102,7 +100,6 @@
     .qr-sub { font-size: 0.68rem; color: #8b92a0; }
     #tv-status-dot { position: fixed; bottom: 30px; left: 14px; z-index: 9999; width: 6px; height: 6px; border-radius: 50%; background: #22c55e; opacity: 0.6; pointer-events: none; }
 
-    /* ─── 캐스트 모달 ─── */
     #cast-modal { display: none; position: fixed; inset: 0; z-index: 99999; background: rgba(8, 9, 12, 0.78); backdrop-filter: blur(20px); align-items: center; justify-content: center; padding: 24px; opacity: 0; transition: opacity 0.4s ease; }
     #cast-modal.show { display: flex; opacity: 1; }
     .cast-dialog { background: #15171e; border: 1px solid rgba(201, 169, 110, 0.45); border-radius: 24px; padding: 42px 48px; max-width: 680px; width: 100%; text-align: center; }
@@ -114,7 +111,6 @@
     .cast-step { font-size: 0.85rem; color: #c4c8d3; line-height: 1.6; margin-bottom: 6px; }
     .cast-step b { color: #dfcfb2; }
 
-    /* ─── 공통 관리자 카드 & UI 위젯 ─── */
     .admin-card { background: #16171b; border: 1px solid #282a32; border-radius: 18px; padding: 24px; margin-bottom: 22px; }
     .admin-title { font-size: 1.2rem; color: #c9a96e; font-weight: 600; margin-bottom: 18px; }
     .form-group { margin-bottom: 15px; }
@@ -134,7 +130,6 @@
 
     .prefix-select-wrap { display: none; margin-bottom: 14px; padding: 10px; background: #1a1b22; border-radius: 10px; border: 1px dashed #3a3d4a; }
 
-    /* 버튼 스타일 */
     .btn-primary { width: 100%; padding: 14px; background: #c9a96e; border: none; border-radius: 10px; color: #0d0e11; font-size: 1rem; font-weight: 700; cursor: pointer; }
     .btn-primary:active { opacity: 0.85; }
     .btn-secondary { width: 100%; padding: 11px; background: #2a2c35; border: 1px solid #3d414e; border-radius: 10px; color: #d1d5db; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
@@ -142,7 +137,6 @@
     .btn-delete { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); color: #f87171; padding: 6px 12px; border-radius: 8px; font-size: 0.78rem; cursor: pointer; }
     .btn-trigger-now { background: rgba(201, 169, 110, 0.2); border: 1px solid #c9a96e; color: #dfcfb2; padding: 6px 12px; border-radius: 8px; font-size: 0.78rem; cursor: pointer; font-weight: 600; flex: 1; }
 
-    /* 공통 리스트 아이템 & 배지 스타일 (다이어트 핵심) */
     .compact-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #181a20; border: 1px solid #262933; border-radius: 8px; margin-bottom: 6px; }
     .tag-badge { display: inline-block; font-size: 0.68rem; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
     .badge-gold { background: rgba(201, 169, 110, 0.15); border: 1px solid rgba(201, 169, 110, 0.4); color: #dfcfb2; }
@@ -156,7 +150,6 @@
     .page-btn { background: #212329; border: 1px solid #333640; color: #c9a96e; padding: 5px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; }
     .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-    /* 화면 섹션 제어 */
     #admin-section { display: none; width: 92%; max-width: 540px; margin: 30px auto 90px auto; }
     #guest-portal-section, #member-client-section { display: none; width: 90%; max-width: 440px; margin: 60px auto 80px auto; text-align: center; }
     #bar-section { display: none; width: 92%; max-width: 480px; margin: 30px auto 80px auto; }
@@ -298,7 +291,7 @@
     <audio id="bgm-player" loop preload="auto"></audio>
   </div>
 
-  <!-- [화면 3] 관리자 메인 화면 (?view=admin) -->
+  <!-- [화면 3] 라운지 관리자 메인 허브 (?view=admin) -->
   <div id="admin-section">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
       <div style="display: flex; gap: 12px;">
@@ -424,7 +417,7 @@
     <!-- 카드 3: 예약 대기열 -->
     <div class="admin-card">
       <div class="admin-title">3. 등록된 VIP 예약 대기열 (진행/예정 일정)</div>
-      <div id="schedule-list"><div style="color: #666; font-size: 0.85rem; text-align: center; padding: 15px 0;">대기 중인 예약 일정이 없습니다.</div></div>
+      <div id="schedule-list"><div style="color: #666; font-size: 0.85rem; text-align: center; padding: 15px 0;">대기 일정이 없습니다.</div></div>
     </div>
 
     <!-- 카드 4: 히스토리 아카이브 -->
@@ -532,7 +525,7 @@
 
   <div id="toast-msg"></div>
 
-  <!-- ─── 마스터 JS 엔진 (압축 & 최적화 완료) ─── -->
+  <!-- ─── 마스터 JS 엔진 (안전성 & 보안 완벽 복구본) ─── -->
   <script>
     const SUPABASE_URL = 'https://jorxmazliodqnxnwctlc.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_GAU-azI_hJvms8k3Nzsyiw_PRH0NG69';
@@ -547,7 +540,6 @@
       viewParam === 'member_admin', viewParam === 'member', viewParam === 'admin'
     ];
 
-    // [다이어트 유틸 1] 날짜 변환 단일화
     function fmtDate(dInput, type) {
       if (!dInput) return '-';
       const d = new Date(dInput);
@@ -556,9 +548,15 @@
       return `${d.getMonth()+1}.${d.getDate()} ${fmtDate(d, 'time')}`;
     }
 
-    // [다이어트 유틸 2] 통신 엔진 통합 (REST & RPC 단일화)
+    // [보안 복구 1] 관리자 세션 토큰 헤더(x-admin-token) 완벽 주입
     function getAdminHeaders(extra = {}) {
-      return { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey, ...extra };
+      const token = sessionStorage.getItem('la_colonne_admin_token') || '';
+      return { 
+        'apikey': cleanKey, 
+        'Authorization': 'Bearer ' + cleanKey,
+        'x-admin-token': token,
+        ...extra 
+      };
     }
 
     async function apiCall(endpoint, method = 'GET', body = null, extraHeaders = {}) {
@@ -599,7 +597,7 @@
       showToast('✓ 계좌번호가 복사되었습니다: ' + str);
     }
 
-    // ─── 보안 인증 로직 ───
+    // ─── 보안 인증 로직 (관리자 PIN) ───
     function requireAdminAuth(onSuccess) {
       if (sessionStorage.getItem('la_colonne_admin_token')) return onSuccess();
       const [modal, input, err] = [document.getElementById('pin-modal'), document.getElementById('admin-pin-input'), document.getElementById('pin-error-msg')];
@@ -631,14 +629,37 @@
       const [phoneIn, pinIn, errEl, resEl] = [document.getElementById('client-phone-input'), document.getElementById('client-pin-input'), document.getElementById('client-login-error'), document.getElementById('member-pass-result')];
       [phoneIn, pinIn].forEach(el => el.addEventListener('keydown', e => { if (e.key === 'Enter') queryMemberPass(); }));
 
+      // [보안 복구 4] 손님 조회 무차별 대입(Brute-force) 5회 실패 잠금 방어
+      let clientFailCount = 0;
+      let clientLockUntil = 0;
+
       window.queryMemberPass = async function() {
+        const now = Date.now();
+        if (now < clientLockUntil) {
+          const remMin = Math.ceil((clientLockUntil - now) / 60000);
+          errEl.innerText = `⚠️ 조회 시도 횟수 초과로 ${remMin}분간 잠금되었습니다.`;
+          errEl.style.display = 'block'; return;
+        }
+
         const [phone, pin] = [phoneIn.value.replace(/[^0-9]/g, ''), pinIn.value.trim()];
         errEl.style.display = 'none';
         if (!phone || !pin) return (errEl.innerText = '연락처와 PIN을 모두 입력하세요.', errEl.style.display = 'block');
         try {
           const res = await apiCall('rpc/verify_member_login', 'POST', { p_phone: phone, p_pin: pin });
           const data = await res.json();
-          if (!data || !data.length) return (errEl.innerText = '일치하는 회원 정보가 없습니다.', errEl.style.display = 'block', resEl.style.display = 'none');
+          if (!data || !data.length) {
+            clientFailCount++;
+            if (clientFailCount >= 5) {
+              clientLockUntil = Date.now() + 15 * 60000;
+              clientFailCount = 0;
+              errEl.innerText = '⚠️ 5회 불일치로 15분간 조회가 잠금되었습니다.';
+            } else {
+              errEl.innerText = `일치하는 회원 정보가 없습니다. (${clientFailCount}/5회 실패)`;
+            }
+            errEl.style.display = 'block'; resEl.style.display = 'none';
+            return;
+          }
+          clientFailCount = 0; // 성공 시 카운트 리셋
           const m = data[0];
           const remain = Math.max(0, (parseInt(m.total_passes) || 0) - (parseInt(m.used_passes) || 0));
           resEl.innerHTML = `
@@ -863,6 +884,13 @@
       window.openCastModal = () => { castModal.classList.add('show'); };
       window.closeCastModal = () => { castModal.classList.remove('show'); };
 
+      // [보안 복구 6] 리모컨 뒤로가기 / ESC 키 지원 복구 (Tizen 10009, Android 4, ESC 27)
+      window.addEventListener('keydown', e => {
+        if (['Escape', 'GoBack'].includes(e.key) || [27, 10009, 4].includes(e.keyCode)) {
+          if (castModal && castModal.classList.contains('show')) closeCastModal();
+        }
+      });
+
       // 시계 & 일일 리로드
       let lastReload = '';
       function updateClock() {
@@ -912,6 +940,12 @@
         const dName = (name && name.trim()) ? name.trim() : 'Guest';
         const dMsg = (msg && msg.trim()) ? msg.trim() : '라 콜론에 오신 것을 환영합니다.';
         const key = `${prefix}|${dName}|${suffix}|${dMsg}|${bgUrl}|${bgmUrl}`;
+        
+        // [보안 복구 5] 오프라인 캐시 저장
+        try {
+          localStorage.setItem('la_colonne_cached_display', JSON.stringify({ prefix, name: dName, suffix, msg: dMsg, bgUrl, bgmUrl }));
+        } catch(e) {}
+
         if (key === currentDataKey) return;
         currentDataKey = key;
 
@@ -946,6 +980,14 @@
         }
       }
 
+      // [보안 복구 5] 오프라인 폴백 로드
+      function loadOfflineFallback() {
+        try {
+          const cached = JSON.parse(localStorage.getItem('la_colonne_cached_display'));
+          if (cached) updateBoard(cached.prefix, cached.name, cached.suffix, cached.msg, cached.bgUrl, cached.bgmUrl);
+        } catch(e) {}
+      }
+
       async function syncTV() {
         try {
           const nowISO = new Date().toISOString();
@@ -959,8 +1001,10 @@
           if (dRes.ok) {
             const d = await dRes.json();
             if (d && d.length) return updateBoard(d[0].prefix, d[0].guest_name, d[0].suffix, d[0].sub_message, d[0].bg_source, d[0].bgm_source);
+          } else {
+            setDot('#ef4444'); loadOfflineFallback();
           }
-        } catch(e) { setDot('#ef4444'); }
+        } catch(e) { setDot('#ef4444'); loadOfflineFallback(); }
       }
 
       async function syncSettings() {
@@ -977,7 +1021,13 @@
         } catch(e) {}
       }
 
-      window.addEventListener('click', () => { if (player.src && player.paused && currentBgmUrl !== 'none') player.play(); });
+      // [보안 복구 7] click + touchstart 미디어 자동재생 언락
+      ['click', 'touchstart'].forEach(evt => {
+        window.addEventListener(evt, () => {
+          if (player.src && player.paused && currentBgmUrl !== 'none') player.play();
+        });
+      });
+
       syncSettings(); syncTV();
       setInterval(syncSettings, 3000); setInterval(syncTV, 1500);
 
@@ -1065,7 +1115,6 @@
           } catch(e) { alert('초기화 실패'); }
         };
 
-        // 입력 폼 헬퍼
         function getFormData() {
           const rawName = document.getElementById('u-name-input').value.trim();
           const sel = document.getElementById('u-member-select');
@@ -1082,7 +1131,6 @@
           };
         }
 
-        // 세션 차감 헬퍼
         async function deductSession(memId, memCode, memName, promptText) {
           if (!memId) return true;
           if (!confirm(`[${memCode}] ${memName} 회원의 세션 패스를 1회 ${promptText}하시겠습니까?`)) return false;
@@ -1178,6 +1226,7 @@
             let html = '';
             scheds.forEach(s => {
               const isCur = (currentSchedId && currentSchedId === s.id);
+              const enc = encodeURIComponent(JSON.stringify(s));
               html += `
                 <div class="schedule-item" style="${isCur ? 'border-color:#22c55e; background:#141f1a;' : ''}">
                   <div>
@@ -1190,8 +1239,9 @@
                     <div style="font-size:0.8rem; color:#9ca3af; margin-top:2px;">"${escapeHtml(s.sub_message)}"</div>
                   </div>
                   <div class="action-btn-group">
-                    <button class="btn-edit" onclick="editSchedule('${encodeURIComponent(JSON.stringify(s))}')">수정</button>
-                    <button class="btn-delete" onclick="deleteSchedule(${s.id}, ${isCur}, '${s.member_code||''}', '${escapeHtml(s.member_name||'')}')">${isCur ? '🚪 조기퇴실' : '취소/삭제'}</button>
+                    <button class="btn-edit" onclick="editSchedule('${enc}')">수정</button>
+                    <!-- [보안 복구 3] encodeURIComponent로 안전하게 인자 전달 -->
+                    <button class="btn-delete" onclick="deleteSchedule(${s.id}, ${isCur}, '${enc}')">${isCur ? '🚪 조기퇴실' : '취소/삭제'}</button>
                   </div>
                 </div>`;
             });
@@ -1200,12 +1250,15 @@
         }
         loadSchedules();
 
-        window.deleteSchedule = async (id, isCur, memCode, memName) => {
+        // [보안 복구 3] 인코딩된 객체에서 memberCode/Name 안전 추출 및 노쇼 환불 분기
+        window.deleteSchedule = async (id, isCur, encData) => {
+          const s = JSON.parse(decodeURIComponent(encData));
           if (!confirm(isCur ? '현재 TV에 진행 중인 일정입니다. [조기 퇴실] 처리하시겠습니까?' : '이 예약을 취소/삭제하시겠습니까?')) return;
-          if (memCode && memName) {
-            const refund = confirm(`[세션 복구 안내]\n\n[${memCode} ${memName}] 회원의 세션 패스를 복구(환불)하시겠습니까?\n\n• [확인] : 1회 환불 복구\n• [취소] : 노쇼 위약 처리 (차감 유지)`);
+          
+          if (s.member_code && s.member_name) {
+            const refund = confirm(`[세션 복구 안내]\n\n[${s.member_code} ${s.member_name}] 회원의 세션 패스를 복구(환불)하시겠습니까?\n\n• [확인] : 1회 환불 복구\n• [취소] : 노쇼 위약 처리 (차감 유지)`);
             if (refund) {
-              const target = cachedMembers.find(m => m.member_code === memCode);
+              const target = cachedMembers.find(m => m.member_code === s.member_code);
               if (target) { await callAdminRpc('adjust_admin_member_pass', { p_id: target.id, p_delta: 1 }); showToast('✓ 1회 복구 완료'); loadMembers(); }
             } else { showToast('ℹ️ 노쇼 위약 처리 완료'); }
           }
