@@ -511,6 +511,7 @@
     </div>
   </div>
 
+  <!-- 관리자 PIN 번호 인증 모달창 -->
   <div id="pin-modal">
     <div class="pin-box">
       <div style="font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: #dfcfb2; margin-bottom: 6px;">Master Authentication</div>
@@ -846,7 +847,7 @@
       </div>
     </div>
 
-    <!-- 카드 4: VIP 히스토리 아카이브 (보안 RPC 연동) -->
+    <!-- 카드 4: VIP 히스토리 아카이브 -->
     <div class="admin-card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
         <div class="admin-title" style="margin-bottom: 0;">4. VIP 히스토리 아카이브</div>
@@ -1016,7 +1017,7 @@
       };
     }
 
-    // ─── Brute-force 방어 및 세션 토큰 인증 ───
+    // ─── Brute-force 방어 및 세션 토큰 인증 로직 ───
     function requireAdminAuth(onSuccess) {
       const storedToken = sessionStorage.getItem('la_colonne_admin_token');
       if (storedToken) {
@@ -1029,6 +1030,7 @@
       pinModal.style.display = 'flex';
       pinInput.value = '';
       pinError.style.display = 'none';
+      pinInput.disabled = false;
       pinInput.focus();
 
       window.verifyAdminPin = async function() {
@@ -1077,6 +1079,9 @@
       window.location.href = window.location.pathname;
     };
 
+    // ─────────────────────────────────────────────
+    // 화면별 라우팅 처리
+    // ─────────────────────────────────────────────
     if (isMemberAdmin) {
       requireAdminAuth(() => {
         document.getElementById('member-admin-section').style.display = 'block';
@@ -1088,7 +1093,6 @@
         const token = sessionStorage.getItem('la_colonne_admin_token') || '';
 
         try {
-          // 보안 RPC 호출
           const res = await fetch(`${cleanUrl}/rest/v1/rpc/get_admin_members`, {
             method: 'POST',
             headers: {
@@ -1253,7 +1257,6 @@
         }
       };
 
-    }
     } else if (isBar) {
       document.getElementById('bar-section').style.display = 'block';
 
@@ -1870,7 +1873,7 @@
       syncGlobalSettings();
       syncTV();
 
-      // [딜레이 해결 핵심] TV 화면은 1.5초마다 초경량 폴링으로 즉각 동기화 (트래픽 월 500MB 미만)
+      // 1.5초 주기 초경량 쾌속 폴링 (TV 화면 즉각 동기화)
       setInterval(syncGlobalSettings, 3000);
       setInterval(syncTV, 1500);
 
@@ -2302,7 +2305,7 @@
           } catch(e) {}
         };
 
-        // ─── 지적 반영: 관리자 세션 토큰을 인자로 전달하여 안전하게 히스토리 조회 (RPC) ───
+        // ─── 관리자 세션 토큰 인자 기반 히스토리 조회 (보안 RPC) ───
         let currentHistPage = 1;
         const HIST_PAGE_SIZE = 5;
 
@@ -2377,6 +2380,7 @@
           loadHistory(currentHistPage);
         };
 
+        // ─── 관리자 세션 토큰 인자 기반 히스토리 삭제 (보안 RPC) ───
         window.deleteHistory = async function(id) {
           if (!confirm('이 VIP 히스토리 기록을 영구 삭제하시겠습니까?')) return;
           const token = sessionStorage.getItem('la_colonne_admin_token') || '';
