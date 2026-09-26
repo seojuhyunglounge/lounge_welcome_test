@@ -794,7 +794,6 @@
             const b2 = schedules.find(s => s.start_time.startsWith(dateStr + 'T14:00'));
             const b3 = schedules.find(s => s.start_time.startsWith(dateStr + 'T18:00'));
 
-            // 오늘 날짜인 경우 각 부별로 시간이 이미 지났는지 판별
             const isS1Past = isPastDay || (dateStr === todayStr && nowKST >= new Date(`${dateStr}T13:00:00`));
             const isS2Past = isPastDay || (dateStr === todayStr && nowKST >= new Date(`${dateStr}T17:00:00`));
             const isS3Past = isPastDay || (dateStr === todayStr && nowKST >= new Date(`${dateStr}T21:00:00`));
@@ -820,6 +819,9 @@
           container.innerHTML = '<div style="grid-column: span 7; color:#f87171; text-align:center;">캘린더 로드 실패</div>';
         }
       }
+
+      // 최초 진입 시 즉시 캘린더를 그리도록 추가됨
+      initBlockCalendar();
 
       window.toggleBlockSession = async function(startISO, endISO, existingId, guestName) {
         const nowKST = new Date();
@@ -854,7 +856,6 @@
           const hasRealBooking = existing.some(ex => ex.guest_name !== '[CLOSED_BLOCK]');
           if (hasRealBooking) return alert('⚠️ 해당일에 이미 고객의 실제 예약이 존재하여 하루 통째 차단을 할 수 없습니다.');
 
-          // 오늘 날짜인 경우 이미 지난 세션은 건드리지 않음
           const activeExisting = existing.filter(ex => {
             if (dateStr === todayStr && new Date(ex.end_time) <= nowKST) return false;
             return true;
@@ -872,7 +873,7 @@
               { start: `${dateStr}T18:00:00`, end: `${dateStr}T21:00:00` }
             ];
             for (const s of slots) {
-              if (dateStr === todayStr && new Date(s.end) <= nowKST) continue; // 이미 지난 세션은 스킵
+              if (dateStr === todayStr && new Date(s.end) <= nowKST) continue;
               await apiCall('welcome_schedules', 'POST', {
                 start_time: s.start, end_time: s.end, guest_name: '[CLOSED_BLOCK]',
                 sub_message: '관리자 마감', prefix: '', suffix: '', bg_source: '', bgm_source: '', member_code: '', member_name: '', pin_code: '0000'
@@ -904,7 +905,7 @@
             const todayStr = nowKST.toLocaleDateString('en-CA');
             for (let d = 1; d <= lastDayDate; d++) {
               const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-              if (dateStr < todayStr) continue; // 과거 날짜 스킵
+              if (dateStr < todayStr) continue;
               const slots = [
                 { start: `${dateStr}T10:00:00`, end: `${dateStr}T13:00:00` },
                 { start: `${dateStr}T14:00:00`, end: `${dateStr}T17:00:00` },
