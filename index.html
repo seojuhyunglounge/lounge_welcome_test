@@ -310,7 +310,7 @@
       <div style="display: flex; gap: 12px; flex-wrap: wrap;">
         <a href="?view=bar&admin=1" style="color: #93c5fd; font-size: 0.85rem; text-decoration: none; font-weight: 500;">🍸 어메니티 편집</a>
         <a href="?view=member_admin" style="color: #dfcfb2; font-size: 0.85rem; text-decoration: none; font-weight: 600;">💳 멤버십 횟수 관리</a>
-        <a href="?view=block_admin" style="color: #f87171; font-size: 0.85rem; text-decoration: none; font-weight: 600;">🔒 예약 불가일 캘린더 관리 ↗</a>
+        <a href="?view=block_admin" style="color: #c9a96e; font-size: 0.85rem; text-decoration: none; font-weight: 600;">🔒 예약 불가일 캘린더 관리 ↗</a>
       </div>
       <div style="display:flex; gap:10px; align-items:center;">
         <button type="button" onclick="logoutAdmin()" style="background:none; border:1px solid #444; color:#aaa; padding:4px 8px; border-radius:6px; font-size:0.75rem; cursor:pointer;">로그아웃</button>
@@ -481,7 +481,7 @@
     <div class="admin-card" style="padding: 16px; border-color: rgba(201, 169, 110, 0.4); background: #161412; text-align: left;">
       <div style="font-size: 0.78rem; color: #b8aba0; margin-bottom: 12px; line-height: 1.5;">
         • <b style="color:#dfcfb2;">날짜 숫자</b> 터치: 하루(1~3부) 통째 마감/오픈 토글<br>
-        • 각 <b style="color:#dfcfb2;">컬러 바</b> 터치: 해당 부 개별 토글 (🟢예약가능 / 🔴관리자마감 / 🔵고객예약)<br>
+        • 각 <b style="color:#dfcfb2;">컬러 바</b> 터치: 해당 부 개별 토글 (<span style="color:#c9a96e;">■</span> 예약가능 / <span style="color:#4e342e;">■</span> 마감 / <span style="color:#3b82f6;">■</span> 고객예약)<br>
         • 상단 <b style="color:#dfcfb2;">월 타이틀</b> 터치: 해당 월 전체 일괄 토글
       </div>
       
@@ -534,19 +534,38 @@
     </div>
   </div>
 
-  <!-- [화면 7] 손님용 라운지 이용 예약 신청 (?view=booking) -->
+  <!-- [화면 7] 손님용 캘린더 예약 포털 (?view=booking) -->
   <div id="booking-section">
     <div class="portal-brand" style="font-size: 2.1rem;">La Colonne</div>
-    <div class="portal-sub">Lounge Reservation Portal</div>
-    <div class="admin-card" style="text-align: left; margin-top: 15px;">
-      <div class="form-group">
-        <label>예약일 선택</label>
-        <input type="date" id="book-date" onchange="renderTimeSlots()">
+    <div class="portal-sub">Lounge Reservation Calendar</div>
+    
+    <div class="admin-card" style="padding: 16px; border-color: rgba(201, 169, 110, 0.4); background: #161412; text-align: left; margin-top: 15px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <div style="font-size: 0.95rem; font-weight: 600; color: #dfcfb2;" id="book-cal-title">2026년 9월 예약 현황</div>
+        <div style="display: flex; gap: 6px;">
+          <button type="button" class="page-btn" onclick="changeBookMonth(-1)">◀</button>
+          <button type="button" class="page-btn" onclick="changeBookMonth(1)">▶</button>
+        </div>
       </div>
+      <div style="font-size: 0.76rem; color: #b8aba0; margin-bottom: 10px;">
+        • <span style="color:#c9a96e;">■</span> 예약 가능일(숫자 터치 시 세부 세션 선택)
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 0.78rem; color: #9c8e80; margin-bottom: 6px; font-weight: 600;">
+        <div style="color: #e57373;">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div style="color: #64b5f6;">토</div>
+      </div>
+      <div id="book-calendar-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;"></div>
+    </div>
+
+    <!-- 날짜 선택 시 나타나는 세부 예약 폼 패널 -->
+    <div class="admin-card" id="book-form-panel" style="display: none; text-align: left; border-color: #c9a96e; background: #1c1917;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <div style="font-size: 1rem; font-weight: 700; color: #dfcfb2;" id="selected-date-title">선택일: --</div>
+        <button type="button" onclick="closeBookPanel()" style="background:none; border:none; color:#aaa; font-size:0.85rem; cursor:pointer;">✕ 닫기</button>
+      </div>
+
       <div class="form-group">
-        <label>이용 세션 선택 (고정 3타임)</label>
-        <div style="font-size: 0.74rem; color: #9ca3af; margin-bottom: 8px;">• 1부: 10-13시 | 2부: 14-17시 | 3부: 18-21시<br>• 연달아 선택 시 브레이크타임 자동 병합</div>
-        <div id="slot-buttons-container" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;"></div>
+        <label>이용 세션 선택 (중복 선택 가능)</label>
+        <div id="book-slots-container" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;"></div>
       </div>
       <div class="form-group">
         <label>신청자 성함 / 연락처</label>
@@ -568,7 +587,7 @@
         <input type="text" id="book-sub-msg" value="라 콜론에 오신 것을 환영합니다.">
       </div>
 
-      <div style="background: #111216; border: 1px solid #262933; border-radius: 10px; padding: 12px; margin-bottom: 16px; font-size: 0.8rem; color: #9ca3af;">
+      <div style="background: #11100e; border: 1px solid #322d28; border-radius: 10px; padding: 12px; margin-bottom: 16px; font-size: 0.8rem; color: #b8aba0;">
         <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer; color: #e5e7eb;">
           <input type="checkbox" id="book-consent-privacy" style="width: 16px; height: 16px; accent-color: #c9a96e;">
           <span><b>[필수]</b> 개인정보 수집 및 이용 동의 (예약 확정 및 안내용)</span>
@@ -582,7 +601,8 @@
       <button type="button" class="btn-primary" onclick="submitBookingRequest()" style="background: #2563eb; color: #fff;">예약 신청 완료</button>
       <div id="booking-error-msg" style="color: #f87171; font-size: 0.8rem; margin-top: 10px; display: none; text-align: center;"></div>
     </div>
-    <div style="margin-top: 16px; display: flex; justify-content: space-between;">
+
+    <div style="margin-top: 20px; display: flex; justify-content: space-between;">
       <a href="?" style="color: #888; font-size: 0.8rem; text-decoration: none;">← 메인 포털</a>
       <a href="?view=my_booking" style="color: #93c5fd; font-size: 0.8rem; text-decoration: none; font-weight: 600;">🔍 내 예약 조회 / 취소 →</a>
     </div>
@@ -758,7 +778,7 @@
       });
 
       let calYear = new Date().getFullYear();
-      let calMonth = new Date().getMonth(); // 0~11
+      let calMonth = new Date().getMonth();
 
       window.changeCalendarMonth = function(delta) {
         calMonth += delta;
@@ -772,7 +792,7 @@
         const container = document.getElementById('calendar-grid-container');
         container.innerHTML = '<div style="grid-column: span 7; text-align:center; color:#888; padding:30px;">캘린더 로딩 중...</div>';
 
-        const firstDayIndex = new Date(calYear, calMonth, 1).getDay(); // 0(일)~6(토)
+        const firstDayIndex = new Date(calYear, calMonth, 1).getDay();
         const lastDayDate = new Date(calYear, calMonth + 1, 0).getDate();
         const startDateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-01T00:00:00`;
         const endDateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(lastDayDate).padStart(2,'0')}T23:59:59`;
@@ -801,12 +821,11 @@
             const isS2Past = isPastDay || (dateStr === todayStr && nowKST >= new Date(`${dateStr}T17:00:00`));
             const isS3Past = isPastDay || (dateStr === todayStr && nowKST >= new Date(`${dateStr}T21:00:00`));
 
-            // 3색 시스템: 오픈(소프트 베이지/골드 #c9a96e), 마감(딥 에스프레소 브라운 #4e342e), 고객예약(인디고 블루 #3b82f6)
             const getBarColor = (b, isPast) => {
               if (isPast) return '#2a2624';
-              if (!b) return '#c9a96e'; // Open (베이지 골드)
-              if (b.guest_name === '[CLOSED_BLOCK]') return '#4e342e'; // Blocked (브라운)
-              return '#3b82f6'; // Booked (블루)
+              if (!b) return '#f4f1ea'; // Open (상아색)
+              if (b.guest_name === '[CLOSED_BLOCK]') return '#3d2c22'; // Blocked (에스프레소 브라운)
+              return '#2b3a42'; // Booked (클래식 네이비)
             };
 
             const c1 = getBarColor(b1, isS1Past);
@@ -841,7 +860,7 @@
         try {
           if (existingId) {
             await apiCall(`welcome_schedules?id=eq.${existingId}`, 'DELETE');
-            showToast('✓ 세션 오픈 완료 (베이지)');
+            showToast('✓ 세션 오픈 완료 (상아색)');
           } else {
             await apiCall('welcome_schedules', 'POST', {
               start_time: startISO, end_time: endISO, guest_name: '[CLOSED_BLOCK]',
@@ -932,61 +951,125 @@
       };
 
     // ─────────────────────────────────────────────
-    // [화면 7] 손님용 라운지 이용 예약 신청 (?view=booking)
+    // [화면 7] 손님용 캘린더 예약 포털 (?view=booking)
     // ─────────────────────────────────────────────
     } else if (isBooking) {
       document.getElementById('booking-section').style.display = 'block';
-      const todayStr = new Date().toLocaleDateString('en-CA');
-      document.getElementById('book-date').value = todayStr;
-      document.getElementById('book-date').min = todayStr;
 
-      const SESSIONS = [
-        { id: 1, name: '1부 (오전)', start: '10:00', end: '13:00' },
-        { id: 2, name: '2부 (오후)', start: '14:00', end: '17:00' },
-        { id: 3, name: '3부 (저녁)', start: '18:00', end: '21:00' }
-      ];
+      let bookYear = new Date().getFullYear();
+      let bookMonth = new Date().getMonth();
+      let selectedDateStr = '';
 
-      window.renderTimeSlots = async function() {
-        const dateVal = document.getElementById('book-date').value;
-        const container = document.getElementById('slot-buttons-container');
-        if (!dateVal) return;
+      window.changeBookMonth = function(delta) {
+        bookMonth += delta;
+        if (bookMonth > 11) { bookMonth = 0; bookYear++; }
+        else if (bookMonth < 0) { bookMonth = 11; bookYear--; }
+        renderBookCalendar();
+      };
 
-        container.innerHTML = '<div style="color:#888; font-size:0.8rem; text-align:center;">예약 가능 여부 확인 중...</div>';
+      async function renderBookCalendar() {
+        document.getElementById('book-cal-title').innerText = `${bookYear}년 ${bookMonth + 1}월 예약 현황`;
+        const container = document.getElementById('book-calendar-grid');
+        container.innerHTML = '<div style="grid-column: span 7; text-align:center; color:#888; padding:25px;">캘린더 로딩 중...</div>';
+
+        const firstDayIndex = new Date(bookYear, bookMonth, 1).getDay();
+        const lastDayDate = new Date(bookYear, bookMonth + 1, 0).getDate();
+        const startDateStr = `${bookYear}-${String(bookMonth+1).padStart(2,'0')}-01T00:00:00`;
+        const endDateStr = `${bookYear}-${String(bookMonth+1).padStart(2,'0')}-${String(lastDayDate).padStart(2,'0')}T23:59:59`;
+
+        const nowKST = new Date();
+        const todayStr = nowKST.toLocaleDateString('en-CA');
+
         try {
-          const sRes = await apiCall(`welcome_schedules?start_time=gte.${dateVal}T00:00:00&start_time=lte.${dateVal}T23:59:59&select=start_time,end_time`);
-          const existing = sRes.ok ? await sRes.json() : [];
+          const res = await apiCall(`welcome_schedules?start_time=gte.${startDateStr}&start_time=lte.${endDateStr}&select=id,start_time,end_time,guest_name`);
+          const schedules = res.ok ? await res.json() : [];
 
+          let html = '';
+          for (let i = 0; i < firstDayIndex; i++) {
+            html += `<div style="background: #11100e; border-radius: 8px; min-height: 70px; opacity: 0.15;"></div>`;
+          }
+
+          for (let d = 1; d <= lastDayDate; d++) {
+            const dateStr = `${bookYear}-${String(bookMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            const isPastDay = dateStr < todayStr;
+
+            const b1 = schedules.find(s => s.start_time.startsWith(dateStr + 'T10:00'));
+            const b2 = schedules.find(s => s.start_time.startsWith(dateStr + 'T14:00'));
+            const b3 = schedules.find(s => s.start_time.startsWith(dateStr + 'T18:00'));
+
+            const isS1Past = isPastDay || (dateStr === todayStr && nowKST >= new Date(`${dateStr}T13:00:00`));
+            const isS2Past = isPastDay || (dateStr === todayStr && nowKST >= new Date(`${dateStr}T17:00:00`));
+            const isS3Past = isPastDay || (dateStr === todayStr && nowKST >= new Date(`${dateStr}T21:00:00`));
+
+            const isFullyBlocked = (b1 && isS1Past || b1) && (b2 && isS2Past || b2) && (b3 && isS3Past || b3) || (isS1Past && isS2Past && isS3Past);
+
+            html += `
+              <div onclick="${isFullyBlocked ? '' : `selectBookingDate('${dateStr}')`}" style="background: ${isFullyBlocked ? '#141210' : '#1c1917'}; border: 1px solid ${selectedDateStr === dateStr ? '#c9a96e' : '#322d28'}; border-radius: 8px; padding: 6px; display: flex; flex-direction: column; justify-content: space-between; min-height: 75px; cursor: ${isFullyBlocked ? 'not-allowed' : 'pointer'}; opacity: ${isFullyBlocked ? '0.4' : '1'};">
+                <div style="font-size: 0.82rem; font-weight: 600; color: ${isFullyBlocked ? '#555' : '#dfcfb2'}; text-align: center;">
+                  ${d}
+                </div>
+                <div style="font-size: 0.68rem; text-align: center; color: ${isFullyBlocked ? '#e57373' : '#c9a96e'}; font-weight: 600;">
+                  ${isFullyBlocked ? '마감' : '예약가능'}
+                </div>
+              </div>`;
+          }
+          container.innerHTML = html;
+        } catch(e) {
+          container.innerHTML = '<div style="grid-column: span 7; color:#f87171; text-align:center;">캘린더 로드 실패</div>';
+        }
+      }
+
+      renderBookCalendar();
+
+      window.selectBookingDate = async function(dateStr) {
+        selectedDateStr = dateStr;
+        document.getElementById('selected-date-title').innerText = `선택일: ${dateStr}`;
+        document.getElementById('book-form-panel').style.display = 'block';
+        document.getElementById('book-form-panel').scrollIntoView({ behavior: 'smooth' });
+
+        const container = document.getElementById('book-slots-container');
+        container.innerHTML = '<div style="color:#888; font-size:0.8rem;">세션 확인 중...</div>';
+
+        const SESSIONS = [
+          { id: 1, name: '1부 (오전)', start: '10:00', end: '13:00' },
+          { id: 2, name: '2부 (오후)', start: '14:00', end: '17:00' },
+          { id: 3, name: '3부 (저녁)', start: '18:00', end: '21:00' }
+        ];
+
+        try {
+          const res = await apiCall(`welcome_schedules?start_time=gte.${dateStr}T00:00:00&start_time=lte.${dateStr}T23:59:59&select=start_time,end_time`);
+          const existing = res.ok ? await res.json() : [];
           const nowKST = new Date();
 
           let html = '';
           SESSIONS.forEach(sess => {
-            const sessStartISO = `${dateVal}T${sess.start}:00`;
-            const sessEndISO = `${dateVal}T${sess.end}:00`;
-            const sessStartTime = new Date(sessStartISO);
-            const isPast = sessStartTime < nowKST;
+            const sessStartISO = `${dateStr}T${sess.start}:00`;
+            const sessEndISO = `${dateStr}T${sess.end}:00`;
+            const isPast = new Date(sessStartISO) < nowKST;
             const isBlocked = isPast || existing.some(ex => sessStartISO < ex.end_time && sessEndISO > ex.start_time);
 
             html += `
-              <label style="display: flex; align-items: center; justify-content: space-between; background: ${isBlocked ? '#1a1214' : '#212329'}; border: 1px solid ${isBlocked ? '#7f1d1d' : '#333640'}; border-radius: 10px; padding: 12px 14px; cursor: ${isBlocked ? 'not-allowed' : 'pointer'}; opacity: ${isBlocked ? '0.6' : '1'};">
+              <label style="display: flex; align-items: center; justify-content: space-between; background: ${isBlocked ? '#1a1214' : '#212329'}; border: 1px solid ${isBlocked ? '#7f1d1d' : '#333640'}; border-radius: 10px; padding: 10px 12px; cursor: ${isBlocked ? 'not-allowed' : 'pointer'}; opacity: ${isBlocked ? '0.5' : '1'};">
                 <div style="display: flex; align-items: center; gap: 10px;">
-                  <input type="checkbox" name="book-slot" value="${sess.id}" data-start="${sessStartISO}" data-end="${sessEndISO}" ${isBlocked ? 'disabled' : ''} style="width: 18px; height: 18px; accent-color: #c9a96e;">
-                  <div>
-                    <div style="font-weight: 600; font-size: 0.9rem; color: ${isBlocked ? '#f87171' : '#fff'};">${sess.name} (${sess.start} ~ ${sess.end})</div>
-                    <div style="font-size: 0.72rem; color: #888; margin-top: 2px;">${isPast ? '⏰ 이미 지난 시간대' : isBlocked ? '🔒 예약 불가' : '✨ 이용 가능'}</div>
-                  </div>
+                  <input type="checkbox" name="book-slot" value="${sess.id}" data-start="${sessStartISO}" data-end="${sessEndISO}" ${isBlocked ? 'disabled' : ''} style="width: 16px; height: 16px; accent-color: #c9a96e;">
+                  <span style="font-weight: 600; font-size: 0.88rem; color: ${isBlocked ? '#f87171' : '#fff'};">${sess.name} (${sess.start} ~ ${sess.end})</span>
                 </div>
-                <span class="tag-badge ${isBlocked ? 'badge-blue' : 'badge-gold'}" style="background: ${isBlocked ? '#7f1d1d' : ''}; color: ${isBlocked ? '#fca5a5' : ''};">${isBlocked ? '예약 마감' : '선택 가능'}</span>
+                <span class="tag-badge ${isBlocked ? 'badge-blue' : 'badge-gold'}" style="background: ${isBlocked ? '#7f1d1d' : ''}; color: ${isBlocked ? '#fca5a5' : ''};">${isBlocked ? '마감' : '선택가능'}</span>
               </label>`;
           });
           container.innerHTML = html;
         } catch(e) {
-          container.innerHTML = '<div style="color:#f87171; font-size:0.8rem; text-align:center;">타임 슬롯 로드 실패</div>';
+          container.innerHTML = '<div style="color:#f87171; font-size:0.8rem;">세션 로드 실패</div>';
         }
       };
-      renderTimeSlots();
+
+      window.closeBookPanel = function() {
+        document.getElementById('book-form-panel').style.display = 'none';
+        selectedDateStr = '';
+        renderBookCalendar();
+      };
 
       window.submitBookingRequest = async function() {
-        const dateVal = document.getElementById('book-date').value;
         const name = document.getElementById('book-name').value.trim();
         const phone = document.getElementById('book-phone').value.trim().replace(/[^0-9]/g, '');
         const pin = document.getElementById('book-pin').value.trim();
@@ -997,7 +1080,7 @@
         const errEl = document.getElementById('booking-error-msg');
         errEl.style.display = 'none';
 
-        if (!dateVal || !name || !phone || !pin || !displayName) return (errEl.innerText = '날짜, 신청자 성함, 연락처, PIN(4자리), 모임명을 모두 입력하세요.', errEl.style.display = 'block');
+        if (!selectedDateStr || !name || !phone || !pin || !displayName) return (errEl.innerText = '날짜, 신청자 성함, 연락처, PIN(4자리), 모임명을 모두 입력하세요.', errEl.style.display = 'block');
         if (pin.length !== 4) return (errEl.innerText = 'PIN 번호는 정확히 숫자 4자리여야 합니다.', errEl.style.display = 'block');
         if (!privacy) return (errEl.innerText = '개인정보 수집 및 이용 동의(필수)에 체크해 주세요.', errEl.style.display = 'block');
 
