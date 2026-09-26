@@ -141,47 +141,12 @@
     .btn-delete { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); color: #f87171; padding: 6px 12px; border-radius: 8px; font-size: 0.78rem; cursor: pointer; }
     .btn-trigger-now { background: rgba(201, 169, 110, 0.2); border: 1px solid #c9a96e; color: #dfcfb2; padding: 6px 12px; border-radius: 8px; font-size: 0.78rem; cursor: pointer; font-weight: 600; flex: 1; }
 
-    /* 리스트 스타일 & 모바일 히스토리 2열 슬림 카드 */
     .compact-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #181a20; border: 1px solid #262933; border-radius: 8px; margin-bottom: 6px; }
-    .history-card-row {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      padding: 10px 14px;
-      background: #181a20;
-      border: 1px solid #262933;
-      border-radius: 10px;
-      margin-bottom: 8px;
-    }
-    .hist-btn-sm {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: #cbd5e1;
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-size: 0.72rem;
-      cursor: pointer;
-    }
-    .hist-btn-sm:hover { background: rgba(255, 255, 255, 0.12); }
-    .hist-btn-del {
-      background: rgba(239, 68, 68, 0.12);
-      border: 1px solid rgba(239, 68, 68, 0.28);
-      color: #f87171;
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-size: 0.72rem;
-      cursor: pointer;
-    }
+    .history-card-row { display: flex; flex-direction: column; gap: 6px; padding: 10px 14px; background: #181a20; border: 1px solid #262933; border-radius: 10px; margin-bottom: 8px; }
+    .hist-btn-sm { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.12); color: #cbd5e1; padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; cursor: pointer; }
+    .hist-btn-del { background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.28); color: #f87171; padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; cursor: pointer; }
 
-    .tag-badge {
-      display: inline-block;
-      font-size: 0.68rem;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-weight: 600;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
+    .tag-badge { display: inline-block; font-size: 0.68rem; padding: 2px 6px; border-radius: 4px; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
     .badge-gold { background: rgba(201, 169, 110, 0.15); border: 1px solid rgba(201, 169, 110, 0.4); color: #dfcfb2; }
     .badge-blue { background: rgba(59, 130, 246, 0.15); color: #93c5fd; }
     .badge-green { background: #22c55e; color: #000; font-weight: 700; }
@@ -193,17 +158,8 @@
     .page-btn { background: #212329; border: 1px solid #333640; color: #c9a96e; padding: 5px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; }
     .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
-    .sched-datetime-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    @media (min-width: 480px) {
-      .sched-datetime-grid {
-        flex-direction: row;
-        gap: 8px;
-      }
-    }
+    .sched-datetime-grid { display: flex; flex-direction: column; gap: 10px; }
+    @media (min-width: 480px) { .sched-datetime-grid { flex-direction: row; gap: 8px; } }
 
     #admin-section { display: none; width: 92%; max-width: 540px; margin: 30px auto 90px auto; }
     #guest-portal-section, #member-client-section, #booking-section, #my-booking-section, #block-admin-section { display: none; width: 90%; max-width: 480px; margin: 60px auto 80px auto; text-align: center; }
@@ -517,7 +473,7 @@
       </div>
       <div style="display: flex; align-items: center; gap: 8px;">
         <button type="button" class="page-btn" onclick="changeCalendarMonth(-1)">◀</button>
-        <span id="cal-month-title" style="font-size: 0.95rem; font-weight: 600; color: #dfcfb2; cursor: pointer;" onclick="toggleMonthBlock()" title="터치 시 월 전체 토글">2026년 10월</span>
+        <span id="cal-month-title" style="font-size: 0.95rem; font-weight: 600; color: #dfcfb2; cursor: pointer;" onclick="toggleMonthBlock()" title="터치 시 월 전체 토글">2026년 9월</span>
         <button type="button" class="page-btn" onclick="changeCalendarMonth(1)">▶</button>
       </div>
     </div>
@@ -818,7 +774,8 @@
         const startDateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-01T00:00:00`;
         const endDateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(lastDayDate).padStart(2,'0')}T23:59:59`;
 
-        const todayStr = new Date().toLocaleDateString('en-CA');
+        const nowKST = new Date();
+        const todayStr = nowKST.toLocaleDateString('en-CA');
 
         try {
           const res = await apiCall(`welcome_schedules?start_time=gte.${startDateStr}&start_time=lte.${endDateStr}&select=id,start_time,end_time,guest_name`);
@@ -831,25 +788,30 @@
 
           for (let d = 1; d <= lastDayDate; d++) {
             const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-            const isPast = dateStr < todayStr;
+            const isPastDay = dateStr < todayStr;
 
             const b1 = schedules.find(s => s.start_time.startsWith(dateStr + 'T10:00'));
             const b2 = schedules.find(s => s.start_time.startsWith(dateStr + 'T14:00'));
             const b3 = schedules.find(s => s.start_time.startsWith(dateStr + 'T18:00'));
+
+            // 오늘 날짜인 경우 각 부별로 시간이 이미 지났는지 판별
+            const isS1Past = isPastDay || (dateStr === todayStr && nowKST >= new Date(`${dateStr}T13:00:00`));
+            const isS2Past = isPastDay || (dateStr === todayStr && nowKST >= new Date(`${dateStr}T17:00:00`));
+            const isS3Past = isPastDay || (dateStr === todayStr && nowKST >= new Date(`${dateStr}T21:00:00`));
 
             const c1 = b1 ? '#7f1d1d' : '#22c55e';
             const c2 = b2 ? '#7f1d1d' : '#22c55e';
             const c3 = b3 ? '#7f1d1d' : '#22c55e';
 
             html += `
-              <div style="background: ${isPast ? '#121318' : '#1c1e27'}; border: 1px solid ${isPast ? '#222' : '#2e323e'}; border-radius: 8px; padding: 6px; display: flex; flex-direction: column; justify-content: space-between; min-height: 85px; opacity: ${isPast ? '0.5' : '1'};">
-                <div style="font-size: 0.82rem; font-weight: 600; color: ${isPast ? '#666' : '#dfcfb2'}; cursor: ${isPast ? 'default' : 'pointer'}; text-align: center;" ${isPast ? '' : `onclick="toggleDayBlock('${dateStr}')" title="터치 시 하루 통째 토글"`}>
+              <div style="background: ${isPastDay ? '#121318' : '#1c1e27'}; border: 1px solid ${isPastDay ? '#222' : '#2e323e'}; border-radius: 8px; padding: 6px; display: flex; flex-direction: column; justify-content: space-between; min-height: 85px; opacity: ${isPastDay ? '0.5' : '1'};">
+                <div style="font-size: 0.82rem; font-weight: 600; color: ${isPastDay ? '#666' : '#dfcfb2'}; cursor: ${isPastDay ? 'default' : 'pointer'}; text-align: center;" ${isPastDay ? '' : `onclick="toggleDayBlock('${dateStr}')" title="터치 시 하루 통째 토글"`}>
                   ${d}
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 3px;">
-                  <div style="background: ${c1}; height: 8px; border-radius: 3px; cursor: ${isPast ? 'default' : 'pointer'};" ${isPast ? '' : `onclick="toggleBlockSession('${dateStr}T10:00:00', '${dateStr}T13:00:00', ${b1 ? b1.id : null}, '${b1 ? b1.guest_name : ''}')"`} title="1부 토글"></div>
-                  <div style="background: ${c2}; height: 8px; border-radius: 3px; cursor: ${isPast ? 'default' : 'pointer'};" ${isPast ? '' : `onclick="toggleBlockSession('${dateStr}T14:00:00', '${dateStr}T17:00:00', ${b2 ? b2.id : null}, '${b2 ? b2.guest_name : ''}')"`} title="2부 토글"></div>
-                  <div style="background: ${c3}; height: 8px; border-radius: 3px; cursor: ${isPast ? 'default' : 'pointer'};" ${isPast ? '' : `onclick="toggleBlockSession('${dateStr}T18:00:00', '${dateStr}T21:00:00', ${b3 ? b3.id : null}, '${b3 ? b3.guest_name : ''}')"`} title="3부 토글"></div>
+                  <div style="background: ${isS1Past ? '#374151' : c1}; height: 8px; border-radius: 3px; cursor: ${isS1Past ? 'not-allowed' : 'pointer'};" ${isS1Past ? '' : `onclick="toggleBlockSession('${dateStr}T10:00:00', '${dateStr}T13:00:00', ${b1 ? b1.id : null}, '${b1 ? b1.guest_name : ''}')"`} title="1부 토글"></div>
+                  <div style="background: ${isS2Past ? '#374151' : c2}; height: 8px; border-radius: 3px; cursor: ${isS2Past ? 'not-allowed' : 'pointer'};" ${isS2Past ? '' : `onclick="toggleBlockSession('${dateStr}T14:00:00', '${dateStr}T17:00:00', ${b2 ? b2.id : null}, '${b2 ? b2.guest_name : ''}')"`} title="2부 토글"></div>
+                  <div style="background: ${isS3Past ? '#374151' : c3}; height: 8px; border-radius: 3px; cursor: ${isS3Past ? 'not-allowed' : 'pointer'};" ${isS3Past ? '' : `onclick="toggleBlockSession('${dateStr}T18:00:00', '${dateStr}T21:00:00', ${b3 ? b3.id : null}, '${b3 ? b3.guest_name : ''}')"`} title="3부 토글"></div>
                 </div>
               </div>`;
           }
@@ -860,6 +822,8 @@
       }
 
       window.toggleBlockSession = async function(startISO, endISO, existingId, guestName) {
+        const nowKST = new Date();
+        if (new Date(endISO) <= nowKST) return alert('⚠️ 이미 종료되었거나 지난 시간대의 세션은 변경할 수 없습니다.');
         if (existingId && guestName && guestName !== '[CLOSED_BLOCK]') {
           return alert(`⚠️ 이미 고객 예약("${guestName}")이 잡혀 있는 시간대입니다. 관리자 임의로 차단할 수 없습니다.`);
         }
@@ -879,17 +843,27 @@
       };
 
       window.toggleDayBlock = async function(dateStr) {
+        const nowKST = new Date();
+        const todayStr = nowKST.toLocaleDateString('en-CA');
+        if (dateStr < todayStr) return alert('⚠️ 지나간 날짜는 차단할 수 없습니다.');
+
         try {
-          const res = await apiCall(`welcome_schedules?start_time=gte.${dateStr}T00:00:00&start_time=lte.${dateStr}T23:59:59&select=id,guest_name`);
+          const res = await apiCall(`welcome_schedules?start_time=gte.${dateStr}T00:00:00&start_time=lte.${dateStr}T23:59:59&select=id,guest_name,start_time,end_time`);
           const existing = res.ok ? await res.json() : [];
 
           const hasRealBooking = existing.some(ex => ex.guest_name !== '[CLOSED_BLOCK]');
           if (hasRealBooking) return alert('⚠️ 해당일에 이미 고객의 실제 예약이 존재하여 하루 통째 차단을 할 수 없습니다.');
 
-          const blocks = existing.filter(ex => ex.guest_name === '[CLOSED_BLOCK]');
-          if (blocks.length === 3) {
+          // 오늘 날짜인 경우 이미 지난 세션은 건드리지 않음
+          const activeExisting = existing.filter(ex => {
+            if (dateStr === todayStr && new Date(ex.end_time) <= nowKST) return false;
+            return true;
+          });
+
+          const blocks = activeExisting.filter(ex => ex.guest_name === '[CLOSED_BLOCK]');
+          if (blocks.length > 0 && blocks.length === (dateStr === todayStr ? 3 - existing.filter(ex => new Date(ex.end_time) <= nowKST).length : 3)) {
             for (const b of blocks) await apiCall(`welcome_schedules?id=eq.${b.id}`, 'DELETE');
-            showToast('✓ 해당일 전체 오픈 완료');
+            showToast('✓ 해당일 오픈 완료');
           } else {
             for (const b of blocks) await apiCall(`welcome_schedules?id=eq.${b.id}`, 'DELETE');
             const slots = [
@@ -898,19 +872,20 @@
               { start: `${dateStr}T18:00:00`, end: `${dateStr}T21:00:00` }
             ];
             for (const s of slots) {
+              if (dateStr === todayStr && new Date(s.end) <= nowKST) continue; // 이미 지난 세션은 스킵
               await apiCall('welcome_schedules', 'POST', {
                 start_time: s.start, end_time: s.end, guest_name: '[CLOSED_BLOCK]',
                 sub_message: '관리자 마감', prefix: '', suffix: '', bg_source: '', bgm_source: '', member_code: '', member_name: '', pin_code: '0000'
               });
             }
-            showToast('✓ 해당일 하루 통째 마감 완료');
+            showToast('✓ 해당일 마감 완료');
           }
           initBlockCalendar();
         } catch(e) { alert('처리 실패'); }
       };
 
       window.toggleMonthBlock = async function() {
-        if (!confirm(`${calYear}년 ${calMonth + 1}월 전체를 일괄 차단/오픈 토글하시겠습니까? (고객 예약일은 유지됩니다)`)) return;
+        if (!confirm(`${calYear}년 ${calMonth + 1}월 전체를 일괄 차단/오픈 토글하시겠습니까?`)) return;
         const startDateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-01T00:00:00`;
         const lastDayDate = new Date(calYear, calMonth + 1, 0).getDate();
         const endDateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(lastDayDate).padStart(2,'0')}T23:59:59`;
@@ -925,14 +900,18 @@
           for (const b of blocks) await apiCall(`welcome_schedules?id=eq.${b.id}`, 'DELETE');
 
           if (blocks.length === 0) {
+            const nowKST = new Date();
+            const todayStr = nowKST.toLocaleDateString('en-CA');
             for (let d = 1; d <= lastDayDate; d++) {
               const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+              if (dateStr < todayStr) continue; // 과거 날짜 스킵
               const slots = [
                 { start: `${dateStr}T10:00:00`, end: `${dateStr}T13:00:00` },
                 { start: `${dateStr}T14:00:00`, end: `${dateStr}T17:00:00` },
                 { start: `${dateStr}T18:00:00`, end: `${dateStr}T21:00:00` }
               ];
               for (const s of slots) {
+                if (dateStr === todayStr && new Date(s.end) <= nowKST) continue;
                 await apiCall('welcome_schedules', 'POST', {
                   start_time: s.start, end_time: s.end, guest_name: '[CLOSED_BLOCK]',
                   sub_message: '관리자 마감', prefix: '', suffix: '', bg_source: '', bgm_source: '', member_code: '', member_name: '', pin_code: '0000'
