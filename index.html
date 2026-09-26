@@ -888,6 +888,7 @@
       </div>
     </div>
 
+    <!-- 관리자 품목 등록 카드 -->
     <div id="admin-bar-control-card">
       <div class="admin-bar-control-title">➕ 새로운 어메니티 품목 추가</div>
       <div style="display: flex; gap: 8px; margin-bottom: 8px;">
@@ -1344,7 +1345,9 @@
         document.getElementById('bar-total-display').innerText = '₩ ' + total.toLocaleString();
       }
 
+      // ─── 보안 RPC 기반 어메니티 품목 등록 ───
       window.addNewAmenityItem = async function() {
+        const token = sessionStorage.getItem('la_colonne_admin_token') || '';
         const nameInput = document.getElementById('new-item-name');
         const priceInput = document.getElementById('new-item-price');
         const name = nameInput.value.trim();
@@ -1353,51 +1356,100 @@
         if (!name || isNaN(price) || price < 0) return alert('품목명과 가격을 올바르게 입력해 주세요.');
 
         try {
-          const res = await fetch(`${cleanUrl}/rest/v1/lounge_bar_items`, {
+          const res = await fetch(`${cleanUrl}/rest/v1/rpc/add_admin_bar_item`, {
             method: 'POST',
-            headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
-            body: JSON.stringify({ name, price, display_order: loadedItems.length + 1 })
+            headers: {
+              'apikey': cleanKey,
+              'Authorization': 'Bearer ' + cleanKey,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              p_token: token,
+              p_name: name,
+              p_price: price,
+              p_order: loadedItems.length + 1
+            })
           });
-          if (res.ok) {
+
+          const ok = await res.json();
+          if (ok === true) {
             nameInput.value = '';
             priceInput.value = '';
             showToast('✓ 새로운 어메니티 품목이 등록되었습니다.');
             fetchAmenityItems();
+          } else {
+            alert('등록 실패: 관리자 인증이 만료되었거나 권한이 없습니다.');
           }
-        } catch(e) {}
+        } catch(e) {
+          alert('오류: ' + e.message);
+        }
       };
 
+      // ─── 보안 RPC 기반 어메니티 품목 수정 ───
       window.updateItem = async function(id) {
+        const token = sessionStorage.getItem('la_colonne_admin_token') || '';
         const name = document.getElementById(`edit-name-${id}`).value.trim();
         const price = parseInt(document.getElementById(`edit-price-${id}`).value, 10);
 
         if (!name || isNaN(price) || price < 0) return alert('품목명과 가격을 올바르게 입력해 주세요.');
 
         try {
-          const res = await fetch(`${cleanUrl}/rest/v1/lounge_bar_items?id=eq.${id}`, {
-            method: 'PATCH',
-            headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
-            body: JSON.stringify({ name, price })
+          const res = await fetch(`${cleanUrl}/rest/v1/rpc/update_admin_bar_item`, {
+            method: 'POST',
+            headers: {
+              'apikey': cleanKey,
+              'Authorization': 'Bearer ' + cleanKey,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              p_token: token,
+              p_id: id,
+              p_name: name,
+              p_price: price
+            })
           });
-          if (res.ok) {
+
+          const ok = await res.json();
+          if (ok === true) {
             showToast('✓ 품목 정보가 수정되었습니다.');
             fetchAmenityItems();
+          } else {
+            alert('수정 실패: 관리자 인증이 만료되었거나 권한이 없습니다.');
           }
-        } catch(e) {}
+        } catch(e) {
+          alert('오류: ' + e.message);
+        }
       };
 
+      // ─── 보안 RPC 기반 어메니티 품목 삭제 ───
       window.deleteItem = async function(id) {
         if (!confirm('이 어메니티 품목을 삭제하시겠습니까?')) return;
+        const token = sessionStorage.getItem('la_colonne_admin_token') || '';
+
         try {
-          const res = await fetch(`${cleanUrl}/rest/v1/lounge_bar_items?id=eq.${id}`, {
-            method: 'DELETE',
-            headers: getAdminHeaders()
+          const res = await fetch(`${cleanUrl}/rest/v1/rpc/delete_admin_bar_item`, {
+            method: 'POST',
+            headers: {
+              'apikey': cleanKey,
+              'Authorization': 'Bearer ' + cleanKey,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              p_token: token,
+              p_id: id
+            })
           });
-          if (res.ok) {
+
+          const ok = await res.json();
+          if (ok === true) {
             showToast('✓ 품목이 삭제되었습니다.');
             fetchAmenityItems();
+          } else {
+            alert('삭제 실패: 관리자 인증이 만료되었거나 권한이 없습니다.');
           }
-        } catch(e) {}
+        } catch(e) {
+          alert('오류: ' + e.message);
+        }
       };
 
       window.copyAccount = function() {
@@ -1809,7 +1861,7 @@
           const nowISO = nowObj.toISOString();
           const fiveMinLaterISO = new Date(nowObj.getTime() + 5 * 60 * 1000).toISOString();
 
-          // 1순위: 현재 진행 중이거나 5분 전인 VIP 예약 스케줄
+          // 1순위: VIP 예약 스케줄
           const schedRes = await fetch(cleanUrl + '/rest/v1/welcome_schedules?start_time=lte.' + fiveMinLaterISO + '&end_time=gte.' + nowISO + '&order=start_time.asc&limit=1', {
             headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
           });
@@ -1831,7 +1883,7 @@
             }
           }
 
-          // 2순위: 스케줄이 없을 때 표출되는 상시 설정 (즉시 반영 테이블)
+          // 2순위: 상시 표출 (즉시 반영)
           const defRes = await fetch(cleanUrl + '/rest/v1/welcome_screen?select=*&id=eq.1', {
             headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
           });
@@ -1873,7 +1925,7 @@
       syncGlobalSettings();
       syncTV();
 
-      // 1.5초 주기 초경량 쾌속 폴링 (TV 화면 즉각 동기화)
+      // 1.5초 쾌속 동기화 폴링
       setInterval(syncGlobalSettings, 3000);
       setInterval(syncTV, 1500);
 
