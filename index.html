@@ -813,7 +813,7 @@
             <input type="datetime-local" id="u-sched-start" style="padding: 10px; font-size: 0.85rem;">
           </div>
           <div style="flex: 1;">
-            <label style="font-size: 0.75rem; margin-bottom: 4px;">종료 시각 (시작시각 선택 시 +3시간 자동)</label>
+            <label style="font-size: 0.75rem; margin-bottom: 4px;">종료 시각 (시작 선택 시 +3시간 자동)</label>
             <input type="datetime-local" id="u-sched-end" style="padding: 10px; font-size: 0.85rem;">
           </div>
         </div>
@@ -2078,7 +2078,7 @@
         }
         populateMemberDropdown();
 
-        // 실시간 라운지 점유 & 표출 상태 갱신 (예약 조기퇴실 및 배지 지원)
+        // 실시간 라운지 점유 & 표출 상태 갱신
         async function updateLiveOccupancyStatus() {
           const badgeEl = document.getElementById('occupancy-badge');
           const titleEl = document.getElementById('occupancy-title');
@@ -2391,7 +2391,7 @@
           }
         });
 
-        // [동작 2] 📅 예약 일정 추가 / 수정 버튼 클릭 시
+        // [동작 2] 📅 예약 일정 추가 / 수정 버튼 클릭 시 (시간대 중복 방지 검증 탑재)
         let editingScheduleId = null;
 
         document.getElementById('btn-action-sched').addEventListener('click', async function() {
@@ -2402,7 +2402,10 @@
             alert('⚠️ 예약 일정을 등록하려면 [시작 시각]과 [종료 시각]을 모두 지정해야 합니다.\n\n지금 바로 띄우시려면 좌측 [⚡ TV 즉시 표출] 버튼을 눌러주세요.');
             return;
           }
-          if (new Date(startVal) >= new Date(endVal)) {
+          const newStart = new Date(startVal);
+          const newEnd = new Date(endVal);
+
+          if (newStart >= newEnd) {
             alert('종료 시각은 시작 시각보다 뒤여야 합니다.');
             return;
           }
@@ -2415,22 +2418,48 @@
 
           uLogBox.style.display = 'block';
           uLogBox.style.color = '#ffd166';
-          uLogBox.innerText = editingScheduleId ? '일정 수정 중...' : '예약 일정 등록 중...';
-
-          const payload = {
-            start_time: new Date(startVal).toISOString(),
-            end_time: new Date(endVal).toISOString(),
-            prefix: f.prefix,
-            guest_name: f.name,
-            suffix: f.suffix,
-            sub_message: f.msg,
-            bg_source: f.bg,
-            bgm_source: f.bgm,
-            member_code: f.memberCode,
-            member_name: f.memberName
-          };
+          uLogBox.innerText = '시간대 중복 검증 중...';
 
           try {
+            // [중복 방지 검사] 기존 예약 일정들과 시간대가 겹치는지 체크
+            const checkRes = await fetch(cleanUrl + '/rest/v1/welcome_schedules?select=id,guest_name,start_time,end_time', {
+              headers: getAdminHeaders()
+            });
+            if (checkRes.ok) {
+              const allScheds = await checkRes.json();
+              for (const ex of allScheds) {
+                // 수정 중일 때는 자기 자신과의 충돌은 제외
+                if (editingScheduleId && ex.id === editingScheduleId) continue;
+
+                const exStart = new Date(ex.start_time);
+                const exEnd = new Date(ex.end_time);
+
+                // 두 시간 구간이 겹치는지 판별하는 표준 공식: (A_start < B_end) && (A_end > B_start)
+                if (newStart < exEnd && newEnd > exStart) {
+                  const formatTime = (d) => `${d.getMonth()+1}/${d.getDate()} ${d.toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit', hour12:false})}`;
+                  alert(`⚠️ 예약 시간대가 기존 일정과 중복됩니다!\n\n이미 등록된 [${ex.guest_name} 님]의 일정(${formatTime(exStart)} ~ ${formatTime(exEnd)})과 겹칩니다.\n시간을 다시 확인해 주세요.`);
+                  uLogBox.style.color = '#f87171';
+                  uLogBox.innerText = '취소됨: 예약 시간대 중복';
+                  return;
+                }
+              }
+            }
+
+            uLogBox.innerText = editingScheduleId ? '일정 수정 중...' : '예약 일정 등록 중...';
+
+            const payload = {
+              start_time: newStart.toISOString(),
+              end_time: newEnd.toISOString(),
+              prefix: f.prefix,
+              guest_name: f.name,
+              suffix: f.suffix,
+              sub_message: f.msg,
+              bg_source: f.bg,
+              bgm_source: f.bgm,
+              member_code: f.memberCode,
+              member_name: f.memberName
+            };
+
             let res;
             if (editingScheduleId) {
               res = await fetch(cleanUrl + '/rest/v1/welcome_schedules?id=eq.' + editingScheduleId, {
@@ -2450,7 +2479,7 @@
               uLogBox.style.color = '#4ade80';
               uLogBox.innerText = editingScheduleId ? '✓ VIP 일정이 성공적으로 수정되었습니다!' : '✓ 예약 일정이 성공적으로 추가되었습니다!';
               if (!editingScheduleId) {
-                recordHistory('예약 일정', f.prefix, f.name, f.suffix, f.msg, f.bg, f.bgm, new Date(startVal).toISOString(), f.memberCode, f.memberName);
+                recordHistory('예약 일정', f.prefix, f.name, f.suffix, f.msg, f.bg, f.bgm, newStart.toISOString(), f.memberCode, f.memberName);
               }
               cancelEditSchedule();
               loadSchedules();
@@ -2549,16 +2578,24 @@
               const memberTag = s.member_name ? `<span style="background: rgba(201, 169, 110, 0.15); border: 1px solid rgba(201, 169, 110, 0.4); color: #dfcfb2; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">💳 ${escapeHtml(s.member_code || '')} ${escapeHtml(s.member_name)}</span>` : '';
               const itemEscaped = encodeURIComponent(JSON.stringify(s));
 
+              // 현재 TV에 진행 중인 일정인지 여부 판별
+              const isCurrentActive = (currentActiveScheduleId && currentActiveScheduleId === s.id);
+
               html += `
-                <div class="schedule-item">
+                <div class="schedule-item" style="${isCurrentActive ? 'border-color: #22c55e; background: #141f1a;' : ''}">
                   <div>
-                    <div class="schedule-time">📅 ${escapeHtml(dateStr)} ${memberTag}</div>
+                    <div class="schedule-time">
+                      📅 ${escapeHtml(dateStr)} ${memberTag}
+                      ${isCurrentActive ? '<span style="background: #22c55e; color: #000; font-size: 0.68rem; font-weight: 700; padding: 1px 6px; border-radius: 4px; margin-left: 6px;">● 현재 진행 중</span>' : ''}
+                    </div>
                     <div class="schedule-name">${escapeHtml(s.prefix ? s.prefix + ' ' : '')}${escapeHtml(s.guest_name)}${escapeHtml(s.suffix ? ' ' + s.suffix : '')}</div>
                     <div class="schedule-msg">"${escapeHtml(s.sub_message)}"</div>
                   </div>
                   <div class="action-btn-group">
                     <button class="btn-edit" onclick="editSchedule('${itemEscaped}')">수정</button>
-                    <button class="btn-delete" onclick="deleteSchedule(${s.id}, false)">취소/삭제</button>
+                    <button class="btn-delete" onclick="deleteSchedule(${s.id}, ${isCurrentActive})">
+                      ${isCurrentActive ? '🚪 퇴실/종료' : '취소/삭제'}
+                    </button>
                   </div>
                 </div>
               `;
@@ -2568,23 +2605,57 @@
         }
         loadSchedules();
 
-        window.deleteSchedule = async function(id, isEarlyCheckout) {
-          const msg = isEarlyCheckout 
-            ? '손님이 조기 퇴실하셨습니까?\n\n이 일정을 즉시 종료하고 TV 화면을 기본 라운지 대기 화면으로 복귀시킵니다.'
-            : '이 예약 일정을 취소/삭제하시겠습니까? (히스토리 아카이브에는 안전하게 보존됩니다)';
-            
-          if (!confirm(msg)) return;
+        // [개선] 대기열 삭제 시 현재 진행 중인 일정이면 퇴실 처리 및 화면 초기화
+        window.deleteSchedule = async function(id, isCurrentlyRunning) {
+          let confirmMsg = '이 예약 일정을 취소/삭제하시겠습니까? (히스토리 아카이브에는 안전하게 보존됩니다)';
+          if (isCurrentlyRunning) {
+            confirmMsg = '⚠️ 현재 TV 화면에 진행 중인 일정입니다!\n\n지금 삭제하면 손님이 [조기 퇴실] 처리되며, TV 화면이 즉시 기본 대기 화면(Guest)으로 복귀합니다.\n진행하시겠습니까?';
+          }
+
+          if (!confirm(confirmMsg)) return;
 
           try {
+            // 1. 스케줄 삭제
             const res = await fetch(cleanUrl + '/rest/v1/welcome_schedules?id=eq.' + id, {
               method: 'DELETE',
               headers: getAdminHeaders()
             });
+
             if (res.ok) {
+              // 2. 만약 방금 삭제한 일정이 현재 TV에 표출 중이던 일정이라면 TV 화면을 Guest로 리셋
+              if (isCurrentlyRunning || currentActiveScheduleId === id) {
+                await fetch(cleanUrl + '/rest/v1/welcome_screen', {
+                  method: 'POST',
+                  headers: getAdminHeaders({
+                    'Content-Type': 'application/json',
+                    'Prefer': 'resolution=merge-duplicates,return=representation'
+                  }),
+                  body: JSON.stringify({
+                    id: 1,
+                    prefix: '',
+                    guest_name: 'Guest',
+                    suffix: '',
+                    sub_message: '라 콜론에 오신 것을 환영합니다.',
+                    bg_source: 'video1.mp4,video2.mp4',
+                    bgm_source: 'jazz1.mp3',
+                    member_code: '',
+                    member_name: '',
+                    updated_at: new Date().toISOString()
+                  })
+                });
+                currentActiveScheduleId = null;
+                showToast('✓ 일정이 종료되고 TV가 기본 대기 화면으로 복귀되었습니다.');
+              } else {
+                showToast('✓ 예약 일정이 취소되었습니다.');
+              }
+
               if (editingScheduleId === id) cancelEditSchedule();
               loadSchedules();
+              if (window.updateLiveOccupancyStatus) updateLiveOccupancyStatus();
             }
-          } catch(e) {}
+          } catch(e) {
+            alert('삭제 실패: ' + e.message);
+          }
         };
 
         // ─── VIP 히스토리 아카이브 (컴팩트 리스트형) ───
