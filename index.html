@@ -469,7 +469,7 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
       <div>
         <a href="?view=admin" style="color: #94a3b8; font-size: 0.82rem; text-decoration: none; display: inline-block; margin-bottom: 4px;">← 라운지 관리 홈</a>
-        <h2 style="font-size: 1.2rem; color: #f87171; font-weight: 600;">🔒 예약 불가일 캘린더 관리</h2>
+        <h2 style="font-size: 1.2rem; color: #c9a96e; font-weight: 600;">🔒 예약 불가일 캘린더 관리</h2>
       </div>
       <div style="display: flex; align-items: center; gap: 8px;">
         <button type="button" class="page-btn" onclick="changeCalendarMonth(-1)">◀</button>
@@ -478,16 +478,16 @@
       </div>
     </div>
 
-    <div class="admin-card" style="padding: 16px; border-color: #7f1d1d; background: #151315; text-align: left;">
-      <div style="font-size: 0.78rem; color: #9ca3af; margin-bottom: 12px; line-height: 1.4;">
-        • <b>날짜 숫자</b> 터치: 하루(1~3부) 통째 마감/오픈 토글<br>
-        • 각 <b>컬러 바</b> 터치: 해당 부(1부/2부/3부) 개별 토글<br>
-        • 상단 <b>월 타이틀</b> 터치: 해당 월 전체 일괄 토글 (과거 날짜 제외)
+    <div class="admin-card" style="padding: 16px; border-color: rgba(201, 169, 110, 0.4); background: #161412; text-align: left;">
+      <div style="font-size: 0.78rem; color: #b8aba0; margin-bottom: 12px; line-height: 1.5;">
+        • <b style="color:#dfcfb2;">날짜 숫자</b> 터치: 하루(1~3부) 통째 마감/오픈 토글<br>
+        • 각 <b style="color:#dfcfb2;">컬러 바</b> 터치: 해당 부 개별 토글 (🟢예약가능 / 🔴관리자마감 / 🔵고객예약)<br>
+        • 상단 <b style="color:#dfcfb2;">월 타이틀</b> 터치: 해당 월 전체 일괄 토글
       </div>
       
-      <!-- 구글 캘린더 스타일 7열 격자 -->
-      <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 0.78rem; color: #888; margin-bottom: 8px; font-weight: 600;">
-        <div style="color: #f87171;">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div style="color: #93c5fd;">토</div>
+      <!-- 구글 캘린더 스타일 7열 격자 (하이엔드 브라운/베이지 톤) -->
+      <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 0.78rem; color: #9c8e80; margin-bottom: 8px; font-weight: 600;">
+        <div style="color: #e57373;">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div style="color: #64b5f6;">토</div>
       </div>
       <div id="calendar-grid-container" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;">
         <!-- 동적 캘린더 매트릭스 -->
@@ -582,7 +582,10 @@
       <button type="button" class="btn-primary" onclick="submitBookingRequest()" style="background: #2563eb; color: #fff;">예약 신청 완료</button>
       <div id="booking-error-msg" style="color: #f87171; font-size: 0.8rem; margin-top: 10px; display: none; text-align: center;"></div>
     </div>
-    <div style="margin-top: 16px;"><a href="?" style="color: #888; font-size: 0.8rem; text-decoration: none;">← 메인 포털로 돌아가기</a></div>
+    <div style="margin-top: 16px; display: flex; justify-content: space-between;">
+      <a href="?" style="color: #888; font-size: 0.8rem; text-decoration: none;">← 메인 포털</a>
+      <a href="?view=my_booking" style="color: #93c5fd; font-size: 0.8rem; text-decoration: none; font-weight: 600;">🔍 내 예약 조회 / 취소 →</a>
+    </div>
   </div>
 
   <!-- [화면 8] 내 예약 조회 및 취소 (?view=my_booking) -->
@@ -746,7 +749,7 @@
     window.logoutAdmin = () => { sessionStorage.removeItem('la_colonne_admin_token'); location.href = location.pathname; };
 
     // ─────────────────────────────────────────────
-    // [화면 9] 구글 캘린더 스타일 7열 격자 블록 관리 (?view=block_admin)
+    // [화면 9] 하이엔드 3색 캘린더 관리 (?view=block_admin)
     // ─────────────────────────────────────────────
     if (isBlockAdmin) {
       requireAdminAuth(() => {
@@ -783,7 +786,7 @@
 
           let html = '';
           for (let i = 0; i < firstDayIndex; i++) {
-            html += `<div style="background: #0f1014; border-radius: 8px; min-height: 80px; opacity: 0.2;"></div>`;
+            html += `<div style="background: #11100e; border-radius: 8px; min-height: 80px; opacity: 0.15;"></div>`;
           }
 
           for (let d = 1; d <= lastDayDate; d++) {
@@ -798,19 +801,27 @@
             const isS2Past = isPastDay || (dateStr === todayStr && nowKST >= new Date(`${dateStr}T17:00:00`));
             const isS3Past = isPastDay || (dateStr === todayStr && nowKST >= new Date(`${dateStr}T21:00:00`));
 
-            const c1 = b1 ? '#7f1d1d' : '#22c55e';
-            const c2 = b2 ? '#7f1d1d' : '#22c55e';
-            const c3 = b3 ? '#7f1d1d' : '#22c55e';
+            // 3색 시스템: 오픈(소프트 베이지/골드 #c9a96e), 마감(딥 에스프레소 브라운 #4e342e), 고객예약(인디고 블루 #3b82f6)
+            const getBarColor = (b, isPast) => {
+              if (isPast) return '#2a2624';
+              if (!b) return '#c9a96e'; // Open (베이지 골드)
+              if (b.guest_name === '[CLOSED_BLOCK]') return '#4e342e'; // Blocked (브라운)
+              return '#3b82f6'; // Booked (블루)
+            };
+
+            const c1 = getBarColor(b1, isS1Past);
+            const c2 = getBarColor(b2, isS2Past);
+            const c3 = getBarColor(b3, isS3Past);
 
             html += `
-              <div style="background: ${isPastDay ? '#121318' : '#1c1e27'}; border: 1px solid ${isPastDay ? '#222' : '#2e323e'}; border-radius: 8px; padding: 6px; display: flex; flex-direction: column; justify-content: space-between; min-height: 85px; opacity: ${isPastDay ? '0.5' : '1'};">
-                <div style="font-size: 0.82rem; font-weight: 600; color: ${isPastDay ? '#666' : '#dfcfb2'}; cursor: ${isPastDay ? 'default' : 'pointer'}; text-align: center;" ${isPastDay ? '' : `onclick="toggleDayBlock('${dateStr}')" title="터치 시 하루 통째 토글"`}>
+              <div style="background: ${isPastDay ? '#141210' : '#1c1917'}; border: 1px solid ${isPastDay ? '#222' : '#322d28'}; border-radius: 8px; padding: 6px; display: flex; flex-direction: column; justify-content: space-between; min-height: 85px; opacity: ${isPastDay ? '0.45' : '1'};">
+                <div style="font-size: 0.82rem; font-weight: 600; color: ${isPastDay ? '#555' : '#dfcfb2'}; cursor: ${isPastDay ? 'default' : 'pointer'}; text-align: center;" ${isPastDay ? '' : `onclick="toggleDayBlock('${dateStr}')" title="터치 시 하루 통째 토글"`}>
                   ${d}
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 3px;">
-                  <div style="background: ${isS1Past ? '#374151' : c1}; height: 8px; border-radius: 3px; cursor: ${isS1Past ? 'not-allowed' : 'pointer'};" ${isS1Past ? '' : `onclick="toggleBlockSession('${dateStr}T10:00:00', '${dateStr}T13:00:00', ${b1 ? b1.id : null}, '${b1 ? b1.guest_name : ''}')"`} title="1부 토글"></div>
-                  <div style="background: ${isS2Past ? '#374151' : c2}; height: 8px; border-radius: 3px; cursor: ${isS2Past ? 'not-allowed' : 'pointer'};" ${isS2Past ? '' : `onclick="toggleBlockSession('${dateStr}T14:00:00', '${dateStr}T17:00:00', ${b2 ? b2.id : null}, '${b2 ? b2.guest_name : ''}')"`} title="2부 토글"></div>
-                  <div style="background: ${isS3Past ? '#374151' : c3}; height: 8px; border-radius: 3px; cursor: ${isS3Past ? 'not-allowed' : 'pointer'};" ${isS3Past ? '' : `onclick="toggleBlockSession('${dateStr}T18:00:00', '${dateStr}T21:00:00', ${b3 ? b3.id : null}, '${b3 ? b3.guest_name : ''}')"`} title="3부 토글"></div>
+                  <div style="background: ${c1}; height: 8px; border-radius: 3px; cursor: pointer;" onclick="handleBarClick('${dateStr}T10:00:00', '${dateStr}T13:00:00', ${b1 ? b1.id : null}, '${b1 ? b1.guest_name : ''}', ${isS1Past})" title="1부 토글"></div>
+                  <div style="background: ${c2}; height: 8px; border-radius: 3px; cursor: pointer;" onclick="handleBarClick('${dateStr}T14:00:00', '${dateStr}T17:00:00', ${b2 ? b2.id : null}, '${b2 ? b2.guest_name : ''}', ${isS2Past})" title="2부 토글"></div>
+                  <div style="background: ${c3}; height: 8px; border-radius: 3px; cursor: pointer;" onclick="handleBarClick('${dateStr}T18:00:00', '${dateStr}T21:00:00', ${b3 ? b3.id : null}, '${b3 ? b3.guest_name : ''}', ${isS3Past})" title="3부 토글"></div>
                 </div>
               </div>`;
           }
@@ -820,25 +831,23 @@
         }
       }
 
-      // 최초 진입 시 즉시 캘린더를 그리도록 추가됨
       initBlockCalendar();
 
-      window.toggleBlockSession = async function(startISO, endISO, existingId, guestName) {
-        const nowKST = new Date();
-        if (new Date(endISO) <= nowKST) return alert('⚠️ 이미 종료되었거나 지난 시간대의 세션은 변경할 수 없습니다.');
+      window.handleBarClick = async function(startISO, endISO, existingId, guestName, isPast) {
+        if (isPast) return alert('⚠️ 이미 종료되었거나 지난 시간대의 세션은 변경할 수 없습니다.');
         if (existingId && guestName && guestName !== '[CLOSED_BLOCK]') {
-          return alert(`⚠️ 이미 고객 예약("${guestName}")이 잡혀 있는 시간대입니다. 관리자 임의로 차단할 수 없습니다.`);
+          return alert(`ℹ️ [고객 예약 확정 세션]\n\n예약자: ${guestName} 님\n(실제 고객 예약은 관리자가 직접 취소/변경할 수 있습니다)`);
         }
         try {
           if (existingId) {
             await apiCall(`welcome_schedules?id=eq.${existingId}`, 'DELETE');
-            showToast('✓ 세션 오픈 완료');
+            showToast('✓ 세션 오픈 완료 (베이지)');
           } else {
             await apiCall('welcome_schedules', 'POST', {
               start_time: startISO, end_time: endISO, guest_name: '[CLOSED_BLOCK]',
               sub_message: '관리자 마감', prefix: '', suffix: '', bg_source: '', bgm_source: '', member_code: '', member_name: '', pin_code: '0000'
             });
-            showToast('✓ 세션 차단 완료');
+            showToast('✓ 세션 마감 완료 (브라운)');
           }
           initBlockCalendar();
         } catch(e) { alert('처리 실패'); }
@@ -854,17 +863,12 @@
           const existing = res.ok ? await res.json() : [];
 
           const hasRealBooking = existing.some(ex => ex.guest_name !== '[CLOSED_BLOCK]');
-          if (hasRealBooking) return alert('⚠️ 해당일에 이미 고객의 실제 예약이 존재하여 하루 통째 차단을 할 수 없습니다.');
+          if (hasRealBooking) return alert('⚠️ 해당일에 이미 실제 고객 예약이 존재하여 일괄 차단이 불가합니다.');
 
-          const activeExisting = existing.filter(ex => {
-            if (dateStr === todayStr && new Date(ex.end_time) <= nowKST) return false;
-            return true;
-          });
-
-          const blocks = activeExisting.filter(ex => ex.guest_name === '[CLOSED_BLOCK]');
-          if (blocks.length > 0 && blocks.length === (dateStr === todayStr ? 3 - existing.filter(ex => new Date(ex.end_time) <= nowKST).length : 3)) {
+          const blocks = existing.filter(ex => ex.guest_name === '[CLOSED_BLOCK]');
+          if (blocks.length === 3) {
             for (const b of blocks) await apiCall(`welcome_schedules?id=eq.${b.id}`, 'DELETE');
-            showToast('✓ 해당일 오픈 완료');
+            showToast('✓ 해당일 전체 오픈 완료');
           } else {
             for (const b of blocks) await apiCall(`welcome_schedules?id=eq.${b.id}`, 'DELETE');
             const slots = [
@@ -879,7 +883,7 @@
                 sub_message: '관리자 마감', prefix: '', suffix: '', bg_source: '', bgm_source: '', member_code: '', member_name: '', pin_code: '0000'
               });
             }
-            showToast('✓ 해당일 마감 완료');
+            showToast('✓ 해당일 하루 통째 마감 완료');
           }
           initBlockCalendar();
         } catch(e) { alert('처리 실패'); }
