@@ -508,7 +508,7 @@
     </div>
   </div>
 
-  <!-- [화면 9] 관리자 캘린더형 예약 불가일(블록) 관리 페이지 (?view=block_admin) -->
+  <!-- [화면 9] 캘린더형 예약 불가일(블록) 관리 페이지 (?view=block_admin) -->
   <div id="block-admin-section">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
       <div>
@@ -526,10 +526,10 @@
       <div style="font-size: 0.78rem; color: #9ca3af; margin-bottom: 12px; line-height: 1.4;">
         • <b>날짜 숫자</b> 터치: 하루(1~3부) 통째 마감/오픈 토글<br>
         • 각 <b>컬러 바</b> 터치: 해당 부(1부/2부/3부) 개별 토글<br>
-        • 상단 <b>월 타이틀</b> 터치: 해당 월 전체 일괄 토글
+        • 상단 <b>월 타이틀</b> 터치: 해당 월 전체 일괄 토글 (과거 날짜 제외)
       </div>
       
-      <!-- 구글 캘린더 형태의 월 그리드 -->
+      <!-- 구글 캘린더 스타일 7열 격자 -->
       <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 0.78rem; color: #888; margin-bottom: 8px; font-weight: 600;">
         <div style="color: #f87171;">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div style="color: #93c5fd;">토</div>
       </div>
@@ -825,7 +825,6 @@
           const schedules = res.ok ? await res.json() : [];
 
           let html = '';
-          // 1일 이전 빈 칸 채우기
           for (let i = 0; i < firstDayIndex; i++) {
             html += `<div style="background: #0f1014; border-radius: 8px; min-height: 80px; opacity: 0.2;"></div>`;
           }
@@ -838,17 +837,16 @@
             const b2 = schedules.find(s => s.start_time.startsWith(dateStr + 'T14:00'));
             const b3 = schedules.find(s => s.start_time.startsWith(dateStr + 'T18:00'));
 
-            // 컬러 바 상태 클래스 또는 배경색 지정 (열림: 골드/그린, 마감: 붉은색)
             const c1 = b1 ? '#7f1d1d' : '#22c55e';
             const c2 = b2 ? '#7f1d1d' : '#22c55e';
             const c3 = b3 ? '#7f1d1d' : '#22c55e';
 
             html += `
               <div style="background: ${isPast ? '#121318' : '#1c1e27'}; border: 1px solid ${isPast ? '#222' : '#2e323e'}; border-radius: 8px; padding: 6px; display: flex; flex-direction: column; justify-content: space-between; min-height: 85px; opacity: ${isPast ? '0.5' : '1'};">
-                <div style="font-size: 0.82rem; font-weight: 600; color: ${isPast ? '#666' : '#dfcfb2}; cursor: ${isPast ? 'default' : 'pointer'}; text-align: center;" ${isPast ? '' : `onclick="toggleDayBlock('${dateStr}')" title="터치 시 하루 통째 토글"`}>
+                <div style="font-size: 0.82rem; font-weight: 600; color: ${isPast ? '#666' : '#dfcfb2'}; cursor: ${isPast ? 'default' : 'pointer'}; text-align: center;" ${isPast ? '' : `onclick="toggleDayBlock('${dateStr}')" title="터치 시 하루 통째 토글"`}>
                   ${d}
                 </div>
-                <div style="display: flex; flex-direction: column; gap: 3px;" ${isPast ? '' : ''}>
+                <div style="display: flex; flex-direction: column; gap: 3px;">
                   <div style="background: ${c1}; height: 8px; border-radius: 3px; cursor: ${isPast ? 'default' : 'pointer'};" ${isPast ? '' : `onclick="toggleBlockSession('${dateStr}T10:00:00', '${dateStr}T13:00:00', ${b1 ? b1.id : null}, '${b1 ? b1.guest_name : ''}')"`} title="1부 토글"></div>
                   <div style="background: ${c2}; height: 8px; border-radius: 3px; cursor: ${isPast ? 'default' : 'pointer'};" ${isPast ? '' : `onclick="toggleBlockSession('${dateStr}T14:00:00', '${dateStr}T17:00:00', ${b2 ? b2.id : null}, '${b2 ? b2.guest_name : ''}')"`} title="2부 토글"></div>
                   <div style="background: ${c3}; height: 8px; border-radius: 3px; cursor: ${isPast ? 'default' : 'pointer'};" ${isPast ? '' : `onclick="toggleBlockSession('${dateStr}T18:00:00', '${dateStr}T21:00:00', ${b3 ? b3.id : null}, '${b3 ? b3.guest_name : ''}')"`} title="3부 토글"></div>
@@ -885,17 +883,14 @@
           const res = await apiCall(`welcome_schedules?start_time=gte.${dateStr}T00:00:00&start_time=lte.${dateStr}T23:59:59&select=id,guest_name`);
           const existing = res.ok ? await res.json() : [];
 
-          // 실제 고객 예약이 낀 경우 차단
           const hasRealBooking = existing.some(ex => ex.guest_name !== '[CLOSED_BLOCK]');
           if (hasRealBooking) return alert('⚠️ 해당일에 이미 고객의 실제 예약이 존재하여 하루 통째 차단을 할 수 없습니다.');
 
           const blocks = existing.filter(ex => ex.guest_name === '[CLOSED_BLOCK]');
           if (blocks.length === 3) {
-            // 모두 블록된 상태면 해제
             for (const b of blocks) await apiCall(`welcome_schedules?id=eq.${b.id}`, 'DELETE');
             showToast('✓ 해당일 전체 오픈 완료');
           } else {
-            // 부족한 세션 마감 처리
             for (const b of blocks) await apiCall(`welcome_schedules?id=eq.${b.id}`, 'DELETE');
             const slots = [
               { start: `${dateStr}T10:00:00`, end: `${dateStr}T13:00:00` },
@@ -915,7 +910,7 @@
       };
 
       window.toggleMonthBlock = async function() {
-        if (!confirm(`${calYear}년 ${calMonth + 1월} 전체를 일괄 차단/오픈 토글하시겠습니까? (고객 예약일은 유지됩니다)`)) return;
+        if (!confirm(`${calYear}년 ${calMonth + 1}월 전체를 일괄 차단/오픈 토글하시겠습니까? (고객 예약일은 유지됩니다)`)) return;
         const startDateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-01T00:00:00`;
         const lastDayDate = new Date(calYear, calMonth + 1, 0).getDate();
         const endDateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(lastDayDate).padStart(2,'0')}T23:59:59`;
@@ -926,12 +921,10 @@
           const hasBooking = schedules.some(s => s.guest_name !== '[CLOSED_BLOCK]');
           if (hasBooking) return alert('⚠️ 이 달에 이미 고객의 실제 예약이 존재하여 월 전체 일괄 차단이 불가합니다.');
 
-          // 기존 블록 싹 지우기
           const blocks = schedules.filter(s => s.guest_name === '[CLOSED_BLOCK]');
           for (const b of blocks) await apiCall(`welcome_schedules?id=eq.${b.id}`, 'DELETE');
 
           if (blocks.length === 0) {
-            // 전부 새로 마감
             for (let d = 1; d <= lastDayDate; d++) {
               const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
               const slots = [
