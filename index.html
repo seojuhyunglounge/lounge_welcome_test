@@ -813,7 +813,7 @@
             <input type="datetime-local" id="u-sched-start" style="padding: 10px; font-size: 0.85rem;">
           </div>
           <div style="flex: 1;">
-            <label style="font-size: 0.75rem; margin-bottom: 4px;">종료 시각</label>
+            <label style="font-size: 0.75rem; margin-bottom: 4px;">종료 시각 (시작시각 선택 시 +3시간 자동)</label>
             <input type="datetime-local" id="u-sched-end" style="padding: 10px; font-size: 0.85rem;">
           </div>
         </div>
@@ -2053,6 +2053,7 @@
 
       function initAdminControls() {
         let cachedAdminMembers = [];
+        let currentActiveScheduleId = null;
 
         // 멤버십 회원 목록 불러와서 예약 등록 드롭다운에 채우기
         async function populateMemberDropdown() {
@@ -2077,7 +2078,7 @@
         }
         populateMemberDropdown();
 
-        // 실시간 라운지 점유 & 표출 상태 갱신
+        // 실시간 라운지 점유 & 표출 상태 갱신 (예약 조기퇴실 및 배지 지원)
         async function updateLiveOccupancyStatus() {
           const badgeEl = document.getElementById('occupancy-badge');
           const titleEl = document.getElementById('occupancy-title');
@@ -2099,15 +2100,17 @@
               const scheds = await schedRes.json();
               if (scheds && scheds.length > 0) {
                 const s = scheds[0];
+                currentActiveScheduleId = s.id;
                 const endD = new Date(s.end_time);
                 const remainMin = Math.max(0, Math.round((endD.getTime() - Date.now()) / 60000));
                 const memInfo = s.member_name ? ` (회원: ${s.member_code || ''} ${s.member_name})` : '';
+                const memTag = s.member_name ? ' [회원]' : '';
 
                 cardEl.style.borderColor = '#22c55e';
                 badgeEl.style.background = 'rgba(34, 197, 94, 0.2)';
                 badgeEl.style.color = '#4ade80';
-                badgeEl.innerText = `● 예약 일정 표출 중 (종료까지 ${remainMin}분 남음)`;
-                if (resetBtn) resetBtn.style.display = 'none';
+                badgeEl.innerText = `● 예약 일정 표출 중${memTag} (종료까지 ${remainMin}분 남음)`;
+                if (resetBtn) resetBtn.style.display = 'block';
 
                 titleEl.innerText = `${s.prefix ? s.prefix + ' ' : ''}${s.guest_name}${s.suffix ? ' ' + s.suffix : ''}`;
                 descEl.innerText = `문구: "${s.sub_message}"${memInfo}`;
@@ -2115,7 +2118,9 @@
               }
             }
 
-            // 2. 스케줄이 없다면 상시(즉시) 표출 레코드 확인
+            currentActiveScheduleId = null;
+
+            // 2. 수동 즉시 표출 레코드 확인
             const defRes = await fetch(cleanUrl + '/rest/v1/welcome_screen?select=*&id=eq.1', {
               headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
             });
@@ -2123,15 +2128,15 @@
               const defs = await defRes.json();
               if (defs && defs.length > 0 && defs[0].guest_name && defs[0].guest_name !== 'Guest') {
                 const d = defs[0];
+                const memInfo = d.member_name ? ` (회원: ${d.member_code || ''} ${d.member_name})` : '';
                 cardEl.style.borderColor = '#eab308';
                 badgeEl.style.background = 'rgba(234, 179, 8, 0.2)';
                 badgeEl.style.color = '#fde047';
-                const memInfo = d.member_name ? ` (회원: ${d.member_code || ''} ${d.member_name})` : '';
                 badgeEl.innerText = '● 수동 즉시 표출 중' + (d.member_name ? ' [회원]' : '');
                 if (resetBtn) resetBtn.style.display = 'block';
 
                 titleEl.innerText = `${d.prefix ? d.prefix + ' ' : ''}${d.guest_name}${d.suffix ? ' ' + d.suffix : ''}`;
-                descEl.innerText = `문구: "${d.sub_message}"${memInfo}`;
+                descEl.innerText = `문구: "${d.sub_message}" (상시 유지 모드)${memInfo}`;
                 return;
               }
             }
@@ -2211,10 +2216,20 @@
           } catch(e) {}
         }
 
-        // 즉시 퇴실 및 기본 화면(Guest) 복귀 함수
+        // 즉시 퇴실 및 기본 화면(Guest) 복귀 함수 (예약 일정 조기 퇴실 지원)
         window.resetToGuestScreen = async function() {
-          if (!confirm('현재 표출을 종료하고 기본 대기 화면(Guest)으로 복귀하시겠습니까?')) return;
+          if (!confirm('현재 손님의 이용을 종료(조기 퇴실)하고 기본 대기 화면(Guest)으로 복귀하시겠습니까?')) return;
           try {
+            if (currentActiveScheduleId) {
+              await fetch(cleanUrl + '/rest/v1/welcome_schedules?id=eq.' + currentActiveScheduleId, {
+                method: 'PATCH',
+                headers: getAdminHeaders({ 'Content-Type': 'application/json' }),
+                body: JSON.stringify({ end_time: new Date().toISOString() })
+              });
+              currentActiveScheduleId = null;
+              if (window.loadSchedules) loadSchedules();
+            }
+
             await fetch(cleanUrl + '/rest/v1/welcome_screen', {
               method: 'POST',
               headers: getAdminHeaders({
@@ -2229,15 +2244,32 @@
                 sub_message: '라 콜론에 오신 것을 환영합니다.',
                 bg_source: 'video1.mp4,video2.mp4',
                 bgm_source: 'jazz1.mp3',
+                member_code: '',
+                member_name: '',
                 updated_at: new Date().toISOString()
               })
             });
-            showToast('✓ 기본 대기 화면으로 복귀되었습니다.');
+
+            showToast('✓ 퇴실 처리 완료: TV가 기본 대기 화면으로 복귀되었습니다.');
             if (window.updateLiveOccupancyStatus) updateLiveOccupancyStatus();
           } catch(e) {
             alert('초기화 실패: ' + e.message);
           }
         };
+
+        // 시작 시각 입력 시 1세션(3시간) 자동 계산하여 종료 시각 채우기
+        const startInputEl = document.getElementById('u-sched-start');
+        if (startInputEl) {
+          startInputEl.addEventListener('change', function() {
+            const startVal = this.value;
+            if (!startVal) return;
+            const endInput = document.getElementById('u-sched-end');
+            const d = new Date(startVal);
+            d.setHours(d.getHours() + 3);
+            const toLocalISO = (dt) => new Date(dt.getTime() - dt.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+            endInput.value = toLocalISO(d);
+          });
+        }
         
         const uPrefixToggle = document.getElementById('u-prefix-toggle');
         const uPrefixSelectBox = document.getElementById('u-prefix-select-box');
@@ -2245,17 +2277,6 @@
         const uSuffixToggle = document.getElementById('u-suffix-toggle');
         const uLogBox = document.getElementById('unified-log-box');
 
-        // [신규] 시작 시각 입력 시 1세션(3시간) 자동 계산하여 종료 시각 채우기
-        document.getElementById('u-sched-start').addEventListener('change', function() {
-          const startVal = this.value;
-          if (!startVal) return;
-          const endInput = document.getElementById('u-sched-end');
-          const d = new Date(startVal);
-          d.setHours(d.getHours() + 3); // 3시간 추가
-          const toLocalISO = (dt) => new Date(dt.getTime() - dt.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-          endInput.value = toLocalISO(d);
-        });
-        
         uPrefixToggle.addEventListener('change', function() {
           uPrefixSelectBox.style.display = this.checked ? 'block' : 'none';
         });
@@ -2292,7 +2313,7 @@
           return { name, msg, prefix, suffix, bg, bgm, memberId, memberCode, memberName };
         }
 
-        // [동작 1] ⚡ TV 즉시 표출 버튼 클릭 시
+        // [동작 1] ⚡ TV 즉시 표출 버튼 클릭 시 (예약 중복 방지 및 확실한 차감 보장)
         document.getElementById('btn-action-now').addEventListener('click', async function() {
           const startVal = document.getElementById('u-sched-start').value;
           const endVal = document.getElementById('u-sched-end').value;
@@ -2302,21 +2323,36 @@
             return;
           }
 
+          if (currentActiveScheduleId) {
+            const currentGuest = document.getElementById('occupancy-title').innerText;
+            alert(`⚠️ 현재 [${currentGuest}] 손님의 예약 일정이 TV에 표출 중입니다!\n\n새로운 즉시 표출을 진행하시려면 먼저 상단의 [🚪 퇴실 처리 (기본 화면 복귀)] 버튼을 눌러 기존 손님을 퇴실 처리해 주세요.`);
+            return;
+          }
+
           const f = getUnifiedFormData();
           uLogBox.style.display = 'block';
           uLogBox.style.color = '#ffd166';
-          uLogBox.innerText = '상태 확인 중...';
+          uLogBox.innerText = '처리 중...';
 
           try {
             if (f.memberId) {
               if (confirm(`[${f.memberCode}] ${f.memberName} 회원의 세션 패스를 1회 차감하시겠습니까?`)) {
                 const token = sessionStorage.getItem('la_colonne_admin_token') || '';
-                await fetch(`${cleanUrl}/rest/v1/rpc/adjust_admin_member_pass`, {
+                const adjRes = await fetch(`${cleanUrl}/rest/v1/rpc/adjust_admin_member_pass`, {
                   method: 'POST',
                   headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey, 'Content-Type': 'application/json' },
                   body: JSON.stringify({ p_token: token, p_id: parseInt(f.memberId, 10), p_delta: -1 })
                 });
-                showToast('✓ 회원 세션 1회 차감 완료');
+
+                const adjOk = await adjRes.json();
+                if (adjOk === true) {
+                  showToast('✓ 회원 세션 1회 차감 완료');
+                  populateMemberDropdown();
+                } else {
+                  alert('⚠️ 회원 세션 차감에 실패했습니다. (관리자 인증 만료 또는 잔여 횟수 부족)');
+                  uLogBox.innerText = '취소됨: 세션 차감 실패';
+                  return;
+                }
               }
             }
 
@@ -2441,6 +2477,7 @@
           document.getElementById('u-sched-start').value = '';
           document.getElementById('u-sched-end').value = '';
           document.getElementById('u-member-select').value = '';
+          document.getElementById('u-name-input').placeholder = "비워둘 시 기본값 'Guest' 표출";
           uPrefixToggle.checked = false;
           uPrefixSelectBox.style.display = 'none';
           uSuffixToggle.checked = true;
@@ -2470,13 +2507,17 @@
           if (item.bgm_source) document.getElementById('u-bgm-select').value = item.bgm_source;
 
           const memSelect = document.getElementById('u-member-select');
-          if (memSelect && item.member_code) {
-            for (let i = 0; i < memSelect.options.length; i++) {
-              if (memSelect.options[i].getAttribute('data-code') === item.member_code) {
-                memSelect.selectedIndex = i;
-                break;
+          if (memSelect) {
+            memSelect.value = '';
+            if (item.member_code) {
+              for (let i = 0; i < memSelect.options.length; i++) {
+                if (memSelect.options[i].getAttribute('data-code') === item.member_code) {
+                  memSelect.selectedIndex = i;
+                  break;
+                }
               }
             }
+            memSelect.dispatchEvent(new Event('change'));
           }
 
           document.getElementById('unified-card-title').innerText = `✏️ VIP 예약 일정 수정 (${item.guest_name})`;
@@ -2681,7 +2722,7 @@
           // 회원 연동 선택 매핑
           const memSelect = document.getElementById('u-member-select');
           if (memSelect) {
-            memSelect.value = ''; // 우선 기본 초기화
+            memSelect.value = '';
             if (data.member_code) {
               for (let i = 0; i < memSelect.options.length; i++) {
                 if (memSelect.options[i].getAttribute('data-code') === data.member_code) {
@@ -2690,10 +2731,9 @@
                 }
               }
             }
-            // 회원 변경 이벤트 강제 트리거 (placeholder 안내 갱신)
             memSelect.dispatchEvent(new Event('change'));
           }
-          
+
           document.getElementById('unified-control-card').scrollIntoView({ behavior: 'smooth' });
           alert(`[${data.guest_name}] 님의 방문 설정이 상단 통합 제어 폼에 채워졌습니다.`);
         };
