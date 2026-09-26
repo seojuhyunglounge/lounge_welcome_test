@@ -369,7 +369,7 @@
       margin-top: 8px;
     }
 
-    .schedule-item, .history-item, .order-item, .member-item {
+    .schedule-item, .order-item, .member-item {
       background: #1f2128;
       border: 1px solid #2e323e;
       border-radius: 12px;
@@ -379,9 +379,9 @@
       flex-direction: column;
       gap: 12px;
     }
-    .schedule-time, .history-time, .order-time, .member-meta { font-size: 0.8rem; color: #c9a96e; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600; }
-    .schedule-name, .history-name, .order-name, .member-name { font-size: 1.05rem; font-weight: 600; color: #fff; }
-    .schedule-msg, .history-msg, .order-msg { font-size: 0.8rem; color: #9ca3af; margin-top: 3px; }
+    .schedule-time, .order-time, .member-meta { font-size: 0.8rem; color: #c9a96e; letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600; }
+    .schedule-name, .order-name, .member-name { font-size: 1.05rem; font-weight: 600; color: #fff; }
+    .schedule-msg, .order-msg { font-size: 0.8rem; color: #9ca3af; margin-top: 3px; }
     
     .btn-trigger-now {
       background: rgba(201, 169, 110, 0.2);
@@ -398,7 +398,6 @@
 
     .btn-edit { background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.35); color: #93c5fd; padding: 7px 12px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; }
     .btn-delete { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); color: #f87171; padding: 7px 12px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; }
-    .btn-reuse { background: rgba(201, 169, 110, 0.15); border: 1px solid rgba(201, 169, 110, 0.4); color: #dfcfb2; padding: 8px 12px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; }
 
     .action-btn-group { display: flex; align-items: center; gap: 8px; width: 100%; border-top: 1px dashed #2a2e3d; padding-top: 10px; }
     .tag-badge { display: inline-block; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; background: #2a2e3d; color: #93c5fd; margin-bottom: 4px; }
@@ -407,8 +406,6 @@
     .page-btn { background: #212329; border: 1px solid #333640; color: #c9a96e; padding: 6px 14px; border-radius: 6px; font-size: 0.82rem; cursor: pointer; }
     .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
     .page-indicator { font-size: 0.82rem; color: #888; letter-spacing: 1px; }
-
-    #log-box, #sched-log-box { margin-top: 14px; padding: 12px; background: #0f1013; border-radius: 8px; border: 1px solid #333; font-size: 0.85rem; color: #aaa; white-space: pre-wrap; word-break: break-all; display: none; }
 
     #guest-portal-section {
       display: none;
@@ -470,7 +467,6 @@
     .btn-pass-action { background: #232631; border: 1px solid #3d4253; color: #dfcfb2; padding: 7px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease; }
     .btn-pass-action:hover { background: #c9a96e; color: #0b0c0e; border-color: #c9a96e; }
 
-    /* 손님용 멤버십 패스 확인 UI (?view=member) */
     #member-client-section { display: none; width: 90%; max-width: 440px; margin: 40px auto 80px auto; text-align: center; }
     .pass-card-ui {
       background: radial-gradient(circle at top right, #252834 0%, #15161c 100%);
@@ -678,13 +674,18 @@
       </div>
     </div>
 
-    <!-- [신규] 실시간 라운지 점유 & 디스플레이 상태 모니터 -->
+    <!-- 실시간 라운지 점유 & 디스플레이 상태 모니터 -->
     <div class="admin-card" id="current-occupancy-card" style="border: 1px solid #3b82f6; background: #131722; padding: 20px 24px; margin-bottom: 20px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
         <div style="font-size: 0.8rem; font-weight: 700; color: #93c5fd; letter-spacing: 1px; text-transform: uppercase;">
           ● LIVE OCCUPANCY & DISPLAY STATUS
         </div>
-        <span id="occupancy-badge" style="font-size: 0.72rem; padding: 3px 8px; border-radius: 12px; background: rgba(59, 130, 246, 0.2); color: #93c5fd; font-weight: 600;">상태 확인 중...</span>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span id="occupancy-badge" style="font-size: 0.72rem; padding: 3px 8px; border-radius: 12px; background: rgba(59, 130, 246, 0.2); color: #93c5fd; font-weight: 600;">상태 확인 중...</span>
+          <button type="button" id="btn-force-guest" onclick="resetToGuestScreen()" style="display: none; font-size: 0.72rem; padding: 4px 10px; border-radius: 8px; background: #374151; color: #f3f4f6; border: 1px solid #4b5563; cursor: pointer;">
+            🚪 퇴실 처리 (기본 화면 복귀)
+          </button>
+        </div>
       </div>
       <div id="occupancy-title" style="font-size: 1.35rem; font-weight: 700; color: #ffffff; margin-bottom: 4px;">--</div>
       <div id="occupancy-desc" style="font-size: 0.85rem; color: #94a3b8;">디스플레이 상태를 동기화하고 있습니다.</div>
@@ -727,7 +728,7 @@
       </div>
     </div>
 
-<!-- 통합 제어 카드: 환영 디스플레이 & 예약 일정 설정 -->
+    <!-- 통합 제어 카드: 환영 디스플레이 & 예약 일정 설정 -->
     <div class="admin-card" id="unified-control-card">
       <div class="admin-title" id="unified-card-title">1. VIP 디스플레이 표출 & 예약 제어</div>
 
@@ -839,9 +840,9 @@
       </div>
     </div>
 
-    <!-- 카드 4: VIP 히스토리 아카이브 -->
+    <!-- 카드 4: VIP 히스토리 아카이브 (컴팩트 리스트) -->
     <div class="admin-card">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
         <div class="admin-title" style="margin-bottom: 0;">4. VIP 히스토리 아카이브</div>
         <button type="button" onclick="loadHistory(1)" style="background: none; border: 1px solid #444; color: #aaa; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;">새로고침</button>
       </div>
@@ -927,7 +928,7 @@
       <div style="font-size: 0.95rem; font-weight: 600; color: #c9a96e; margin-bottom: 12px;">➕ 신규 VIP 회원 등록</div>
       <div style="display: flex; gap: 8px; margin-bottom: 8px;">
         <input type="text" id="new-mem-company" placeholder="회사명/VIP 성함" style="flex: 2; padding: 10px;">
-        <input type="text" id="new-mem-code" placeholder="코드(예: LC-1003)" style="flex: 1; padding: 10px;">
+        <input type="text" id="new-mem-code" placeholder="코드(예: LC-9001)" style="flex: 1; padding: 10px;">
       </div>
       <div style="display: flex; gap: 8px; margin-bottom: 8px;">
         <input type="tel" id="new-mem-phone" placeholder="연락처 (010-0000-0000)" style="flex: 2; padding: 10px;">
@@ -1050,7 +1051,6 @@
       pinInput.disabled = false;
       pinInput.focus();
 
-      // [기능 추가] 관리자 PIN 입력창에서 Enter 키 입력 시 즉시 인증 실행
       pinInput.onkeydown = function(e) {
         if (e.key === 'Enter' || e.keyCode === 13) {
           e.preventDefault();
@@ -1108,13 +1108,11 @@
     // 화면별 라우팅 처리
     // ─────────────────────────────────────────────
     if (isMemberClient) {
-      // 5. 손님용 멤버십 패스 확인 화면 (?view=member)
       document.getElementById('member-client-section').style.display = 'block';
 
       const clientPhoneInput = document.getElementById('client-phone-input');
       const clientPinInput = document.getElementById('client-pin-input');
 
-      // [기능 추가] 손님용 조회 입력창에서 Enter 키 누를 시 즉시 조회 실행
       [clientPhoneInput, clientPinInput].forEach(el => {
         if (!el) return;
         el.addEventListener('keydown', function(e) {
@@ -1139,7 +1137,6 @@
         }
 
         try {
-          // 전화번호 숫자만 추출하여 하이픈 유무 차이 완전 해결
           const cleanPhone = rawPhone.replace(/[^0-9]/g, '');
 
           const res = await fetch(`${cleanUrl}/rest/v1/rpc/verify_member_login`, {
@@ -1260,6 +1257,20 @@
             `;
           });
           container.innerHTML = html;
+
+          // 다음 LC- 번호 자동 계산하여 입력칸에 안내
+          let maxNum = 9000;
+          members.forEach(m => {
+            const match = (m.member_code || '').match(/LC-(\d+)/i);
+            if (match) {
+              const n = parseInt(match[1], 10);
+              if (n > maxNum) maxNum = n;
+            }
+          });
+          const nextCodeInput = document.getElementById('new-mem-code');
+          if (nextCodeInput && (!nextCodeInput.value || nextCodeInput.value.startsWith('LC-'))) {
+            nextCodeInput.value = 'LC-' + (maxNum + 1);
+          }
         } catch(e) {
           container.innerHTML = '<div style="color:#f87171; text-align:center;">회원 목록 조회 실패</div>';
         }
@@ -1328,7 +1339,6 @@
           if (ok === true) {
             showToast('✓ 신규 VIP 회원이 등록되었습니다.');
             document.getElementById('new-mem-company').value = '';
-            document.getElementById('new-mem-code').value = '';
             document.getElementById('new-mem-phone').value = '';
             document.getElementById('new-mem-pin').value = '';
             document.getElementById('new-mem-total').value = '';
@@ -2067,19 +2077,20 @@
         }
         populateMemberDropdown();
 
-        // [실시간 라운지 점유 & 표출 상태 갱신]
+        // 실시간 라운지 점유 & 표출 상태 갱신
         async function updateLiveOccupancyStatus() {
           const badgeEl = document.getElementById('occupancy-badge');
           const titleEl = document.getElementById('occupancy-title');
           const descEl = document.getElementById('occupancy-desc');
           const cardEl = document.getElementById('current-occupancy-card');
+          const resetBtn = document.getElementById('btn-force-guest');
           if (!badgeEl || !titleEl) return;
 
           try {
             const nowISO = new Date().toISOString();
             const fiveMinLaterISO = new Date(Date.now() + 5 * 60 * 1000).toISOString();
 
-            // 1. 현재 진행 중인 예약 스케줄이 있는지 확인
+            // 1. 현재 진행 중인 예약 스케줄 확인
             const schedRes = await fetch(cleanUrl + '/rest/v1/welcome_schedules?start_time=lte.' + fiveMinLaterISO + '&end_time=gte.' + nowISO + '&order=start_time.asc&limit=1', {
               headers: { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey }
             });
@@ -2096,6 +2107,7 @@
                 badgeEl.style.background = 'rgba(34, 197, 94, 0.2)';
                 badgeEl.style.color = '#4ade80';
                 badgeEl.innerText = `● 예약 일정 표출 중 (종료까지 ${remainMin}분 남음)`;
+                if (resetBtn) resetBtn.style.display = 'none';
 
                 titleEl.innerText = `${s.prefix ? s.prefix + ' ' : ''}${s.guest_name}${s.suffix ? ' ' + s.suffix : ''}`;
                 descEl.innerText = `문구: "${s.sub_message}"${memInfo}`;
@@ -2115,6 +2127,8 @@
                 badgeEl.style.background = 'rgba(234, 179, 8, 0.2)';
                 badgeEl.style.color = '#fde047';
                 badgeEl.innerText = '● 수동 즉시 표출 중';
+                if (resetBtn) resetBtn.style.display = 'block';
+
                 titleEl.innerText = `${d.prefix ? d.prefix + ' ' : ''}${d.guest_name}${d.suffix ? ' ' + d.suffix : ''}`;
                 descEl.innerText = `문구: "${d.sub_message}" (상시 유지 모드)`;
                 return;
@@ -2126,6 +2140,8 @@
             badgeEl.style.background = 'rgba(100, 116, 139, 0.2)';
             badgeEl.style.color = '#94a3b8';
             badgeEl.innerText = '○ 빈 공간 (대기 중)';
+            if (resetBtn) resetBtn.style.display = 'none';
+
             titleEl.innerText = 'Guest (기본 라운지 화면)';
             descEl.innerText = '현재 활성화된 손님 일정이 없으며 기본 환영 영상이 대기 중입니다.';
           } catch(e) {}
@@ -2168,8 +2184,8 @@
         globalWifi.addEventListener('change', () => updateGlobalSetting('show_wifi', globalWifi.checked));
         globalAmenity.addEventListener('change', () => updateGlobalSetting('show_amenity', globalAmenity.checked));
 
-// [복원] VIP 히스토리 아카이브 기록 함수
-        async function recordHistory(eventType, prefix, name, suffix, msg, bg, bgm, visitDate) {
+        // VIP 히스토리 아카이브 기록 (회원 정보 포함)
+        async function recordHistory(eventType, prefix, name, suffix, msg, bg, bgm, visitDate, memCode, memName) {
           if (!name || name === 'Guest') return;
           try {
             const res = await fetch(cleanUrl + '/rest/v1/welcome_history', {
@@ -2183,7 +2199,9 @@
                 suffix: suffix || '',
                 sub_message: msg || '',
                 bg_source: bg,
-                bgm_source: bgm
+                bgm_source: bgm,
+                member_code: memCode || '',
+                member_name: memName || ''
               })
             });
             if (res.ok && window.loadHistory) {
@@ -2191,8 +2209,36 @@
             }
           } catch(e) {}
         }
+
+        // 즉시 퇴실 및 기본 화면(Guest) 복귀 함수
+        window.resetToGuestScreen = async function() {
+          if (!confirm('현재 표출을 종료하고 기본 대기 화면(Guest)으로 복귀하시겠습니까?')) return;
+          try {
+            await fetch(cleanUrl + '/rest/v1/welcome_screen', {
+              method: 'POST',
+              headers: getAdminHeaders({
+                'Content-Type': 'application/json',
+                'Prefer': 'resolution=merge-duplicates,return=representation'
+              }),
+              body: JSON.stringify({
+                id: 1,
+                prefix: '',
+                guest_name: 'Guest',
+                suffix: '',
+                sub_message: '라 콜론에 오신 것을 환영합니다.',
+                bg_source: 'video1.mp4,video2.mp4',
+                bgm_source: 'jazz1.mp3',
+                updated_at: new Date().toISOString()
+              })
+            });
+            showToast('✓ 기본 대기 화면으로 복귀되었습니다.');
+            if (window.updateLiveOccupancyStatus) updateLiveOccupancyStatus();
+          } catch(e) {
+            alert('초기화 실패: ' + e.message);
+          }
+        };
         
-const uPrefixToggle = document.getElementById('u-prefix-toggle');
+        const uPrefixToggle = document.getElementById('u-prefix-toggle');
         const uPrefixSelectBox = document.getElementById('u-prefix-select-box');
         const uPrefixSelect = document.getElementById('u-prefix-select');
         const uSuffixToggle = document.getElementById('u-suffix-toggle');
@@ -2202,7 +2248,7 @@ const uPrefixToggle = document.getElementById('u-prefix-toggle');
           uPrefixSelectBox.style.display = this.checked ? 'block' : 'none';
         });
 
-// [추가] 회원 선택 시 이름 입력칸이 비어있으면 회원 이름을 기본값 힌트로 안내
+        // 회원 선택 시 이름 입력칸 안내 문구 동적 변경
         document.getElementById('u-member-select').addEventListener('change', function() {
           const selOpt = this.options[this.selectedIndex];
           const memName = (selOpt && this.value) ? selOpt.getAttribute('data-name') : '';
@@ -2214,7 +2260,7 @@ const uPrefixToggle = document.getElementById('u-prefix-toggle');
           }
         });
         
-// 폼 입력값 추출 공통 헬퍼 (회원 선택 시 이름 미입력 fallback 적용)
+        // 폼 입력값 추출 공통 헬퍼 (회원 연동 시 이름 미입력 fallback 처리)
         function getUnifiedFormData() {
           const rawName = document.getElementById('u-name-input').value.trim();
           const memSelect = document.getElementById('u-member-select');
@@ -2223,7 +2269,6 @@ const uPrefixToggle = document.getElementById('u-prefix-toggle');
           const memberCode = (selOpt && memberId) ? selOpt.getAttribute('data-code') : '';
           const memberName = (selOpt && memberId) ? selOpt.getAttribute('data-name') : '';
 
-          // 이름이 비어있으면: 연동된 회원 이름 우선 적용 -> 그것도 없으면 'Guest'
           const name = rawName || (memberName ? memberName : 'Guest');
 
           const msg = document.getElementById('u-msg-input').value.trim() || '라 콜론에 오신 것을 환영합니다.';
@@ -2240,7 +2285,6 @@ const uPrefixToggle = document.getElementById('u-prefix-toggle');
           const startVal = document.getElementById('u-sched-start').value;
           const endVal = document.getElementById('u-sched-end').value;
 
-          // 오동작 방지: 예약 시각이 들어있으면 경고
           if (startVal || endVal) {
             alert('⚠️ 예약 시각이 입력되어 있습니다!\n\n현재 시각으로 즉시 띄우시려면 시각 입력을 지우시거나, 우측 [📅 예약 일정 추가] 버튼을 눌러주세요.');
             return;
@@ -2252,7 +2296,6 @@ const uPrefixToggle = document.getElementById('u-prefix-toggle');
           uLogBox.innerText = '상태 확인 중...';
 
           try {
-            // 회원 연동 시 1회 차감 확인
             if (f.memberId) {
               if (confirm(`[${f.memberCode}] ${f.memberName} 회원의 세션 패스를 1회 차감하시겠습니까?`)) {
                 const token = sessionStorage.getItem('la_colonne_admin_token') || '';
@@ -2286,7 +2329,7 @@ const uPrefixToggle = document.getElementById('u-prefix-toggle');
             if (res.ok) {
               uLogBox.style.color = '#4ade80';
               uLogBox.innerText = '✓ TV 화면에 즉시 반영되었습니다!';
-              recordHistory('즉시 반영', f.prefix, f.name, f.suffix, f.msg, f.bg, f.bgm);
+              recordHistory('즉시 반영', f.prefix, f.name, f.suffix, f.msg, f.bg, f.bgm, null, f.memberCode, f.memberName);
               if (window.updateLiveOccupancyStatus) updateLiveOccupancyStatus();
             } else {
               uLogBox.style.color = '#f87171';
@@ -2305,7 +2348,6 @@ const uPrefixToggle = document.getElementById('u-prefix-toggle');
           const startVal = document.getElementById('u-sched-start').value;
           const endVal = document.getElementById('u-sched-end').value;
 
-          // 오동작 방지: 예약 시각 미입력 시 경고
           if (!startVal || !endVal) {
             alert('⚠️ 예약 일정을 등록하려면 [시작 시각]과 [종료 시각]을 모두 지정해야 합니다.\n\n지금 바로 띄우시려면 좌측 [⚡ TV 즉시 표출] 버튼을 눌러주세요.');
             return;
@@ -2358,7 +2400,7 @@ const uPrefixToggle = document.getElementById('u-prefix-toggle');
               uLogBox.style.color = '#4ade80';
               uLogBox.innerText = editingScheduleId ? '✓ VIP 일정이 성공적으로 수정되었습니다!' : '✓ 예약 일정이 성공적으로 추가되었습니다!';
               if (!editingScheduleId) {
-                recordHistory('예약 일정', f.prefix, f.name, f.suffix, f.msg, f.bg, f.bgm, new Date(startVal).toISOString());
+                recordHistory('예약 일정', f.prefix, f.name, f.suffix, f.msg, f.bg, f.bgm, new Date(startVal).toISOString(), f.memberCode, f.memberName);
               }
               cancelEditSchedule();
               loadSchedules();
@@ -2413,7 +2455,6 @@ const uPrefixToggle = document.getElementById('u-prefix-toggle');
           if (item.bg_source) document.getElementById('u-bg-select').value = item.bg_source;
           if (item.bgm_source) document.getElementById('u-bgm-select').value = item.bgm_source;
 
-          // 회원 연동 선택 매핑
           const memSelect = document.getElementById('u-member-select');
           if (memSelect && item.member_code) {
             for (let i = 0; i < memSelect.options.length; i++) {
@@ -2430,6 +2471,47 @@ const uPrefixToggle = document.getElementById('u-prefix-toggle');
           document.getElementById('u-cancel-btn').style.display = 'block';
           document.getElementById('unified-control-card').scrollIntoView({ behavior: 'smooth' });
         };
+
+        async function loadSchedules() {
+          const listEl = document.getElementById('schedule-list');
+          try {
+            const nowISO = new Date().toISOString();
+            const res = await fetch(cleanUrl + '/rest/v1/welcome_schedules?end_time=gte.' + nowISO + '&order=start_time.asc', {
+              headers: getAdminHeaders()
+            });
+            if (!res.ok) return;
+            const schedules = await res.json();
+            if (!schedules || schedules.length === 0) {
+              listEl.innerHTML = '<div style="color: #666; font-size: 0.9rem; text-align: center; padding: 20px 0;">현재 대기 중인 미래 예약 일정이 없습니다.</div>';
+              return;
+            }
+
+            let html = '';
+            schedules.forEach(s => {
+              const sDate = new Date(s.start_time);
+              const eDate = new Date(s.end_time);
+              const dateStr = `${sDate.getMonth()+1}/${sDate.getDate()} ${sDate.toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit', hour12:false})} ~ ${eDate.toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit', hour12:false})}`;
+              const memberTag = s.member_name ? `<span style="background: rgba(201, 169, 110, 0.15); border: 1px solid rgba(201, 169, 110, 0.4); color: #dfcfb2; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">💳 ${escapeHtml(s.member_code || '')} ${escapeHtml(s.member_name)}</span>` : '';
+              const itemEscaped = encodeURIComponent(JSON.stringify(s));
+
+              html += `
+                <div class="schedule-item">
+                  <div>
+                    <div class="schedule-time">📅 ${escapeHtml(dateStr)} ${memberTag}</div>
+                    <div class="schedule-name">${escapeHtml(s.prefix ? s.prefix + ' ' : '')}${escapeHtml(s.guest_name)}${escapeHtml(s.suffix ? ' ' + s.suffix : '')}</div>
+                    <div class="schedule-msg">"${escapeHtml(s.sub_message)}"</div>
+                  </div>
+                  <div class="action-btn-group">
+                    <button class="btn-edit" onclick="editSchedule('${itemEscaped}')">수정</button>
+                    <button class="btn-delete" onclick="deleteSchedule(${s.id}, false)">취소/삭제</button>
+                  </div>
+                </div>
+              `;
+            });
+            listEl.innerHTML = html;
+          } catch(e) {}
+        }
+        loadSchedules();
 
         window.deleteSchedule = async function(id, isEarlyCheckout) {
           const msg = isEarlyCheckout 
@@ -2450,6 +2532,7 @@ const uPrefixToggle = document.getElementById('u-prefix-toggle');
           } catch(e) {}
         };
 
+        // ─── VIP 히스토리 아카이브 (컴팩트 리스트형) ───
         let currentHistPage = 1;
         const HIST_PAGE_SIZE = 5;
 
@@ -2490,20 +2573,30 @@ const uPrefixToggle = document.getElementById('u-prefix-toggle');
             let html = '';
             items.forEach(h => {
               const vDate = new Date(h.visit_date);
-              const dateStr = `${vDate.getFullYear()}.${vDate.getMonth()+1}.${vDate.getDate()} (${vDate.toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit', hour12:false})})`;
+              const dateStr = `${vDate.getMonth()+1}.${vDate.getDate()} ${vDate.toLocaleTimeString('ko-KR', {hour:'2-digit', minute:'2-digit', hour12:false})}`;
               const itemDataEscaped = encodeURIComponent(JSON.stringify(h));
 
+              const memberBadge = h.member_name ? 
+                `<span style="background: rgba(201, 169, 110, 0.15); border: 1px solid rgba(201, 169, 110, 0.4); color: #dfcfb2; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px; margin-left: 6px; font-weight: 500;">💳 ${escapeHtml(h.member_code || '')} ${escapeHtml(h.member_name)}</span>` : '';
+
+              const typeBadgeColor = h.event_type === '즉시 반영' ? '#eab308' : '#3b82f6';
+
               html += `
-                <div class="history-item">
-                  <div>
-                    <span class="tag-badge">${escapeHtml(h.event_type || '방문')}</span>
-                    <div class="history-time">${escapeHtml(dateStr)}</div>
-                    <div class="history-name">${escapeHtml(h.prefix ? h.prefix + ' ' : '')}${escapeHtml(h.guest_name)}${escapeHtml(h.suffix ? ' ' + h.suffix : '')}</div>
-                    <div class="history-msg">${escapeHtml(h.sub_message || '-')}</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #181a20; border: 1px solid #262933; border-radius: 8px; margin-bottom: 6px;">
+                  <div style="flex: 1; min-width: 0;">
+                    <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 3px; flex-wrap: wrap;">
+                      <span style="font-size: 0.68rem; padding: 2px 5px; border-radius: 4px; background: rgba(255,255,255,0.06); color: ${typeBadgeColor}; font-weight: 600;">${escapeHtml(h.event_type || '기록')}</span>
+                      <span style="font-size: 0.75rem; color: #64748b;">${dateStr}</span>
+                      ${memberBadge}
+                    </div>
+                    <div style="display: flex; align-items: baseline; gap: 8px;">
+                      <span style="font-size: 0.95rem; font-weight: 600; color: #ffffff;">${escapeHtml(h.prefix ? h.prefix + ' ' : '')}${escapeHtml(h.guest_name)}${escapeHtml(h.suffix ? ' ' + h.suffix : '')}</span>
+                      <span style="font-size: 0.78rem; color: #94a3b8; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 280px;">${escapeHtml(h.sub_message || '')}</span>
+                    </div>
                   </div>
-                  <div class="action-btn-group">
-                    <button class="btn-reuse" onclick="applyHistory('${itemDataEscaped}')">불러오기</button>
-                    <button class="btn-delete" onclick="deleteHistory(${h.id})">삭제</button>
+                  <div style="display: flex; gap: 6px; align-items: center; margin-left: 10px;">
+                    <button type="button" class="btn-edit" style="padding: 4px 8px; font-size: 0.75rem;" onclick="applyHistory('${itemDataEscaped}')">불러오기</button>
+                    <button type="button" class="btn-delete" style="padding: 4px 8px; font-size: 0.75rem;" onclick="deleteHistory(${h.id})">삭제</button>
                   </div>
                 </div>
               `;
@@ -2553,25 +2646,37 @@ const uPrefixToggle = document.getElementById('u-prefix-toggle');
           }
         };
 
+        // 히스토리 항목을 통합 입력 폼으로 불러오기
         window.applyHistory = function(encodedData) {
           const data = JSON.parse(decodeURIComponent(encodedData));
           if (data.prefix) {
-            prefixToggle.checked = true;
-            prefixSelectBox.style.display = 'block';
-            prefixSelect.value = data.prefix;
+            uPrefixToggle.checked = true;
+            uPrefixSelectBox.style.display = 'block';
+            uPrefixSelect.value = data.prefix;
           } else {
-            prefixToggle.checked = false;
-            prefixSelectBox.style.display = 'none';
+            uPrefixToggle.checked = false;
+            uPrefixSelectBox.style.display = 'none';
           }
 
-          document.getElementById('name-input').value = data.guest_name || '';
-          suffixToggle.checked = (data.suffix === '님');
-          document.getElementById('msg-input').value = data.sub_message || '';
-          if (data.bg_source) document.getElementById('bg-select').value = data.bg_source;
-          if (data.bgm_source) document.getElementById('bgm-select').value = data.bgm_source;
+          document.getElementById('u-name-input').value = (data.guest_name && data.guest_name !== 'Guest') ? data.guest_name : '';
+          uSuffixToggle.checked = (data.suffix === '님');
+          document.getElementById('u-msg-input').value = data.sub_message || '라 콜론에 오신 것을 환영합니다.';
+          if (data.bg_source) document.getElementById('u-bg-select').value = data.bg_source;
+          if (data.bgm_source) document.getElementById('u-bgm-select').value = data.bgm_source;
 
-          window.scrollTo({ top: 120, behavior: 'smooth' });
-          alert(`[${data.guest_name}] 님의 기존 방문 설정이 상시 표출 폼에 채워졌습니다. 확인 후 [TV 화면에 즉시 반영]을 누르시면 됩니다.`);
+          // 회원 연동 선택 매핑
+          const memSelect = document.getElementById('u-member-select');
+          if (memSelect && data.member_code) {
+            for (let i = 0; i < memSelect.options.length; i++) {
+              if (memSelect.options[i].getAttribute('data-code') === data.member_code) {
+                memSelect.selectedIndex = i;
+                break;
+              }
+            }
+          }
+
+          document.getElementById('unified-control-card').scrollIntoView({ behavior: 'smooth' });
+          alert(`[${data.guest_name}] 님의 방문 설정이 상단 통합 제어 폼에 채워졌습니다.`);
         };
 
         window.loadOrders = async function() {
