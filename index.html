@@ -19,6 +19,7 @@
       -webkit-overflow-scrolling: touch;
     }
 
+    /* ─── 애니메이션 ─── */
     @keyframes pixelShiftTop {
       0%, 100% { transform: translate(0px, 0px); }
       25% { transform: translate(1.5px, -1.5px); }
@@ -32,6 +33,7 @@
       75% { transform: translate(-1px, -24px); }
     }
 
+    /* ─── TV 디스플레이 레이아웃 ─── */
     #tv-section {
       display: none;
       position: fixed;
@@ -100,6 +102,7 @@
     .qr-sub { font-size: 0.68rem; color: #8b92a0; }
     #tv-status-dot { position: fixed; bottom: 30px; left: 14px; z-index: 9999; width: 6px; height: 6px; border-radius: 50%; background: #22c55e; opacity: 0.6; pointer-events: none; }
 
+    /* ─── 캐스트 모달 ─── */
     #cast-modal { display: none; position: fixed; inset: 0; z-index: 99999; background: rgba(8, 9, 12, 0.78); backdrop-filter: blur(20px); align-items: center; justify-content: center; padding: 24px; opacity: 0; transition: opacity 0.4s ease; }
     #cast-modal.show { display: flex; opacity: 1; }
     .cast-dialog { background: #15171e; border: 1px solid rgba(201, 169, 110, 0.45); border-radius: 24px; padding: 42px 48px; max-width: 680px; width: 100%; text-align: center; }
@@ -111,6 +114,7 @@
     .cast-step { font-size: 0.85rem; color: #c4c8d3; line-height: 1.6; margin-bottom: 6px; }
     .cast-step b { color: #dfcfb2; }
 
+    /* ─── 공통 관리자 카드 & UI 위젯 ─── */
     .admin-card { background: #16171b; border: 1px solid #282a32; border-radius: 18px; padding: 24px; margin-bottom: 22px; }
     .admin-title { font-size: 1.2rem; color: #c9a96e; font-weight: 600; margin-bottom: 18px; }
     .form-group { margin-bottom: 15px; }
@@ -137,9 +141,8 @@
     .btn-delete { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.35); color: #f87171; padding: 6px 12px; border-radius: 8px; font-size: 0.78rem; cursor: pointer; }
     .btn-trigger-now { background: rgba(201, 169, 110, 0.2); border: 1px solid #c9a96e; color: #dfcfb2; padding: 6px 12px; border-radius: 8px; font-size: 0.78rem; cursor: pointer; font-weight: 600; flex: 1; }
 
+    /* 리스트 스타일 & 모바일 히스토리 2열 슬림 카드 */
     .compact-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #181a20; border: 1px solid #262933; border-radius: 8px; margin-bottom: 6px; }
-   
-    /* 모바일 히스토리 슬림 카드 */
     .history-card-row {
       display: flex;
       flex-direction: column;
@@ -169,7 +172,7 @@
       font-size: 0.72rem;
       cursor: pointer;
     }
-    
+
     .tag-badge { display: inline-block; font-size: 0.68rem; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
     .badge-gold { background: rgba(201, 169, 110, 0.15); border: 1px solid rgba(201, 169, 110, 0.4); color: #dfcfb2; }
     .badge-blue { background: rgba(59, 130, 246, 0.15); color: #93c5fd; }
@@ -201,7 +204,7 @@
 </head>
 <body>
 
-  <!-- [화면 1] 손님용 기본 허브 포털 (?view 없음) -->
+  <!-- [화면 1] 손님용 포털 (?view 없음) -->
   <div id="guest-portal-section">
     <div class="portal-brand">La Colonne</div>
     <div class="portal-sub">Private Business Lounge</div>
@@ -216,7 +219,7 @@
     </div>
   </div>
 
-  <!-- 관리자 PIN 인증 모달 -->
+  <!-- 관리자 PIN 모달 -->
   <div id="pin-modal">
     <div class="pin-box">
       <div style="font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; color: #dfcfb2; margin-bottom: 6px;">Master Authentication</div>
@@ -323,7 +326,7 @@
     <audio id="bgm-player" loop preload="auto"></audio>
   </div>
 
-  <!-- [화면 3] 라운지 관리자 메인 허브 (?view=admin) -->
+  <!-- [화면 3] 관리자 메인 허브 (?view=admin) -->
   <div id="admin-section">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
       <div style="display: flex; gap: 12px;">
@@ -557,7 +560,7 @@
 
   <div id="toast-msg"></div>
 
-  <!-- ─── 마스터 JS 엔진 (안전성 & 보안 완벽 복구본) ─── -->
+  <!-- ─── 마스터 JS 엔진 (보안 & 모바일 최적화 완결판) ─── -->
   <script>
     const SUPABASE_URL = 'https://jorxmazliodqnxnwctlc.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_GAU-azI_hJvms8k3Nzsyiw_PRH0NG69';
@@ -580,7 +583,7 @@
       return `${d.getMonth()+1}.${d.getDate()} ${fmtDate(d, 'time')}`;
     }
 
-    // [보안 복구 1] 관리자 세션 토큰 헤더(x-admin-token) 완벽 주입
+    // 관리자 세션 토큰 헤더(x-admin-token) 주입
     function getAdminHeaders(extra = {}) {
       const token = sessionStorage.getItem('la_colonne_admin_token') || '';
       return { 
@@ -661,7 +664,6 @@
       const [phoneIn, pinIn, errEl, resEl] = [document.getElementById('client-phone-input'), document.getElementById('client-pin-input'), document.getElementById('client-login-error'), document.getElementById('member-pass-result')];
       [phoneIn, pinIn].forEach(el => el.addEventListener('keydown', e => { if (e.key === 'Enter') queryMemberPass(); }));
 
-      // [보안 복구 4] 손님 조회 무차별 대입(Brute-force) 5회 실패 잠금 방어
       let clientFailCount = 0;
       let clientLockUntil = 0;
 
@@ -691,7 +693,7 @@
             errEl.style.display = 'block'; resEl.style.display = 'none';
             return;
           }
-          clientFailCount = 0; // 성공 시 카운트 리셋
+          clientFailCount = 0;
           const m = data[0];
           const remain = Math.max(0, (parseInt(m.total_passes) || 0) - (parseInt(m.used_passes) || 0));
           resEl.innerHTML = `
@@ -906,7 +908,6 @@
       let currentDataKey = '', currentBgmUrl = '', videoPlaylist = [], currentPlaylistIdx = 0, activeBuf = 'A', isFired = false;
       const setDot = c => dot.style.backgroundColor = c;
 
-      // OTT 독 제어
       let ottTimer = null;
       const wakeOtt = () => {
         const dock = document.getElementById('ott-dock');
@@ -916,14 +917,12 @@
       window.openCastModal = () => { castModal.classList.add('show'); };
       window.closeCastModal = () => { castModal.classList.remove('show'); };
 
-      // [보안 복구 6] 리모컨 뒤로가기 / ESC 키 지원 복구 (Tizen 10009, Android 4, ESC 27)
       window.addEventListener('keydown', e => {
         if (['Escape', 'GoBack'].includes(e.key) || [27, 10009, 4].includes(e.keyCode)) {
           if (castModal && castModal.classList.contains('show')) closeCastModal();
         }
       });
 
-      // 시계 & 일일 리로드
       let lastReload = '';
       function updateClock() {
         const d = new Date();
@@ -933,7 +932,6 @@
       }
       setInterval(updateClock, 1000); updateClock();
 
-      // 날씨 위젯
       async function updateWeather() {
         try {
           const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=35.1796&longitude=129.0756&current_weather=true');
@@ -948,12 +946,10 @@
       }
       updateWeather(); setInterval(updateWeather, 1800000);
 
-      // QR 초기화
       const makeQR = (id, data) => document.getElementById(id).src = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&margin=0&data=' + encodeURIComponent(data);
       makeQR('wifi-qr-img', 'WIFI:T:WPA;S:La_Colonne_VIP;P:welcome2026;;');
       makeQR('amenity-qr-img', `${location.origin}${location.pathname}?view=bar`);
 
-      // 비디오 크로스페이드
       function crossfade() {
         if (isFired || videoPlaylist.length <= 1) return;
         isFired = true;
@@ -973,7 +969,6 @@
         const dMsg = (msg && msg.trim()) ? msg.trim() : '라 콜론에 오신 것을 환영합니다.';
         const key = `${prefix}|${dName}|${suffix}|${dMsg}|${bgUrl}|${bgmUrl}`;
         
-        // [보안 복구 5] 오프라인 캐시 저장
         try {
           localStorage.setItem('la_colonne_cached_display', JSON.stringify({ prefix, name: dName, suffix, msg: dMsg, bgUrl, bgmUrl }));
         } catch(e) {}
@@ -1012,7 +1007,6 @@
         }
       }
 
-      // [보안 복구 5] 오프라인 폴백 로드
       function loadOfflineFallback() {
         try {
           const cached = JSON.parse(localStorage.getItem('la_colonne_cached_display'));
@@ -1053,7 +1047,6 @@
         } catch(e) {}
       }
 
-      // [보안 복구 7] click + touchstart 미디어 자동재생 언락
       ['click', 'touchstart'].forEach(evt => {
         window.addEventListener(evt, () => {
           if (player.src && player.paused && currentBgmUrl !== 'none') player.play();
@@ -1089,7 +1082,6 @@
         }
         loadMembers();
 
-        // 실시간 모니터
         async function updateStatus() {
           const [badge, title, desc, card, btn] = ['occupancy-badge','occupancy-title','occupancy-desc','current-occupancy-card','btn-force-guest'].map(id => document.getElementById(id));
           try {
@@ -1131,7 +1123,6 @@
         }
         updateStatus(); setInterval(updateStatus, 4000);
 
-        // 퇴실 처리 (공통 리셋)
         window.resetToGuestScreen = async function() {
           if (!confirm('현재 표출을 종료(퇴실)하고 기본 대기 화면(Guest)으로 복귀하시겠습니까?')) return;
           try {
@@ -1232,14 +1223,12 @@
           }
         };
 
-        // +3시간 자동
         document.getElementById('u-sched-start').onchange = function() {
           if (!this.value) return;
           const d = new Date(this.value); d.setHours(d.getHours() + 3);
           document.getElementById('u-sched-end').value = fmtDate(d, 'iso');
         };
 
-        // 회원 변경 힌트
         document.getElementById('u-member-select').onchange = function() {
           const opt = this.options[this.selectedIndex];
           document.getElementById('u-name-input').placeholder = (opt && this.value) ? `미입력 시 회원명 '${opt.dataset.name}' 표출` : "비워둘 시 기본값 'Guest' 표출";
@@ -1272,7 +1261,6 @@
                   </div>
                   <div class="action-btn-group">
                     <button class="btn-edit" onclick="editSchedule('${enc}')">수정</button>
-                    <!-- [보안 복구 3] encodeURIComponent로 안전하게 인자 전달 -->
                     <button class="btn-delete" onclick="deleteSchedule(${s.id}, ${isCur}, '${enc}')">${isCur ? '🚪 조기퇴실' : '취소/삭제'}</button>
                   </div>
                 </div>`;
@@ -1282,7 +1270,6 @@
         }
         loadSchedules();
 
-        // [보안 복구 3] 인코딩된 객체에서 memberCode/Name 안전 추출 및 노쇼 환불 분기
         window.deleteSchedule = async (id, isCur, encData) => {
           const s = JSON.parse(decodeURIComponent(encData));
           if (!confirm(isCur ? '현재 TV에 진행 중인 일정입니다. [조기 퇴실] 처리하시겠습니까?' : '이 예약을 취소/삭제하시겠습니까?')) return;
@@ -1338,45 +1325,71 @@
           document.getElementById('u-prefix-select-box').style.display = 'none';
         };
 
-        // 히스토리 아카이브
+        // ─── VIP 히스토리 아카이브 (모바일 2열 슬림 카드 & 이중 안전 로드) ───
         let histPage = 1;
+        const HIST_PAGE_SIZE = 5;
+
         async function recordHistory(type, f, date = null) {
           if (!f.name || f.name === 'Guest') return;
-          await apiCall('welcome_history', 'POST', {
-            event_type: type, visit_date: date || new Date().toISOString(), prefix: f.prefix, guest_name: f.name,
-            suffix: f.suffix, sub_message: f.msg, bg_source: f.bg, bgm_source: f.bgm, member_code: f.memberCode, member_name: f.memberName
-          });
-          loadHistory(1);
+          try {
+            await apiCall('welcome_history', 'POST', {
+              event_type: type,
+              visit_date: date || new Date().toISOString(),
+              prefix: f.prefix,
+              guest_name: f.name,
+              suffix: f.suffix,
+              sub_message: f.msg,
+              bg_source: f.bg,
+              bgm_source: f.bgm,
+              member_code: f.memberCode || '',
+              member_name: f.memberName || ''
+            });
+            loadHistory(1);
+          } catch(e) {}
         }
 
-        window.loadHistory = async p => {
+        window.loadHistory = async function(p) {
           if (p) histPage = p;
-          const c = document.getElementById('history-list');
+          const histContainer = document.getElementById('history-list');
+          const paginationBar = document.getElementById('history-pagination');
+          const offset = (histPage - 1) * HIST_PAGE_SIZE;
+
           try {
-            const items = await callAdminRpc('get_admin_history', { p_limit: 5, p_offset: (histPage - 1) * 5 });
+            let items = null;
+            try {
+              items = await callAdminRpc('get_admin_history', { p_limit: HIST_PAGE_SIZE, p_offset: offset });
+            } catch(rpcErr) {
+              const fallbackRes = await apiCall(`welcome_history?select=*&order=visit_date.desc&limit=${HIST_PAGE_SIZE}&offset=${offset}`);
+              if (fallbackRes.ok) items = await fallbackRes.json();
+            }
+
             if (!items || !items.length) {
               if (histPage > 1) return loadHistory(histPage - 1);
-              c.innerHTML = '<div style="color:#666; font-size:0.85rem; text-align:center; padding:15px;">히스토리가 없습니다.</div>';
-              document.getElementById('history-pagination').style.display = 'none'; return;
+              histContainer.innerHTML = '<div style="color: #666; font-size: 0.85rem; text-align: center; padding: 15px 0;">히스토리가 비어 있습니다.</div>';
+              if (paginationBar) paginationBar.style.display = 'none';
+              return;
             }
+
             let html = '';
             items.forEach(h => {
+              const enc = encodeURIComponent(JSON.stringify(h));
+              const isInstant = (h.event_type === '즉시 반영');
+              const vDateStr = fmtDate(h.visit_date);
+              const mBadge = h.member_name ? `<span class="tag-badge badge-gold" style="white-space:nowrap; text-overflow:ellipsis; overflow:hidden; max-width:120px;">💳 ${escapeHtml(h.member_name)}</span>` : '';
+
               html += `
-               <div class="history-card-row">
-                  <!-- 1행: 상태 배지 + 일시 + 회원정보 / 우측 액션 버튼 -->
+                <div class="history-card-row">
                   <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div style="display: flex; align-items: center; gap: 5px; min-width: 0; overflow: hidden;">
-                      <span class="tag-badge ${isInstant ? 'badge-gold' : 'badge-blue'}">${escapeHtml(h.event_type)}</span>
-                      <span style="font-size: 0.73rem; color: #64748b; white-space: nowrap;">${fmtDate(h.visit_date)}</span>
-                      ${h.member_name ? `<span class="tag-badge badge-gold" style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden; max-width: 130px;">💳 ${escapeHtml(h.member_name)}</span>` : ''}
+                      <span class="tag-badge ${isInstant ? 'badge-gold' : 'badge-blue'}">${escapeHtml(h.event_type || '기록')}</span>
+                      <span style="font-size: 0.73rem; color: #64748b; white-space: nowrap;">${vDateStr}</span>
+                      ${mBadge}
                     </div>
                     <div style="display: flex; gap: 5px; flex-shrink: 0; margin-left: 6px;">
                       <button type="button" class="hist-btn-sm" onclick="applyHistory('${enc}')">불러오기</button>
                       <button type="button" class="hist-btn-del" onclick="deleteHistory(${h.id})">삭제</button>
                     </div>
                   </div>
-
-                  <!-- 2행: 표출 성함 + 환영 문구 -->
                   <div style="display: flex; align-items: baseline; gap: 8px; min-width: 0;">
                     <span style="font-size: 0.92rem; font-weight: 600; color: #ffffff; white-space: nowrap;">
                       ${escapeHtml(h.prefix ? h.prefix + ' ' : '')}${escapeHtml(h.guest_name)}${escapeHtml(h.suffix ? ' ' + h.suffix : '')}
@@ -1387,25 +1400,38 @@
                   </div>
                 </div>`;
             });
-            c.innerHTML = html;
-            const total = Math.ceil((items[0].total_count || 1) / 5);
-            document.getElementById('history-pagination').style.display = total > 1 ? 'flex' : 'none';
-            document.getElementById('hist-page-num').innerText = `${histPage} / ${total}`;
-            document.getElementById('hist-prev-btn').disabled = (histPage <= 1);
-            document.getElementById('hist-next-btn').disabled = (histPage >= total);
-          } catch(e) {}
+
+            histContainer.innerHTML = html;
+
+            const totalCount = items[0].total_count || 1;
+            const totalPages = Math.ceil(totalCount / HIST_PAGE_SIZE) || 1;
+            if (paginationBar) {
+              paginationBar.style.display = totalPages > 1 ? 'flex' : 'none';
+              document.getElementById('hist-page-num').innerText = `${histPage} / ${totalPages}`;
+              document.getElementById('hist-prev-btn').disabled = (histPage <= 1);
+              document.getElementById('hist-next-btn').disabled = (histPage >= totalPages);
+            }
+          } catch(err) {
+            histContainer.innerHTML = '<div style="color: #f87171; font-size: 0.82rem; text-align: center; padding: 15px;">히스토리 로드 실패 (새로고침을 눌러주세요)</div>';
+          }
         };
         loadHistory(1);
+
         window.changeHistPage = d => loadHistory(histPage + d);
         window.deleteHistory = async id => {
           if (!confirm('이 기록을 영구 삭제하시겠습니까?')) return;
-          if (await callAdminRpc('delete_admin_history', { p_id: id })) loadHistory(histPage);
+          try {
+            await callAdminRpc('delete_admin_history', { p_id: id });
+          } catch(e) {
+            await apiCall(`welcome_history?id=eq.${id}`, 'DELETE');
+          }
+          loadHistory(histPage);
         };
 
         window.applyHistory = enc => {
           const h = JSON.parse(decodeURIComponent(enc));
-          document.getElementById('u-name-input').value = h.guest_name;
-          document.getElementById('u-msg-input').value = h.sub_message;
+          document.getElementById('u-name-input').value = (h.guest_name && h.guest_name !== 'Guest') ? h.guest_name : '';
+          document.getElementById('u-msg-input').value = h.sub_message || '';
           document.getElementById('u-prefix-toggle').checked = !!h.prefix;
           document.getElementById('u-prefix-select-box').style.display = h.prefix ? 'block' : 'none';
           if (h.prefix) document.getElementById('u-prefix-select').value = h.prefix;
@@ -1418,6 +1444,7 @@
             for (let i = 0; i < sel.options.length; i++) {
               if (sel.options[i].dataset.code === h.member_code) { sel.selectedIndex = i; break; }
             }
+            sel.dispatchEvent(new Event('change'));
           }
           document.getElementById('unified-control-card').scrollIntoView({ behavior: 'smooth' });
           showToast(`✓ [${h.guest_name}] 설정 불러오기 완료`);
@@ -1457,7 +1484,6 @@
         window.markPaid = async id => { await apiCall(`lounge_bar_orders?id=eq.${id}`, 'PATCH', { payment_status: '확인 완료' }); loadOrders(); };
         window.delOrder = async id => { if (confirm('삭제하시겠습니까?')) { await apiCall(`lounge_bar_orders?id=eq.${id}`, 'DELETE'); loadOrders(); } };
 
-        // 전역 설정 토글
         ['weather', 'wifi', 'amenity'].forEach(key => {
           const el = document.getElementById(`global-${key}-toggle`);
           el.onchange = () => apiCall('lounge_settings?id=eq.1', 'PATCH', { [`show_${key}`]: el.checked });
