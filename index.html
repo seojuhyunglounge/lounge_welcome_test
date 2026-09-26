@@ -206,7 +206,7 @@
     }
 
     #admin-section { display: none; width: 92%; max-width: 540px; margin: 30px auto 90px auto; }
-    #guest-portal-section, #member-client-section { display: none; width: 90%; max-width: 440px; margin: 60px auto 80px auto; text-align: center; }
+    #guest-portal-section, #member-client-section, #booking-section, #my-booking-section { display: none; width: 90%; max-width: 440px; margin: 60px auto 80px auto; text-align: center; }
     #bar-section { display: none; width: 92%; max-width: 480px; margin: 30px auto 80px auto; }
     #member-admin-section { display: none; width: 92%; max-width: 520px; margin: 30px auto 90px auto; }
 
@@ -231,6 +231,8 @@
     <p style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.6; margin-bottom: 24px;">
       라 콜론 프라이빗 라운지에 오신 것을 환영합니다.<br>이용을 원하시는 서비스를 선택해 주세요.
     </p>
+    <a href="?view=booking" class="portal-menu-btn" style="background: #2563eb; color: #ffffff;">📅 라운지 이용 예약 신청</a>
+    <a href="?view=my_booking" class="portal-menu-btn" style="background: #1f2128; border: 1px solid #3b82f6; color: #93c5fd;">🔍 내 예약 조회 / 취소</a>
     <a href="?view=bar" class="portal-menu-btn" style="background: #c9a96e; color: #0b0c0e;">🍷 어메니티 & 미니바 셀프 정산</a>
     <a href="?view=member" class="portal-menu-btn" style="background: #1f2128; border: 1px solid #333846; color: #dfcfb2;">💳 VIP 멤버십 세션 패스 잔여 확인</a>
     <a href="https://la-colonne.vercel.app/" target="_blank" rel="noopener" class="portal-menu-btn" style="background: transparent; border: 1px solid rgba(201, 169, 110, 0.35); color: #dfcfb2;">🏛 공식 홈페이지 바로가기 ↗</a>
@@ -346,9 +348,8 @@
     <audio id="bgm-player" loop preload="auto"></audio>
   </div>
 
-  <!-- [화면 3] 관리자 메인 허브 (?view=admin) -->
+  <!-- [화면 3] 라운지 관리자 메인 허브 (?view=admin) -->
   <div id="admin-section">
-    <!-- 동일 탭 이동 링크 및 TV 새 창 열기 -->
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
       <div style="display: flex; gap: 12px;">
         <a href="?view=bar&admin=1" style="color: #93c5fd; font-size: 0.85rem; text-decoration: none; font-weight: 500;">🍸 어메니티 편집</a>
@@ -389,6 +390,30 @@
       <div class="toggle-row" style="margin-bottom: 0;">
         <div class="toggle-label"><span>Lounge Bar 어메니티 QR 표시</span><span class="toggle-sub">좌측 하단 미니바 QR On/Off</span></div>
         <label class="switch"><input type="checkbox" id="global-amenity-toggle"><span class="slider"></span></label>
+      </div>
+    </div>
+
+    <!-- 관리자 광역 블록 관리 카드 -->
+    <div class="admin-card" style="border-color: #ef4444; background: #161315;">
+      <div class="admin-title" style="color: #f87171; margin-bottom: 10px;">🔒 예약 불가일 (광역 블록) 관리</div>
+      <div style="font-size: 0.82rem; color: #9ca3af; line-height: 1.5; margin-bottom: 16px;">
+        라운지 휴무, 내부 정비, 또는 개인 일정으로 손님용 웹 예약을 차단할 날짜와 단위를 선택하세요.
+      </div>
+      <div class="form-group">
+        <label>기준 날짜 선택</label>
+        <input type="date" id="block-target-date" style="border-color: #7f1d1d;">
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
+        <button type="button" class="btn-secondary" onclick="applyBulkBlock('day')" style="border-color: #ef4444; color: #fca5a5;">📅 선택한 '일(Day)' 통째 차단</button>
+        <button type="button" class="btn-secondary" onclick="applyBulkBlock('week')" style="border-color: #ef4444; color: #fca5a5;">🗓 선택한 날짜 '주(Week)' 차단</button>
+      </div>
+      <div style="display: flex; gap: 8px; margin-bottom: 16px;">
+        <button type="button" class="btn-secondary" onclick="applyBulkBlock('month')" style="flex: 1; border-color: #ef4444; color: #fca5a5;">🗂 선택한 '월(Month)' 차단</button>
+        <button type="button" class="btn-secondary" onclick="clearBlockForDate()" style="flex: 1; border-color: #374151; color: #9ca3af;">🧹 선택일 블록 해제</button>
+      </div>
+      <div style="font-size: 0.8rem; font-weight: 600; color: #dfcfb2; margin-bottom: 8px;">현재 등록된 활성 블록 목록</div>
+      <div id="blocked-slots-list" style="max-height: 140px; overflow-y: auto; background: #0f1014; border-radius: 8px; padding: 8px; font-size: 0.78rem; color: #9ca3af;">
+        불러오는 중...
       </div>
     </div>
 
@@ -511,7 +536,6 @@
     <div style="text-align: center; margin-bottom: 20px;">
       <div class="portal-brand" style="font-size: 2.2rem;">La Colonne</div>
       <div class="portal-sub">Honesty Bar & Amenities</div>
-      <!-- 관리자 모드 복귀 링크 -->
       <div id="admin-mode-indicator" style="display: none; margin-top: 8px;">
         <a href="?view=admin" style="color: #94a3b8; font-size: 0.82rem; text-decoration: none; margin-right: 8px;">← 라운지 관리 홈</a>
         <span class="tag-badge badge-gold">⚙️ 관리자 편집 모드</span>
@@ -544,6 +568,77 @@
       <button type="button" class="btn-primary" onclick="submitBarOrder()" id="btn-submit-bar">이용 내역 전송 및 입금 완료</button>
       <div id="bar-status-msg" style="margin-top: 10px; font-size: 0.82rem; display: none;"></div>
     </div>
+  </div>
+
+  <!-- [화면 7] 손님용 라운지 이용 예약 신청 (?view=booking) -->
+  <div id="booking-section">
+    <div class="portal-brand" style="font-size: 2.1rem;">La Colonne</div>
+    <div class="portal-sub">Lounge Reservation Portal</div>
+    <div class="admin-card" style="text-align: left; margin-top: 15px;">
+      <div class="form-group">
+        <label>예약일 선택</label>
+        <input type="date" id="book-date" onchange="renderTimeSlots()">
+      </div>
+      <div class="form-group">
+        <label>이용 세션 선택 (고정 3타임)</label>
+        <div style="font-size: 0.74rem; color: #9ca3af; margin-bottom: 8px;">• 1부: 10-13시 | 2부: 14-17시 | 3부: 18-21시<br>• 연달아 선택 시 브레이크타임 자동 병합</div>
+        <div id="slot-buttons-container" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px;"></div>
+      </div>
+      <div class="form-group">
+        <label>신청자 성함 / 연락처</label>
+        <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+          <input type="text" id="book-name" placeholder="성함 입력" style="flex: 1;">
+          <input type="tel" id="book-phone" placeholder="연락처 (010-0000-0000)" style="flex: 1.4;">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>예약 확인용 PIN 번호 (숫자 4자리)</label>
+        <input type="password" id="book-pin" maxlength="4" placeholder="예약 조회 및 취소 시 사용" style="letter-spacing: 4px;">
+      </div>
+      <div class="form-group">
+        <label>TV 표출용 성함 / 모임명</label>
+        <input type="text" id="book-display-name" placeholder="예: ABC 컴퍼니 / 홍길동 대표님 환영회">
+      </div>
+      <div class="form-group">
+        <label>모임 목적 / 서브 환영 문구</label>
+        <input type="text" id="book-sub-msg" value="라 콜론에 오신 것을 환영합니다.">
+      </div>
+
+      <div style="background: #111216; border: 1px solid #262933; border-radius: 10px; padding: 12px; margin-bottom: 16px; font-size: 0.8rem; color: #9ca3af;">
+        <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer; color: #e5e7eb;">
+          <input type="checkbox" id="book-consent-privacy" style="width: 16px; height: 16px; accent-color: #c9a96e;">
+          <span><b>[필수]</b> 개인정보 수집 및 이용 동의 (예약 확정 및 안내용)</span>
+        </label>
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+          <input type="checkbox" id="book-consent-sms" style="width: 16px; height: 16px; accent-color: #c9a96e;">
+          <span><b>[선택]</b> 마케팅 문자(SMS) 수신 동의 (이벤트 및 혜택 안내)</span>
+        </label>
+      </div>
+
+      <button type="button" class="btn-primary" onclick="submitBookingRequest()" style="background: #2563eb; color: #fff;">예약 신청 완료</button>
+      <div id="booking-error-msg" style="color: #f87171; font-size: 0.8rem; margin-top: 10px; display: none; text-align: center;"></div>
+    </div>
+    <div style="margin-top: 16px;"><a href="?" style="color: #888; font-size: 0.8rem; text-decoration: none;">← 메인 포털로 돌아가기</a></div>
+  </div>
+
+  <!-- [화면 8] 내 예약 조회 및 취소 (?view=my_booking) -->
+  <div id="my-booking-section">
+    <div class="portal-brand" style="font-size: 2.1rem;">La Colonne</div>
+    <div class="portal-sub">Reservation Lookup & Cancel</div>
+    <div class="admin-card" style="text-align: left; margin-top: 15px;">
+      <div class="form-group">
+        <label>등록된 휴대폰 번호</label>
+        <input type="tel" id="my-phone-input" placeholder="010-1234-5678">
+      </div>
+      <div class="form-group">
+        <label>예약 확인용 PIN 번호 (4자리)</label>
+        <input type="password" id="my-pin-input" maxlength="4" placeholder="PIN 입력" style="letter-spacing: 4px;">
+      </div>
+      <button type="button" class="btn-primary" onclick="lookupMyBookings()">내 예약 내역 조회</button>
+      <div id="my-lookup-error" style="color: #f87171; font-size: 0.8rem; margin-top: 10px; display: none; text-align: center;"></div>
+    </div>
+    <div id="my-bookings-result" style="display: none;"></div>
+    <div style="margin-top: 16px;"><a href="?" style="color: #888; font-size: 0.8rem; text-decoration: none;">← 메인 포털로 돌아가기</a></div>
   </div>
 
   <!-- [화면 5] VIP 멤버십 횟수 관리 (?view=member_admin) -->
@@ -587,7 +682,7 @@
       <div id="client-login-error" style="color: #f87171; font-size: 0.8rem; margin-top: 10px; display: none; text-align: center;"></div>
     </div>
     <div id="member-pass-result" style="display: none;"></div>
-    <div style="margin-top: 16px;"><a href="javascript:history.back()" style="color: #888; font-size: 0.8rem; text-decoration: none;">← 이전으로 돌아가기</a></div>
+    <div style="margin-top: 16px;"><a href="?" style="color: #888; font-size: 0.8rem; text-decoration: none;">← 메인 포털로 돌아가기</a></div>
   </div>
 
   <div id="toast-msg"></div>
@@ -602,9 +697,9 @@
     const ACCOUNT_CONFIG = { bank: '국민은행', num: '123456-04-123456', owner: '라콜론' };
     const params = new URLSearchParams(window.location.search);
     const viewParam = params.get('view');
-    const [isTV, isBar, isBarAdmin, isMemberAdmin, isMemberClient, isAdmin] = [
+    const [isTV, isBar, isBarAdmin, isMemberAdmin, isMemberClient, isBooking, isMyBooking, isAdmin] = [
       viewParam === 'tv', viewParam === 'bar', viewParam === 'bar' && params.get('admin') === '1',
-      viewParam === 'member_admin', viewParam === 'member', viewParam === 'admin'
+      viewParam === 'member_admin', viewParam === 'member', viewParam === 'booking', viewParam === 'my_booking', viewParam === 'admin'
     ];
 
     function fmtDate(dInput, type) {
@@ -663,7 +758,7 @@
       showToast('✓ 계좌번호가 복사되었습니다: ' + str);
     }
 
-    // ─── 관리자 PIN 인증 ───
+    // 관리자 PIN 인증
     function requireAdminAuth(onSuccess) {
       if (sessionStorage.getItem('la_colonne_admin_token')) return onSuccess();
       const [modal, input, err] = [document.getElementById('pin-modal'), document.getElementById('admin-pin-input'), document.getElementById('pin-error-msg')];
@@ -688,9 +783,170 @@
     window.logoutAdmin = () => { sessionStorage.removeItem('la_colonne_admin_token'); location.href = location.pathname; };
 
     // ─────────────────────────────────────────────
+    // [화면 7] 손님용 라운지 이용 예약 신청 (?view=booking)
+    // ─────────────────────────────────────────────
+    if (isBooking) {
+      document.getElementById('booking-section').style.display = 'block';
+      const todayStr = new Date().toISOString().slice(0, 10);
+      document.getElementById('book-date').value = todayStr;
+      document.getElementById('book-date').min = todayStr;
+
+      const SESSIONS = [
+        { id: 1, name: '1부 (오전)', start: '10:00', end: '13:00' },
+        { id: 2, name: '2부 (오후)', start: '14:00', end: '17:00' },
+        { id: 3, name: '3부 (저녁)', start: '18:00', end: '21:00' }
+      ];
+
+      window.renderTimeSlots = async function() {
+        const dateVal = document.getElementById('book-date').value;
+        const container = document.getElementById('slot-buttons-container');
+        if (!dateVal) return;
+
+        container.innerHTML = '<div style="color:#888; font-size:0.8rem; text-align:center;">예약 가능 여부 확인 중...</div>';
+        try {
+          const sRes = await apiCall(`welcome_schedules?start_time=gte.${dateVal}T00:00:00&start_time=lte.${dateVal}T23:59:59&select=start_time,end_time`);
+          const existing = sRes.ok ? await sRes.json() : [];
+
+          let html = '';
+          SESSIONS.forEach(sess => {
+            const sessStartISO = `${dateVal}T${sess.start}:00`;
+            const sessEndISO = `${dateVal}T${sess.end}:00`;
+            const isBlocked = existing.some(ex => sessStartISO < ex.end_time && sessEndISO > ex.start_time);
+
+            html += `
+              <label style="display: flex; align-items: center; justify-content: space-between; background: ${isBlocked ? '#1a1214' : '#212329'}; border: 1px solid ${isBlocked ? '#7f1d1d' : '#333640'}; border-radius: 10px; padding: 12px 14px; cursor: ${isBlocked ? 'not-allowed' : 'pointer'}; opacity: ${isBlocked ? '0.6' : '1'};">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <input type="checkbox" name="book-slot" value="${sess.id}" data-start="${sessStartISO}" data-end="${sessEndISO}" ${isBlocked ? 'disabled' : ''} style="width: 18px; height: 18px; accent-color: #c9a96e;">
+                  <div>
+                    <div style="font-weight: 600; font-size: 0.9rem; color: ${isBlocked ? '#f87171' : '#fff'};">${sess.name} (${sess.start} ~ ${sess.end})</div>
+                    <div style="font-size: 0.72rem; color: #888; margin-top: 2px;">${isBlocked ? '🔒 관리자 마감 또는 예약 불가' : '✨ 이용 가능'}</div>
+                  </div>
+                </div>
+                <span class="tag-badge ${isBlocked ? 'badge-blue' : 'badge-gold'}" style="background: ${isBlocked ? '#7f1d1d' : ''}; color: ${isBlocked ? '#fca5a5' : ''};">${isBlocked ? '예약 마감' : '선택 가능'}</span>
+              </label>`;
+          });
+          container.innerHTML = html;
+        } catch(e) {
+          container.innerHTML = '<div style="color:#f87171; font-size:0.8rem; text-align:center;">타임 슬롯 로드 실패</div>';
+        }
+      };
+      renderTimeSlots();
+
+      window.submitBookingRequest = async function() {
+        const dateVal = document.getElementById('book-date').value;
+        const name = document.getElementById('book-name').value.trim();
+        const phone = document.getElementById('book-phone').value.trim().replace(/[^0-9]/g, '');
+        const pin = document.getElementById('book-pin').value.trim();
+        const displayName = document.getElementById('book-display-name').value.trim();
+        const subMsg = document.getElementById('book-sub-msg').value.trim();
+        const privacy = document.getElementById('book-consent-privacy').checked;
+        const smsConsent = document.getElementById('book-consent-sms').checked;
+        const errEl = document.getElementById('booking-error-msg');
+        errEl.style.display = 'none';
+
+        if (!dateVal || !name || !phone || !pin || !displayName) return (errEl.innerText = '날짜, 신청자 성함, 연락처, PIN(4자리), 모임명을 모두 입력하세요.', errEl.style.display = 'block');
+        if (pin.length !== 4) return (errEl.innerText = 'PIN 번호는 정확히 숫자 4자리여야 합니다.', errEl.style.display = 'block');
+        if (!privacy) return (errEl.innerText = '개인정보 수집 및 이용 동의(필수)에 체크해 주세요.', errEl.style.display = 'block');
+
+        const checkedSlots = Array.from(document.querySelectorAll('input[name="book-slot"]:checked'));
+        if (!checkedSlots.length) return (errEl.innerText = '이용할 세션을 최소 1개 이상 선택해 주세요.', errEl.style.display = 'block');
+
+        let finalStart = checkedSlots[0].dataset.start;
+        let finalEnd = checkedSlots[checkedSlots.length - 1].dataset.end;
+
+        try {
+          errEl.innerText = '예약 신청 접수 중...'; errEl.style.display = 'block';
+
+          // 보안 RPC 함수 호출
+          const res = await apiCall('rpc/submit_customer_booking', 'POST', {
+            p_name: name,
+            p_phone: phone,
+            p_sms_consent: smsConsent,
+            p_start_time: finalStart,
+            p_end_time: finalEnd,
+            p_guest_name: displayName,
+            p_sub_message: subMsg || '라 콜론에 오신 것을 환영합니다.',
+            p_pin_code: pin
+          });
+          const result = await res.json();
+
+          if (result && result.success) {
+            alert(`[예약 신청 완료]\n\n${name} 님의 라운지 이용 예약이 접수되었습니다.\n추후 '내 예약 조회'에서 PIN 번호로 확인 및 취소가 가능합니다.`);
+            location.href = '?';
+          } else {
+            throw new Error(result.message || '예약 실패');
+          }
+        } catch(e) {
+          errEl.innerText = '예약 신청 실패: ' + (e.message || '시간대가 중복되었거나 서버 오류가 발생했습니다.');
+          errEl.style.display = 'block';
+        }
+      };
+
+    // ─────────────────────────────────────────────
+    // [화면 8] 내 예약 조회 및 취소 (?view=my_booking)
+    // ─────────────────────────────────────────────
+    } else if (isMyBooking) {
+      document.getElementById('my-booking-section').style.display = 'block';
+      const [phoneIn, pinIn, errEl, resEl] = [document.getElementById('my-phone-input'), document.getElementById('my-pin-input'), document.getElementById('my-lookup-error'), document.getElementById('my-bookings-result')];
+
+      window.lookupMyBookings = async function() {
+        const phone = phoneIn.value.trim().replace(/[^0-9]/g, '');
+        const pin = pinIn.value.trim();
+        errEl.style.display = 'none';
+
+        if (!phone || !pin) return (errEl.innerText = '연락처와 PIN 번호 4자리를 모두 입력하세요.', errEl.style.display = 'block');
+
+        try {
+          // 일치하는 PIN과 예약 조회 (고객 전화번호 기반 또는 스케줄 조인)
+          const res = await apiCall(`welcome_schedules?pin_code=eq.${pin}&end_time=gte.${new Date().toISOString()}&order=start_time.asc`);
+          const bookings = res.ok ? await res.json() : [];
+          
+          if (!bookings.length) {
+            errEl.innerText = '일치하는 예약 내역이 없거나 PIN 번호가 올바르지 않습니다.';
+            errEl.style.display = 'block'; resEl.style.display = 'none';
+            return;
+          }
+
+          let html = '<div style="margin-top: 20px; text-align: left;"><div style="font-size: 0.9rem; font-weight: 600; color: #dfcfb2; margin-bottom: 12px;">📅 나의 예약 내역</div>';
+          bookings.forEach(b => {
+            if (b.guest_name === '[CLOSED_BLOCK]') return;
+            html += `
+              <div class="schedule-item">
+                <div>
+                  <div style="font-size: 0.8rem; color: #c9a96e; font-weight: 600; margin-bottom: 3px;">📅 ${fmtDate(b.start_time)} ~ ${fmtDate(b.end_time, 'time')}</div>
+                  <div style="font-size: 1rem; font-weight: 600;">${escapeHtml(b.guest_name)}</div>
+                  <div style="font-size: 0.78rem; color: #9ca3af; margin-top: 2px;">"${escapeHtml(b.sub_message)}"</div>
+                </div>
+                <div class="action-btn-group" style="justify-content: flex-end;">
+                  <button class="btn-delete" onclick="cancelMyBooking(${b.id}, '${pin}')">예약 취소하기</button>
+                </div>
+              </div>`;
+          });
+          html += '</div>';
+          resEl.innerHTML = html;
+          resEl.style.display = 'block';
+        } catch(e) {
+          errEl.innerText = '조회 중 오류가 발생했습니다.'; errEl.style.display = 'block';
+        }
+      };
+
+      window.cancelMyBooking = async function(id, pin) {
+        if (!confirm('정말로 이 예약을 취소하시겠습니까?')) return;
+        try {
+          const res = await apiCall(`welcome_schedules?id=eq.${id}&pin_code=eq.${pin}`, 'DELETE');
+          if (res.ok) {
+            showToast('✓ 예약이 취소되었습니다.');
+            lookupMyBookings();
+          } else {
+            alert('취소 실패');
+          }
+        } catch(e) { alert('서버 오류'); }
+      };
+
+    // ─────────────────────────────────────────────
     // [화면 6] 손님용 멤버십 패스 조회 (?view=member)
     // ─────────────────────────────────────────────
-    if (isMemberClient) {
+    } else if (isMemberClient) {
       document.getElementById('member-client-section').style.display = 'block';
       const [phoneIn, pinIn, errEl, resEl] = [document.getElementById('client-phone-input'), document.getElementById('client-pin-input'), document.getElementById('client-login-error'), document.getElementById('member-pass-result')];
       [phoneIn, pinIn].forEach(el => el.addEventListener('keydown', e => { if (e.key === 'Enter') queryMemberPass(); }));
@@ -1099,7 +1355,6 @@
       function initAdmin() {
         let cachedMembers = [], currentSchedId = null, editingId = null;
 
-        // 공통 토글 상태 불러와서 스위치 완벽 유지
         async function loadGlobalSettings() {
           try {
             const res = await apiCall('lounge_settings?select=*&id=eq.1');
@@ -1138,7 +1393,102 @@
         }
         loadMembers();
 
-        // LIVE 상태창 표시 및 간결한 퇴실 버튼 정렬
+        const blockDateIn = document.getElementById('block-target-date');
+        blockDateIn.value = new Date().toISOString().slice(0, 10);
+
+        window.loadBlockedSlots = async function() {
+          const listEl = document.getElementById('blocked-slots-list');
+          try {
+            const res = await apiCall(`welcome_schedules?guest_name=eq.[CLOSED_BLOCK]&end_time=gte.${new Date().toISOString()}&order=start_time.asc`);
+            const blocks = res.ok ? await res.json() : [];
+            if (!blocks.length) return (listEl.innerHTML = '<div style="padding: 6px; text-align: center;">등록된 활성 블록이 없습니다.</div>');
+            let html = '';
+            blocks.forEach(b => {
+              html += `<div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 6px; border-bottom: 1px solid #1a1c24;">
+                <span>🔒 ${fmtDate(b.start_time)} ~ ${fmtDate(b.end_time, 'time')}</span>
+                <button type="button" onclick="removeBlock(${b.id})" style="background:none; border:none; color:#f87171; cursor:pointer; font-size:0.75rem;">[해제]</button>
+              </div>`;
+            });
+            listEl.innerHTML = html;
+          } catch(e) { listEl.innerHTML = '블록 로드 실패'; }
+        };
+        loadBlockedSlots();
+
+        window.applyBulkBlock = async function(mode) {
+          const dVal = blockDateIn.value;
+          if (!dVal) return alert('기준 날짜를 선택하세요.');
+
+          let startList = [];
+          const targetDate = new Date(dVal);
+
+          if (mode === 'day') {
+            startList.push(`${dVal}T10:00:00`, `${dVal}T14:00:00`, `${dVal}T18:00:00`);
+          } else if (mode === 'week') {
+            const dayOfWeek = targetDate.getDay() || 7;
+            const monday = new Date(targetDate);
+            monday.setDate(targetDate.getDate() - dayOfWeek + 1);
+            for (let i = 0; i < 7; i++) {
+              const cur = new Date(monday);
+              cur.setDate(monday.getDate() + i);
+              const cStr = cur.toISOString().slice(0, 10);
+              startList.push(`${cStr}T10:00:00`, `${cStr}T14:00:00`, `${cStr}T18:00:00`);
+            }
+          } else if (mode === 'month') {
+            const year = targetDate.getFullYear();
+            const month = targetDate.getMonth();
+            const lastDay = new Date(year, month + 1, 0).getDate();
+            for (let d = 1; d <= lastDay; d++) {
+              const cStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+              startList.push(`${cStr}T10:00:00`, `${cStr}T14:00:00`, `${cStr}T18:00:00`);
+            }
+          }
+
+          if (!confirm(`선택한 조건(${mode.toUpperCase()})에 따라 총 ${startList.length}개의 세션 타임이 예약 불가로 차단됩니다. 진행하시겠습니까?`)) return;
+
+          try {
+            for (const st of startList) {
+              const dt = new Date(st);
+              let endH = dt.getHours() + 3;
+              dt.setHours(endH);
+              const enStr = dt.toISOString();
+
+              await apiCall('welcome_schedules', 'POST', {
+                start_time: st,
+                end_time: enStr,
+                guest_name: '[CLOSED_BLOCK]',
+                sub_message: '관리자 마감',
+                prefix: '', suffix: '', bg_source: '', bgm_source: '', member_code: '', member_name: '', pin_code: '0000'
+              });
+            }
+            showToast('✓ 광역 블록 적용 완료');
+            loadBlockedSlots();
+          } catch(e) {
+            alert('블록 처리 중 오류가 발생했습니다.');
+          }
+        };
+
+        window.removeBlock = async function(id) {
+          try {
+            await apiCall(`welcome_schedules?id=eq.${id}`, 'DELETE');
+            showToast('✓ 블록 해제 완료');
+            loadBlockedSlots();
+          } catch(e) { alert('해제 실패'); }
+        };
+
+        window.clearBlockForDate = async function() {
+          const dVal = blockDateIn.value;
+          if (!dVal || !confirm(`${dVal} 날짜에 등록된 모든 관리자 블록을 해제하시겠습니까?`)) return;
+          try {
+            const res = await apiCall(`welcome_schedules?guest_name=eq.[CLOSED_BLOCK]&start_time=gte.${dVal}T00:00:00&start_time=lte.${dVal}T23:59:59`);
+            const blocks = res.ok ? await res.json() : [];
+            for (const b of blocks) {
+              await apiCall(`welcome_schedules?id=eq.${b.id}`, 'DELETE');
+            }
+            showToast('✓ 해당일 블록 일괄 해제 완료');
+            loadBlockedSlots();
+          } catch(e) { alert('해제 실패'); }
+        };
+
         async function updateStatus() {
           const [badge, title, desc, card, btn] = ['occupancy-badge','occupancy-title','occupancy-desc','current-occupancy-card','btn-force-guest'].map(id => document.getElementById(id));
           try {
@@ -1154,7 +1504,7 @@
               badge.className = 'tag-badge badge-green'; badge.innerText = `● 표출 중 (${rem}분 남음)`;
               btn.style.display = 'block';
               title.innerText = `${s.prefix ? s.prefix+' ' : ''}${s.guest_name}${s.suffix ? ' '+s.suffix : ''}`;
-              desc.innerText = `문구: "${s.sub_message}"${s.member_name ? ` (회원: ${s.member_code}${s.member_name})` : ''}`;
+              desc.innerText = `문구: "${s.sub_message}"${s.member_name ? ` (회원: ${s.member_code} ${s.member_name})` : ''}`;
               return;
             }
 
@@ -1219,7 +1569,6 @@
           alert('세션 차감 실패 (횟수 부족 또는 인증 만료)'); return false;
         }
 
-        // [동작 1] 즉시 표출
         document.getElementById('btn-action-now').onclick = async () => {
           if (document.getElementById('u-sched-start').value || document.getElementById('u-sched-end').value) return alert('⚠️ 예약 시각이 적혀 있습니다. 시각을 지우고 누르세요.');
           if (currentSchedId) return alert('⚠️ 현재 예약 일정이 진행 중입니다. 상단 [퇴실 처리] 후 진행하세요.');
@@ -1243,7 +1592,6 @@
           }
         };
 
-        // [동작 2] 예약 일정 등록
         document.getElementById('btn-action-sched').onclick = async () => {
           const [sVal, eVal] = [document.getElementById('u-sched-start').value, document.getElementById('u-sched-end').value];
           if (!sVal || !eVal) return alert('시작 및 종료 시각을 모두 지정하세요.');
@@ -1252,13 +1600,12 @@
           const f = getFormData();
           if (!f.name || f.name === 'Guest') return alert('VIP 성함을 입력하세요.');
 
-          // 충돌 검사
           const cRes = await apiCall(`welcome_schedules?end_time=gte.${new Date().toISOString()}&select=id,guest_name,start_time,end_time`);
           const existing = cRes.ok ? await cRes.json() : [];
           for (const ex of existing) {
             if (editingId && ex.id === editingId) continue;
             if (nStart < new Date(ex.end_time) && nEnd > new Date(ex.start_time)) {
-              return alert(`⚠️ [${ex.guest_name}] 님의 일정과 중복됩니다! (${fmtDate(ex.start_time)} ~ ${fmtDate(ex.end_time, 'time')})`);
+              return alert(`⚠️ [${ex.guest_name === '[CLOSED_BLOCK]' ? '관리자 마감' : ex.guest_name}] 님의 일정과 중복됩니다!`);
             }
           }
 
@@ -1266,7 +1613,7 @@
           try {
             const payload = {
               start_time: nStart.toISOString(), end_time: nEnd.toISOString(), prefix: f.prefix, guest_name: f.name,
-              suffix: f.suffix, sub_message: f.msg, bg_source: f.bg, bgm_source: f.bgm, member_code: f.memberCode, member_name: f.memberName
+              suffix: f.suffix, sub_message: f.msg, bg_source: f.bg, bgm_source: f.bgm, member_code: f.memberCode, member_name: f.memberName, pin_code: '0000'
             };
             const res = editingId ? await apiCall(`welcome_schedules?id=eq.${editingId}`, 'PATCH', payload) : await apiCall('welcome_schedules', 'POST', payload);
             if (res.ok) {
@@ -1294,12 +1641,11 @@
           document.getElementById('u-prefix-select-box').style.display = this.checked ? 'block' : 'none';
         };
 
-        // 대기열 목록
         async function loadSchedules() {
           const list = document.getElementById('schedule-list');
           try {
             const res = await apiCall(`welcome_schedules?end_time=gte.${new Date().toISOString()}&order=start_time.asc`);
-            const scheds = res.ok ? await res.json() : [];
+            const scheds = (res.ok ? await res.json() : []).filter(s => s.guest_name !== '[CLOSED_BLOCK]');
             if (!scheds.length) return (list.innerHTML = '<div style="color:#666; font-size:0.85rem; text-align:center; padding:15px;">대기 일정이 없습니다.</div>');
             let html = '';
             scheds.forEach(s => {
@@ -1382,7 +1728,6 @@
           document.getElementById('u-prefix-select-box').style.display = 'none';
         };
 
-        // ─── VIP 히스토리 아카이브 ───
         let histPage = 1;
         const HIST_PAGE_SIZE = 5;
 
@@ -1469,7 +1814,7 @@
               document.getElementById('hist-next-btn').disabled = (histPage >= totalPages);
             }
           } catch(err) {
-            histContainer.innerHTML = '<div style="color: #f87171; font-size: 0.82rem; text-align: center; padding: 15px;">히스토리 로드 실패 (새로고침을 눌러주세요)</div>';
+            histContainer.innerHTML = '<div style="color: #f87171; font-size: 0.82rem; text-align: center; padding: 15px;">히스토리 로드 실패</div>';
           }
         };
         loadHistory(1);
@@ -1507,7 +1852,6 @@
           showToast(`✓ [${h.guest_name}] 설정 불러오기 완료`);
         };
 
-        // 주문 내역
         window.loadOrders = async () => {
           const list = document.getElementById('orders-list');
           try {
