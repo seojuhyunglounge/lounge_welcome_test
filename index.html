@@ -30,7 +30,7 @@
       0%, 100% { transform: translate(0px, -25px); }
       25% { transform: translate(-1.5px, -23.5px); }
       50% { transform: translate(1.5px, -26px); }
-      75% { transform: translate(-1px, -24px); }
+      75% { transform: translate(-1.5px, -24px); }
     }
 
     /* ─── TV 디스플레이 레이아웃 ─── */
@@ -532,8 +532,7 @@
           </div>
         </div>
         <div style="font-size: 0.76rem; color: #b8aba0; margin-bottom: 10px;">
-          • <span style="color:#f4f1ea;">■</span> 예약 가능일 (터치 시 세부 세션 선택)<br>
-          • <span style="color:#6b7280;">■</span> 예약마감 (비활성화)
+          • 날짜 터치 시 세부 세션 선택 (마감된 날은 비활성화)
         </div>
         <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 0.78rem; color: #9c8e80; margin-bottom: 6px; font-weight: 600;">
           <div style="color: #e57373;">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div style="color: #64b5f6;">토</div>
@@ -1073,32 +1072,43 @@
             const dateStr = `${bookYear}-${String(bookMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
             const isPastDay = dateStr < todayStr;
 
-            const checkFullDayBlock = () => {
-              if (isPastDay) return true;
-              const sSlots = [
-                { s: new Date(bookYear, bookMonth, d, 10, 0, 0), e: new Date(bookYear, bookMonth, d, 13, 0, 0) },
-                { s: new Date(bookYear, bookMonth, d, 14, 0, 0), e: new Date(bookYear, bookMonth, d, 17, 0, 0) },
-                { s: new Date(bookYear, bookMonth, d, 18, 0, 0), e: new Date(bookYear, bookMonth, d, 21, 0, 0) }
-              ];
-              return sSlots.every(slot => {
-                if (dateStr === todayStr && nowKST >= slot.e) return true;
-                return schedules.some(ex => {
-                  const exS = new Date(ex.start_time);
-                  const exE = new Date(ex.end_time);
-                  return slot.s < exE && slot.e > exS;
-                });
+            const checkSessionState = (sessStartH, sessEndH) => {
+              const sDate = new Date(bookYear, bookMonth, d, sessStartH, 0, 0);
+              const eDate = new Date(bookYear, bookMonth, d, sessEndH, 0, 0);
+              if (isPastDay || (dateStr === todayStr && nowKST >= eDate)) return true;
+              return schedules.some(ex => {
+                const exS = new Date(ex.start_time);
+                const exEnd = new Date(ex.end_time);
+                return sDate < exEnd && eDate > exStart;
               });
             };
 
-            const isFullyBlocked = checkFullDayBlock();
+            const is1Blocked = checkSessionState(10, 13);
+            const is2Blocked = checkSessionState(14, 17);
+            const is3Blocked = checkSessionState(18, 21);
+
+            const isFullyBlocked = is1Blocked && is2Blocked && is3Blocked;
+
+            // 부분 마감 텍스트 판별 (1부만 마감, 2부만 마감 등)
+            let subText = '';
+            let blockedCount = (is1Blocked ? 1 : 0) + (is2Blocked ? 1 : 0) + (is3Blocked ? 1 : 0);
+            if (isFullyBlocked) {
+              subText = '예약마감';
+            } else if (blockedCount > 0) {
+              let closedParts = [];
+              if (is1Blocked) closedParts.push('1부');
+              if (is2Blocked) closedParts.push('2부');
+              if (is3Blocked) closedParts.push('3부');
+              subText = `${closedParts.join(', ')} 마감`;
+            }
 
             html += `
-              <div onclick="${isFullyBlocked ? '' : `selectBookingDate('${dateStr}')`}" style="background: ${isFullyBlocked ? '#121214' : '#1c1917'}; border: 1px solid ${selectedDateStr === dateStr ? '#c9a96e' : '#322d28'}; border-radius: 8px; padding: 6px; display: flex; flex-direction: column; justify-content: space-between; min-height: 75px; cursor: ${isFullyBlocked ? 'not-allowed' : 'pointer'}; opacity: ${isFullyBlocked ? '0.35' : '1'};">
+              <div onclick="${isFullyBlocked ? '' : `selectBookingDate('${dateStr}')`}" style="background: ${isFullyBlocked ? '#121214' : '#1c1917'}; border: 1px solid ${selectedDateStr === dateStr ? '#c9a96e' : '#322d28'}; border-radius: 8px; padding: 6px; display: flex; flex-direction: column; justify-content: space-between; min-height: 75px; cursor: ${isFullyBlocked ? 'not-allowed' : 'pointer'}; opacity: ${isFullyBlocked ? '0.4' : '1'};">
                 <div style="font-size: 0.82rem; font-weight: 600; color: ${isFullyBlocked ? '#555' : '#dfcfb2'}; text-align: center;">
                   ${d}
                 </div>
-                <div style="font-size: 0.68rem; text-align: center; color: ${isFullyBlocked ? '#9ca3af' : '#f4f1ea'}; font-weight: 600;">
-                  ${isFullyBlocked ? '예약마감' : '예약가능'}
+                <div style="font-size: 0.62rem; text-align: center; color: ${isFullyBlocked ? '#9ca3af' : '#c9a96e'}; font-weight: 500; line-height: 1.1;">
+                  ${subText}
                 </div>
               </div>`;
           }
