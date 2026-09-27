@@ -532,7 +532,7 @@
           </div>
         </div>
         <div style="font-size: 0.76rem; color: #b8aba0; margin-bottom: 10px;">
-          • 날짜 터치 시 세부 세션 선택 (예약마감일은 터치 불가)
+          • 날짜 터치 시 세부 세션 선택 (전체 마감일은 터치 불가)
         </div>
         <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 0.78rem; color: #9c8e80; margin-bottom: 6px; font-weight: 600;">
           <div style="color: #e57373;">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div style="color: #64b5f6;">토</div>
@@ -1079,7 +1079,7 @@
               return schedules.some(ex => {
                 const exS = new Date(ex.start_time);
                 const exE = new Date(ex.end_time);
-                return sDate < exE && eDate > exS;
+                return sDate < exE && eDate > exStart;
               });
             };
 
@@ -1092,7 +1092,7 @@
             let subText = '';
             let blockedCount = (is1Blocked ? 1 : 0) + (is2Blocked ? 1 : 0) + (is3Blocked ? 1 : 0);
             if (isFullyBlocked) {
-              subText = '예약마감';
+              subText = '전체 마감';
             } else if (blockedCount > 0) {
               let closedParts = [];
               if (is1Blocked) closedParts.push('1부');
