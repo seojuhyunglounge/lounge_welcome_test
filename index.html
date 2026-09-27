@@ -1017,8 +1017,21 @@
 
         if (!phone || !pin) return (errEl.innerText = '연락처와 PIN 번호 4자리를 입력하세요.', errEl.style.display = 'block');
         try {
-          const res = await apiCall('rpc/verify_member_login', 'POST', { p_phone: phone, p_pin: pin });
-          const data = await res.json();
+const res = await apiCall('rpc/verify_member_login', 'POST', { p_phone: phone, p_pin: pin });
+
+if (!res.ok) {
+  const errorText = await res.text();
+  throw new Error(`HTTP ${res.status}: ${errorText}`);
+}
+
+const data = await res.json();
+
+if (!res.ok) {
+  const errorText = await res.text();
+  console.error('verify_member_login RPC 오류:', res.status, errorText);
+  throw new Error(`HTTP ${res.status}: ${errorText}`);
+}
+          
           if (!data || !data.length) {
             errEl.innerText = '일치하는 VIP 회원 정보가 없거나 PIN이 올바르지 않습니다.';
             errEl.style.display = 'block'; return;
