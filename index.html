@@ -663,6 +663,18 @@
       viewParam === 'member_admin', viewParam === 'member', viewParam === 'booking', viewParam === 'my_booking', viewParam === 'block_admin', viewParam === 'admin'
     ];
 
+    // 엄격한 KST 오프셋(+09:00) 생성기 (UTC 왜곡 완전 차단)
+    function toKSTISOString(dateObj) {
+      const pad = n => String(n).padStart(2, '0');
+      const y = dateObj.getFullYear();
+      const m = pad(dateObj.getMonth() + 1);
+      const d = pad(dateObj.getDate());
+      const h = pad(dateObj.getHours());
+      const min = pad(dateObj.getMinutes());
+      const s = pad(dateObj.getSeconds());
+      return `${y}-${m}-${d}T${h}:${min}:${s}+09:00`;
+    }
+
     function fmtDate(dInput, type) {
       if (!dInput) return '-';
       const d = new Date(dInput);
@@ -775,8 +787,8 @@
 
         const firstDayIndex = new Date(calYear, calMonth, 1).getDay();
         const lastDayDate = new Date(calYear, calMonth + 1, 0).getDate();
-        const startDateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-01T00:00:00`;
-        const endDateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(lastDayDate).padStart(2,'0')}T23:59:59`;
+        const startDateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-01T00:00:00+09:00`;
+        const endDateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(lastDayDate).padStart(2,'0')}T23:59:59+09:00`;
 
         const nowKST = new Date();
         const todayStr = nowKST.toLocaleDateString('en-CA');
@@ -795,8 +807,8 @@
             const isPastDay = dateStr < todayStr;
 
             const getSessionStatus = (sessStartH, sessEndH) => {
-              const sDate = new Date(`${dateStr}T${String(sessStartH).padStart(2,'0')}:00:00`);
-              const eDate = new Date(`${dateStr}T${String(sessEndH).padStart(2,'0')}:00:00`);
+              const sDate = new Date(`${dateStr}T${String(sessStartH).padStart(2,'0')}:00:00+09:00`);
+              const eDate = new Date(`${dateStr}T${String(sessEndH).padStart(2,'0')}:00:00+09:00`);
 
               const isPast = isPastDay || (dateStr === todayStr && nowKST >= eDate);
               if (isPast) return { color: '#2a2624', isPast: true, record: null };
@@ -822,9 +834,9 @@
                   ${d}
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 3px;">
-                  <div style="background: ${s1.color}; height: 8px; border-radius: 3px; cursor: pointer;" onclick="handleBarClick('${dateStr}T10:00:00', '${dateStr}T13:00:00', ${s1.record ? s1.record.id : null}, '${s1.record ? s1.record.guest_name : ''}', ${s1.isPast})" title="1부 토글"></div>
-                  <div style="background: ${s2.color}; height: 8px; border-radius: 3px; cursor: pointer;" onclick="handleBarClick('${dateStr}T14:00:00', '${dateStr}T17:00:00', ${s2.record ? s2.record.id : null}, '${s2.record ? s2.record.guest_name : ''}', ${s2.isPast})" title="2부 토글"></div>
-                  <div style="background: ${s3.color}; height: 8px; border-radius: 3px; cursor: pointer;" onclick="handleBarClick('${dateStr}T18:00:00', '${dateStr}T21:00:00', ${s3.record ? s3.record.id : null}, '${s3.record ? s3.record.guest_name : ''}', ${s3.isPast})" title="3부 토글"></div>
+                  <div style="background: ${s1.color}; height: 8px; border-radius: 3px; cursor: pointer;" onclick="handleBarClick('${dateStr}T10:00:00+09:00', '${dateStr}T13:00:00+09:00', ${s1.record ? s1.record.id : null}, '${s1.record ? s1.record.guest_name : ''}', ${s1.isPast})" title="1부 토글"></div>
+                  <div style="background: ${s2.color}; height: 8px; border-radius: 3px; cursor: pointer;" onclick="handleBarClick('${dateStr}T14:00:00+09:00', '${dateStr}T17:00:00+09:00', ${s2.record ? s2.record.id : null}, '${s2.record ? s2.record.guest_name : ''}', ${s2.isPast})" title="2부 토글"></div>
+                  <div style="background: ${s3.color}; height: 8px; border-radius: 3px; cursor: pointer;" onclick="handleBarClick('${dateStr}T18:00:00+09:00', '${dateStr}T21:00:00+09:00', ${s3.record ? s3.record.id : null}, '${s3.record ? s3.record.guest_name : ''}', ${s3.isPast})" title="3부 토글"></div>
                 </div>
               </div>`;
           }
@@ -862,7 +874,7 @@
         if (dateStr < todayStr) return alert('⚠️ 지나간 날짜는 차단할 수 없습니다.');
 
         try {
-          const res = await apiCall(`welcome_schedules?start_time=gte.${dateStr}T00:00:00&start_time=lte.${dateStr}T23:59:59&select=id,guest_name,start_time,end_time`);
+          const res = await apiCall(`welcome_schedules?start_time=gte.${dateStr}T00:00:00+09:00&start_time=lte.${dateStr}T23:59:59+09:00&select=id,guest_name,start_time,end_time`);
           const existing = res.ok ? await res.json() : [];
 
           const hasRealBooking = existing.some(ex => ex.guest_name !== '[CLOSED_BLOCK]');
@@ -875,9 +887,9 @@
           } else {
             for (const b of blocks) await apiCall(`welcome_schedules?id=eq.${b.id}`, 'DELETE');
             const slots = [
-              { start: `${dateStr}T10:00:00`, end: `${dateStr}T13:00:00` },
-              { start: `${dateStr}T14:00:00`, end: `${dateStr}T17:00:00` },
-              { start: `${dateStr}T18:00:00`, end: `${dateStr}T21:00:00` }
+              { start: `${dateStr}T10:00:00+09:00`, end: `${dateStr}T13:00:00+09:00` },
+              { start: `${dateStr}T14:00:00+09:00`, end: `${dateStr}T17:00:00+09:00` },
+              { start: `${dateStr}T18:00:00+09:00`, end: `${dateStr}T21:00:00+09:00` }
             ];
             for (const s of slots) {
               if (dateStr === todayStr && new Date(s.end) <= nowKST) continue;
@@ -894,9 +906,9 @@
 
       window.toggleMonthBlock = async function() {
         if (!confirm(`${calYear}년 ${calMonth + 1}월 전체를 일괄 차단/오픈 토글하시겠습니까?`)) return;
-        const startDateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-01T00:00:00`;
+        const startDateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-01T00:00:00+09:00`;
         const lastDayDate = new Date(calYear, calMonth + 1, 0).getDate();
-        const endDateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(lastDayDate).padStart(2,'0')}T23:59:59`;
+        const endDateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(lastDayDate).padStart(2,'0')}T23:59:59+09:00`;
 
         try {
           const res = await apiCall(`welcome_schedules?start_time=gte.${startDateStr}&start_time=lte.${endDateStr}&select=id,start_time,end_time,guest_name`);
@@ -914,9 +926,9 @@
               const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
               if (dateStr < todayStr) continue;
               const slots = [
-                { start: `${dateStr}T10:00:00`, end: `${dateStr}T13:00:00` },
-                { start: `${dateStr}T14:00:00`, end: `${dateStr}T17:00:00` },
-                { start: `${dateStr}T18:00:00`, end: `${dateStr}T21:00:00` }
+                { start: `${dateStr}T10:00:00+09:00`, end: `${dateStr}T13:00:00+09:00` },
+                { start: `${dateStr}T14:00:00+09:00`, end: `${dateStr}T17:00:00+09:00` },
+                { start: `${dateStr}T18:00:00+09:00`, end: `${dateStr}T21:00:00+09:00` }
               ];
               for (const s of slots) {
                 if (dateStr === todayStr && new Date(s.end) <= nowKST) continue;
@@ -943,7 +955,7 @@
       let bookYear = new Date().getFullYear();
       let bookMonth = new Date().getMonth();
       let selectedDateStr = '';
-      let detectedMember = null; // 자동 감지된 멤버 데이터 임시 저장
+      let detectedMember = null;
 
       window.changeBookMonth = function(delta) {
         bookMonth += delta;
@@ -959,8 +971,8 @@
 
         const firstDayIndex = new Date(bookYear, bookMonth, 1).getDay();
         const lastDayDate = new Date(bookYear, bookMonth + 1, 0).getDate();
-        const startDateStr = `${bookYear}-${String(bookMonth+1).padStart(2,'0')}-01T00:00:00`;
-        const endDateStr = `${bookYear}-${String(bookMonth+1).padStart(2,'0')}-${String(lastDayDate).padStart(2,'0')}T23:59:59`;
+        const startDateStr = `${bookYear}-${String(bookMonth+1).padStart(2,'0')}-01T00:00:00+09:00`;
+        const endDateStr = `${bookYear}-${String(bookMonth+1).padStart(2,'0')}-${String(lastDayDate).padStart(2,'0')}T23:59:59+09:00`;
 
         const nowKST = new Date();
         const todayStr = nowKST.toLocaleDateString('en-CA');
@@ -981,9 +993,9 @@
             const checkFullDayBlock = () => {
               if (isPastDay) return true;
               const sSlots = [
-                { s: new Date(`${dateStr}T10:00:00`), e: new Date(`${dateStr}T13:00:00`) },
-                { s: new Date(`${dateStr}T14:00:00`), e: new Date(`${dateStr}T17:00:00`) },
-                { s: new Date(`${dateStr}T18:00:00`), e: new Date(`${dateStr}T21:00:00`) }
+                { s: new Date(`${dateStr}T10:00:00+09:00`), e: new Date(`${dateStr}T13:00:00+09:00`) },
+                { s: new Date(`${dateStr}T14:00:00+09:00`), e: new Date(`${dateStr}T17:00:00+09:00`) },
+                { s: new Date(`${dateStr}T18:00:00+09:00`), e: new Date(`${dateStr}T21:00:00+09:00`) }
               ];
               return sSlots.every(slot => {
                 if (dateStr === todayStr && nowKST >= slot.e) return true;
@@ -1031,15 +1043,15 @@
         ];
 
         try {
-          const res = await apiCall(`welcome_schedules?start_time=gte.${dateStr}T00:00:00&start_time=lte.${dateStr}T23:59:59&select=start_time,end_time`);
+          const res = await apiCall(`welcome_schedules?start_time=gte.${dateStr}T00:00:00+09:00&start_time=lte.${dateStr}T23:59:59+09:00&select=start_time,end_time`);
           const existing = res.ok ? await res.json() : [];
           const nowKST = new Date();
           const todayStr = nowKST.toLocaleDateString('en-CA');
 
           let html = '';
           SESSIONS.forEach(sess => {
-            const sessStartISO = `${dateStr}T${String(sess.startH).padStart(2,'0')}:00:00`;
-            const sessEndISO = `${dateStr}T${String(sess.endH).padStart(2,'0')}:00:00`;
+            const sessStartISO = `${dateStr}T${String(sess.startH).padStart(2,'0')}:00:00+09:00`;
+            const sessEndISO = `${dateStr}T${String(sess.endH).padStart(2,'0')}:00:00+09:00`;
             const sDate = new Date(sessStartISO);
             const eDate = new Date(sessEndISO);
 
@@ -1073,7 +1085,6 @@
         renderBookCalendar();
       };
 
-      // 실시간 휴대폰 번호 입력 감지 ➔ VIP 회원 자동 매칭 엔진
       window.checkMembershipAuto = async function(phoneVal) {
         const cleanPhone = phoneVal.replace(/[^0-9]/g, '');
         const box = document.getElementById('membership-detect-box');
@@ -1120,7 +1131,6 @@
         if (!selectedDateStr || !name || !phone || !displayName) return (errEl.innerText = '날짜, 신청자 성함, 연락처, 모임명을 모두 입력하세요.', errEl.style.display = 'block');
         if (!privacy) return (errEl.innerText = '개인정보 수집 및 이용 동의(필수)에 체크해 주세요.', errEl.style.display = 'block');
 
-        // 멤버십 패스 사용 여부 확인 및 PIN 검증
         let usePass = false;
         let memberPin = '';
         const usePassCheckbox = document.getElementById('book-use-pass');
@@ -1153,7 +1163,6 @@
         try {
           errEl.innerText = '예약 신청 접수 중...'; errEl.style.display = 'block';
 
-          // RPC 호출 시 멤버십 정보 함께 전달
           const res = await apiCall('rpc/submit_customer_booking', 'POST', {
             p_name: name, p_phone: phone, p_sms_consent: smsConsent,
             p_start_time: finalStart, p_end_time: finalEnd,
@@ -1581,8 +1590,8 @@
 
       async function syncTV() {
         try {
-          const nowISO = new Date().toISOString();
-          const fiveMin = new Date(Date.now() + 300000).toISOString();
+          const nowISO = toKSTISOString(new Date());
+          const fiveMin = toKSTISOString(new Date(Date.now() + 300000));
           const sRes = await apiCall(`welcome_schedules?start_time=lte.${fiveMin}&end_time=gte.${nowISO}&order=start_time.asc&limit=1`);
           if (sRes.ok) {
             const s = await sRes.json();
@@ -1656,7 +1665,7 @@
           if (el) {
             el.onchange = () => apiCall('lounge_settings?id=eq.1', 'PATCH', { 
               [`show_${key}`]: el.checked,
-              updated_at: new Date().toISOString()
+              updated_at: toKSTISOString(new Date())
             });
           }
         });
@@ -1678,8 +1687,8 @@
         async function updateStatus() {
           const [badge, title, desc, card, btn] = ['occupancy-badge','occupancy-title','occupancy-desc','current-occupancy-card','btn-force-guest'].map(id => document.getElementById(id));
           try {
-            const nowISO = new Date().toISOString();
-            const fiveMin = new Date(Date.now() + 300000).toISOString();
+            const nowISO = toKSTISOString(new Date());
+            const fiveMin = toKSTISOString(new Date(Date.now() + 300000));
             const sRes = await apiCall(`welcome_schedules?start_time=lte.${fiveMin}&end_time=gte.${nowISO}&order=start_time.asc&limit=1`);
             const scheds = sRes.ok ? await sRes.json() : [];
 
@@ -1720,12 +1729,12 @@
           if (!confirm('현재 표출을 종료(퇴실)하고 기본 대기 화면(Guest)으로 복귀하시겠습니까?')) return;
           try {
             if (currentSchedId) {
-              await apiCall(`welcome_schedules?id=eq.${currentSchedId}`, 'PATCH', { end_time: new Date().toISOString() });
+              await apiCall(`welcome_schedules?id=eq.${currentSchedId}`, 'PATCH', { end_time: toKSTISOString(new Date()) });
               currentSchedId = null; loadSchedules();
             }
             await apiCall('welcome_screen', 'POST', {
               id: 1, prefix: '', guest_name: 'Guest', suffix: '', sub_message: '라 콜론에 오신 것을 환영합니다.',
-              bg_source: 'video1.mp4,video2.mp4', bgm_source: 'jazz1.mp3', member_code: '', member_name: '', updated_at: new Date().toISOString()
+              bg_source: 'video1.mp4,video2.mp4', bgm_source: 'jazz1.mp3', member_code: '', member_name: '', updated_at: toKSTISOString(new Date())
             }, { 'Prefer': 'resolution=merge-duplicates,return=representation' });
             showToast('✓ 기본 대기 화면 복귀 완료'); updateStatus();
           } catch(e) { alert('초기화 실패'); }
@@ -1766,7 +1775,7 @@
           try {
             const res = await apiCall('welcome_screen', 'POST', {
               id: 1, prefix: f.prefix, guest_name: f.name, suffix: f.suffix, sub_message: f.msg,
-              bg_source: f.bg, bgm_source: f.bgm, member_code: f.memberCode, member_name: f.memberName, updated_at: new Date().toISOString()
+              bg_source: f.bg, bgm_source: f.bgm, member_code: f.memberCode, member_name: f.memberName, updated_at: toKSTISOString(new Date())
             }, { 'Prefer': 'resolution=merge-duplicates,return=representation' });
             if (res.ok) {
               log.innerText = '✓ TV에 즉시 반영되었습니다.';
@@ -1779,14 +1788,18 @@
         };
 
         document.getElementById('btn-action-sched').onclick = async () => {
-          const [sVal, eVal] = [document.getElementById('u-sched-start').value, document.getElementById('u-sched-end').value];
+          const sVal = document.getElementById('u-sched-start').value;
+          const eVal = document.getElementById('u-sched-end').value;
           if (!sVal || !eVal) return alert('시작 및 종료 시각을 모두 지정하세요.');
-          const [nStart, nEnd] = [new Date(sVal), new Date(eVal)];
+          
+          const nStart = new Date(sVal);
+          const nEnd = new Date(eVal);
           if (nStart >= nEnd) return alert('종료 시각은 시작 시각보다 뒤여야 합니다.');
+          
           const f = getFormData();
           if (!f.name || f.name === 'Guest') return alert('VIP 성함을 입력하세요.');
 
-          const cRes = await apiCall(`welcome_schedules?end_time=gte.${new Date().toISOString()}&select=id,guest_name,start_time,end_time`);
+          const cRes = await apiCall(`welcome_schedules?end_time=gte.${toKSTISOString(new Date())}&select=id,guest_name,start_time,end_time`);
           const existing = cRes.ok ? await cRes.json() : [];
           for (const ex of existing) {
             if (editingId && ex.id === editingId) continue;
@@ -1800,13 +1813,13 @@
           if (!editingId && f.memberId && !(await deductSession(f.memberId, f.memberCode, f.memberName, '선차감'))) return;
           try {
             const payload = {
-              start_time: nStart.toISOString(), end_time: nEnd.toISOString(), prefix: f.prefix, guest_name: f.name,
+              start_time: toKSTISOString(nStart), end_time: toKSTISOString(nEnd), prefix: f.prefix, guest_name: f.name,
               suffix: f.suffix, sub_message: f.msg, bg_source: f.bg, bgm_source: f.bgm, member_code: f.memberCode, member_name: f.memberName, pin_code: '0000'
             };
             const res = editingId ? await apiCall(`welcome_schedules?id=eq.${editingId}`, 'PATCH', payload) : await apiCall('welcome_schedules', 'POST', payload);
             if (res.ok) {
               showToast(editingId ? '✓ 수정 완료' : '✓ 예약 등록 완료');
-              if (!editingId) recordHistory('예약 일정', f, nStart.toISOString());
+              if (!editingId) recordHistory('예약 일정', f, toKSTISOString(nStart));
               cancelEditSchedule(); loadSchedules(); updateStatus();
             } else throw new Error();
           } catch(e) {
@@ -1832,7 +1845,7 @@
         window.loadSchedules = async function() {
           const list = document.getElementById('schedule-list');
           try {
-            const res = await apiCall(`welcome_schedules?end_time=gte.${new Date().toISOString()}&order=start_time.asc`);
+            const res = await apiCall(`welcome_schedules?end_time=gte.${toKSTISOString(new Date())}&order=start_time.asc`);
             const scheds = (res.ok ? await res.json() : []).filter(s => s.guest_name !== '[CLOSED_BLOCK]');
             if (!scheds.length) return (list.innerHTML = '<div style="color:#666; font-size:0.85rem; text-align:center; padding:15px;">대기 일정이 없습니다.</div>');
             let html = '';
@@ -1924,7 +1937,7 @@
           try {
             await apiCall('welcome_history', 'POST', {
               event_type: type,
-              visit_date: date || new Date().toISOString(),
+              visit_date: date || toKSTISOString(new Date()),
               prefix: f.prefix,
               guest_name: f.name,
               suffix: f.suffix,
