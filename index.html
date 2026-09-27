@@ -1019,6 +1019,12 @@
         try {
 const res = await apiCall('rpc/verify_member_login', 'POST', { p_phone: phone, p_pin: pin });
 
+          if (!res.ok) {
+  const errorText = await res.text();
+  throw new Error(`HTTP ${res.status}: ${errorText}`);
+}
+
+          
 if (!res.ok) {
   const errorText = await res.text();
   throw new Error(`HTTP ${res.status}: ${errorText}`);
@@ -1047,9 +1053,11 @@ if (!res.ok) {
           document.getElementById('member-auth-panel').style.display = 'none';
           document.getElementById('calendar-wrapper').style.display = 'block';
           renderBookCalendar();
-        } catch(e) {
-          errEl.innerText = '인증 서버 연결 오류'; errEl.style.display = 'block';
-        }
+} catch(e) {
+  console.error('멤버십 조회 오류:', e);
+  errEl.innerText = e.message || '서버 연결 오류';
+  errEl.style.display = 'block';
+}
       };
 
       window.changeBookMonth = function(delta) {
