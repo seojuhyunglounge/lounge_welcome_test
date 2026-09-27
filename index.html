@@ -527,16 +527,30 @@
         <label>이용 세션 선택 (중복 선택 가능)</label>
         <div id="book-slots-container" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;"></div>
       </div>
+
       <div class="form-group">
-        <label>신청자 성함 / 연락처</label>
+        <label>신청자 성함 / 연락처 (알림 수신용)</label>
         <div style="display: flex; gap: 8px; margin-bottom: 8px;">
           <input type="text" id="book-name" placeholder="성함 입력" style="flex: 1;">
-          <input type="tel" id="book-phone" placeholder="연락처 (010-0000-0000)" style="flex: 1.4;">
+          <input type="tel" id="book-phone" placeholder="연락처 (010-0000-0000)" style="flex: 1.4;" onblur="checkMembershipAuto(this.value)">
         </div>
       </div>
+
+      <!-- 스마트 멤버십 자동 감지 결과 및 차감 옵션 영역 -->
+      <div id="membership-detect-box" style="display: none; background: rgba(201,169,110,0.08); border: 1px solid rgba(201,169,110,0.35); border-radius: 12px; padding: 14px; margin-bottom: 15px;">
+        <div style="font-size: 0.85rem; font-weight: 600; color: #dfcfb2; margin-bottom: 8px;" id="detect-msg">✨ VIP 회원님이 인식되었습니다.</div>
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 8px; color: #e5e7eb; font-size: 0.85rem;">
+          <input type="checkbox" id="book-use-pass" checked style="width: 16px; height: 16px; accent-color: #c9a96e;" onchange="togglePassInput(this.checked)">
+          <span><b>[선택]</b> 보유 중인 VIP 멤버십 세션 패스 1회 차감 적용</span>
+        </label>
+        <div id="pass-pin-wrap" style="margin-top: 8px;">
+          <input type="password" id="book-member-pin" maxlength="4" placeholder="VIP 회원 인증 PIN 번호 (4자리)" style="letter-spacing: 4px; font-size: 0.9rem;">
+        </div>
+      </div>
+
       <div class="form-group">
-        <label>예약 확인용 PIN 번호 (숫자 4자리)</label>
-        <input type="password" id="book-pin" maxlength="4" placeholder="예약 조회 및 취소 시 사용" style="letter-spacing: 4px;">
+        <label>예약 확인/취소용 PIN 번호 (숫자 4자리)</label>
+        <input type="password" id="book-pin" maxlength="4" placeholder="비회원 또는 일반 예약 관리용" style="letter-spacing: 4px;">
       </div>
       <div class="form-group">
         <label>TV 표출용 성함 / 모임명</label>
@@ -649,7 +663,6 @@
       viewParam === 'member_admin', viewParam === 'member', viewParam === 'booking', viewParam === 'my_booking', viewParam === 'block_admin', viewParam === 'admin'
     ];
 
-    // 순수 KST 시간 기준 변환기 (UTC 왜곡 방지)
     function fmtDate(dInput, type) {
       if (!dInput) return '-';
       const d = new Date(dInput);
@@ -788,16 +801,15 @@
               const isPast = isPastDay || (dateStr === todayStr && nowKST >= eDate);
               if (isPast) return { color: '#2a2624', isPast: true, record: null };
 
-              // 엄격한 시간대 교차 겹침(Overlap) 검사
               const matched = schedules.find(s => {
                 const exStart = new Date(s.start_time);
                 const exEnd = new Date(s.end_time);
                 return sDate < exEnd && eDate > exStart;
               });
 
-              if (!matched) return { color: '#f4f1ea', isPast: false, record: null }; // Open (상아색)
-              if (matched.guest_name === '[CLOSED_BLOCK]') return { color: '#3d2c22', isPast: false, record: matched }; // Blocked (브라운)
-              return { color: '#3b82f6', isPast: false, record: matched }; // Booked (네이비)
+              if (!matched) return { color: '#f4f1ea', isPast: false, record: null };
+              if (matched.guest_name === '[CLOSED_BLOCK]') return { color: '#3d2c22', isPast: false, record: matched };
+              return { color: '#3b82f6', isPast: false, record: matched };
             };
 
             const s1 = getSessionStatus(10, 13);
@@ -931,6 +943,7 @@
       let bookYear = new Date().getFullYear();
       let bookMonth = new Date().getMonth();
       let selectedDateStr = '';
+      let detectedMember = null; // 자동 감지된 멤버 데이터 임시 저장
 
       window.changeBookMonth = function(delta) {
         bookMonth += delta;
@@ -1060,6 +1073,39 @@
         renderBookCalendar();
       };
 
+      // 실시간 휴대폰 번호 입력 감지 ➔ VIP 회원 자동 매칭 엔진
+      window.checkMembershipAuto = async function(phoneVal) {
+        const cleanPhone = phoneVal.replace(/[^0-9]/g, '');
+        const box = document.getElementById('membership-detect-box');
+        const msgEl = document.getElementById('detect-msg');
+        detectedMember = null;
+
+        if (cleanPhone.length < 10) {
+          box.style.display = 'none';
+          return;
+        }
+
+        try {
+          const res = await apiCall(`vip_members?phone=eq.${cleanPhone}&select=*`);
+          const members = res.ok ? await res.json() : [];
+
+          if (members && members.length > 0) {
+            detectedMember = members[0];
+            const remain = Math.max(0, (parseInt(detectedMember.total_passes) || 0) - (parseInt(detectedMember.used_passes) || 0));
+            msgEl.innerHTML = `✨ <b>[VIP 회원 인식]</b> ${escapeHtml(detectedMember.company_name)} 님 (잔여 세션: ${remain}회)`;
+            box.style.display = 'block';
+          } else {
+            box.style.display = 'none';
+          }
+        } catch(e) {
+          box.style.display = 'none';
+        }
+      };
+
+      window.togglePassInput = function(isChecked) {
+        document.getElementById('pass-pin-wrap').style.display = isChecked ? 'block' : 'none';
+      };
+
       window.submitBookingRequest = async function() {
         const name = document.getElementById('book-name').value.trim();
         const phone = document.getElementById('book-phone').value.trim().replace(/[^0-9]/g, '');
@@ -1071,9 +1117,23 @@
         const errEl = document.getElementById('booking-error-msg');
         errEl.style.display = 'none';
 
-        if (!selectedDateStr || !name || !phone || !pin || !displayName) return (errEl.innerText = '날짜, 신청자 성함, 연락처, PIN(4자리), 모임명을 모두 입력하세요.', errEl.style.display = 'block');
-        if (pin.length !== 4) return (errEl.innerText = 'PIN 번호는 정확히 숫자 4자리여야 합니다.', errEl.style.display = 'block');
+        if (!selectedDateStr || !name || !phone || !displayName) return (errEl.innerText = '날짜, 신청자 성함, 연락처, 모임명을 모두 입력하세요.', errEl.style.display = 'block');
         if (!privacy) return (errEl.innerText = '개인정보 수집 및 이용 동의(필수)에 체크해 주세요.', errEl.style.display = 'block');
+
+        // 멤버십 패스 사용 여부 확인 및 PIN 검증
+        let usePass = false;
+        let memberPin = '';
+        const usePassCheckbox = document.getElementById('book-use-pass');
+        const detectBox = document.getElementById('membership-detect-box');
+
+        if (detectBox.style.display !== 'none' && usePassCheckbox && usePassCheckbox.checked) {
+          usePass = true;
+          memberPin = document.getElementById('book-member-pin').value.trim();
+          if (memberPin.length !== 4) return (errEl.innerText = '멤버십 세션 패스 차감을 위해 VIP 전용 PIN 번호 4자리를 정확히 입력하세요.', errEl.style.display = 'block');
+          if (detectedMember && memberPin !== detectedMember.pin_code) return (errEl.innerText = '⚠️ VIP 회원 PIN 번호가 일치하지 않습니다.', errEl.style.display = 'block');
+        } else {
+          if (pin.length !== 4) return (errEl.innerText = '예약 확인용 PIN 번호는 숫자 4자리여야 합니다.', errEl.style.display = 'block');
+        }
 
         const checkedSlots = Array.from(document.querySelectorAll('input[name="book-slot"]:checked'));
         if (!checkedSlots.length) return (errEl.innerText = '이용할 세션을 최소 1개 이상 선택해 주세요.', errEl.style.display = 'block');
@@ -1093,21 +1153,24 @@
         try {
           errEl.innerText = '예약 신청 접수 중...'; errEl.style.display = 'block';
 
+          // RPC 호출 시 멤버십 정보 함께 전달
           const res = await apiCall('rpc/submit_customer_booking', 'POST', {
             p_name: name, p_phone: phone, p_sms_consent: smsConsent,
             p_start_time: finalStart, p_end_time: finalEnd,
-            p_guest_name: displayName, p_sub_message: subMsg || '라 콜론에 오신 것을 환영합니다.', p_pin_code: pin
+            p_guest_name: displayName, p_sub_message: subMsg || '라 콜론에 오신 것을 환영합니다.',
+            p_pin_code: usePass ? memberPin : pin,
+            p_member_id: usePass && detectedMember ? detectedMember.id : null
           });
           const result = await res.json();
 
           if (result && result.success) {
-            alert(`[예약 신청 완료]\n\n${name} 님의 라운지 이용 예약이 접수되었습니다.\n추후 '내 예약 조회'에서 PIN 번호로 확인 및 취소가 가능합니다.`);
+            alert(`[예약 신청 완료]\n\n${name} 님의 라운지 이용 예약이 접수되었습니다.${usePass ? '\n(VIP 멤버십 세션 패스가 성공적으로 차감되었습니다)' : ''}\n추후 '내 예약 조회'에서 확인 및 취소가 가능합니다.`);
             location.href = '?';
           } else {
             throw new Error(result.message || '예약 실패');
           }
         } catch(e) {
-          errEl.innerText = '예약 신청 실패: ' + (e.message || '시간대가 중복되었거나 서버 오류가 발생했습니다.');
+          errEl.innerText = '예약 신청 실패: ' + (e.message || '서버 오류가 발생했습니다.');
           errEl.style.display = 'block';
         }
       };
