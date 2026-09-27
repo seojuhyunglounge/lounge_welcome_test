@@ -549,7 +549,7 @@
       </div>
 
       <div class="form-group">
-        <label>이용 세션 선택 (중복 선택 가능)</label>
+        <label>이용 세션 선택 (연속된 세션만 선택 가능)</label>
         <div id="book-slots-container" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;"></div>
       </div>
 
@@ -1079,7 +1079,7 @@
               return schedules.some(ex => {
                 const exS = new Date(ex.start_time);
                 const exE = new Date(ex.end_time);
-                return sDate < exE && eDate > exStart;
+                return sDate < exE && eDate > exS;
               });
             };
 
@@ -1216,6 +1216,15 @@
         const checkedSlots = Array.from(document.querySelectorAll('input[name="book-slot"]:checked'));
         if (!checkedSlots.length) return (errEl.innerText = '이용할 세션을 최소 1개 이상 선택해 주세요.', errEl.style.display = 'block');
 
+        if (checkedSlots.length > 1) {
+          const slotIds = checkedSlots.map(el => parseInt(el.value)).sort((a, b) => a - b);
+          for (let i = 0; i < slotIds.length - 1; i++) {
+            if (slotIds[i + 1] - slotIds[i] > 1) {
+              return (errEl.innerText = '⚠️ 연속된 세션만 선택할 수 있습니다. (중간 세션도 함께 선택해주세요)', errEl.style.display = 'block');
+            }
+          }
+        }
+
         let finalStart = checkedSlots[0].dataset.start;
         let finalEnd = checkedSlots[checkedSlots.length - 1].dataset.end;
 
@@ -1253,28 +1262,46 @@
       };
 
     // ─────────────────────────────────────────────
-    // [화면 8] 내 예약 조회 및 취소 (?view=my_booking)
+    // [화면 8] 내 예약 조회 및 취소 (?view=my_booking) - RPC 적용 및 브루트포스 방어 잠금 강화
     // ─────────────────────────────────────────────
     } else if (isMyBooking) {
       document.getElementById('my-booking-section').style.display = 'block';
       const [phoneIn, pinIn, errEl, resEl] = [document.getElementById('my-phone-input'), document.getElementById('my-pin-input'), document.getElementById('my-lookup-error'), document.getElementById('my-bookings-result')];
+      
+      let myLookupFailCount = 0;
+      let myLookupLockUntil = 0;
 
       window.lookupMyBookings = async function() {
+        const now = Date.now();
+        if (now < myLookupLockUntil) {
+          const remMin = Math.ceil((myLookupLockUntil - now) / 60000);
+          errEl.innerText = `⚠️ 조회 시도 횟수 초과로 ${remMin}분간 잠금되었습니다.`;
+          errEl.style.display = 'block'; return;
+        }
+
         const phone = phoneIn.value.trim().replace(/[^0-9]/g, '');
         const pin = pinIn.value.trim();
         errEl.style.display = 'none';
 
-        if (!phone || !pin) return (errEl.innerText = '연락처와 PIN 번호 4자리를 모두 입력하세요.', errEl.style.display = 'block');
+        if (!phone || !pin) return (errEl.innerText = '휴대폰 번호와 PIN 번호 4자리를 모두 입력하세요.', errEl.style.display = 'block');
 
         try {
-          const res = await apiCall(`welcome_schedules?pin_code=eq.${pin}&end_time=gte.${toISOStringSafe(new Date())}&order=start_time.asc`);
+          const res = await apiCall('rpc/lookup_my_bookings', 'POST', { p_phone: phone, p_pin: pin });
           const bookings = res.ok ? await res.json() : [];
           
           if (!bookings.length) {
-            errEl.innerText = '일치하는 예약 내역이 없거나 PIN 번호가 올바르지 않습니다.';
+            myLookupFailCount++;
+            if (myLookupFailCount >= 5) {
+              myLookupLockUntil = Date.now() + 15 * 60000;
+              myLookupFailCount = 0;
+              errEl.innerText = '⚠️ 5회 불일치로 15분간 조회가 잠금되었습니다.';
+            } else {
+              errEl.innerText = `일치하는 예약 내역이 없거나 연락처/PIN 번호가 올바르지 않습니다. (${myLookupFailCount}/5회 실패)`;
+            }
             errEl.style.display = 'block'; resEl.style.display = 'none';
             return;
           }
+          myLookupFailCount = 0;
 
           let html = '<div style="margin-top: 20px; text-align: left;"><div style="font-size: 0.9rem; font-weight: 600; color: #dfcfb2; margin-bottom: 12px;">📅 나의 예약 내역</div>';
           bookings.forEach(b => {
@@ -1287,7 +1314,7 @@
                   <div style="font-size: 0.78rem; color: #9ca3af; margin-top: 2px;">"${escapeHtml(b.sub_message)}"</div>
                 </div>
                 <div class="action-btn-group" style="justify-content: flex-end;">
-                  <button class="btn-delete" onclick="cancelMyBooking(${b.id}, '${pin}')">예약 취소하기</button>
+                  <button class="btn-delete" onclick="cancelMyBooking(${b.id}, '${phone}', '${pin}')">예약 취소하기</button>
                 </div>
               </div>`;
           });
@@ -1299,15 +1326,16 @@
         }
       };
 
-      window.cancelMyBooking = async function(id, pin) {
+      window.cancelMyBooking = async function(id, phone, pin) {
         if (!confirm('정말로 이 예약을 취소하시겠습니까?')) return;
         try {
-          const res = await apiCall(`welcome_schedules?id=eq.${id}&pin_code=eq.${pin}`, 'DELETE');
-          if (res.ok) {
+          const res = await apiCall('rpc/cancel_my_booking', 'POST', { p_id: id, p_phone: phone, p_pin: pin });
+          const success = res.ok ? await res.json() : false;
+          if (success) {
             showToast('✓ 예약이 취소되었습니다.');
             lookupMyBookings();
           } else {
-            alert('취소 실패');
+            alert('취소 실패 (정보 불일치)');
           }
         } catch(e) { alert('서버 오류'); }
       };
@@ -1660,7 +1688,8 @@
         try {
           const nowISO = toISOStringSafe(new Date());
           const fiveMin = toISOStringSafe(new Date(Date.now() + 300000));
-          const sRes = await apiCall(`welcome_schedules?start_time=lte.${fiveMin}&end_time=gte.${nowISO}&order=start_time.asc&limit=1`);
+          const encodedBlock = encodeURIComponent('[CLOSED_BLOCK]');
+          const sRes = await apiCall(`welcome_schedules?start_time=lte.${fiveMin}&end_time=gte.${nowISO}&guest_name=neq.${encodedBlock}&order=start_time.asc&limit=1`);
           if (sRes.ok) {
             const s = await sRes.json();
             if (s && s.length) return updateBoard(s[0].prefix, s[0].guest_name, s[0].suffix, s[0].sub_message, s[0].bg_source, s[0].bgm_source);
@@ -1757,7 +1786,8 @@
           try {
             const nowISO = toISOStringSafe(new Date());
             const fiveMin = toISOStringSafe(new Date(Date.now() + 300000));
-            const sRes = await apiCall(`welcome_schedules?start_time=lte.${fiveMin}&end_time=gte.${nowISO}&order=start_time.asc&limit=1`);
+            const encodedBlock = encodeURIComponent('[CLOSED_BLOCK]');
+            const sRes = await apiCall(`welcome_schedules?start_time=lte.${fiveMin}&end_time=gte.${nowISO}&guest_name=neq.${encodedBlock}&order=start_time.asc&limit=1`);
             const scheds = sRes.ok ? await sRes.json() : [];
 
             if (scheds && scheds.length) {
