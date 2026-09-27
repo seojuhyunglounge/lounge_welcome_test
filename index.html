@@ -1207,7 +1207,7 @@
 
         if (currentBookingMode === 'member') {
           if (!verifiedMember) return (errEl.innerText = '회원 인증 정보가 유실되었습니다. 상단에서 다시 인증해주세요.', errEl.style.display = 'block');
-          finalPin = verifiedMember.pin_code;
+          finalPin = 'MEMBER'; // 회원권 예약은 PIN을 'MEMBER'로 고정
           memberId = verifiedMember.id;
         } else {
           if (pin.length !== 4) return (errEl.innerText = '예약 확인용 PIN 번호는 숫자 4자리여야 합니다.', errEl.style.display = 'block');
@@ -1229,22 +1229,17 @@
         let finalEnd = checkedSlots[checkedSlots.length - 1].dataset.end;
 
         try {
-          const checkRes = await apiCall(`welcome_schedules?start_time=lt.${finalEnd}&end_time=gt.${finalStart}&select=id,guest_name`);
-          const conflicts = checkRes.ok ? await checkRes.json() : [];
-          if (conflicts.length > 0) {
-            const hasReal = conflicts.some(c => c.guest_name !== '[CLOSED_BLOCK]');
-            return (errEl.innerText = hasReal ? '⚠️ 이미 해당 시간대에 확정된 고객 예약이 존재합니다.' : '⚠️ 해당 시간대는 이미 관리자에 의해 마감되었습니다.', errEl.style.display = 'block');
-          }
-        } catch(e) {}
-
-        try {
           errEl.innerText = '예약 신청 접수 중...'; errEl.style.display = 'block';
 
           const res = await apiCall('rpc/submit_customer_booking', 'POST', {
-            p_name: name, p_phone: phone, p_sms_consent: smsConsent,
-            p_start_time: finalStart, p_end_time: finalEnd,
-            p_guest_name: displayName, p_sub_message: subMsg || '라 콜론에 오신 것을 환영합니다.',
-            p_pin_code: finalPin,
+            p_name: name, 
+            p_phone: phone, 
+            p_sms_consent: smsConsent,
+            p_start_time: finalStart, 
+            p_end_time: finalEnd,
+            p_guest_name: displayName, 
+            p_sub_message: subMsg || '라 콜론에 오신 것을 환영합니다.',
+            p_pin_code: finalPin,  // 9번째 인자 완벽 대응
             p_member_id: memberId
           });
           const result = await res.json();
@@ -1262,7 +1257,7 @@
       };
 
     // ─────────────────────────────────────────────
-    // [화면 8] 내 예약 조회 및 취소 (?view=my_booking) - RPC 적용 및 브루트포스 방어 잠금 강화
+    // [화면 8] 내 예약 조회 및 취소 (?view=my_booking)
     // ─────────────────────────────────────────────
     } else if (isMyBooking) {
       document.getElementById('my-booking-section').style.display = 'block';
