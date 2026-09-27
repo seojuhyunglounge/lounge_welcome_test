@@ -663,7 +663,6 @@
       viewParam === 'member_admin', viewParam === 'member', viewParam === 'booking', viewParam === 'my_booking', viewParam === 'block_admin', viewParam === 'admin'
     ];
 
-    // 표준 UTC ISO 변환기 (URL 인코딩 공백 변환 이슈 방지)
     function toISOStringSafe(dateObj) {
       return dateObj.toISOString();
     }
@@ -1092,7 +1091,8 @@
         }
 
         try {
-          const res = await apiCall(`members?phone=eq.${cleanPhone}&select=*`);
+          // lounge_members 테이블 조회로 수정
+          const res = await apiCall(`lounge_members?phone=eq.${cleanPhone}&select=*`);
           const members = res.ok ? await res.json() : [];
 
           if (members && members.length > 0) {
