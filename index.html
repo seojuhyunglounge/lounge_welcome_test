@@ -499,21 +499,47 @@
     <div class="portal-brand" style="font-size: 2.1rem;">La Colonne</div>
     <div class="portal-sub">Lounge Reservation Calendar</div>
     
-    <div class="admin-card" style="padding: 16px; border-color: rgba(201, 169, 110, 0.4); background: #161412; text-align: left; margin-top: 15px;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-        <div style="font-size: 0.95rem; font-weight: 600; color: #dfcfb2;" id="book-cal-title">2026년 9월 예약 현황</div>
-        <div style="display: flex; gap: 6px;">
-          <button type="button" class="page-btn" onclick="changeBookMonth(-1)">◀</button>
-          <button type="button" class="page-btn" onclick="changeBookMonth(1)">▶</button>
+    <!-- 예약 모드 선택 탭 (일반 대관 vs 회원권 패스 차감) -->
+    <div style="display: flex; gap: 8px; margin-bottom: 16px; background: #16171b; padding: 6px; border-radius: 12px; border: 1px solid #282a32;">
+      <button type="button" id="tab-mode-general" onclick="switchBookingMode('general')" style="flex: 1; padding: 11px; border-radius: 8px; border: none; background: #c9a96e; color: #0d0e11; font-weight: 700; font-size: 0.88rem; cursor: pointer;">일반 대관 예약</button>
+      <button type="button" id="tab-mode-member" onclick="switchBookingMode('member')" style="flex: 1; padding: 11px; border-radius: 8px; border: none; background: transparent; color: #94a3b8; font-weight: 600; font-size: 0.88rem; cursor: pointer;">💳 회원권 패스 차감 예약</button>
+    </div>
+
+    <!-- 멤버십 로그인 인증 패널 -->
+    <div class="admin-card" id="member-auth-panel" style="display: none; text-align: left; border-color: #c9a96e; background: #16171b;">
+      <div style="font-size: 0.95rem; font-weight: 600; color: #dfcfb2; margin-bottom: 6px;">💳 VIP 회원권 패스 인증</div>
+      <div style="font-size: 0.78rem; color: #888; margin-bottom: 14px;">등록된 휴대폰 번호와 4자리 PIN 번호를 입력하세요.</div>
+      <div class="form-group">
+        <label>회원 연락처</label>
+        <input type="tel" id="auth-member-phone" placeholder="010-0000-0000">
+      </div>
+      <div class="form-group">
+        <label>회원 PIN 번호 (4자리)</label>
+        <input type="password" id="auth-member-pin" maxlength="4" placeholder="PIN 입력" style="letter-spacing: 4px;">
+      </div>
+      <button type="button" class="btn-primary" onclick="verifyMemberAuthForBooking()">인증 및 캘린더 열기</button>
+      <div id="auth-error-msg" style="color: #f87171; font-size: 0.8rem; margin-top: 10px; display: none; text-align: center;"></div>
+    </div>
+
+    <!-- 메인 예약 캘린더 패널 -->
+    <div id="calendar-wrapper" style="display: block;">
+      <div class="admin-card" style="padding: 16px; border-color: rgba(201, 169, 110, 0.4); background: #161412; text-align: left; margin-top: 5px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+          <div style="font-size: 0.95rem; font-weight: 600; color: #dfcfb2;" id="book-cal-title">2026년 9월 예약 현황</div>
+          <div style="display: flex; gap: 6px;">
+            <button type="button" class="page-btn" onclick="changeBookMonth(-1)">◀</button>
+            <button type="button" class="page-btn" onclick="changeBookMonth(1)">▶</button>
+          </div>
         </div>
+        <div style="font-size: 0.76rem; color: #b8aba0; margin-bottom: 10px;">
+          • <span style="color:#f4f1ea;">■</span> 예약 가능일 (터치 시 세부 세션 선택)<br>
+          • <span style="color:#6b7280;">■</span> 예약마감 (비활성화)
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 0.78rem; color: #9c8e80; margin-bottom: 6px; font-weight: 600;">
+          <div style="color: #e57373;">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div style="color: #64b5f6;">토</div>
+        </div>
+        <div id="book-calendar-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;"></div>
       </div>
-      <div style="font-size: 0.76rem; color: #b8aba0; margin-bottom: 10px;">
-        • <span style="color:#f4f1ea;">■</span> 예약 가능일 (숫자 터치 시 세부 세션 선택)
-      </div>
-      <div style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 0.78rem; color: #9c8e80; margin-bottom: 6px; font-weight: 600;">
-        <div style="color: #e57373;">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div style="color: #64b5f6;">토</div>
-      </div>
-      <div id="book-calendar-grid" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;"></div>
     </div>
 
     <!-- 날짜 선택 시 나타나는 세부 예약 폼 패널 -->
@@ -532,25 +558,18 @@
         <label>신청자 성함 / 연락처 (알림 수신용)</label>
         <div style="display: flex; gap: 8px; margin-bottom: 8px;">
           <input type="text" id="book-name" placeholder="성함 입력" style="flex: 1;">
-          <input type="tel" id="book-phone" placeholder="연락처 (010-0000-0000)" style="flex: 1.4;" onblur="checkMembershipAuto(this.value)">
+          <input type="tel" id="book-phone" placeholder="연락처 (010-0000-0000)" style="flex: 1.4;">
         </div>
       </div>
 
-      <!-- 스마트 멤버십 자동 감지 결과 및 차감 옵션 영역 -->
-      <div id="membership-detect-box" style="display: none; background: rgba(201,169,110,0.08); border: 1px solid rgba(201,169,110,0.35); border-radius: 12px; padding: 14px; margin-bottom: 15px;">
-        <div style="font-size: 0.85rem; font-weight: 600; color: #dfcfb2; margin-bottom: 8px;" id="detect-msg">✨ VIP 회원님이 인식되었습니다.</div>
-        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; margin-bottom: 8px; color: #e5e7eb; font-size: 0.85rem;">
-          <input type="checkbox" id="book-use-pass" checked style="width: 16px; height: 16px; accent-color: #c9a96e;" onchange="togglePassInput(this.checked)">
-          <span><b>[선택]</b> 보유 중인 VIP 멤버십 세션 패스 1회 차감 적용</span>
-        </label>
-        <div id="pass-pin-wrap" style="margin-top: 8px;">
-          <input type="password" id="book-member-pin" maxlength="4" placeholder="VIP 회원 인증 PIN 번호 (4자리)" style="letter-spacing: 4px; font-size: 0.9rem;">
-        </div>
+      <!-- 멤버십 인증된 회원 정보 표출 배지 -->
+      <div id="active-member-badge" style="display: none; background: rgba(201,169,110,0.12); border: 1px solid #c9a96e; border-radius: 10px; padding: 12px; margin-bottom: 15px; font-size: 0.85rem; color: #dfcfb2;">
+        ✨ <b>[VIP 회원권 적용]</b> <span id="badge-member-info"></span> 회원의 세션 패스 1회가 차감됩니다.
       </div>
 
-      <div class="form-group">
+      <div class="form-group" id="general-pin-group">
         <label>예약 확인/취소용 PIN 번호 (숫자 4자리)</label>
-        <input type="password" id="book-pin" maxlength="4" placeholder="비회원 또는 일반 예약 관리용" style="letter-spacing: 4px;">
+        <input type="password" id="book-pin" maxlength="4" placeholder="비회원 예약 관리용" style="letter-spacing: 4px;">
       </div>
       <div class="form-group">
         <label>TV 표출용 성함 / 모임명</label>
@@ -646,6 +665,15 @@
     <div style="margin-top: 16px;"><a href="?" style="color: #888; font-size: 0.8rem; text-decoration: none;">← 메인 포털로 돌아가기</a></div>
   </div>
 
+  <!-- 럭셔리 커스텀 알림 모달 -->
+  <div id="custom-modal" style="display: none; position: fixed; inset: 0; z-index: 999999; background: rgba(8, 9, 12, 0.88); backdrop-filter: blur(12px); align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: #16171d; border: 1px solid rgba(201, 169, 110, 0.4); border-radius: 20px; padding: 30px 24px; max-width: 360px; width: 100%; text-align: center;">
+      <div style="font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: #dfcfb2; margin-bottom: 8px;" id="modal-title">알림 안내</div>
+      <div style="font-size: 0.9rem; color: #cbd5e1; line-height: 1.5; margin-bottom: 22px;" id="modal-desc">내용이 들어갑니다.</div>
+      <button type="button" class="btn-primary" onclick="closeCustomModal()" style="padding: 12px; font-size: 0.95rem;">확인</button>
+    </div>
+  </div>
+
   <div id="toast-msg"></div>
 
   <!-- ─── 마스터 JS 엔진 ─── -->
@@ -662,6 +690,15 @@
       viewParam === 'tv', viewParam === 'bar', viewParam === 'bar' && params.get('admin') === '1',
       viewParam === 'member_admin', viewParam === 'member', viewParam === 'booking', viewParam === 'my_booking', viewParam === 'block_admin', viewParam === 'admin'
     ];
+
+    function showModal(title, desc) {
+      document.getElementById('modal-title').innerText = title;
+      document.getElementById('modal-desc').innerText = desc;
+      document.getElementById('custom-modal').style.display = 'flex';
+    }
+    window.closeCustomModal = function() {
+      document.getElementById('custom-modal').style.display = 'none';
+    };
 
     function toISOStringSafe(dateObj) {
       return dateObj.toISOString();
@@ -716,10 +753,6 @@
       let t = document.getElementById('toast-msg');
       t.innerText = msg; t.classList.add('show');
       setTimeout(() => t.classList.remove('show'), 2200);
-    }
-
-    function pauseBgmForApp() {
-      const p = document.getElementById('bgm-player'); if (p) p.pause();
     }
 
     function copyAccount() {
@@ -951,7 +984,61 @@
       let bookYear = new Date().getFullYear();
       let bookMonth = new Date().getMonth();
       let selectedDateStr = '';
-      let detectedMember = null;
+      let currentBookingMode = 'general';
+      let verifiedMember = null;
+
+      window.switchBookingMode = function(mode) {
+        currentBookingMode = mode;
+        const btnGen = document.getElementById('tab-mode-general');
+        const btnMem = document.getElementById('tab-mode-member');
+        const authPanel = document.getElementById('member-auth-panel');
+        const calWrapper = document.getElementById('calendar-wrapper');
+
+        if (mode === 'general') {
+          btnGen.style.background = '#c9a96e'; btnGen.style.color = '#0d0e11'; btnGen.style.fontWeight = '700';
+          btnMem.style.background = 'transparent'; btnMem.style.color = '#94a3b8'; btnMem.style.fontWeight = '600';
+          authPanel.style.display = 'none';
+          calWrapper.style.display = 'block';
+          verifiedMember = null;
+        } else {
+          btnMem.style.background = '#c9a96e'; btnMem.style.color = '#0d0e11'; btnMem.style.fontWeight = '700';
+          btnGen.style.background = 'transparent'; btnGen.style.color = '#94a3b8'; btnGen.style.fontWeight = '600';
+          authPanel.style.display = 'block';
+          calWrapper.style.display = 'none';
+          verifiedMember = null;
+        }
+        closeBookPanel();
+      };
+
+      window.verifyMemberAuthForBooking = async function() {
+        const phone = document.getElementById('auth-member-phone').value.trim().replace(/[^0-9]/g, '');
+        const pin = document.getElementById('auth-member-pin').value.trim();
+        const errEl = document.getElementById('auth-error-msg');
+        errEl.style.display = 'none';
+
+        if (!phone || !pin) return (errEl.innerText = '연락처와 PIN 번호 4자리를 입력하세요.', errEl.style.display = 'block');
+        try {
+          const res = await apiCall('rpc/verify_member_login', 'POST', { p_phone: phone, p_pin: pin });
+          const data = await res.json();
+          if (!data || !data.length) {
+            errEl.innerText = '일치하는 VIP 회원 정보가 없거나 PIN이 올바르지 않습니다.';
+            errEl.style.display = 'block'; return;
+          }
+          verifiedMember = data[0];
+          const remain = Math.max(0, (parseInt(verifiedMember.total_passes) || 0) - (parseInt(verifiedMember.used_passes) || 0));
+          if (remain <= 0) {
+            errEl.innerText = '⚠️ 보유하신 잔여 세션 패스가 없습니다 (0회).';
+            errEl.style.display = 'block'; verifiedMember = null; return;
+          }
+
+          showToast(`✨ [인증 완료] ${verifiedMember.company_name} 님 (잔여 ${remain}회)`);
+          document.getElementById('member-auth-panel').style.display = 'none';
+          document.getElementById('calendar-wrapper').style.display = 'block';
+          renderBookCalendar();
+        } catch(e) {
+          errEl.innerText = '인증 서버 연결 오류'; errEl.style.display = 'block';
+        }
+      };
 
       window.changeBookMonth = function(delta) {
         bookMonth += delta;
@@ -1006,12 +1093,12 @@
             const isFullyBlocked = checkFullDayBlock();
 
             html += `
-              <div onclick="${isFullyBlocked ? '' : `selectBookingDate('${dateStr}')`}" style="background: ${isFullyBlocked ? '#141210' : '#1c1917'}; border: 1px solid ${selectedDateStr === dateStr ? '#c9a96e' : '#322d28'}; border-radius: 8px; padding: 6px; display: flex; flex-direction: column; justify-content: space-between; min-height: 75px; cursor: ${isFullyBlocked ? 'not-allowed' : 'pointer'}; opacity: ${isFullyBlocked ? '0.4' : '1'};">
+              <div onclick="${isFullyBlocked ? '' : `selectBookingDate('${dateStr}')`}" style="background: ${isFullyBlocked ? '#121214' : '#1c1917'}; border: 1px solid ${selectedDateStr === dateStr ? '#c9a96e' : '#322d28'}; border-radius: 8px; padding: 6px; display: flex; flex-direction: column; justify-content: space-between; min-height: 75px; cursor: ${isFullyBlocked ? 'not-allowed' : 'pointer'}; opacity: ${isFullyBlocked ? '0.35' : '1'};">
                 <div style="font-size: 0.82rem; font-weight: 600; color: ${isFullyBlocked ? '#555' : '#dfcfb2'}; text-align: center;">
                   ${d}
                 </div>
-                <div style="font-size: 0.68rem; text-align: center; color: ${isFullyBlocked ? '#e57373' : '#f4f1ea'}; font-weight: 600;">
-                  ${isFullyBlocked ? '마감' : '예약가능'}
+                <div style="font-size: 0.68rem; text-align: center; color: ${isFullyBlocked ? '#9ca3af' : '#f4f1ea'}; font-weight: 600;">
+                  ${isFullyBlocked ? '예약마감' : '예약가능'}
                 </div>
               </div>`;
           }
@@ -1028,6 +1115,19 @@
         document.getElementById('selected-date-title').innerText = `선택일: ${dateStr}`;
         document.getElementById('book-form-panel').style.display = 'block';
         document.getElementById('book-form-panel').scrollIntoView({ behavior: 'smooth' });
+
+        const pinGroup = document.getElementById('general-pin-group');
+        const badge = document.getElementById('active-member-badge');
+        if (currentBookingMode === 'member' && verifiedMember) {
+          pinGroup.style.display = 'none';
+          document.getElementById('badge-member-info').innerText = `[${verifiedMember.member_code}] ${verifiedMember.company_name}`;
+          badge.style.display = 'block';
+          document.getElementById('book-name').value = verifiedMember.company_name;
+          document.getElementById('book-phone').value = verifiedMember.phone || '';
+        } else {
+          pinGroup.style.display = 'block';
+          badge.style.display = 'none';
+        }
 
         const container = document.getElementById('book-slots-container');
         container.innerHTML = '<div style="color:#888; font-size:0.8rem; text-align:center; padding:10px;">세션 확인 중...</div>';
@@ -1069,7 +1169,7 @@
           });
           container.innerHTML = html;
         } catch(e) {
-          container.innerHTML = '<div style="color:#f87171; font-size:0.8rem; text-align:center;">세션 로드 실패 (다시 시도해주세요)</div>';
+          container.innerHTML = '<div style="color:#f87171; font-size:0.8rem; text-align:center;">세션 로드 실패</div>';
         }
       };
 
@@ -1077,39 +1177,6 @@
         document.getElementById('book-form-panel').style.display = 'none';
         selectedDateStr = '';
         renderBookCalendar();
-      };
-
-      window.checkMembershipAuto = async function(phoneVal) {
-        const cleanPhone = phoneVal.replace(/[^0-9]/g, '');
-        const box = document.getElementById('membership-detect-box');
-        const msgEl = document.getElementById('detect-msg');
-        detectedMember = null;
-
-        if (cleanPhone.length < 10) {
-          box.style.display = 'none';
-          return;
-        }
-
-        try {
-          // lounge_members 테이블 조회로 수정
-          const res = await apiCall(`lounge_members?phone=eq.${cleanPhone}&select=*`);
-          const members = res.ok ? await res.json() : [];
-
-          if (members && members.length > 0) {
-            detectedMember = members[0];
-            const remain = Math.max(0, (parseInt(detectedMember.total_passes) || 0) - (parseInt(detectedMember.used_passes) || 0));
-            msgEl.innerHTML = `✨ <b>[VIP 회원 인식]</b> ${escapeHtml(detectedMember.company_name)} 님 (잔여 세션: ${remain}회)`;
-            box.style.display = 'block';
-          } else {
-            box.style.display = 'none';
-          }
-        } catch(e) {
-          box.style.display = 'none';
-        }
-      };
-
-      window.togglePassInput = function(isChecked) {
-        document.getElementById('pass-pin-wrap').style.display = isChecked ? 'block' : 'none';
       };
 
       window.submitBookingRequest = async function() {
@@ -1126,16 +1193,13 @@
         if (!selectedDateStr || !name || !phone || !displayName) return (errEl.innerText = '날짜, 신청자 성함, 연락처, 모임명을 모두 입력하세요.', errEl.style.display = 'block');
         if (!privacy) return (errEl.innerText = '개인정보 수집 및 이용 동의(필수)에 체크해 주세요.', errEl.style.display = 'block');
 
-        let usePass = false;
-        let memberPin = '';
-        const usePassCheckbox = document.getElementById('book-use-pass');
-        const detectBox = document.getElementById('membership-detect-box');
+        let finalPin = pin;
+        let memberId = null;
 
-        if (detectBox.style.display !== 'none' && usePassCheckbox && usePassCheckbox.checked) {
-          usePass = true;
-          memberPin = document.getElementById('book-member-pin').value.trim();
-          if (memberPin.length !== 4) return (errEl.innerText = '멤버십 세션 패스 차감을 위해 VIP 전용 PIN 번호 4자리를 정확히 입력하세요.', errEl.style.display = 'block');
-          if (detectedMember && memberPin !== detectedMember.pin_code) return (errEl.innerText = '⚠️ VIP 회원 PIN 번호가 일치하지 않습니다.', errEl.style.display = 'block');
+        if (currentBookingMode === 'member') {
+          if (!verifiedMember) return (errEl.innerText = '회원 인증 정보가 유실되었습니다. 상단에서 다시 인증해주세요.', errEl.style.display = 'block');
+          finalPin = verifiedMember.pin_code;
+          memberId = verifiedMember.id;
         } else {
           if (pin.length !== 4) return (errEl.innerText = '예약 확인용 PIN 번호는 숫자 4자리여야 합니다.', errEl.style.display = 'block');
         }
@@ -1162,14 +1226,14 @@
             p_name: name, p_phone: phone, p_sms_consent: smsConsent,
             p_start_time: finalStart, p_end_time: finalEnd,
             p_guest_name: displayName, p_sub_message: subMsg || '라 콜론에 오신 것을 환영합니다.',
-            p_pin_code: usePass ? memberPin : pin,
-            p_member_id: usePass && detectedMember ? detectedMember.id : null
+            p_pin_code: finalPin,
+            p_member_id: memberId
           });
           const result = await res.json();
 
           if (result && result.success) {
-            alert(`[예약 신청 완료]\n\n${name} 님의 라운지 이용 예약이 접수되었습니다.${usePass ? '\n(VIP 멤버십 세션 패스가 성공적으로 차감되었습니다)' : ''}\n추후 '내 예약 조회'에서 확인 및 취소가 가능합니다.`);
-            location.href = '?';
+            showModal('예약 신청 완료', `${name} 님의 라운지 이용 예약이 접수되었습니다.${memberId ? '\n(VIP 회원권 패스 1회가 차감되었습니다)' : ''}\n추후 '내 예약 조회'에서 확인 및 취소가 가능합니다.`);
+            setTimeout(() => { location.href = '?'; }, 2000);
           } else {
             throw new Error(result.message || '예약 실패');
           }
