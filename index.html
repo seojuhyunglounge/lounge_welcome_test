@@ -649,31 +649,29 @@
       viewParam === 'member_admin', viewParam === 'member', viewParam === 'booking', viewParam === 'my_booking', viewParam === 'block_admin', viewParam === 'admin'
     ];
 
+    // 순수 KST 시간 기준 변환기 (UTC 왜곡 방지)
     function fmtDate(dInput, type) {
       if (!dInput) return '-';
       const d = new Date(dInput);
-      if (type === 'iso') return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-      if (type === 'time') return d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false });
+      if (isNaN(d.getTime())) return '-';
+      if (type === 'iso') {
+        const pad = n => String(n).padStart(2, '0');
+        return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      }
+      if (type === 'time') {
+        const pad = n => String(n).padStart(2, '0');
+        return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+      }
       return `${d.getMonth()+1}.${d.getDate()} ${fmtDate(d, 'time')}`;
     }
 
-    // 비로그인 손님도 안전하게 조회할 수 있도록 기본 퍼블릭 헤더 제공
     function getPublicHeaders(extra = {}) {
-      return { 
-        'apikey': cleanKey, 
-        'Authorization': 'Bearer ' + cleanKey,
-        ...extra 
-      };
+      return { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey, ...extra };
     }
 
     function getAdminHeaders(extra = {}) {
       const token = sessionStorage.getItem('la_colonne_admin_token') || '';
-      return { 
-        'apikey': cleanKey, 
-        'Authorization': 'Bearer ' + cleanKey,
-        'x-admin-token': token,
-        ...extra 
-      };
+      return { 'apikey': cleanKey, 'Authorization': 'Bearer ' + cleanKey, 'x-admin-token': token, ...extra };
     }
 
     async function apiCall(endpoint, method = 'GET', body = null, extraHeaders = {}) {
@@ -784,23 +782,22 @@
             const isPastDay = dateStr < todayStr;
 
             const getSessionStatus = (sessStartH, sessEndH) => {
-              const sessStartISO = `${dateStr}T${String(sessStartH).padStart(2,'0')}:00:00`;
-              const sessEndISO = `${dateStr}T${String(sessEndH).padStart(2,'0')}:00:00`;
-              const sDate = new Date(sessStartISO);
-              const eDate = new Date(sessEndISO);
+              const sDate = new Date(`${dateStr}T${String(sessStartH).padStart(2,'0')}:00:00`);
+              const eDate = new Date(`${dateStr}T${String(sessEndH).padStart(2,'0')}:00:00`);
 
               const isPast = isPastDay || (dateStr === todayStr && nowKST >= eDate);
               if (isPast) return { color: '#2a2624', isPast: true, record: null };
 
+              // 엄격한 시간대 교차 겹침(Overlap) 검사
               const matched = schedules.find(s => {
                 const exStart = new Date(s.start_time);
                 const exEnd = new Date(s.end_time);
                 return sDate < exEnd && eDate > exStart;
               });
 
-              if (!matched) return { color: '#f4f1ea', isPast: false, record: null };
-              if (matched.guest_name === '[CLOSED_BLOCK]') return { color: '#3d2c22', isPast: false, record: matched };
-              return { color: '#3b82f6', isPast: false, record: matched };
+              if (!matched) return { color: '#f4f1ea', isPast: false, record: null }; // Open (상아색)
+              if (matched.guest_name === '[CLOSED_BLOCK]') return { color: '#3d2c22', isPast: false, record: matched }; // Blocked (브라운)
+              return { color: '#3b82f6', isPast: false, record: matched }; // Booked (네이비)
             };
 
             const s1 = getSessionStatus(10, 13);
@@ -809,7 +806,7 @@
 
             html += `
               <div style="background: ${isPastDay ? '#141210' : '#1c1917'}; border: 1px solid ${isPastDay ? '#222' : '#322d28'}; border-radius: 8px; padding: 6px; display: flex; flex-direction: column; justify-content: space-between; min-height: 85px; opacity: ${isPastDay ? '0.45' : '1'};">
-                <div style="font-size: 0.82rem; font-weight: 600; color: ${isPastDay ? '#555' : '#dfcfb2'}; text-align: center;">
+                <div style="font-size: 0.82rem; font-weight: 600; color: ${isPastDay ? '#555' : '#dfcfb2'}; text-align: center; cursor: ${isPastDay ? 'default' : 'pointer'};" ${isPastDay ? '' : `onclick="toggleDayBlock('${dateStr}')"`} title="터치 시 하루 통째 토글">
                   ${d}
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 3px;">
@@ -842,6 +839,42 @@
               sub_message: '관리자 마감', prefix: '', suffix: '', bg_source: '', bgm_source: '', member_code: '', member_name: '', pin_code: '0000'
             });
             showToast('✓ 세션 마감 완료 (브라운)');
+          }
+          initBlockCalendar();
+        } catch(e) { alert('처리 실패'); }
+      };
+
+      window.toggleDayBlock = async function(dateStr) {
+        const nowKST = new Date();
+        const todayStr = nowKST.toLocaleDateString('en-CA');
+        if (dateStr < todayStr) return alert('⚠️ 지나간 날짜는 차단할 수 없습니다.');
+
+        try {
+          const res = await apiCall(`welcome_schedules?start_time=gte.${dateStr}T00:00:00&start_time=lte.${dateStr}T23:59:59&select=id,guest_name,start_time,end_time`);
+          const existing = res.ok ? await res.json() : [];
+
+          const hasRealBooking = existing.some(ex => ex.guest_name !== '[CLOSED_BLOCK]');
+          if (hasRealBooking) return alert('⚠️ 해당일에 이미 실제 고객 예약이 존재하여 일괄 차단이 불가합니다.');
+
+          const blocks = existing.filter(ex => ex.guest_name === '[CLOSED_BLOCK]');
+          if (blocks.length === 3) {
+            for (const b of blocks) await apiCall(`welcome_schedules?id=eq.${b.id}`, 'DELETE');
+            showToast('✓ 해당일 전체 오픈 완료');
+          } else {
+            for (const b of blocks) await apiCall(`welcome_schedules?id=eq.${b.id}`, 'DELETE');
+            const slots = [
+              { start: `${dateStr}T10:00:00`, end: `${dateStr}T13:00:00` },
+              { start: `${dateStr}T14:00:00`, end: `${dateStr}T17:00:00` },
+              { start: `${dateStr}T18:00:00`, end: `${dateStr}T21:00:00` }
+            ];
+            for (const s of slots) {
+              if (dateStr === todayStr && new Date(s.end) <= nowKST) continue;
+              await apiCall('welcome_schedules', 'POST', {
+                start_time: s.start, end_time: s.end, guest_name: '[CLOSED_BLOCK]',
+                sub_message: '관리자 마감', prefix: '', suffix: '', bg_source: '', bgm_source: '', member_code: '', member_name: '', pin_code: '0000'
+              });
+            }
+            showToast('✓ 해당일 하루 통째 마감 완료');
           }
           initBlockCalendar();
         } catch(e) { alert('처리 실패'); }
@@ -1733,7 +1766,7 @@
           document.getElementById('u-prefix-select-box').style.display = this.checked ? 'block' : 'none';
         };
 
-        async function loadSchedules() {
+        window.loadSchedules = async function() {
           const list = document.getElementById('schedule-list');
           try {
             const res = await apiCall(`welcome_schedules?end_time=gte.${new Date().toISOString()}&order=start_time.asc`);
