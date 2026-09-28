@@ -177,7 +177,7 @@
     @media (min-width: 480px) { .sched-datetime-grid { flex-direction: row; gap: 8px; } }
 
     #admin-section { display: none; width: 92%; max-width: 540px; margin: 30px auto 90px auto; }
-    #guest-portal-section, #member-client-section, #booking-section, #my-booking-section, #block-admin-section { display: none; width: 90%; max-width: 480px; margin: 60px auto 80px auto; text-align: center; }
+    #guest-portal-section, #member-client-section, #booking-section, #my-booking-section, #block-admin-section, #history-admin-section { display: none; width: 90%; max-width: 480px; margin: 60px auto 80px auto; text-align: center; }
     #bar-section { display: none; width: 92%; max-width: 480px; margin: 30px auto 80px auto; }
     #member-admin-section { display: none; width: 92%; max-width: 520px; margin: 30px auto 90px auto; }
 
@@ -295,7 +295,8 @@
       <div style="display: flex; gap: 12px; flex-wrap: wrap;">
         <a href="?view=bar&admin=1" style="color: #93c5fd; font-size: 0.85rem; text-decoration: none; font-weight: 500;">🍸 어메니티 편집</a>
         <a href="?view=member_admin" style="color: #dfcfb2; font-size: 0.85rem; text-decoration: none; font-weight: 600;">💳 멤버십 횟수 관리</a>
-        <a href="?view=block_admin" style="color: #c9a96e; font-size: 0.85rem; text-decoration: none; font-weight: 600;">🔒 예약 불가일 캘린더 관리 ↗</a>
+        <a href="?view=block_admin" style="color: #c9a96e; font-size: 0.85rem; text-decoration: none; font-weight: 600;">🔒 예약 캘린더 관리 ↗</a>
+        <a href="?view=history_admin" style="color: #c9a96e; font-size: 0.85rem; text-decoration: none; font-weight: 600;">📚 히스토리 전체보기 ↗</a>
       </div>
       <div style="display:flex; gap:10px; align-items:center;">
         <button type="button" onclick="logoutAdmin()" style="background:none; border:1px solid #444; color:#aaa; padding:4px 8px; border-radius:6px; font-size:0.75rem; cursor:pointer;">로그아웃</button>
@@ -341,7 +342,7 @@
 
     <!-- 카드 1: 환영 디스플레이 표출 & 예약 제어 -->
     <div class="admin-card" id="unified-control-card">
-      <div class="admin-title" id="unified-card-title">1. VIP 디스플레이 표출 & 예약 제어</div>
+      <div class="admin-title" id="unified-card-title">1. TV 즉시표출 & 예약제어</div>
 
       <div class="form-group">
         <label>VIP 멤버십 회원 연동 (선택)</label>
@@ -442,17 +443,20 @@
     <!-- 카드 2: 예약 대기열 -->
     <div class="admin-card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-        <div class="admin-title" style="margin-bottom: 0;">2. 등록된 VIP 예약 대기열</div>
+        <div class="admin-title" style="margin-bottom: 0;">2. 예약대기열</div>
         <button type="button" onclick="loadSchedules()" title="목록 새로고침" style="background: none; border: 1px solid #444; color: #c9a96e; padding: 3px 10px; border-radius: 6px; font-size: 0.74rem; cursor: pointer;">🔄 새로고침</button>
       </div>
       <div id="schedule-list"><div style="color: #666; font-size: 0.85rem; text-align: center; padding: 15px 0;">대기 일정이 없습니다.</div></div>
     </div>
 
-    <!-- 카드 3: 히스토리 아카이브 -->
+    <!-- 카드 3: 최근 히스토리 -->
     <div class="admin-card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-        <div class="admin-title" style="margin-bottom: 0;">3. VIP 히스토리 아카이브</div>
-        <button type="button" onclick="loadHistory(1)" style="background: none; border: 1px solid #444; color: #aaa; padding: 3px 8px; border-radius: 6px; font-size: 0.74rem; cursor: pointer;">새로고침</button>
+        <div class="admin-title" style="margin-bottom: 0;">3. 최근 히스토리</div>
+        <div style="display:flex; gap:6px; align-items:center;">
+          <button type="button" onclick="loadHistory(1)" style="background: none; border: 1px solid #444; color: #aaa; padding: 3px 8px; border-radius: 6px; font-size: 0.74rem; cursor: pointer;">새로고침</button>
+          <a href="?view=history_admin" style="border: 1px solid #444; color: #c9a96e; padding: 3px 8px; border-radius: 6px; font-size: 0.74rem; text-decoration:none;">전체보기 ↗</a>
+        </div>
       </div>
       <div id="history-list"><div style="color: #666; font-size: 0.85rem; text-align: center; padding: 15px 0;">히스토리가 비어 있습니다.</div></div>
       <div class="pagination-bar" id="history-pagination" style="display: none;">
@@ -477,7 +481,7 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
       <div>
         <a href="?view=admin" style="color: #94a3b8; font-size: 0.82rem; text-decoration: none; display: inline-block; margin-bottom: 4px;">← 라운지 관리 홈</a>
-        <h2 style="font-size: 1.2rem; color: #c9a96e; font-weight: 600;">🔒 예약 불가일 캘린더 관리</h2>
+        <h2 style="font-size: 1.2rem; color: #c9a96e; font-weight: 600;">🔒 예약 캘린더 관리</h2>
       </div>
       <div style="display: flex; align-items: center; gap: 8px;">
         <button type="button" class="page-btn" onclick="changeCalendarMonth(-1)">◀</button>
@@ -497,6 +501,26 @@
         <div style="color: #e57373;">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div style="color: #64b5f6;">토</div>
       </div>
       <div id="calendar-grid-container" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px;"></div>
+    </div>
+  </div>
+
+  <!-- [화면 10] 전체 히스토리 관리 (?view=history_admin) -->
+  <div id="history-admin-section">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:12px; flex-wrap:wrap;">
+      <div>
+        <a href="?view=admin" style="color:#94a3b8; font-size:0.82rem; text-decoration:none; display:inline-block; margin-bottom:4px;">← 라운지 관리 홈</a>
+        <h2 style="font-size:1.2rem; color:#c9a96e; font-weight:600; margin:0;">📚 히스토리 전체보기</h2>
+        <div style="font-size:0.76rem; color:#7f8795; margin-top:5px;">최근 기록부터 오래된 기록까지 확인할 수 있습니다.</div>
+      </div>
+      <button type="button" class="page-btn" onclick="loadHistoryArchive(1)">새로고침</button>
+    </div>
+    <div class="admin-card" style="padding:16px;">
+      <div id="history-archive-list"><div style="color:#666; font-size:0.85rem; text-align:center; padding:25px 0;">히스토리를 불러오는 중...</div></div>
+      <div class="pagination-bar" id="history-archive-pagination" style="display:none;">
+        <button class="page-btn" id="hist-archive-prev" onclick="changeHistoryArchivePage(-1)">← 이전</button>
+        <span id="hist-archive-page-num" style="font-size:0.8rem; color:#888;">1 / 1</span>
+        <button class="page-btn" id="hist-archive-next" onclick="changeHistoryArchivePage(1)">다음 →</button>
+      </div>
     </div>
   </div>
 
@@ -730,9 +754,9 @@
     const ACCOUNT_CONFIG = { bank: '국민은행', num: '123456-04-123456', owner: '라콜론' };
     const params = new URLSearchParams(window.location.search);
     const viewParam = params.get('view');
-    const [isTV, isBar, isBarAdmin, isMemberAdmin, isMemberClient, isBooking, isMyBooking, isBlockAdmin, isAdmin] = [
+    const [isTV, isBar, isBarAdmin, isMemberAdmin, isMemberClient, isBooking, isMyBooking, isBlockAdmin, isHistoryAdmin, isAdmin] = [
       viewParam === 'tv', viewParam === 'bar', viewParam === 'bar' && params.get('admin') === '1',
-      viewParam === 'member_admin', viewParam === 'member', viewParam === 'booking', viewParam === 'my_booking', viewParam === 'block_admin', viewParam === 'admin'
+      viewParam === 'member_admin', viewParam === 'member', viewParam === 'booking', viewParam === 'my_booking', viewParam === 'block_admin', viewParam === 'history_admin', viewParam === 'admin'
     ];
 
     function showModal(title, desc) {
@@ -837,6 +861,92 @@
       };
     }
     window.logoutAdmin = () => { sessionStorage.removeItem('la_colonne_admin_token'); location.href = location.pathname; };
+
+    // ─────────────────────────────────────────────
+    // [화면 10] 전체 히스토리 관리 (?view=history_admin)
+    // ─────────────────────────────────────────────
+    if (isHistoryAdmin) {
+      requireAdminAuth(() => {
+        document.getElementById('history-admin-section').style.display = 'block';
+        loadHistoryArchive(1);
+      });
+    }
+
+    let historyArchivePage = 1;
+    const HISTORY_ARCHIVE_PAGE_SIZE = 20;
+
+    window.loadHistoryArchive = async function(p) {
+      if (p) historyArchivePage = p;
+      const container = document.getElementById('history-archive-list');
+      const pagination = document.getElementById('history-archive-pagination');
+      if (!container) return;
+      const offset = (historyArchivePage - 1) * HISTORY_ARCHIVE_PAGE_SIZE;
+      container.innerHTML = '<div style="color:#666; font-size:0.85rem; text-align:center; padding:25px 0;">히스토리를 불러오는 중...</div>';
+
+      try {
+        let items = null;
+        try {
+          items = await callAdminRpc('get_admin_history', { p_limit: HISTORY_ARCHIVE_PAGE_SIZE, p_offset: offset });
+        } catch (rpcErr) {
+          const fallbackRes = await apiCall(`welcome_history?select=*&order=visit_date.desc&limit=${HISTORY_ARCHIVE_PAGE_SIZE}&offset=${offset}`);
+          if (fallbackRes.ok) items = await fallbackRes.json();
+        }
+
+        if (!items || !items.length) {
+          if (historyArchivePage > 1) return loadHistoryArchive(historyArchivePage - 1);
+          container.innerHTML = '<div style="color:#666; font-size:0.85rem; text-align:center; padding:25px 0;">히스토리가 없습니다.</div>';
+          if (pagination) pagination.style.display = 'none';
+          return;
+        }
+
+        let html = '';
+        items.forEach(h => {
+          const enc = encodeURIComponent(JSON.stringify(h));
+          const isInstant = h.event_type === '즉시 반영';
+          const mBadge = h.member_name ? `<span class="tag-badge badge-gold" style="white-space:nowrap;">💳 ${escapeHtml(h.member_name)}</span>` : '';
+          html += `
+            <div class="history-card-row" style="padding:12px 14px; margin-bottom:8px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+                <div style="display:flex; align-items:center; gap:7px; min-width:0; flex-wrap:wrap;">
+                  <span class="tag-badge ${isInstant ? 'badge-gold' : 'badge-blue'}">${escapeHtml(h.event_type || '기록')}</span>
+                  <span style="font-size:0.74rem; color:#64748b; white-space:nowrap;">${fmtDate(h.visit_date)}</span>
+                  ${mBadge}
+                </div>
+                <div style="display:flex; gap:5px; flex-shrink:0;">
+                  <button type="button" class="hist-btn-del" onclick="deleteHistoryArchive(${h.id})">삭제</button>
+                </div>
+              </div>
+              <div style="margin-top:5px; display:flex; align-items:baseline; gap:9px; min-width:0;">
+                <span style="font-size:0.95rem; font-weight:600; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(h.prefix ? h.prefix + ' ' : '')}${escapeHtml(h.guest_name || '')}${escapeHtml(h.suffix ? ' ' + h.suffix : '')}</span>
+                <span style="font-size:0.78rem; color:#94a3b8; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1;">${escapeHtml(h.sub_message || '-')}</span>
+              </div>
+            </div>`;
+        });
+        container.innerHTML = html;
+
+        const totalCount = Number(items[0].total_count || 0);
+        const totalPages = Math.max(1, Math.ceil(totalCount / HISTORY_ARCHIVE_PAGE_SIZE));
+        if (pagination) {
+          pagination.style.display = totalPages > 1 ? 'flex' : 'none';
+          document.getElementById('hist-archive-page-num').innerText = `${historyArchivePage} / ${totalPages}`;
+          document.getElementById('hist-archive-prev').disabled = historyArchivePage <= 1;
+          document.getElementById('hist-archive-next').disabled = historyArchivePage >= totalPages;
+        }
+      } catch (err) {
+        container.innerHTML = '<div style="color:#f87171; font-size:0.82rem; text-align:center; padding:25px 0;">히스토리 로드 실패</div>';
+      }
+    };
+
+    window.changeHistoryArchivePage = d => loadHistoryArchive(historyArchivePage + d);
+    window.deleteHistoryArchive = async function(id) {
+      if (!confirm('이 기록을 영구 삭제하시겠습니까?')) return;
+      try {
+        await callAdminRpc('delete_admin_history', { p_id: id });
+      } catch(e) {
+        await apiCall(`welcome_history?id=eq.${id}`, 'DELETE');
+      }
+      loadHistoryArchive(historyArchivePage);
+    };
 
     // ─────────────────────────────────────────────
     // [화면 9] 하이엔드 3색 캘린더 관리 (?view=block_admin)
@@ -2393,7 +2503,7 @@ async function syncTV() {
 
         window.cancelEditSchedule = () => {
           editingId = null;
-          document.getElementById('unified-card-title').innerText = '1. VIP 디스플레이 표출 & 예약 제어';
+          document.getElementById('unified-card-title').innerText = '1. TV 즉시표출 & 예약제어';
           document.getElementById('btn-action-sched').innerText = '📅 예약 일정 추가';
           document.getElementById('btn-action-now').style.display = 'block';
           document.getElementById('u-cancel-btn').style.display = 'none';
