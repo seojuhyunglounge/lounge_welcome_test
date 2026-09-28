@@ -2117,17 +2117,31 @@ async function syncTV() {
 
           if (f.memberId && !(await deductSession(f.memberId, f.memberCode, f.memberName, '차감'))) return (log.innerText = '취소됨');
           try {
-            const res = await apiCall('welcome_screen', 'POST', {
-              id: 1, prefix: f.prefix, guest_name: f.name, suffix: f.suffix, sub_message: f.msg,
-              bg_source: f.bg, bgm_source: f.bgm, member_code: f.memberCode, member_name: f.memberName, updated_at: toISOStringSafe(new Date())
-            }, { 'Prefer': 'resolution=merge-duplicates,return=representation' });
+            // welcome_screen(id=1)은 이미 존재하는 단일 설정 row이므로
+            // POST upsert 대신 UPDATE(PATCH)를 사용한다.
+            // POST upsert는 INSERT 정책까지 검사되어 401이 발생할 수 있다.
+            const res = await apiCall('welcome_screen?id=eq.1', 'PATCH', {
+              prefix: f.prefix, guest_name: f.name, suffix: f.suffix, sub_message: f.msg,
+              bg_source: f.bg, bgm_source: f.bgm, member_code: f.memberCode, member_name: f.memberName,
+              updated_at: toISOStringSafe(new Date())
+            });
             if (res.ok) {
               log.innerText = '✓ TV에 즉시 반영되었습니다.';
-              recordHistory('즉시 반영', f); updateStatus();
-            } else throw new Error();
+              recordHistory('즉시 반영', f);
+              updateStatus();
+            } else {
+              let detail = '';
+              try { detail = (await res.text()).slice(0, 300); } catch (_) {}
+              throw new Error(`TV 표출 저장 실패 (${res.status})${detail ? `\n${detail}` : ''}`);
+            }
           } catch(e) {
-            if (f.memberId) await callAdminRpc('adjust_admin_member_pass', { p_id: parseInt(f.memberId), p_delta: 1 });
+            if (f.memberId) {
+              try { await callAdminRpc('adjust_admin_member_pass', { p_id: parseInt(f.memberId), p_delta: 1 }); }
+              catch (_) {}
+            }
             log.innerText = '표출 실패 (세션 복구됨)';
+            console.error('[TV 즉시 표출]', e);
+            alert(e && e.message ? e.message : 'TV 즉시 표출에 실패했습니다.');
           }
         };
 
