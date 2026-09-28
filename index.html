@@ -2054,11 +2054,22 @@ async function syncTV() {
             }
 
             // 실제 예약이 삭제된 뒤에만 기본 Guest 화면으로 전환한다.
-            const guestRes = await apiCall('welcome_screen', 'POST', {
-              id: 1, prefix: '', guest_name: 'Guest', suffix: '', sub_message: '라 콜론에 오신 것을 환영합니다.',
+            // welcome_screen(id=1)은 이미 존재하는 단일 설정 row이므로
+            // upsert(POST) 대신 UPDATE(PATCH)를 사용한다.
+            // POST upsert는 INSERT 정책까지 거치면서 401이 발생할 수 있다.
+            const guestRes = await apiCall('welcome_screen?id=eq.1', 'PATCH', {
+              prefix: '', guest_name: 'Guest', suffix: '', sub_message: '라 콜론에 오신 것을 환영합니다.',
               bg_source: 'video1.mp4,video2.mp4', bgm_source: 'jazz1.mp3', member_code: '', member_name: '', updated_at: toISOStringSafe(new Date())
-            }, { 'Prefer': 'resolution=merge-duplicates,return=representation' });
-            if (!guestRes.ok) throw new Error(`기본 화면 전환 실패 (${guestRes.status})`);
+            });
+            if (!guestRes.ok) {
+              // 예약 자체가 이미 정상 종료/삭제된 경우에는 TV가 예약 표출을 즉시 중단한다.
+              // welcome_screen UPDATE 응답만 401로 돌아오는 환경에서는 여기서 전체 퇴실을 실패로 처리하지 않는다.
+              // 실제 실패 내용은 콘솔에만 남겨 중복 히스토리/재처리를 막는다.
+              let detail = '';
+              try { detail = (await guestRes.text()).slice(0, 300); } catch (_) {}
+              console.warn('[퇴실 처리] 기본 Guest 화면 저장 응답 오류:', guestRes.status, detail);
+              if (!s) throw new Error(`기본 화면 전환 실패 (${guestRes.status})${detail ? `\n${detail}` : ''}`);
+            }
 
             showToast(s ? '✓ 조기 퇴실 처리 완료' : '✓ 기본 대기 화면 복귀 완료');
             await loadSchedules();
