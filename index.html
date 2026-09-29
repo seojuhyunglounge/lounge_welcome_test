@@ -197,7 +197,188 @@
     .badge-green { background: #22c55e; color: #000; font-weight: 700; }
     .member-meta { font-size: 0.78rem; color: #c9a96e; font-weight: 600; }
 
-    .schedule-item, .order-item, .member-item { background: #1f2128; border: 1px solid #2e323e; border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
+    
+    /* La Colonne customer My Reservation V2 */
+    #my-booking-section.lc-my-booking {
+      width: min(88%, 720px);
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 72px 0 70px;
+      background: #f7f4ed;
+      color: #292722;
+      text-align: left;
+    }
+    #my-booking-section.lc-my-booking .my-booking-brand {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(42px, 7vw, 64px);
+      font-weight: 400;
+      line-height: .9;
+      letter-spacing: .01em;
+      color: #292722;
+      margin-bottom: 8px;
+    }
+    #my-booking-section.lc-my-booking .my-booking-kicker {
+      font-size: 11px;
+      letter-spacing: .20em;
+      color: #9b8058;
+      margin-bottom: 34px;
+    }
+    #my-booking-section.lc-my-booking .my-booking-card,
+    #my-booking-section.lc-my-booking .my-change-panel {
+      background: rgba(255,255,255,.42);
+      border: 1px solid rgba(41,39,34,.14);
+      border-radius: 2px;
+      padding: 28px;
+    }
+    #my-booking-section.lc-my-booking .my-booking-label {
+      font-size: 11px;
+      letter-spacing: .14em;
+      color: #9b8058;
+      margin-bottom: 8px;
+    }
+    #my-booking-section.lc-my-booking input,
+    #my-booking-section.lc-my-booking textarea {
+      box-sizing: border-box;
+      width: 100%;
+      background: rgba(255,255,255,.72);
+      color: #292722;
+      border: 1px solid rgba(41,39,34,.18);
+      border-radius: 0;
+      padding: 12px 13px;
+      font: inherit;
+      outline: none;
+    }
+    #my-booking-section.lc-my-booking textarea { min-height: 92px; resize: vertical; line-height: 1.6; }
+    #my-booking-section.lc-my-booking input:focus,
+    #my-booking-section.lc-my-booking textarea:focus { border-color: #9b8058; }
+    .my-booking-submit {
+      width: 100%;
+      margin-top: 8px;
+      padding: 13px 18px;
+      background: #292722;
+      color: #f7f4ed;
+      border: 1px solid #292722;
+      border-radius: 0;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .my-booking-list-title {
+      margin: 34px 0 14px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 500;
+      color: #292722;
+    }
+    .my-booking-item {
+      border-top: 1px solid rgba(41,39,34,.14);
+      padding: 22px 0 24px;
+    }
+    .my-booking-item:first-child { border-top: 0; padding-top: 4px; }
+    .my-booking-date {
+      font-size: 13px;
+      letter-spacing: .04em;
+      color: #9b8058;
+      margin-bottom: 15px;
+    }
+    .my-booking-main {
+      display: grid;
+      grid-template-columns: 112px 1fr;
+      gap: 7px 16px;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    .my-booking-main .key { color: #777269; }
+    .my-booking-main .value { color: #292722; word-break: break-word; }
+    .my-booking-submessage {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(41,39,34,.10);
+      color: #777269;
+      font-size: 13px;
+      line-height: 1.65;
+      white-space: pre-line;
+    }
+    .my-booking-status {
+      display: inline-block;
+      margin-left: 8px;
+      padding: 2px 7px;
+      border: 1px solid rgba(155,128,88,.45);
+      color: #9b8058;
+      font-size: 10px;
+      letter-spacing: .06em;
+      vertical-align: 2px;
+    }
+    .my-booking-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+    .my-booking-action {
+      padding: 8px 12px;
+      background: transparent;
+      color: #292722;
+      border: 1px solid rgba(41,39,34,.22);
+      border-radius: 0;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .my-booking-action.primary { border-color: #9b8058; color: #7f6848; }
+    .my-booking-action.danger { color: #7a5550; border-color: rgba(122,85,80,.35); }
+    .my-booking-action:disabled { opacity: .38; cursor: not-allowed; }
+    .my-booking-link-row {
+      margin-top: 34px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(41,39,34,.12);
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .my-booking-link-row a { color: #777269; font-size: 11px; letter-spacing: .08em; text-decoration: none; }
+    .my-booking-edit-head,
+    .my-change-head {
+      display:flex; justify-content:space-between; align-items:center; gap:14px; margin-bottom:18px;
+    }
+    .my-booking-edit-title,
+    .my-change-title { font-family:'Cormorant Garamond',serif; font-size:27px; color:#292722; }
+    .my-booking-close { background:none; border:0; color:#777269; cursor:pointer; font-size:12px; }
+    .my-booking-edit-grid { display:grid; gap:13px; }
+    .my-booking-edit-grid label { display:block; font-size:11px; color:#777269; margin-bottom:6px; }
+    .my-change-calendar-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+    .my-change-month { font-size:14px; color:#292722; }
+    .my-change-calendar-nav { display:flex; gap:6px; }
+    .my-change-calendar-nav button { background:transparent; border:1px solid rgba(41,39,34,.18); color:#292722; padding:5px 10px; cursor:pointer; }
+    .my-change-week { display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:11px; color:#777269; margin-bottom:6px; }
+    .my-change-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+    .my-change-day { background:rgba(255,255,255,.58); border:1px solid rgba(41,39,34,.12); min-height:66px; padding:6px; cursor:pointer; text-align:center; }
+    .my-change-day.is-selected { border-color:#9b8058; background:#f0eadf; }
+    .my-change-day.is-blocked { opacity:.35; cursor:not-allowed; }
+    .my-change-day .day-num { font-size:12px; color:#292722; }
+    .my-change-day .day-status { margin-top:13px; font-size:9px; line-height:1.25; color:#9b8058; }
+    .my-change-session-title { margin:22px 0 10px; font-size:12px; color:#777269; letter-spacing:.06em; }
+    .my-change-session-list { display:flex; flex-direction:column; gap:7px; }
+    .my-change-session {
+      display:grid; grid-template-columns:56px 1fr auto; align-items:center; gap:10px;
+      padding:11px 12px; border:1px solid rgba(41,39,34,.14); background:rgba(255,255,255,.52); cursor:pointer;
+    }
+    .my-change-session.is-blocked { opacity:.35; cursor:not-allowed; }
+    .my-change-session input { width:16px !important; }
+    .my-change-session .session-name { color:#292722; font-size:13px; }
+    .my-change-session .session-time { color:#777269; font-size:12px; }
+    .my-change-session .session-status { color:#9b8058; font-size:10px; }
+    .my-change-actions { display:flex; gap:8px; margin-top:18px; }
+    .my-change-actions button { flex:1; padding:12px; border:1px solid rgba(41,39,34,.18); background:transparent; color:#292722; cursor:pointer; }
+    .my-change-actions .save { background:#292722; color:#f7f4ed; border-color:#292722; }
+    @media (max-width: 560px) {
+      #my-booking-section.lc-my-booking { width:min(92%, 720px); padding-top:46px; }
+      #my-booking-section.lc-my-booking .my-booking-card,
+      #my-booking-section.lc-my-booking .my-change-panel { padding:20px; }
+      .my-booking-main { grid-template-columns:88px 1fr; gap:6px 12px; }
+      .my-change-session { grid-template-columns:38px 1fr auto; }
+    }
+
+.schedule-item, .order-item, .member-item { background: #1f2128; border: 1px solid #2e323e; border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
     .action-btn-group { display: flex; align-items: center; gap: 8px; width: 100%; border-top: 1px dashed #2a2e3d; padding-top: 10px; }
     .pagination-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding-top: 12px; border-top: 1px solid #282a32; }
     .page-btn { background: #212329; border: 1px solid #333640; color: #c9a96e; padding: 5px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; }
@@ -1280,24 +1461,75 @@
     </div>
   </div>
 
-  <!-- [화면 8] 내 예약 조회 및 취소 (?view=my_booking) -->
-  <div id="my-booking-section">
-    <div class="portal-brand" style="font-size: 2.1rem;">La Colonne</div>
-    <div class="portal-sub">Reservation Lookup & Cancel</div>
-    <div class="admin-card" style="text-align: left; margin-top: 15px;">
-      <div class="form-group">
-        <label>등록된 휴대폰 번호</label>
+  <!-- [화면 8] 내 예약 (?view=my_booking) -->
+  <div id="my-booking-section" class="lc-my-booking">
+    <div class="my-booking-brand">La Colonne</div>
+    <div class="my-booking-kicker">MY RESERVATION</div>
+
+    <div class="my-booking-card">
+      <div class="my-booking-label">RESERVATION LOOKUP</div>
+      <div style="font-size:13px; color:#777269; line-height:1.65; margin-bottom:20px;">예약 시 등록한 휴대폰 번호와 PIN으로 예약 내역을 확인할 수 있습니다.</div>
+      <div style="margin-bottom:13px;">
+        <label class="my-booking-label" for="my-phone-input">휴대폰 번호</label>
         <input type="tel" id="my-phone-input" placeholder="010-1234-5678">
       </div>
-      <div class="form-group">
-        <label>예약 확인용 PIN 번호 (4자리)</label>
-        <input type="password" id="my-pin-input" maxlength="4" placeholder="PIN 입력" style="letter-spacing: 4px;">
+      <div style="margin-bottom:5px;">
+        <label class="my-booking-label" for="my-pin-input">예약 확인용 PIN</label>
+        <input type="password" id="my-pin-input" maxlength="4" inputmode="numeric" placeholder="4자리 숫자" style="letter-spacing:4px;">
       </div>
-      <button type="button" class="btn-primary" onclick="lookupMyBookings()">내 예약 내역 조회</button>
-      <div id="my-lookup-error" style="color: #f87171; font-size: 0.8rem; margin-top: 10px; display: none; text-align: center;"></div>
+      <button type="button" class="my-booking-submit" onclick="lookupMyBookings()">예약 내역 조회</button>
+      <div id="my-lookup-error" style="color:#8b5b55; font-size:12px; margin-top:10px; display:none; text-align:center;"></div>
     </div>
-    <div id="my-bookings-result" style="display: none;"></div>
-    <div style="margin-top: 16px; display:flex; justify-content:space-between; gap:16px; align-items:center;"><a href="?view=booking" style="color: #888; font-size: 0.8rem; text-decoration: none;">예약하기 →</a><a href="https://la-colonne.vercel.app/" style="color: #888; font-size: 0.8rem; text-decoration: none;">VISIT LA COLONNE ↗</a></div>
+
+    <div id="my-bookings-result" style="display:none;"></div>
+
+    <div id="my-info-edit-panel" class="my-change-panel" style="display:none; margin-top:24px;">
+      <div class="my-booking-edit-head">
+        <div class="my-booking-edit-title">예약 정보 수정</div>
+        <button type="button" class="my-booking-close" onclick="closeMyInfoEdit()">닫기</button>
+      </div>
+      <div style="font-size:12px; color:#777269; line-height:1.6; margin-bottom:18px;">예약자명과 TV에 표시되는 정보를 수정할 수 있습니다. 예약 시작 후에는 수정할 수 없습니다.</div>
+      <div class="my-booking-edit-grid">
+        <div><label>예약자명</label><input id="my-edit-reservation-name" type="text"></div>
+        <div><label>디스플레이 표출명</label><input id="my-edit-display-name" type="text"></div>
+        <div><label>모임명</label><input id="my-edit-meeting-name" type="text"></div>
+        <div><label>디스플레이 서브문구</label><textarea id="my-edit-sub-message"></textarea></div>
+      </div>
+      <div class="my-change-actions">
+        <button type="button" onclick="closeMyInfoEdit()">취소</button>
+        <button type="button" class="save" onclick="saveMyInfoEdit()">수정 저장</button>
+      </div>
+      <div id="my-edit-error" style="display:none; margin-top:10px; color:#8b5b55; font-size:12px;"></div>
+    </div>
+
+    <div id="my-change-panel" class="my-change-panel" style="display:none; margin-top:24px;">
+      <div class="my-change-head">
+        <div class="my-change-title">예약 일정 변경</div>
+        <button type="button" class="my-booking-close" onclick="closeMyChange()">닫기</button>
+      </div>
+      <div style="font-size:12px; color:#777269; line-height:1.6; margin-bottom:18px;">예약 가능한 날짜와 세션을 다시 선택해주세요. 기존 예약은 변경이 완료될 때까지 유지됩니다.</div>
+      <div class="my-change-calendar-head">
+        <div id="my-change-month-title" class="my-change-month">2026년 9월 예약 현황</div>
+        <div class="my-change-calendar-nav">
+          <button type="button" onclick="changeMyChangeMonth(-1)">‹</button>
+          <button type="button" onclick="changeMyChangeMonth(1)">›</button>
+        </div>
+      </div>
+      <div class="my-change-week"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
+      <div id="my-change-calendar-grid" class="my-change-grid"></div>
+      <div id="my-change-session-title" class="my-change-session-title">날짜를 선택해주세요.</div>
+      <div id="my-change-session-list" class="my-change-session-list"></div>
+      <div class="my-change-actions">
+        <button type="button" onclick="closeMyChange()">취소</button>
+        <button type="button" class="save" onclick="saveMyChange()">일정 변경 저장</button>
+      </div>
+      <div id="my-change-error" style="display:none; margin-top:10px; color:#8b5b55; font-size:12px;"></div>
+    </div>
+
+    <div class="my-booking-link-row">
+      <a href="?view=booking">예약하기 →</a>
+      <a href="https://la-colonne.vercel.app/">VISIT LA COLONNE ↗</a>
+    </div>
   </div>
 
   <!-- [화면 5] VIP 멤버십 관리 (?view=member_admin) -->
@@ -2058,63 +2290,291 @@
     // ─────────────────────────────────────────────
     } else if (isMyBooking) {
       document.getElementById('my-booking-section').style.display = 'block';
-      const [phoneIn, pinIn, errEl, resEl] = [document.getElementById('my-phone-input'), document.getElementById('my-pin-input'), document.getElementById('my-lookup-error'), document.getElementById('my-bookings-result')];
-      
+      const [phoneIn, pinIn, errEl, resEl] = [
+        document.getElementById('my-phone-input'),
+        document.getElementById('my-pin-input'),
+        document.getElementById('my-lookup-error'),
+        document.getElementById('my-bookings-result')
+      ];
+
       let myLookupFailCount = 0;
       let myLookupLockUntil = 0;
+      let myBookingCache = [];
+      let myEditingInfoId = null;
+      let myChangeId = null;
+      let myChangeYear = new Date().getFullYear();
+      let myChangeMonth = new Date().getMonth();
+      let myChangeDate = '';
+
+      [phoneIn, pinIn].forEach(el => el.addEventListener('keydown', e => {
+        if (e.key === 'Enter') lookupMyBookings();
+      }));
+
+      function isMyBookingStarted(b) {
+        return new Date(b.start_time).getTime() <= Date.now();
+      }
+
+      function renderMyBookingCards(bookings, phone, pin) {
+        let html = '<div class="my-booking-list-title">나의 예약</div>';
+        bookings.forEach(b => {
+          if (b.guest_name === '[CLOSED_BLOCK]') return;
+          const started = isMyBookingStarted(b);
+          const modified = !!b.customer_modified_at;
+          const reservationName = b.reservation_name || b.guest_name || '—';
+          const displayName = b.guest_name || reservationName || '—';
+          const meetingName = b.meeting_name || '—';
+          const subMessage = b.sub_message || '라 콜론에 오신 것을 환영합니다.';
+          html += `
+            <div class="my-booking-item">
+              <div class="my-booking-date">
+                ${escapeHtml(fmtDate(b.start_time))} ~ ${escapeHtml(fmtDate(b.end_time, 'time'))}
+                ${started ? '<span class="my-booking-status">이용 중</span>' : ''}
+                ${modified ? '<span class="my-booking-status">변경됨</span>' : ''}
+              </div>
+              <div class="my-booking-main">
+                <div class="key">예약자</div><div class="value">${escapeHtml(reservationName)}</div>
+                <div class="key">표출명</div><div class="value">${escapeHtml(displayName)}</div>
+                <div class="key">모임명</div><div class="value">${escapeHtml(meetingName)}</div>
+              </div>
+              <div class="my-booking-submessage">${escapeHtml(subMessage)}</div>
+              <div class="my-booking-actions">
+                <button type="button" class="my-booking-action primary" ${started ? 'disabled' : ''} onclick="openMyInfoEdit(${b.id})">예약 정보 수정</button>
+                <button type="button" class="my-booking-action" ${started ? 'disabled' : ''} onclick="openMyChange(${b.id})">일정 변경</button>
+                <button type="button" class="my-booking-action danger" onclick="cancelMyBooking(${b.id}, '${escapeHtml(phone)}', '${escapeHtml(pin)}')">예약 취소</button>
+              </div>
+              ${modified && b.customer_change_note ? `<div style="margin-top:10px; color:#9b8058; font-size:11px;">${escapeHtml(b.customer_change_note)}</div>` : ''}
+            </div>`;
+        });
+        resEl.innerHTML = html;
+        resEl.style.display = 'block';
+      }
 
       window.lookupMyBookings = async function() {
         const now = Date.now();
         if (now < myLookupLockUntil) {
           const remMin = Math.ceil((myLookupLockUntil - now) / 60000);
-          errEl.innerText = `⚠️ 조회 시도 횟수 초과로 ${remMin}분간 잠금되었습니다.`;
-          errEl.style.display = 'block'; return;
+          errEl.innerText = `조회 시도 횟수 초과로 ${remMin}분간 잠금되었습니다.`;
+          errEl.style.display = 'block';
+          return;
         }
 
         const phone = phoneIn.value.trim().replace(/[^0-9]/g, '');
         const pin = pinIn.value.trim();
         errEl.style.display = 'none';
 
-        if (!phone || !pin) return (errEl.innerText = '휴대폰 번호와 PIN 번호 4자리를 모두 입력하세요.', errEl.style.display = 'block');
+        if (!phone || !/^\d{4}$/.test(pin)) {
+          errEl.innerText = '휴대폰 번호와 PIN 번호 4자리를 모두 입력해주세요.';
+          errEl.style.display = 'block';
+          return;
+        }
 
         try {
           const res = await apiCall('rpc/lookup_my_bookings', 'POST', { p_phone: phone, p_pin: pin });
           const bookings = res.ok ? await res.json() : [];
-          
           if (!bookings.length) {
             myLookupFailCount++;
             if (myLookupFailCount >= 5) {
               myLookupLockUntil = Date.now() + 15 * 60000;
               myLookupFailCount = 0;
-              errEl.innerText = '⚠️ 5회 불일치로 15분간 조회가 잠금되었습니다.';
+              errEl.innerText = '5회 불일치로 15분간 조회가 잠금되었습니다.';
             } else {
               errEl.innerText = `일치하는 예약 내역이 없거나 연락처/PIN 번호가 올바르지 않습니다. (${myLookupFailCount}/5회 실패)`;
             }
-            errEl.style.display = 'block'; resEl.style.display = 'none';
+            errEl.style.display = 'block';
+            resEl.style.display = 'none';
             return;
           }
           myLookupFailCount = 0;
-
-          let html = '<div style="margin-top: 20px; text-align: left;"><div style="font-size: 0.9rem; font-weight: 600; color: #dfcfb2; margin-bottom: 12px;">📅 나의 예약 내역</div>';
-          bookings.forEach(b => {
-            if (b.guest_name === '[CLOSED_BLOCK]') return;
-            html += `
-              <div class="schedule-item">
-                <div>
-                  <div style="font-size: 0.8rem; color: #c9a96e; font-weight: 600; margin-bottom: 3px;">📅 ${fmtDate(b.start_time)} ~ ${fmtDate(b.end_time, 'time')}</div>
-                  <div style="font-size: 1rem; font-weight: 600;">${escapeHtml(b.guest_name)}</div>
-                  <div style="font-size: 0.78rem; color: #9ca3af; margin-top: 2px;">"${escapeHtml(b.sub_message)}"</div>
-                </div>
-                <div class="action-btn-group" style="justify-content: flex-end;">
-                  <button class="btn-delete" onclick="cancelMyBooking(${b.id}, '${phone}', '${pin}')">예약 취소하기</button>
-                </div>
-              </div>`;
-          });
-          html += '</div>';
-          resEl.innerHTML = html;
-          resEl.style.display = 'block';
+          myBookingCache = bookings;
+          renderMyBookingCards(bookings, phone, pin);
         } catch(e) {
-          errEl.innerText = '조회 중 오류가 발생했습니다.'; errEl.style.display = 'block';
+          errEl.innerText = '조회 중 오류가 발생했습니다.';
+          errEl.style.display = 'block';
+        }
+      };
+
+      window.openMyInfoEdit = function(id) {
+        const b = myBookingCache.find(x => Number(x.id) === Number(id));
+        if (!b) return;
+        if (isMyBookingStarted(b)) return alert('이미 시작된 예약은 고객이 수정할 수 없습니다.');
+        myEditingInfoId = id;
+        document.getElementById('my-edit-reservation-name').value = b.reservation_name || b.guest_name || '';
+        document.getElementById('my-edit-display-name').value = b.guest_name || b.reservation_name || '';
+        document.getElementById('my-edit-meeting-name').value = b.meeting_name || '';
+        document.getElementById('my-edit-sub-message').value = b.sub_message || '';
+        document.getElementById('my-edit-error').style.display = 'none';
+        document.getElementById('my-info-edit-panel').style.display = 'block';
+        document.getElementById('my-info-edit-panel').scrollIntoView({ behavior:'smooth', block:'start' });
+      };
+
+      window.closeMyInfoEdit = function() {
+        myEditingInfoId = null;
+        document.getElementById('my-info-edit-panel').style.display = 'none';
+      };
+
+      window.saveMyInfoEdit = async function() {
+        if (!myEditingInfoId) return;
+        const reservationName = document.getElementById('my-edit-reservation-name').value.trim();
+        const displayName = document.getElementById('my-edit-display-name').value.trim();
+        const meetingName = document.getElementById('my-edit-meeting-name').value.trim();
+        const subMessage = document.getElementById('my-edit-sub-message').value.trim();
+        const editErr = document.getElementById('my-edit-error');
+        editErr.style.display = 'none';
+        if (!reservationName) {
+          editErr.innerText = '예약자명을 입력해주세요.';
+          editErr.style.display = 'block';
+          return;
+        }
+        try {
+          const res = await apiCall('rpc/update_customer_booking', 'POST', {
+            p_id: myEditingInfoId,
+            p_phone: phoneIn.value.trim().replace(/[^0-9]/g, ''),
+            p_pin: pinIn.value.trim(),
+            p_reservation_name: reservationName,
+            p_guest_name: displayName,
+            p_meeting_name: meetingName,
+            p_sub_message: subMessage
+          });
+          const result = res.ok ? await res.json() : null;
+          if (!result || !result.success) throw new Error((result && result.message) || '수정에 실패했습니다.');
+          closeMyInfoEdit();
+          showToast('예약 정보가 수정되었습니다.');
+          await lookupMyBookings();
+        } catch(e) {
+          editErr.innerText = e.message || '수정에 실패했습니다.';
+          editErr.style.display = 'block';
+        }
+      };
+
+      window.openMyChange = function(id) {
+        const b = myBookingCache.find(x => Number(x.id) === Number(id));
+        if (!b) return;
+        if (isMyBookingStarted(b)) return alert('이미 시작된 예약은 일정을 변경할 수 없습니다.');
+        myChangeId = id;
+        const d = new Date(b.start_time);
+        myChangeYear = d.getFullYear();
+        myChangeMonth = d.getMonth();
+        myChangeDate = '';
+        document.getElementById('my-change-error').style.display = 'none';
+        document.getElementById('my-change-panel').style.display = 'block';
+        document.getElementById('my-change-panel').scrollIntoView({ behavior:'smooth', block:'start' });
+        renderMyChangeCalendar();
+      };
+
+      window.closeMyChange = function() {
+        myChangeId = null;
+        myChangeDate = '';
+        document.getElementById('my-change-panel').style.display = 'none';
+        document.getElementById('my-change-session-list').innerHTML = '';
+        document.getElementById('my-change-session-title').innerText = '날짜를 선택해주세요.';
+      };
+
+      window.changeMyChangeMonth = function(delta) {
+        myChangeMonth += delta;
+        if (myChangeMonth > 11) { myChangeMonth = 0; myChangeYear++; }
+        if (myChangeMonth < 0) { myChangeMonth = 11; myChangeYear--; }
+        renderMyChangeCalendar();
+      };
+
+      async function renderMyChangeCalendar() {
+        const title = document.getElementById('my-change-month-title');
+        const grid = document.getElementById('my-change-calendar-grid');
+        title.innerText = `${myChangeYear}년 ${myChangeMonth + 1}월 예약 현황`;
+        grid.innerHTML = '<div style="grid-column:span 7; text-align:center; padding:22px 0; color:#777269; font-size:12px;">캘린더 로딩 중...</div>';
+        const firstDayIndex = new Date(myChangeYear, myChangeMonth, 1).getDay();
+        const lastDayDate = new Date(myChangeYear, myChangeMonth + 1, 0).getDate();
+        const monthStart = new Date(myChangeYear, myChangeMonth, 1, 0, 0, 0);
+        const monthEnd = new Date(myChangeYear, myChangeMonth, lastDayDate, 23, 59, 59);
+        const todayStr = new Date().toLocaleDateString('en-CA');
+        try {
+          const res = await apiCall(`welcome_schedules?start_time=gte.${toISOStringSafe(monthStart)}&start_time=lte.${toISOStringSafe(monthEnd)}&select=id,start_time,end_time,guest_name`);
+          const schedules = (res.ok ? await res.json() : []).filter(s => Number(s.id) !== Number(myChangeId));
+          let html = '';
+          for (let i = 0; i < firstDayIndex; i++) html += '<div style="min-height:66px;"></div>';
+          for (let d = 1; d <= lastDayDate; d++) {
+            const dateStr = `${myChangeYear}-${String(myChangeMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            const isPastDay = dateStr < todayStr;
+            const sessionChecks = [[10,13],[14,17],[18,21]].map(([sh,eh]) => {
+              const s = new Date(myChangeYear,myChangeMonth,d,sh,0,0);
+              const e = new Date(myChangeYear,myChangeMonth,d,eh,0,0);
+              return isPastDay || (dateStr === todayStr && e <= new Date()) || schedules.some(ex => s < new Date(ex.end_time) && e > new Date(ex.start_time));
+            });
+            const blocked = sessionChecks.every(Boolean);
+            const statuses = sessionChecks.map((v,i)=>v?`${i+1}부마감`:'').filter(Boolean);
+            html += `<button type="button" class="my-change-day ${blocked?'is-blocked':''} ${myChangeDate===dateStr?'is-selected':''}" ${blocked?'disabled':''} onclick="selectMyChangeDate('${dateStr}')">
+              <div class="day-num">${d}</div><div class="day-status">${blocked?'전체마감':statuses.join('<br>')}</div>
+            </button>`;
+          }
+          grid.innerHTML = html;
+        } catch(e) {
+          grid.innerHTML = '<div style="grid-column:span 7; color:#8b5b55; text-align:center; padding:20px;">캘린더를 불러오지 못했습니다.</div>';
+        }
+      }
+
+      window.selectMyChangeDate = async function(dateStr) {
+        myChangeDate = dateStr;
+        document.getElementById('my-change-session-title').innerText = `${dateStr} · 이용 세션 선택`;
+        const list = document.getElementById('my-change-session-list');
+        const err = document.getElementById('my-change-error');
+        err.style.display = 'none';
+        list.innerHTML = '<div style="padding:10px 0; color:#777269; font-size:12px;">세션 확인 중...</div>';
+        renderMyChangeCalendar();
+        const [y,m,d] = dateStr.split('-').map(Number);
+        const sessions = [
+          {id:1,name:'1부',start:'10:00',end:'13:00',s:new Date(y,m-1,d,10,0,0),e:new Date(y,m-1,d,13,0,0)},
+          {id:2,name:'2부',start:'14:00',end:'17:00',s:new Date(y,m-1,d,14,0,0),e:new Date(y,m-1,d,17,0,0)},
+          {id:3,name:'3부',start:'18:00',end:'21:00',s:new Date(y,m-1,d,18,0,0),e:new Date(y,m-1,d,21,0,0)}
+        ];
+        try {
+          const dayStart = new Date(y,m-1,d,0,0,0);
+          const dayEnd = new Date(y,m-1,d,23,59,59);
+          const res = await apiCall(`welcome_schedules?start_time=gte.${toISOStringSafe(dayStart)}&start_time=lte.${toISOStringSafe(dayEnd)}&select=id,start_time,end_time,guest_name`);
+          const existing = (res.ok ? await res.json() : []).filter(x => Number(x.id) !== Number(myChangeId));
+          const current = myBookingCache.find(x => Number(x.id) === Number(myChangeId));
+          const now = new Date();
+          let html = '';
+          sessions.forEach(sess => {
+            const past = dateStr < now.toLocaleDateString('en-CA') || (dateStr === now.toLocaleDateString('en-CA') && sess.e <= now);
+            const overlap = existing.some(ex => sess.s < new Date(ex.end_time) && sess.e > new Date(ex.start_time));
+            const blocked = past || overlap;
+            const selected = current && new Date(current.start_time).getTime() === sess.s.getTime() && new Date(current.end_time).getTime() === sess.e.getTime();
+            html += `<label class="my-change-session ${blocked?'is-blocked':''}">
+              <input type="checkbox" class="my-change-slot" value="${sess.id}" data-start="${toISOStringSafe(sess.s)}" data-end="${toISOStringSafe(sess.e)}" ${blocked?'disabled':''} ${selected?'checked':''}>
+              <span class="session-name">${sess.name}</span><span class="session-time">${sess.start} ~ ${sess.end}</span><span class="session-status">${blocked?'마감':'선택 가능'}</span>
+            </label>`;
+          });
+          list.innerHTML = html;
+        } catch(e) {
+          list.innerHTML = '<div style="color:#8b5b55; font-size:12px;">세션을 불러오지 못했습니다.</div>';
+        }
+      };
+
+      window.saveMyChange = async function() {
+        if (!myChangeId || !myChangeDate) {
+          const e = document.getElementById('my-change-error'); e.innerText='변경할 날짜와 세션을 선택해주세요.'; e.style.display='block'; return;
+        }
+        const slots = Array.from(document.querySelectorAll('.my-change-slot:checked')).sort((a,b)=>Number(a.value)-Number(b.value));
+        const e = document.getElementById('my-change-error'); e.style.display='none';
+        if (!slots.length) { e.innerText='이용할 세션을 최소 1개 이상 선택해주세요.'; e.style.display='block'; return; }
+        for (let i=0;i<slots.length-1;i++) {
+          if (Number(slots[i+1].value)-Number(slots[i].value) !== 1) { e.innerText='연속된 세션만 선택할 수 있습니다.'; e.style.display='block'; return; }
+        }
+        try {
+          const res = await apiCall('rpc/change_customer_booking','POST',{
+            p_id: myChangeId,
+            p_phone: phoneIn.value.trim().replace(/[^0-9]/g,''),
+            p_pin: pinIn.value.trim(),
+            p_start_time: slots[0].dataset.start,
+            p_end_time: slots[slots.length-1].dataset.end
+          });
+          const result = res.ok ? await res.json() : null;
+          if (!result || !result.success) throw new Error((result && result.message) || '일정 변경에 실패했습니다.');
+          closeMyChange();
+          showToast('예약 일정이 변경되었습니다.');
+          await lookupMyBookings();
+        } catch(err) {
+          e.innerText = err.message || '일정 변경에 실패했습니다.';
+          e.style.display='block';
         }
       };
 
@@ -2124,8 +2584,8 @@
           const res = await apiCall('rpc/cancel_my_booking', 'POST', { p_id: id, p_phone: phone, p_pin: pin });
           const success = res.ok ? await res.json() : false;
           if (success) {
-            showToast('✓ 예약이 취소되었습니다.');
-            lookupMyBookings();
+            showToast('예약이 취소되었습니다.');
+            await lookupMyBookings();
           } else {
             alert('취소 실패 (정보 불일치)');
           }
@@ -3117,6 +3577,7 @@ async function syncTV() {
                         <span class="name-text">${name}</span>
                         ${memberBadge}
                         ${isCur ? '<span class="tag-badge badge-green">● 진행 중</span>' : ''}
+                        ${s.customer_modified_at ? '<span class="tag-badge badge-gold">예약 변경됨</span>' : ''}
                       </div>
                       <div class="schedule-compact-actions">
                         <button class="btn-edit" onclick="event.stopPropagation(); editSchedule('${enc}')">수정</button>
@@ -3128,6 +3589,7 @@ async function syncTV() {
                       <div class="schedule-host-brief-row"><span class="schedule-host-brief-label">디스플레이 표출명</span><span class="schedule-host-brief-value">${escapeHtml(displayName)}</span></div>
                       <div class="schedule-host-brief-row"><span class="schedule-host-brief-label">모임명</span><span class="schedule-host-brief-value">${escapeHtml(meetingName)}</span></div>
                       <div class="schedule-host-brief-row"><span class="schedule-host-brief-label">디스플레이 문구</span><span class="schedule-host-brief-value">${escapeHtml(subMessage)}</span></div>
+                      ${s.customer_modified_at ? `<div class="schedule-host-brief-row"><span class="schedule-host-brief-label">고객 변경</span><span class="schedule-host-brief-value" style="color:#9b8058;">${escapeHtml(s.customer_change_note || '예약 변경됨')}</span></div>` : ''}
                     </div>
                   </div>`;
                 }).join('')}</div>
