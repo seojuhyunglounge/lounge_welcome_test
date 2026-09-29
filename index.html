@@ -136,8 +136,14 @@
     .schedule-day-header .day-count { font-size: 0.7rem; color: #7f8795; }
     .schedule-day-header .day-arrow { font-size: 0.72rem; color: #8b93a1; flex-shrink: 0; }
     .schedule-day-body { padding: 4px 8px 6px 8px; }
-    .schedule-compact-row { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 7px 6px; border-bottom: 1px solid #242731; }
+    .schedule-compact-row { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 7px 6px; border-bottom: 1px solid #242731; cursor: pointer; }
+    .schedule-compact-row:hover { background: rgba(201,169,110,0.045); }
     .schedule-compact-row:last-child { border-bottom: 0; }
+    .schedule-host-brief { display: none; margin: 0 6px 8px; padding: 10px 12px; border-left: 2px solid rgba(201,169,110,0.55); background: rgba(255,255,255,0.025); color: #b9b4ac; font-size: 0.76rem; line-height: 1.65; }
+    .schedule-host-brief.is-open { display: block; }
+    .schedule-host-brief-row { display: flex; gap: 10px; }
+    .schedule-host-brief-label { flex: 0 0 88px; color: #8f8a82; }
+    .schedule-host-brief-value { min-width: 0; color: #e2ddd5; word-break: break-word; white-space: pre-wrap; }
     .schedule-compact-time { width: 92px; flex-shrink: 0; font-size: 0.76rem; color: #c9a96e; font-weight: 700; white-space: nowrap; }
     .schedule-compact-name { min-width: 0; flex: 1; display: flex; align-items: center; gap: 5px; overflow: hidden; }
     .schedule-compact-name .name-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.84rem; font-weight: 600; color: #f3f4f6; }
@@ -2938,17 +2944,29 @@ async function syncTV() {
                   const memberBadge = s.member_name
                     ? `<button type="button" class="tag-badge badge-gold" onclick="event.stopPropagation(); showMemberInfo('${encodeURIComponent(s.member_code || '')}', '${encodeURIComponent(s.member_name || '')}')" title="멤버십 회원정보 보기" style="cursor:pointer; border:1px solid rgba(201,169,110,0.4); padding:3px 6px;">💳</button>`
                     : '';
-                  const name = `${escapeHtml(s.prefix ? s.prefix+' ' : '')}${escapeHtml(s.guest_name)}${escapeHtml(s.suffix ? ' '+s.suffix : '')}`;
-                  return `<div class="schedule-compact-row" style="${isCur ? 'background:#141f1a; border-radius:7px;' : ''}">
-                    <div class="schedule-compact-time">${fmtDate(s.start_time, 'time')}–${fmtDate(s.end_time, 'time')}</div>
-                    <div class="schedule-compact-name">
-                      <span class="name-text">${name}</span>
-                      ${memberBadge}
-                      ${isCur ? '<span class="tag-badge badge-green">● 진행 중</span>' : ''}
+                  const reservationName = s.reservation_name || s.guest_name || '';
+                  const name = `${escapeHtml(s.prefix ? s.prefix+' ' : '')}${escapeHtml(reservationName)}${escapeHtml(s.suffix ? ' '+s.suffix : '')}`;
+                  const displayName = s.guest_name || reservationName || '—';
+                  const meetingName = s.meeting_name || '—';
+                  const subMessage = s.sub_message || '—';
+                  return `<div class="schedule-host-item">
+                    <div class="schedule-compact-row" style="${isCur ? 'background:#141f1a; border-radius:7px;' : ''}" onclick="toggleHostBrief(this, '${enc}')" title="예약 상세 보기">
+                      <div class="schedule-compact-time">${fmtDate(s.start_time, 'time')}–${fmtDate(s.end_time, 'time')}</div>
+                      <div class="schedule-compact-name">
+                        <span class="name-text">${name}</span>
+                        ${memberBadge}
+                        ${isCur ? '<span class="tag-badge badge-green">● 진행 중</span>' : ''}
+                      </div>
+                      <div class="schedule-compact-actions">
+                        <button class="btn-edit" onclick="event.stopPropagation(); editSchedule('${enc}')">수정</button>
+                        <button class="btn-delete" onclick="event.stopPropagation(); deleteSchedule(${s.id}, ${isCur}, '${enc}')">${isCur ? '🚪 퇴실' : '취소'}</button>
+                      </div>
                     </div>
-                    <div class="schedule-compact-actions">
-                      <button class="btn-edit" onclick="editSchedule('${enc}')">수정</button>
-                      <button class="btn-delete" onclick="deleteSchedule(${s.id}, ${isCur}, '${enc}')">${isCur ? '🚪 퇴실' : '취소'}</button>
+                    <div class="schedule-host-brief">
+                      <div class="schedule-host-brief-row"><span class="schedule-host-brief-label">예약자</span><span class="schedule-host-brief-value">${escapeHtml(reservationName || '—')}</span></div>
+                      <div class="schedule-host-brief-row"><span class="schedule-host-brief-label">디스플레이 표출명</span><span class="schedule-host-brief-value">${escapeHtml(displayName)}</span></div>
+                      <div class="schedule-host-brief-row"><span class="schedule-host-brief-label">모임명</span><span class="schedule-host-brief-value">${escapeHtml(meetingName)}</span></div>
+                      <div class="schedule-host-brief-row"><span class="schedule-host-brief-label">디스플레이 문구</span><span class="schedule-host-brief-value">${escapeHtml(subMessage)}</span></div>
                     </div>
                   </div>`;
                 }).join('')}</div>` : ''}
@@ -2962,6 +2980,18 @@ async function syncTV() {
                 <button type="button" onclick="loadSchedules()" style="margin-top:9px; background:#212329; border:1px solid #555; color:#c9a96e; padding:6px 12px; border-radius:7px; cursor:pointer;">↻ 다시 시도</button>
               </div>`;
           }
+        };
+
+        window.toggleHostBrief = function(rowEl) {
+          const item = rowEl && rowEl.closest('.schedule-host-item');
+          if (!item) return;
+          const brief = item.querySelector('.schedule-host-brief');
+          if (!brief) return;
+          const wasOpen = brief.classList.contains('is-open');
+          document.querySelectorAll('.schedule-host-brief.is-open').forEach(el => {
+            if (el !== brief) el.classList.remove('is-open');
+          });
+          brief.classList.toggle('is-open', !wasOpen);
         };
 
         async function initScheduleQueue() {
