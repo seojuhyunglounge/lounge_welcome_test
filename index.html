@@ -136,6 +136,7 @@
     .schedule-day-header .day-count { font-size: 0.7rem; color: #7f8795; }
     .schedule-day-header .day-arrow { font-size: 0.72rem; color: #8b93a1; flex-shrink: 0; }
     .schedule-day-body { padding: 4px 8px 6px 8px; }
+    .schedule-day-body.is-collapsed { display: none; }
     .schedule-compact-row { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 7px 6px; border-bottom: 1px solid #242731; cursor: pointer; }
     .schedule-compact-row:hover { background: rgba(201,169,110,0.045); }
     .schedule-compact-row:last-child { border-bottom: 0; }
@@ -2894,9 +2895,20 @@ async function syncTV() {
         window.scheduleOpenDates = window.scheduleOpenDates || new Set();
         window.scheduleOpenDatesInitialized = window.scheduleOpenDatesInitialized || false;
         window.toggleScheduleDay = function(dateKey) {
-          if (window.scheduleOpenDates.has(dateKey)) window.scheduleOpenDates.delete(dateKey);
-          else window.scheduleOpenDates.add(dateKey);
-          loadSchedules();
+          const group = document.querySelector(`.schedule-day-group[data-date-key="${dateKey}"]`);
+          if (!group) return;
+          const body = group.querySelector('.schedule-day-body');
+          const arrow = group.querySelector('.day-arrow');
+          const isOpen = window.scheduleOpenDates.has(dateKey);
+          if (isOpen) {
+            window.scheduleOpenDates.delete(dateKey);
+            if (body) body.classList.add('is-collapsed');
+            if (arrow) arrow.textContent = '▶';
+          } else {
+            window.scheduleOpenDates.add(dateKey);
+            if (body) body.classList.remove('is-collapsed');
+            if (arrow) arrow.textContent = '▼';
+          }
         };
 
         window.loadSchedules = async function() {
@@ -2930,7 +2942,7 @@ async function syncTV() {
               const title = `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${['일','월','화','수','목','금','토'][d.getDay()]})`;
               const isOpen = window.scheduleOpenDates.has(dateKey);
               const isToday = dateKey === todayKey;
-              html += `<div class="schedule-day-group">
+              html += `<div class="schedule-day-group" data-date-key="${dateKey}">
                 <button type="button" class="schedule-day-header" onclick="toggleScheduleDay('${dateKey}')">
                   <span style="display:flex; align-items:center; gap:7px; min-width:0;">
                     <span class="day-arrow">${isOpen ? '▼' : '▶'}</span>
@@ -2938,7 +2950,7 @@ async function syncTV() {
                     <span class="day-count">${groups[dateKey].length}건</span>
                   </span>
                 </button>
-                ${isOpen ? `<div class="schedule-day-body">${groups[dateKey].map(s => {
+                <div class="schedule-day-body${isOpen ? '' : ' is-collapsed'}">${groups[dateKey].map(s => {
                   const isCur = (currentSchedId && currentSchedId === s.id);
                   const enc = encodeURIComponent(JSON.stringify(s));
                   const memberBadge = s.member_name
@@ -2969,7 +2981,7 @@ async function syncTV() {
                       <div class="schedule-host-brief-row"><span class="schedule-host-brief-label">디스플레이 문구</span><span class="schedule-host-brief-value">${escapeHtml(subMessage)}</span></div>
                     </div>
                   </div>`;
-                }).join('')}</div>` : ''}
+                }).join('')}</div>
               </div>`;
             });
             list.innerHTML = html;
