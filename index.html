@@ -346,7 +346,46 @@
     
     #toast-msg { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(22, 23, 29, 0.95); border: 1px solid #c9a96e; color: #dfcfb2; padding: 11px 22px; border-radius: 30px; font-size: 0.86rem; font-weight: 600; opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 999999; white-space: nowrap; }
     #toast-msg.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  </style>
+  
+    .global-display-toggles {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .global-display-toggle-item {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 10px;
+      background: #1a1c24;
+      border: 1px solid #34394a;
+      border-radius: 9px;
+    }
+    .global-display-toggle-item .toggle-label {
+      min-width: 0;
+      gap: 2px;
+    }
+    .global-display-toggle-item .toggle-label span:first-child {
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+    .global-display-toggle-item .toggle-sub {
+      font-size: 0.64rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .global-display-toggle-item .switch {
+      flex: 0 0 auto;
+    }
+    @media (max-width: 700px) {
+      .global-display-toggles {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+</style>
 <style>
 
 /* La Colonne — Reservation Calendar v1 (presentation only) */
@@ -858,21 +897,23 @@
     <!-- 공통 온오프 설정 -->
     <div class="admin-card" style="padding: 18px 22px; border-color: rgba(201, 169, 110, 0.4);">
       <div class="admin-title" style="font-size: 1rem; margin-bottom: 12px;">⚙️ 라운지 디스플레이 공통 설정</div>
-      <div class="toggle-row">
-        <div class="toggle-label"><span>실시간 날씨 위젯 표시</span><span class="toggle-sub">상단 날씨 배지 On/Off</span></div>
-        <label class="switch"><input type="checkbox" id="global-weather-toggle"><span class="slider"></span></label>
-      </div>
-      <div class="toggle-row">
-        <div class="toggle-label"><span>Guest Wi-Fi QR 위젯 표시</span><span class="toggle-sub">우측 하단 Wi-Fi QR On/Off</span></div>
-        <label class="switch"><input type="checkbox" id="global-wifi-toggle"><span class="slider"></span></label>
-      </div>
-      <div class="toggle-row">
-        <div class="toggle-label"><span>Lounge Bar 어메니티 QR 표시</span><span class="toggle-sub">좌측 하단 미니바 QR On/Off</span></div>
-        <label class="switch"><input type="checkbox" id="global-amenity-toggle"><span class="slider"></span></label>
-      </div>
-      <div class="toggle-row" style="margin-bottom: 0;">
-        <div class="toggle-label"><span>OTT / Cast 가이드 QR 표시</span><span class="toggle-sub">하단 중앙 OTT 가이드 QR On/Off</span></div>
-        <label class="switch"><input type="checkbox" id="global-ott-toggle"><span class="slider"></span></label>
+      <div class="global-display-toggles">
+        <div class="global-display-toggle-item">
+          <div class="toggle-label"><span>날씨</span><span class="toggle-sub">날씨 배지</span></div>
+          <label class="switch"><input type="checkbox" id="global-weather-toggle"><span class="slider"></span></label>
+        </div>
+        <div class="global-display-toggle-item">
+          <div class="toggle-label"><span>Wi-Fi QR</span><span class="toggle-sub">우측 하단</span></div>
+          <label class="switch"><input type="checkbox" id="global-wifi-toggle"><span class="slider"></span></label>
+        </div>
+        <div class="global-display-toggle-item">
+          <div class="toggle-label"><span>어메니티 QR</span><span class="toggle-sub">좌측 하단</span></div>
+          <label class="switch"><input type="checkbox" id="global-amenity-toggle"><span class="slider"></span></label>
+        </div>
+        <div class="global-display-toggle-item">
+          <div class="toggle-label"><span>OTT / Cast</span><span class="toggle-sub">하단 중앙 QR</span></div>
+          <label class="switch"><input type="checkbox" id="global-ott-toggle"><span class="slider"></span></label>
+        </div>
       </div>
     </div>
 
