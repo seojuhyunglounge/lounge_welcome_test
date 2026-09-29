@@ -200,35 +200,41 @@
     
     /* La Colonne customer My Reservation V2 */
     #my-booking-section.lc-my-booking {
-      width: min(88%, 720px);
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 72px 0 70px;
-      background: #f7f4ed;
+      display: none;
+      width: 90%;
+      max-width: 480px;
+      margin: 60px auto 80px;
+      padding: 34px 22px 28px;
+      box-sizing: border-box;
+      background: #f1eee7;
       color: #292722;
       text-align: left;
     }
     #my-booking-section.lc-my-booking .my-booking-brand {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(42px, 7vw, 64px);
+      font-family: "Cormorant Garamond", serif;
+      font-size: 2.1rem;
       font-weight: 400;
-      line-height: .9;
+      line-height: 1;
       letter-spacing: .01em;
       color: #292722;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     #my-booking-section.lc-my-booking .my-booking-kicker {
-      font-size: 11px;
-      letter-spacing: .20em;
-      color: #9b8058;
-      margin-bottom: 34px;
+      font-family: "Pretendard", sans-serif;
+      font-size: .85rem;
+      font-weight: 300;
+      letter-spacing: 2px;
+      color: #777269;
+      text-transform: uppercase;
+      margin-bottom: 28px;
     }
     #my-booking-section.lc-my-booking .my-booking-card,
     #my-booking-section.lc-my-booking .my-change-panel {
-      background: rgba(255,255,255,.42);
-      border: 1px solid rgba(41,39,34,.14);
-      border-radius: 2px;
-      padding: 28px;
+      background: #f4f1ea;
+      border: 1px solid rgba(41,39,34,.12);
+      border-radius: 10px;
+      box-shadow: none;
+      padding: 22px 20px;
     }
     #my-booking-section.lc-my-booking .my-booking-label {
       font-size: 11px;
@@ -240,17 +246,27 @@
     #my-booking-section.lc-my-booking textarea {
       box-sizing: border-box;
       width: 100%;
-      background: rgba(255,255,255,.72);
+      background: #faf9f6;
       color: #292722;
-      border: 1px solid rgba(41,39,34,.18);
-      border-radius: 0;
-      padding: 12px 13px;
+      border: 1px solid rgba(41,39,34,.16);
+      border-radius: 5px;
+      padding: 11px 12px;
       font: inherit;
+      font-size: .88rem;
       outline: none;
+      box-shadow: none;
     }
     #my-booking-section.lc-my-booking textarea { min-height: 92px; resize: vertical; line-height: 1.6; }
     #my-booking-section.lc-my-booking input:focus,
-    #my-booking-section.lc-my-booking textarea:focus { border-color: #9b8058; }
+    #my-booking-section.lc-my-booking textarea:focus { border-color: rgba(155,128,88,.65); }
+    #my-booking-section.lc-my-booking .my-booking-label {
+      font-family: "Pretendard", sans-serif;
+      font-size: .76rem;
+      font-weight: 400;
+      letter-spacing: .02em;
+      color: #777269;
+      margin-bottom: 7px;
+    }
     .my-booking-submit {
       width: 100%;
       margin-top: 8px;
@@ -258,8 +274,8 @@
       background: #292722;
       color: #f7f4ed;
       border: 1px solid #292722;
-      border-radius: 0;
-      font-size: 13px;
+      border-radius: 5px;
+      font-size: .84rem;
       cursor: pointer;
     }
     .my-booking-list-title {
@@ -370,10 +386,166 @@
     .my-change-actions { display:flex; gap:8px; margin-top:18px; }
     .my-change-actions button { flex:1; padding:12px; border:1px solid rgba(41,39,34,.18); background:transparent; color:#292722; cursor:pointer; }
     .my-change-actions .save { background:#292722; color:#f7f4ed; border-color:#292722; }
+
+    /* My Reservation — same visual language as the customer reservation calendar */
+    #my-booking-section.lc-my-booking .my-booking-list-title {
+      margin: 24px 0 14px;
+      font-family: "Cormorant Garamond", serif;
+      font-size: 1.8rem;
+      font-weight: 400;
+      color: #292722;
+    }
+    #my-booking-section.lc-my-booking .my-booking-item {
+      border-top: 1px solid rgba(41,39,34,.12);
+      padding: 18px 0 20px;
+    }
+    #my-booking-section.lc-my-booking .my-booking-date {
+      font-size: .78rem;
+      color: #9b8058;
+      margin-bottom: 14px;
+    }
+    #my-booking-section.lc-my-booking .my-booking-main {
+      grid-template-columns: 76px 1fr;
+      gap: 7px 12px;
+      font-size: .82rem;
+      line-height: 1.5;
+    }
+    #my-booking-section.lc-my-booking .my-booking-submessage {
+      margin-top: 12px;
+      padding-top: 12px;
+      color: #777269;
+      font-size: .76rem;
+    }
+    #my-booking-section.lc-my-booking .my-booking-actions {
+      gap: 7px;
+      margin-top: 16px;
+    }
+    #my-booking-section.lc-my-booking .my-booking-action {
+      padding: 8px 10px;
+      border-radius: 5px;
+      font-size: .74rem;
+      background: #faf9f6;
+    }
+
+    #my-booking-section.lc-my-booking .my-change-panel {
+      margin-top: 18px !important;
+    }
+    #my-booking-section.lc-my-booking .my-change-title,
+    #my-booking-section.lc-my-booking .my-booking-edit-title {
+      font-family: "Cormorant Garamond", serif;
+      font-size: 1.55rem;
+      font-weight: 400;
+      color: #292722;
+    }
+    #my-booking-section.lc-my-booking .my-change-calendar-head {
+      margin-bottom: 12px;
+    }
+    #my-booking-section.lc-my-booking .my-change-month {
+      font-family: "Noto Sans KR", sans-serif;
+      font-size: .88rem;
+      font-weight: 500;
+      color: #292722;
+    }
+    #my-booking-section.lc-my-booking .my-change-calendar-nav button {
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      border: 1px solid rgba(41,39,34,.14);
+      border-radius: 50%;
+      background: #faf9f6;
+      color: #5f5a52;
+      font-size: .68rem;
+    }
+    #my-booking-section.lc-my-booking .my-change-week {
+      color: #777269;
+      font-size: .70rem;
+      font-weight: 400;
+      margin-bottom: 6px;
+    }
+    #my-booking-section.lc-my-booking .my-change-grid {
+      gap: 5px;
+    }
+    #my-booking-section.lc-my-booking .my-change-day {
+      min-height: 62px;
+      padding: 7px 4px;
+      background: #faf9f6;
+      border: 1px solid rgba(41,39,34,.12);
+      border-radius: 5px;
+    }
+    #my-booking-section.lc-my-booking .my-change-day.is-selected {
+      border-color: #9b8058;
+      background: #eee9df;
+    }
+    #my-booking-section.lc-my-booking .my-change-day .day-num {
+      font-size: .74rem;
+    }
+    #my-booking-section.lc-my-booking .my-change-day .day-status {
+      margin-top: 10px;
+      font-size: .58rem;
+      line-height: 1.25;
+      color: #9b8058;
+    }
+    #my-booking-section.lc-my-booking .my-change-session-title {
+      margin: 18px 0 10px;
+      font-size: .70rem;
+      color: #777269;
+      letter-spacing: .05em;
+    }
+    #my-booking-section.lc-my-booking .my-change-session-list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 7px;
+    }
+    #my-booking-section.lc-my-booking .my-change-session {
+      position: relative;
+      min-width: 0;
+      min-height: 76px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 10px 5px;
+      background: #faf9f6;
+      border: 1px solid rgba(41,39,34,.14);
+      border-radius: 8px;
+      text-align: center;
+    }
+    #my-booking-section.lc-my-booking .my-change-session.is-selected {
+      background: #eee9df;
+      border-color: #9b8058;
+      box-shadow: inset 0 0 0 1px rgba(155,128,88,.18);
+    }
+    #my-booking-section.lc-my-booking .my-change-session input[type="radio"],
+    #my-booking-section.lc-my-booking .my-change-session input[type="checkbox"] {
+      position: absolute;
+      width: 1px !important;
+      height: 1px !important;
+      opacity: 0;
+      pointer-events: none;
+    }
+    #my-booking-section.lc-my-booking .my-change-session .session-name {
+      color: #292722;
+      font-size: .82rem;
+      font-weight: 600;
+    }
+    #my-booking-section.lc-my-booking .my-change-session .session-time {
+      color: #777269;
+      font-size: .65rem;
+    }
+    #my-booking-section.lc-my-booking .my-change-session .session-status {
+      color: #9b8058;
+      font-size: .58rem;
+    }
+    #my-booking-section.lc-my-booking .my-change-actions button {
+      border-radius: 5px;
+      font-size: .78rem;
+    }
+
     @media (max-width: 560px) {
-      #my-booking-section.lc-my-booking { width:min(92%, 720px); padding-top:46px; }
+      #my-booking-section.lc-my-booking { width:90%; max-width:480px; margin:40px auto 60px; padding:28px 18px 24px; }
       #my-booking-section.lc-my-booking .my-booking-card,
-      #my-booking-section.lc-my-booking .my-change-panel { padding:20px; }
+      #my-booking-section.lc-my-booking .my-change-panel { padding:18px; }
       .my-booking-main { grid-template-columns:88px 1fr; gap:6px 12px; }
       .my-change-session { grid-template-columns:38px 1fr auto; }
     }
@@ -1463,8 +1635,8 @@
 
   <!-- [화면 8] 내 예약 (?view=my_booking) -->
   <div id="my-booking-section" class="lc-my-booking">
-    <div class="my-booking-brand">La Colonne</div>
-    <div class="my-booking-kicker">MY RESERVATION</div>
+    <div class="portal-brand" style="font-size: 2.1rem;">La Colonne</div>
+    <div class="portal-sub">My Reservation</div>
 
     <div class="my-booking-card">
       <div class="my-booking-label">RESERVATION LOOKUP</div>
