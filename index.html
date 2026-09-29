@@ -208,7 +208,8 @@
       box-sizing: border-box;
       background: #f1eee7;
       color: #292722;
-      text-align: left;
+      border-radius: 12px;
+      text-align: center;
     }
     #my-booking-section.lc-my-booking .my-booking-brand {
       font-family: "Cormorant Garamond", serif;
@@ -219,6 +220,30 @@
       color: #292722;
       margin-bottom: 6px;
     }
+    #my-booking-section.lc-my-booking .portal-brand {
+      font-family: 'Cormorant Garamond', serif !important;
+      font-size: 2.6rem !important;
+      font-weight: 400 !important;
+      letter-spacing: 10px !important;
+      color: #292722 !important;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      line-height: normal;
+    }
+    #my-booking-section.lc-my-booking .portal-sub {
+      font-family: 'Pretendard', sans-serif !important;
+      font-size: .85rem !important;
+      font-weight: 300 !important;
+      letter-spacing: 2px !important;
+      color: #777269 !important;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+    #my-booking-section.lc-my-booking .my-booking-card,
+    #my-booking-section.lc-my-booking .my-change-panel {
+      text-align: left;
+    }
+
     #my-booking-section.lc-my-booking .my-booking-kicker {
       font-family: "Pretendard", sans-serif;
       font-size: .85rem;
@@ -332,15 +357,25 @@
     }
     .my-booking-action {
       padding: 8px 12px;
-      background: transparent;
+      background: #faf9f6;
       color: #292722;
-      border: 1px solid rgba(41,39,34,.22);
-      border-radius: 0;
+      border: 1px solid rgba(41,39,34,.18);
+      border-radius: 5px;
       font-size: 12px;
       cursor: pointer;
+      transition: background .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease;
     }
-    .my-booking-action.primary { border-color: #9b8058; color: #7f6848; }
-    .my-booking-action.danger { color: #7a5550; border-color: rgba(122,85,80,.35); }
+    .my-booking-action:hover {
+      background: #eee9df;
+      border-color: rgba(155,128,88,.55);
+      color: #292722;
+    }
+    .my-booking-action:focus-visible {
+      outline: 2px solid rgba(155,128,88,.35);
+      outline-offset: 2px;
+    }
+    .my-booking-action.primary { border-color: rgba(41,39,34,.18); color: #292722; }
+    .my-booking-action.danger { color: #7a5550; border-color: rgba(122,85,80,.28); }
     .my-booking-action:disabled { opacity: .38; cursor: not-allowed; }
     .my-booking-link-row {
       margin-top: 34px;
@@ -541,6 +576,92 @@
       border-radius: 5px;
       font-size: .78rem;
     }
+
+    /* My Reservation: calendar must visually match the customer Reservation calendar */
+    #my-booking-section.lc-my-booking .my-change-empty {
+      min-height: 75px;
+      background: transparent;
+    }
+    #my-booking-section.lc-my-booking .my-change-day {
+      min-height: 75px;
+      padding: 6px;
+      box-sizing: border-box;
+      background: #1c1917;
+      border: 1px solid #322d28;
+      border-radius: 8px;
+      color: #dfcfb2;
+      transition: border-color .15s ease, background .15s ease;
+    }
+    #my-booking-section.lc-my-booking .my-change-day:hover:not(:disabled) {
+      border-color: rgba(201,169,110,.55);
+      background: #24201d;
+    }
+    #my-booking-section.lc-my-booking .my-change-day.is-selected {
+      background: #1c1917;
+      border-color: #c9a96e;
+      box-shadow: inset 0 0 0 1px rgba(201,169,110,.18);
+    }
+    #my-booking-section.lc-my-booking .my-change-day.is-blocked {
+      background: #121214;
+      border-color: #322d28;
+      opacity: .4;
+    }
+    #my-booking-section.lc-my-booking .my-change-day .day-num {
+      color: #dfcfb2;
+      font-size: .82rem;
+      font-weight: 600;
+    }
+    #my-booking-section.lc-my-booking .my-change-day .day-status {
+      color: #9b8058;
+      font-size: .60rem;
+      margin-top: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: clip;
+    }
+    #my-booking-section.lc-my-booking .my-change-day.is-blocked .day-num,
+    #my-booking-section.lc-my-booking .my-change-day.is-blocked .day-status {
+      color: #777269;
+    }
+    #my-booking-section.lc-my-booking .my-change-session {
+      min-height: 82px;
+      padding: 10px 5px;
+      box-sizing: border-box;
+      background: #faf9f6;
+      border: 1px solid rgba(41,39,34,.14);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background .15s ease, border-color .15s ease, box-shadow .15s ease;
+      user-select: none;
+    }
+    #my-booking-section.lc-my-booking .my-change-session:hover:not(.is-blocked) {
+      border-color: rgba(155,128,88,.55);
+    }
+    #my-booking-section.lc-my-booking .my-change-session.is-selected {
+      background: #eee9df;
+      border-color: #9b8058;
+      box-shadow: inset 0 0 0 1px rgba(155,128,88,.18);
+    }
+    #my-booking-section.lc-my-booking .my-change-session.is-blocked {
+      background: #eeece7;
+      border-color: rgba(41,39,34,.08);
+      opacity: .52;
+      cursor: not-allowed;
+    }
+    #my-booking-section.lc-my-booking .my-change-session .session-name { color:#292722; font-size:.88rem; font-weight:600; }
+    #my-booking-section.lc-my-booking .my-change-session .session-time { color:#777269; font-size:.69rem; }
+    #my-booking-section.lc-my-booking .my-change-session .session-status { color:#9b8058; font-size:.62rem; }
+    #my-booking-section.lc-my-booking .my-change-session.is-blocked .session-name,
+    #my-booking-section.lc-my-booking .my-change-session.is-blocked .session-time,
+    #my-booking-section.lc-my-booking .my-change-session.is-blocked .session-status { color:#777269; }
+    #my-booking-section.lc-my-booking .my-change-actions button {
+      border-radius: 5px;
+      transition: background .15s ease, border-color .15s ease;
+    }
+    #my-booking-section.lc-my-booking .my-change-actions button:not(.save):hover {
+      background:#eee9df; border-color:rgba(155,128,88,.45);
+    }
+    #my-booking-section.lc-my-booking .my-change-actions .save:hover { background:#3a3730; }
 
     @media (max-width: 560px) {
       #my-booking-section.lc-my-booking { width:90%; max-width:480px; margin:40px auto 60px; padding:28px 18px 24px; }
@@ -2510,7 +2631,7 @@
               </div>
               <div class="my-booking-submessage">${escapeHtml(subMessage)}</div>
               <div class="my-booking-actions">
-                <button type="button" class="my-booking-action primary" ${started ? 'disabled' : ''} onclick="openMyInfoEdit(${b.id})">예약 정보 수정</button>
+                <button type="button" class="my-booking-action" ${started ? 'disabled' : ''} onclick="openMyInfoEdit(${b.id})">예약 정보 수정</button>
                 <button type="button" class="my-booking-action" ${started ? 'disabled' : ''} onclick="openMyChange(${b.id})">일정 변경</button>
                 <button type="button" class="my-booking-action danger" onclick="cancelMyBooking(${b.id}, '${escapeHtml(phone)}', '${escapeHtml(pin)}')">예약 취소</button>
               </div>
@@ -2570,6 +2691,9 @@
         if (!b) return;
         if (isMyBookingStarted(b)) return alert('이미 시작된 예약은 고객이 수정할 수 없습니다.');
         myEditingInfoId = id;
+        myChangeId = null;
+        myChangeDate = '';
+        document.getElementById('my-change-panel').style.display = 'none';
         document.getElementById('my-edit-reservation-name').value = b.reservation_name || b.guest_name || '';
         document.getElementById('my-edit-display-name').value = b.guest_name || b.reservation_name || '';
         document.getElementById('my-edit-meeting-name').value = b.meeting_name || '';
@@ -2623,6 +2747,8 @@
         if (!b) return;
         if (isMyBookingStarted(b)) return alert('이미 시작된 예약은 일정을 변경할 수 없습니다.');
         myChangeId = id;
+        myEditingInfoId = null;
+        document.getElementById('my-info-edit-panel').style.display = 'none';
         const d = new Date(b.start_time);
         myChangeYear = d.getFullYear();
         myChangeMonth = d.getMonth();
@@ -2662,7 +2788,7 @@
           const res = await apiCall(`welcome_schedules?start_time=gte.${toISOStringSafe(monthStart)}&start_time=lte.${toISOStringSafe(monthEnd)}&select=id,start_time,end_time,guest_name`);
           const schedules = (res.ok ? await res.json() : []).filter(s => Number(s.id) !== Number(myChangeId));
           let html = '';
-          for (let i = 0; i < firstDayIndex; i++) html += '<div style="min-height:66px;"></div>';
+          for (let i = 0; i < firstDayIndex; i++) html += '<div class="my-change-empty"></div>';
           for (let d = 1; d <= lastDayDate; d++) {
             const dateStr = `${myChangeYear}-${String(myChangeMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
             const isPastDay = dateStr < todayStr;
@@ -2691,6 +2817,7 @@
         err.style.display = 'none';
         list.innerHTML = '<div style="padding:10px 0; color:#777269; font-size:12px;">세션 확인 중...</div>';
         renderMyChangeCalendar();
+
         const [y,m,d] = dateStr.split('-').map(Number);
         const sessions = [
           {id:1,name:'1부',start:'10:00',end:'13:00',s:new Date(y,m-1,d,10,0,0),e:new Date(y,m-1,d,13,0,0)},
@@ -2704,16 +2831,17 @@
           const existing = (res.ok ? await res.json() : []).filter(x => Number(x.id) !== Number(myChangeId));
           const current = myBookingCache.find(x => Number(x.id) === Number(myChangeId));
           const now = new Date();
+          const currentStart = current ? new Date(current.start_time) : null;
+          const currentEnd = current ? new Date(current.end_time) : null;
           let html = '';
           sessions.forEach(sess => {
             const past = dateStr < now.toLocaleDateString('en-CA') || (dateStr === now.toLocaleDateString('en-CA') && sess.e <= now);
             const overlap = existing.some(ex => sess.s < new Date(ex.end_time) && sess.e > new Date(ex.start_time));
             const blocked = past || overlap;
-            const selected = current && new Date(current.start_time).getTime() === sess.s.getTime() && new Date(current.end_time).getTime() === sess.e.getTime();
-            html += `<label class="my-change-session ${blocked?'is-blocked':''}">
-              <input type="checkbox" class="my-change-slot" value="${sess.id}" data-start="${toISOStringSafe(sess.s)}" data-end="${toISOStringSafe(sess.e)}" ${blocked?'disabled':''} ${selected?'checked':''}>
+            const selected = !!(currentStart && currentEnd && currentStart.getTime() === sess.s.getTime() && currentEnd.getTime() === sess.e.getTime());
+            html += `<button type="button" class="my-change-session ${blocked?'is-blocked':''} ${selected?'is-selected':''}" data-start="${toISOStringSafe(sess.s)}" data-end="${toISOStringSafe(sess.e)}" data-slot-id="${sess.id}" ${blocked?'disabled':''} aria-pressed="${selected?'true':'false'}" onclick="toggleMyChangeSlot(this)">
               <span class="session-name">${sess.name}</span><span class="session-time">${sess.start} ~ ${sess.end}</span><span class="session-status">${blocked?'마감':'선택 가능'}</span>
-            </label>`;
+            </button>`;
           });
           list.innerHTML = html;
         } catch(e) {
@@ -2721,15 +2849,22 @@
         }
       };
 
+      window.toggleMyChangeSlot = function(button) {
+        if (!button || button.disabled) return;
+        const selected = button.classList.toggle('is-selected');
+        button.setAttribute('aria-pressed', selected ? 'true' : 'false');
+      };
+
       window.saveMyChange = async function() {
         if (!myChangeId || !myChangeDate) {
           const e = document.getElementById('my-change-error'); e.innerText='변경할 날짜와 세션을 선택해주세요.'; e.style.display='block'; return;
         }
-        const slots = Array.from(document.querySelectorAll('.my-change-slot:checked')).sort((a,b)=>Number(a.value)-Number(b.value));
+        const slots = Array.from(document.querySelectorAll('.my-change-session.is-selected'))
+          .sort((a,b)=>Number(a.dataset.slotId)-Number(b.dataset.slotId));
         const e = document.getElementById('my-change-error'); e.style.display='none';
         if (!slots.length) { e.innerText='이용할 세션을 최소 1개 이상 선택해주세요.'; e.style.display='block'; return; }
         for (let i=0;i<slots.length-1;i++) {
-          if (Number(slots[i+1].value)-Number(slots[i].value) !== 1) { e.innerText='연속된 세션만 선택할 수 있습니다.'; e.style.display='block'; return; }
+          if (Number(slots[i+1].dataset.slotId)-Number(slots[i].dataset.slotId) !== 1) { e.innerText='연속된 세션만 선택할 수 있습니다.'; e.style.display='block'; return; }
         }
         try {
           const res = await apiCall('rpc/change_customer_booking','POST',{
