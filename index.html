@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>La Colonne - Welcome Screen & Lounge Hub</title>
+  <title>La Colonne - Lounge Hub</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -136,52 +136,22 @@
     .schedule-day-header .day-count { font-size: 0.7rem; color: #7f8795; }
     .schedule-day-header .day-arrow { font-size: 0.72rem; color: #8b93a1; flex-shrink: 0; }
     .schedule-day-body { padding: 4px 8px 6px 8px; }
-    .schedule-day-body.is-collapsed { display: none; }
-    .schedule-compact-row { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 7px 6px; border-bottom: 1px solid #242731; cursor: pointer; }
-    .schedule-compact-row:hover { background: rgba(201,169,110,0.045); }
+    .schedule-compact-row { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 7px 6px; border-bottom: 1px solid #242731; }
     .schedule-compact-row:last-child { border-bottom: 0; }
-    .schedule-host-brief { display: none; margin: 0 6px 8px; padding: 10px 12px; border-left: 2px solid rgba(201,169,110,0.55); background: rgba(255,255,255,0.025); color: #b9b4ac; font-size: 0.76rem; line-height: 1.65; }
-    .schedule-host-brief.is-open { display: block; }
-    .schedule-host-brief-row { display: flex; gap: 10px; }
-    .schedule-host-brief-label { flex: 0 0 88px; color: #8f8a82; }
-    .schedule-host-brief-value { min-width: 0; color: #e2ddd5; word-break: break-word; white-space: pre-wrap; }
     .schedule-compact-time { width: 92px; flex-shrink: 0; font-size: 0.76rem; color: #c9a96e; font-weight: 700; white-space: nowrap; }
     .schedule-compact-name { min-width: 0; flex: 1; display: flex; align-items: center; gap: 5px; overflow: hidden; }
     .schedule-compact-name .name-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.84rem; font-weight: 600; color: #f3f4f6; }
     .schedule-compact-actions { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
-    .schedule-compact-actions .btn-edit, .schedule-compact-actions .btn-delete, .schedule-compact-actions .btn-now { padding: 4px 8px; font-size: 0.7rem; }
-    .schedule-compact-actions .btn-now { background: rgba(201,169,110,0.10); border: 1px solid rgba(201,169,110,0.45); color: #dfcfb2; border-radius: 6px; cursor: pointer; }
-    .schedule-compact-actions .btn-now:hover { background: rgba(201,169,110,0.18); }
-    .admin-form-divider { border-top: 1px solid #343640; margin: 14px 0; padding-top: 14px; }
-    .admin-form-section-label { font-size: 0.72rem; color: #8f8a82; margin-bottom: 8px; }
-    .admin-inline-options { display: flex; gap: 8px; align-items: stretch; }
-    .admin-inline-option { flex: 1; min-width: 0; background: #202229; border: 1px solid #333640; border-radius: 9px; padding: 9px 10px; }
-    .admin-inline-option .option-label { display: block; font-size: 0.72rem; color: #8f8a82; margin-bottom: 5px; }
-    .admin-toggle-compact { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-    .admin-toggle-compact .option-label { margin: 0; }
-    .schedule-time-adjust { display: flex; gap: 7px; margin-top: 0; }
-    .schedule-time-adjust button { flex: 0 0 auto; min-width: 68px; background: transparent; border: 1px solid #3a3e49; color: #9ca3af; padding: 5px 9px; border-radius: 7px; font-size: 0.7rem; cursor: pointer; }
-    .schedule-time-adjust button:hover { border-color: #c9a96e; color: #dfcfb2; }
+    .schedule-compact-actions .btn-edit, .schedule-compact-actions .btn-delete { padding: 4px 8px; font-size: 0.7rem; }
     .schedule-time-presets { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 6px; }
     .schedule-time-preset { background: #212329; border: 1px solid #3a3e49; color: #cbd5e1; padding: 6px 11px; border-radius: 8px; font-size: 0.76rem; cursor: pointer; }
     .schedule-time-preset:hover, .schedule-time-preset.active { background: rgba(201,169,110,0.16); border-color: rgba(201,169,110,0.55); color: #dfcfb2; }
     .schedule-date-shortcuts { display: flex; gap: 6px; margin-top: 6px; }
     .schedule-date-shortcut { background: transparent; border: 1px solid #3a3e49; color: #9ca3af; padding: 5px 9px; border-radius: 7px; font-size: 0.72rem; cursor: pointer; }
     .schedule-date-shortcut:hover { border-color: #c9a96e; color: #dfcfb2; }
-    .input-clear-btn { background: transparent; border: 0; color: #8d929d; padding: 2px 0; font-size: 0.72rem; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
-    .input-clear-btn:hover { color: #c9a96e; }
-    .admin-nav-link { color: #aaa; font-size: 0.82rem; text-decoration: none; font-weight: 500; }
-    .admin-nav-link:hover { color: #dfcfb2; }
-    .schedule-datetime-stack { display: flex; flex-direction: column; gap: 10px; }
+    .schedule-datetime-stack { display: flex; flex-direction: column; gap: 12px; }
     .schedule-datetime-stack .schedule-time-box { background: #202229; border: 1px solid #333640; border-radius: 10px; padding: 10px 12px; }
-    .schedule-field-row { display: flex; align-items: center; gap: 12px; }
-    .schedule-field-row > label { flex: 0 0 68px; margin: 0 !important; }
-    .schedule-datetime-stack input[type="date"], .schedule-datetime-stack input[type="time"] { padding: 6px 8px; font-size: 0.92rem; background: transparent; border: 0; flex: 1; min-width: 0; }
-    .schedule-time-presets { align-items: center; }
-    .schedule-date-shortcuts { margin-left: 80px; }
-    .schedule-end-label { white-space: nowrap; }
-    .schedule-clear-wrap { margin-top: 14px !important; margin-bottom: 18px !important; }
-    .schedule-clear-wrap .input-clear-btn { color: #c0c4cc; font-size: 0.76rem; }
+    .schedule-datetime-stack input[type="date"], .schedule-datetime-stack input[type="time"] { padding: 10px; font-size: 0.92rem; background: transparent; border: 0; width: 100%; }
     @media (max-width: 520px) {
       .schedule-compact-row { align-items: flex-start; flex-wrap: wrap; }
       .schedule-compact-time { width: 82px; padding-top: 2px; }
@@ -197,483 +167,7 @@
     .badge-green { background: #22c55e; color: #000; font-weight: 700; }
     .member-meta { font-size: 0.78rem; color: #c9a96e; font-weight: 600; }
 
-    
-    /* La Colonne customer My Reservation V2 */
-    #my-booking-section.lc-my-booking {
-      display: none;
-      width: 90%;
-      max-width: 480px;
-      margin: 60px auto 80px;
-      padding: 34px 22px 28px;
-      box-sizing: border-box;
-      background: #f1eee7;
-      color: #292722;
-      border-radius: 12px;
-      text-align: center;
-    }
-    #my-booking-section.lc-my-booking .my-booking-brand {
-      font-family: "Cormorant Garamond", serif;
-      font-size: 2.1rem;
-      font-weight: 400;
-      line-height: 1;
-      letter-spacing: .01em;
-      color: #292722;
-      margin-bottom: 6px;
-    }
-    #my-booking-section.lc-my-booking .portal-brand {
-      font-family: 'Cormorant Garamond', serif !important;
-      font-size: 2.6rem !important;
-      font-weight: 400 !important;
-      letter-spacing: 10px !important;
-      color: #292722 !important;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-      line-height: normal;
-    }
-    #my-booking-section.lc-my-booking .portal-sub {
-      font-family: 'Pretendard', sans-serif !important;
-      font-size: .85rem !important;
-      font-weight: 300 !important;
-      letter-spacing: 2px !important;
-      color: #777269 !important;
-      text-transform: uppercase;
-      margin-bottom: 28px;
-    }
-    #my-booking-section.lc-my-booking .my-booking-card,
-    #my-booking-section.lc-my-booking .my-change-panel {
-      text-align: left;
-    }
-
-    #my-booking-section.lc-my-booking .my-booking-kicker {
-      font-family: "Pretendard", sans-serif;
-      font-size: .85rem;
-      font-weight: 300;
-      letter-spacing: 2px;
-      color: #777269;
-      text-transform: uppercase;
-      margin-bottom: 28px;
-    }
-    #my-booking-section.lc-my-booking .my-booking-card,
-    #my-booking-section.lc-my-booking .my-change-panel {
-      background: #f4f1ea;
-      border: 1px solid rgba(41,39,34,.12);
-      border-radius: 10px;
-      box-shadow: none;
-      padding: 22px 20px;
-    }
-    #my-booking-section.lc-my-booking .my-booking-label {
-      font-size: 11px;
-      letter-spacing: .14em;
-      color: #9b8058;
-      margin-bottom: 8px;
-    }
-    #my-booking-section.lc-my-booking input,
-    #my-booking-section.lc-my-booking textarea {
-      box-sizing: border-box;
-      width: 100%;
-      background: #faf9f6;
-      color: #292722;
-      border: 1px solid rgba(41,39,34,.16);
-      border-radius: 5px;
-      padding: 11px 12px;
-      font: inherit;
-      font-size: .88rem;
-      outline: none;
-      box-shadow: none;
-    }
-    #my-booking-section.lc-my-booking textarea { min-height: 92px; resize: vertical; line-height: 1.6; }
-    #my-booking-section.lc-my-booking input:focus,
-    #my-booking-section.lc-my-booking textarea:focus { border-color: rgba(155,128,88,.65); }
-    #my-booking-section.lc-my-booking .my-booking-label {
-      font-family: "Pretendard", sans-serif;
-      font-size: .76rem;
-      font-weight: 400;
-      letter-spacing: .02em;
-      color: #777269;
-      margin-bottom: 7px;
-    }
-    .my-booking-submit {
-      width: 100%;
-      margin-top: 8px;
-      padding: 13px 18px;
-      background: #292722;
-      color: #f7f4ed;
-      border: 1px solid #292722;
-      border-radius: 5px;
-      font-size: .84rem;
-      cursor: pointer;
-    }
-    .my-booking-list-title {
-      margin: 34px 0 14px;
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 28px;
-      font-weight: 500;
-      color: #292722;
-    }
-    .my-booking-item {
-      border-top: 1px solid rgba(41,39,34,.14);
-      padding: 22px 0 24px;
-    }
-    .my-booking-item:first-child { border-top: 0; padding-top: 4px; }
-    .my-booking-date {
-      font-size: 13px;
-      letter-spacing: .04em;
-      color: #9b8058;
-      margin-bottom: 15px;
-    }
-    .my-booking-main {
-      display: grid;
-      grid-template-columns: 112px 1fr;
-      gap: 7px 16px;
-      font-size: 14px;
-      line-height: 1.55;
-    }
-    .my-booking-main .key { color: #777269; }
-    .my-booking-main .value { color: #292722; word-break: break-word; }
-    .my-booking-edit-slot, .my-booking-change-slot { margin-top: 12px; }
-    .my-booking-submessage {
-      margin-top: 14px;
-      padding-top: 14px;
-      border-top: 1px solid rgba(41,39,34,.10);
-      color: #777269;
-      font-size: 13px;
-      line-height: 1.65;
-      white-space: pre-line;
-    }
-    .my-booking-status {
-      display: inline-block;
-      margin-left: 8px;
-      padding: 2px 7px;
-      border: 1px solid rgba(155,128,88,.45);
-      color: #9b8058;
-      font-size: 10px;
-      letter-spacing: .06em;
-      vertical-align: 2px;
-    }
-    .my-booking-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 18px;
-    }
-    .my-booking-action {
-      padding: 8px 12px;
-      background: #faf9f6;
-      color: #292722;
-      border: 1px solid rgba(41,39,34,.18);
-      border-radius: 5px;
-      font-size: 12px;
-      cursor: pointer;
-      transition: background .15s ease, border-color .15s ease, color .15s ease, box-shadow .15s ease;
-    }
-    .my-booking-action:hover {
-      background: #eee9df;
-      border-color: rgba(155,128,88,.55);
-      color: #292722;
-    }
-    .my-booking-action:focus-visible {
-      outline: 2px solid rgba(155,128,88,.35);
-      outline-offset: 2px;
-    }
-    .my-booking-action.primary { border-color: rgba(41,39,34,.18); color: #292722; }
-    .my-booking-action.danger { color: #7a5550; border-color: rgba(122,85,80,.28); }
-    .my-booking-action:disabled { opacity: .38; cursor: not-allowed; }
-    .my-booking-link-row {
-      margin-top: 34px;
-      padding-top: 18px;
-      border-top: 1px solid rgba(41,39,34,.12);
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .my-booking-link-row a { color: #777269; font-size: 11px; letter-spacing: .08em; text-decoration: none; }
-    .my-booking-edit-head,
-    .my-change-head {
-      display:flex; justify-content:space-between; align-items:center; gap:14px; margin-bottom:18px;
-    }
-    .my-booking-edit-title,
-    .my-change-title { font-family:'Cormorant Garamond',serif; font-size:27px; color:#292722; }
-    .my-booking-close { background:none; border:0; color:#777269; cursor:pointer; font-size:12px; }
-    .my-booking-edit-grid { display:grid; gap:13px; }
-    .my-booking-edit-grid label { display:block; font-size:11px; color:#777269; margin-bottom:6px; }
-    .my-change-calendar-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
-    .my-change-month { font-size:14px; color:#292722; }
-    .my-change-calendar-nav { display:flex; gap:6px; }
-    .my-change-calendar-nav button { background:transparent; border:1px solid rgba(41,39,34,.18); color:#292722; padding:5px 10px; cursor:pointer; }
-    .my-change-week { display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:11px; color:#777269; margin-bottom:6px; }
-    .my-change-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
-    .my-change-day { background:rgba(255,255,255,.58); border:1px solid rgba(41,39,34,.12); min-height:66px; padding:6px; cursor:pointer; text-align:center; }
-    .my-change-day.is-selected { border-color:#9b8058; background:#f0eadf; }
-    .my-change-day.is-blocked { opacity:.35; cursor:not-allowed; }
-    .my-change-day .day-num { font-size:12px; color:#292722; }
-    .my-change-day .day-status { margin-top:13px; font-size:9px; line-height:1.25; color:#9b8058; }
-    .my-change-session-title { margin:22px 0 10px; font-size:12px; color:#777269; letter-spacing:.06em; }
-    .my-change-session-list { display:flex; flex-direction:column; gap:7px; }
-    .my-change-session {
-      display:grid; grid-template-columns:56px 1fr auto; align-items:center; gap:10px;
-      padding:11px 12px; border:1px solid rgba(41,39,34,.14); background:rgba(255,255,255,.52); cursor:pointer;
-    }
-    .my-change-session.is-blocked { opacity:.35; cursor:not-allowed; }
-    .my-change-session input { width:16px !important; }
-    .my-change-session .session-name { color:#292722; font-size:13px; }
-    .my-change-session .session-time { color:#777269; font-size:12px; }
-    .my-change-session .session-status { color:#9b8058; font-size:10px; }
-    .my-change-actions { display:flex; gap:8px; margin-top:18px; }
-    .my-change-actions button { flex:1; padding:12px; border:1px solid rgba(41,39,34,.18); background:transparent; color:#292722; cursor:pointer; }
-    .my-change-actions .save { background:#292722; color:#f7f4ed; border-color:#292722; }
-
-    /* My Reservation — same visual language as the customer reservation calendar */
-    #my-booking-section.lc-my-booking .my-booking-list-title {
-      margin: 24px 0 14px;
-      font-family: "Cormorant Garamond", serif;
-      font-size: 1.8rem;
-      font-weight: 400;
-      color: #292722;
-    }
-    #my-booking-section.lc-my-booking .my-booking-item {
-      border-top: 1px solid rgba(41,39,34,.12);
-      padding: 18px 0 20px;
-    }
-    #my-booking-section.lc-my-booking .my-booking-date {
-      font-size: .78rem;
-      color: #9b8058;
-      margin-bottom: 14px;
-    }
-    #my-booking-section.lc-my-booking .my-booking-main {
-      grid-template-columns: 76px 1fr;
-      gap: 7px 12px;
-      font-size: .82rem;
-      line-height: 1.5;
-    }
-    #my-booking-section.lc-my-booking .my-booking-edit-slot, .my-booking-change-slot { margin-top: 12px; }
-    .my-booking-submessage {
-      margin-top: 12px;
-      padding-top: 12px;
-      color: #777269;
-      font-size: .76rem;
-    }
-    #my-booking-section.lc-my-booking .my-booking-actions {
-      gap: 7px;
-      margin-top: 16px;
-    }
-    #my-booking-section.lc-my-booking .my-booking-action {
-      padding: 8px 10px;
-      border-radius: 5px;
-      font-size: .74rem;
-      background: #faf9f6;
-    }
-
-    #my-booking-section.lc-my-booking .my-change-panel {
-      margin-top: 18px !important;
-    }
-    #my-booking-section.lc-my-booking .my-change-title,
-    #my-booking-section.lc-my-booking .my-booking-edit-title {
-      font-family: "Cormorant Garamond", serif;
-      font-size: 1.55rem;
-      font-weight: 400;
-      color: #292722;
-    }
-    #my-booking-section.lc-my-booking .my-change-calendar-head {
-      margin-bottom: 12px;
-    }
-    #my-booking-section.lc-my-booking .my-change-month {
-      font-family: "Noto Sans KR", sans-serif;
-      font-size: .88rem;
-      font-weight: 500;
-      color: #292722;
-    }
-    #my-booking-section.lc-my-booking .my-change-calendar-nav button {
-      width: 30px;
-      height: 30px;
-      padding: 0;
-      border: 1px solid rgba(41,39,34,.14);
-      border-radius: 50%;
-      background: #faf9f6;
-      color: #5f5a52;
-      font-size: .68rem;
-    }
-    #my-booking-section.lc-my-booking .my-change-week {
-      color: #777269;
-      font-size: .70rem;
-      font-weight: 400;
-      margin-bottom: 6px;
-    }
-    #my-booking-section.lc-my-booking .my-change-grid {
-      gap: 5px;
-    }
-    #my-booking-section.lc-my-booking .my-change-day {
-      min-height: 62px;
-      padding: 7px 4px;
-      background: #faf9f6;
-      border: 1px solid rgba(41,39,34,.12);
-      border-radius: 5px;
-    }
-    #my-booking-section.lc-my-booking .my-change-day.is-selected {
-      border-color: #9b8058;
-      background: #eee9df;
-    }
-    #my-booking-section.lc-my-booking .my-change-day .day-num {
-      font-size: .74rem;
-    }
-    #my-booking-section.lc-my-booking .my-change-day .day-status {
-      margin-top: 10px;
-      font-size: .58rem;
-      line-height: 1.25;
-      color: #9b8058;
-    }
-    #my-booking-section.lc-my-booking .my-change-session-title {
-      margin: 18px 0 10px;
-      font-size: .70rem;
-      color: #777269;
-      letter-spacing: .05em;
-    }
-    #my-booking-section.lc-my-booking .my-change-session-list {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0,1fr));
-      gap: 7px;
-    }
-    #my-booking-section.lc-my-booking .my-change-session {
-      position: relative;
-      min-width: 0;
-      min-height: 76px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      padding: 10px 5px;
-      background: #faf9f6;
-      border: 1px solid rgba(41,39,34,.14);
-      border-radius: 8px;
-      text-align: center;
-    }
-    #my-booking-section.lc-my-booking .my-change-session.is-selected {
-      background: #eee9df;
-      border-color: #9b8058;
-      box-shadow: inset 0 0 0 1px rgba(155,128,88,.18);
-    }
-    #my-booking-section.lc-my-booking .my-change-session input[type="radio"],
-    #my-booking-section.lc-my-booking .my-change-session input[type="checkbox"] {
-      position: absolute;
-      width: 1px !important;
-      height: 1px !important;
-      opacity: 0;
-      pointer-events: none;
-    }
-    #my-booking-section.lc-my-booking .my-change-session .session-name {
-      color: #292722;
-      font-size: .82rem;
-      font-weight: 600;
-    }
-    #my-booking-section.lc-my-booking .my-change-session .session-time {
-      color: #777269;
-      font-size: .65rem;
-    }
-    #my-booking-section.lc-my-booking .my-change-session .session-status {
-      color: #9b8058;
-      font-size: .58rem;
-    }
-    #my-booking-section.lc-my-booking .my-change-actions button {
-      border-radius: 5px;
-      font-size: .78rem;
-    }
-
-    /* My Reservation: calendar must visually match the customer Reservation calendar */
-    #my-booking-section.lc-my-booking .my-change-empty {
-      min-height: 75px;
-      background: transparent;
-    }
-    #my-booking-section.lc-my-booking .my-change-day {
-      min-height: 75px;
-      padding: 6px;
-      box-sizing: border-box;
-      background: #1c1917;
-      border: 1px solid #322d28;
-      border-radius: 8px;
-      color: #dfcfb2;
-      transition: border-color .15s ease, background .15s ease;
-    }
-    #my-booking-section.lc-my-booking .my-change-day:hover:not(:disabled) {
-      border-color: rgba(201,169,110,.55);
-      background: #24201d;
-    }
-    #my-booking-section.lc-my-booking .my-change-day.is-selected {
-      background: #1c1917;
-      border-color: #c9a96e;
-      box-shadow: inset 0 0 0 1px rgba(201,169,110,.18);
-    }
-    #my-booking-section.lc-my-booking .my-change-day.is-blocked {
-      background: #121214;
-      border-color: #322d28;
-      opacity: .4;
-    }
-    #my-booking-section.lc-my-booking .my-change-day .day-num {
-      color: #dfcfb2;
-      font-size: .82rem;
-      font-weight: 600;
-    }
-    #my-booking-section.lc-my-booking .my-change-day .day-status {
-      color: #9b8058;
-      font-size: .60rem;
-      margin-top: 13px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: clip;
-    }
-    #my-booking-section.lc-my-booking .my-change-day.is-blocked .day-num,
-    #my-booking-section.lc-my-booking .my-change-day.is-blocked .day-status {
-      color: #777269;
-    }
-    #my-booking-section.lc-my-booking .my-change-session {
-      min-height: 82px;
-      padding: 10px 5px;
-      box-sizing: border-box;
-      background: #faf9f6;
-      border: 1px solid rgba(41,39,34,.14);
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background .15s ease, border-color .15s ease, box-shadow .15s ease;
-      user-select: none;
-    }
-    #my-booking-section.lc-my-booking .my-change-session:hover:not(.is-blocked) {
-      border-color: rgba(155,128,88,.55);
-    }
-    #my-booking-section.lc-my-booking .my-change-session.is-selected {
-      background: #eee9df;
-      border-color: #9b8058;
-      box-shadow: inset 0 0 0 1px rgba(155,128,88,.18);
-    }
-    #my-booking-section.lc-my-booking .my-change-session.is-blocked {
-      background: #eeece7;
-      border-color: rgba(41,39,34,.08);
-      opacity: .52;
-      cursor: not-allowed;
-    }
-    #my-booking-section.lc-my-booking .my-change-session .session-name { color:#292722; font-size:.88rem; font-weight:600; }
-    #my-booking-section.lc-my-booking .my-change-session .session-time { color:#777269; font-size:.69rem; }
-    #my-booking-section.lc-my-booking .my-change-session .session-status { color:#9b8058; font-size:.62rem; }
-    #my-booking-section.lc-my-booking .my-change-session.is-blocked .session-name,
-    #my-booking-section.lc-my-booking .my-change-session.is-blocked .session-time,
-    #my-booking-section.lc-my-booking .my-change-session.is-blocked .session-status { color:#777269; }
-    #my-booking-section.lc-my-booking .my-change-actions button {
-      border-radius: 5px;
-      transition: background .15s ease, border-color .15s ease;
-    }
-    #my-booking-section.lc-my-booking .my-change-actions button:not(.save):hover {
-      background:#eee9df; border-color:rgba(155,128,88,.45);
-    }
-    #my-booking-section.lc-my-booking .my-change-actions .save:hover { background:#3a3730; }
-
-    @media (max-width: 560px) {
-      #my-booking-section.lc-my-booking { width:90%; max-width:480px; margin:40px auto 60px; padding:28px 18px 24px; }
-      #my-booking-section.lc-my-booking .my-booking-card,
-      #my-booking-section.lc-my-booking .my-change-panel { padding:18px; }
-      .my-booking-main { grid-template-columns:88px 1fr; gap:6px 12px; }
-      .my-change-session { grid-template-columns:38px 1fr auto; }
-    }
-
-.schedule-item, .order-item, .member-item { background: #1f2128; border: 1px solid #2e323e; border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
+    .schedule-item, .order-item, .member-item { background: #1f2128; border: 1px solid #2e323e; border-radius: 12px; padding: 15px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
     .action-btn-group { display: flex; align-items: center; gap: 8px; width: 100%; border-top: 1px dashed #2a2e3d; padding-top: 10px; }
     .pagination-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; padding-top: 12px; border-top: 1px solid #282a32; }
     .page-btn { background: #212329; border: 1px solid #333640; color: #c9a96e; padding: 5px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; }
@@ -686,6 +180,39 @@
     #guest-portal-section, #member-client-section, #booking-section, #my-booking-section, #block-admin-section, #history-admin-section { display: none; width: 90%; max-width: 480px; margin: 60px auto 80px auto; text-align: center; }
     #bar-section { display: none; width: 92%; max-width: 480px; margin: 30px auto 80px auto; }
     #member-admin-section { display: none; width: 92%; max-width: 520px; margin: 30px auto 90px auto; }
+
+
+    .admin-top-nav { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    .admin-top-btn, .admin-tv-btn { display:inline-flex; align-items:center; justify-content:center; min-height:32px; padding:7px 11px; border-radius:8px; text-decoration:none; font-size:.78rem; font-weight:600; color:#dfcfb2; background:#1b1d23; border:1px solid #393c46; transition:.18s ease; }
+    .admin-top-btn:hover, .admin-tv-btn:hover { border-color:#c9a96e; color:#f1e6d1; background:#22242b; }
+    .admin-system-nav { display:flex; gap:8px; align-items:center; margin-left:auto; }
+    .admin-tv-btn { color:#c9a96e; border-color:rgba(201,169,110,.38); }
+    .admin-logout-btn { min-height:32px; padding:7px 11px; border-radius:8px; background:transparent; border:1px solid rgba(248,113,113,.32); color:#a9a1a1; font-size:.76rem; font-weight:500; cursor:pointer; }
+    .admin-logout-btn:hover { color:#fca5a5; border-color:rgba(248,113,113,.62); background:rgba(127,29,29,.12); }
+    .booking-lookup-trigger { display:block; width:100%; border:0; background:transparent; color:#9aa1ad; font-size:.79rem; padding:4px 0 16px; cursor:pointer; text-decoration:underline; text-underline-offset:4px; }
+    .booking-lookup-trigger:hover { color:#dfcfb2; }
+    .booking-lookup-modal { position:fixed; inset:0; z-index:10000; display:flex; align-items:center; justify-content:center; padding:20px; background:rgba(5,6,8,.72); backdrop-filter:blur(8px); }
+    .booking-lookup-dialog { position:relative; width:min(100%,360px); padding:26px 22px 22px; border-radius:18px; background:#16171b; border:1px solid #343740; box-shadow:0 20px 60px rgba(0,0,0,.45); text-align:center; }
+    .booking-lookup-close { position:absolute; top:10px; right:13px; border:0; background:transparent; color:#777d88; font-size:1.35rem; cursor:pointer; }
+    .booking-lookup-title { font-size:1rem; font-weight:700; color:#dfcfb2; }
+    .booking-lookup-sub { margin:7px 0 18px; color:#8d939f; font-size:.78rem; }
+    .booking-lookup-option { width:100%; margin-top:8px; padding:12px; border-radius:10px; border:1px solid #393d47; background:#202229; color:#e5e7eb; font-size:.86rem; font-weight:600; cursor:pointer; }
+    .booking-lookup-option:hover { border-color:#c9a96e; color:#dfcfb2; }
+    .booking-lookup-option.member { border-color:rgba(201,169,110,.38); color:#dfcfb2; }
+    .member-booking-card { margin:0 0 14px; padding:18px; border-radius:16px; background:linear-gradient(145deg,#1c1a17,#16171b); border:1px solid rgba(201,169,110,.42); }
+    .member-booking-kicker { font-family:'Cormorant Garamond',serif; font-size:.8rem; letter-spacing:2px; color:#a89472; margin-bottom:6px; }
+    .member-booking-name { font-size:1.08rem; font-weight:700; color:#f3f4f6; }
+    .member-booking-code { margin-top:3px; font-size:.72rem; color:#858b97; }
+    .member-booking-stats { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:15px; }
+    .member-booking-stats > div { padding:11px 12px; border-radius:10px; background:rgba(0,0,0,.22); }
+    .member-booking-stats span { display:block; font-size:.7rem; color:#8b919d; margin-bottom:4px; }
+    .member-booking-stats strong { display:block; font-size:1rem; color:#dfcfb2; }
+    @media(max-width:520px){ .admin-top-nav{gap:6px}.admin-top-btn,.admin-tv-btn{padding:6px 9px;font-size:.72rem}.admin-system-nav{margin-left:0} }
+
+
+    .member-client-intro { font-size:.8rem; line-height:1.6; color:#858b97; margin:-10px 0 16px; }
+    .member-client-login-card { border-color:rgba(201,169,110,.34); background:linear-gradient(145deg,#1c1a17,#16171b); }
+    .member-client-login-title { font-family:'Cormorant Garamond',serif; font-size:.82rem; letter-spacing:2px; color:#a89472; margin-bottom:14px; }
 
     .portal-brand { font-family: 'Cormorant Garamond', serif; font-size: 2.6rem; letter-spacing: 10px; color: #dfcfb2; text-transform: uppercase; margin-bottom: 6px; }
     .portal-sub { font-size: 0.85rem; color: #8e94a4; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 28px; }
@@ -810,9 +337,9 @@
     #guest-portal-section.lc-hub .lc-hub-home,
     #guest-portal-section.lc-hub .lc-hub-admin {
       font-family: "Pretendard", sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      letter-spacing: .12em;
+      font-size: 10px;
+      font-weight: 400;
+      letter-spacing: .14em;
       color: #777269;
       text-decoration: none;
       text-transform: uppercase;
@@ -833,46 +360,7 @@
     
     #toast-msg { position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%) translateY(20px); background: rgba(22, 23, 29, 0.95); border: 1px solid #c9a96e; color: #dfcfb2; padding: 11px 22px; border-radius: 30px; font-size: 0.86rem; font-weight: 600; opacity: 0; pointer-events: none; transition: all 0.3s ease; z-index: 999999; white-space: nowrap; }
     #toast-msg.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  
-    .global-display-toggles {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 8px;
-    }
-    .global-display-toggle-item {
-      min-width: 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding: 10px 10px;
-      background: #1a1c24;
-      border: 1px solid #34394a;
-      border-radius: 9px;
-    }
-    .global-display-toggle-item .toggle-label {
-      min-width: 0;
-      gap: 2px;
-    }
-    .global-display-toggle-item .toggle-label span:first-child {
-      font-size: 0.78rem;
-      white-space: nowrap;
-    }
-    .global-display-toggle-item .toggle-sub {
-      font-size: 0.64rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .global-display-toggle-item .switch {
-      flex: 0 0 auto;
-    }
-    @media (max-width: 700px) {
-      .global-display-toggles {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-</style>
+  </style>
 <style>
 
 /* La Colonne — Reservation Calendar v1 (presentation only) */
@@ -1082,174 +570,6 @@
   #booking-section #book-calendar-grid .booking-calendar-status { font-size: .55rem !important; }
 }
 </style>
-
-<style>
-/* La Colonne — Reservation Stage 3: booking form */
-#booking-section {
-  background: #f1eee7;
-  color: #292722;
-  border-radius: 12px;
-  padding: 34px 22px 28px;
-  box-sizing: border-box;
-}
-#booking-section .portal-brand {
-  color: #292722 !important;
-  font-family: "Cormorant Garamond", serif !important;
-  font-weight: 400 !important;
-}
-#booking-section .portal-sub {
-  color: #777269 !important;
-  font-family: "Pretendard", sans-serif !important;
-  font-weight: 300 !important;
-}
-#booking-section .booking-mode-tabs {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-  margin: 0 0 18px;
-  padding: 4px;
-  background: transparent;
-  border: 1px solid rgba(41,39,34,.12);
-  border-radius: 8px;
-}
-#booking-section .booking-mode-tab {
-  min-height: 42px;
-  padding: 9px 10px;
-  border: 1px solid transparent;
-  border-radius: 5px;
-  background: transparent;
-  color: #777269;
-  font-family: "Pretendard", sans-serif;
-  font-size: .82rem;
-  font-weight: 400;
-  cursor: pointer;
-  transition: all .15s ease;
-}
-#booking-section .booking-mode-tab.is-active {
-  background: #faf9f6;
-  border-color: rgba(155,128,88,.5);
-  color: #292722;
-  font-weight: 500;
-}
-#booking-section #member-auth-panel {
-  background: #faf9f6 !important;
-  border: 1px solid rgba(155,128,88,.35) !important;
-  border-radius: 8px !important;
-  color: #292722 !important;
-  box-shadow: none !important;
-}
-#booking-section #member-auth-panel label,
-#booking-section #book-form-panel label {
-  color: #777269 !important;
-  font-family: "Pretendard", sans-serif !important;
-  font-size: .76rem !important;
-  font-weight: 400 !important;
-}
-#booking-section #member-auth-panel input,
-#booking-section #book-form-panel input,
-#booking-section #book-form-panel textarea {
-  background: #faf9f6 !important;
-  border: 1px solid rgba(41,39,34,.16) !important;
-  border-radius: 5px !important;
-  color: #292722 !important;
-  font-family: "Pretendard", sans-serif !important;
-  font-size: .88rem !important;
-  box-shadow: none !important;
-}
-#booking-section #book-form-panel input:focus,
-#booking-section #book-form-panel textarea:focus {
-  border-color: rgba(155,128,88,.65) !important;
-  outline: none !important;
-}
-#booking-section .booking-form-section {
-  margin-top: 22px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(41,39,34,.12);
-}
-#booking-section .booking-form-section:first-of-type {
-  margin-top: 2px;
-  padding-top: 0;
-  border-top: 0;
-}
-#booking-section .booking-form-section-title {
-  margin: 0 0 14px;
-  font-family: "Pretendard", sans-serif;
-  font-size: .73rem;
-  font-weight: 500;
-  letter-spacing: .13em;
-  color: #9b8058;
-}
-#booking-section .booking-applicant-row {
-  display: grid;
-  grid-template-columns: 1fr 1.35fr;
-  gap: 8px;
-}
-#booking-section #active-member-badge {
-  background: rgba(155,128,88,.08) !important;
-  border: 1px solid rgba(155,128,88,.32) !important;
-  border-radius: 6px !important;
-  color: #777269 !important;
-  font-size: .78rem !important;
-}
-#booking-section #active-member-badge b {
-  color: #9b8058 !important;
-}
-#booking-section #book-sub-msg {
-  min-height: 92px;
-  resize: vertical;
-  line-height: 1.65;
-  padding: 11px 12px !important;
-}
-#booking-section .booking-form-help {
-  margin-top: 5px;
-  color: #9a948b;
-  font-size: .7rem;
-  line-height: 1.5;
-}
-#booking-section .booking-consent-box {
-  background: #faf9f6 !important;
-  border: 1px solid rgba(41,39,34,.12) !important;
-  border-radius: 6px !important;
-  color: #777269 !important;
-}
-#booking-section .booking-consent-box label {
-  color: #777269 !important;
-}
-#booking-section .booking-submit-btn {
-  width: 100%;
-  min-height: 46px;
-  margin-top: 2px;
-  padding: 11px 16px;
-  background: #292722 !important;
-  border: 1px solid #292722 !important;
-  border-radius: 5px !important;
-  color: #f7f4ed !important;
-  font-family: "Pretendard", sans-serif !important;
-  font-size: .88rem !important;
-  font-weight: 500 !important;
-  letter-spacing: .03em;
-  cursor: pointer;
-}
-#booking-section .booking-submit-btn:hover { background: #3a3730 !important; }
-#booking-section .booking-bottom-nav a:first-child { color: #777269 !important; }
-#booking-section .booking-bottom-nav a:last-child { color: #9b8058 !important; }
-@media (max-width: 420px) {
-  #booking-section { padding-left: 16px; padding-right: 16px; }
-  #booking-section .booking-applicant-row { grid-template-columns: 1fr; }
-  #booking-section .booking-mode-tab { font-size: .78rem; }
-}
-
-/* TV: meeting name is an optional second line; sub-message preserves line breaks. */
-#tv-section .guest-meeting {
-  margin: 0 0 12px;
-  font-size: 1.18rem;
-  color: #dfcfb2;
-  font-weight: 400;
-  letter-spacing: .04em;
-  text-shadow: 0 2px 12px rgba(0,0,0,.85);
-}
-#tv-section .sub-desc { white-space: pre-line; }
-</style>
 </head>
 <body>
 
@@ -1262,7 +582,7 @@
       <p class="lc-hub-intro">라 콜론을 이용하시는 방법을 선택해 주세요.</p>
       <nav class="lc-hub-nav" aria-label="La Colonne customer access">
         <a href="?view=booking" class="lc-hub-link"><span class="lc-hub-num">01</span><span class="lc-hub-copy"><span class="lc-hub-label">Reservation</span><span class="lc-hub-desc">라운지 이용 예약</span></span><span class="lc-hub-arrow" aria-hidden="true">→</span></a>
-        <a href="?view=my_booking" class="lc-hub-link"><span class="lc-hub-num">02</span><span class="lc-hub-copy"><span class="lc-hub-label">My Reservation</span><span class="lc-hub-desc">예약 조회 및 취소</span></span><span class="lc-hub-arrow" aria-hidden="true">→</span></a>
+        <a href="?view=booking" class="lc-hub-link"><span class="lc-hub-num">02</span><span class="lc-hub-copy"><span class="lc-hub-label">Reservation &amp; Lookup</span><span class="lc-hub-desc">라운지 이용 예약 및 예약조회</span></span><span class="lc-hub-arrow" aria-hidden="true">→</span></a>
         <a href="?view=member" class="lc-hub-link"><span class="lc-hub-num">03</span><span class="lc-hub-copy"><span class="lc-hub-label">Membership</span><span class="lc-hub-desc">회원권 세션 확인</span></span><span class="lc-hub-arrow" aria-hidden="true">→</span></a>
         <a href="?view=bar" class="lc-hub-link"><span class="lc-hub-num">04</span><span class="lc-hub-copy"><span class="lc-hub-label">Amenities</span><span class="lc-hub-desc">어메니티 &amp; 미니바 셀프 정산</span></span><span class="lc-hub-arrow" aria-hidden="true">→</span></a>
       </nav>
@@ -1311,7 +631,6 @@
         <span class="guest-core-name" id="guest-name"></span>
         <span class="honorific-suffix" id="guest-suffix"></span>
       </div>
-      <div class="guest-meeting" id="guest-meeting" style="display:none;"></div>
       <div class="sub-desc" id="guest-msg"></div>
     </div>
 
@@ -1354,15 +673,15 @@
   <!-- [화면 3] 라운지 관리자 메인 허브 (?view=admin) -->
   <div id="admin-section">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
-      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-        <a href="?view=bar&admin=1" class="admin-nav-link">어메니티 편집</a>
-        <a href="?view=member_admin" class="admin-nav-link">멤버십 관리</a>
-        <a href="?view=block_admin" class="admin-nav-link">예약 캘린더 관리 ↗</a>
-        <a href="?view=history_admin" class="admin-nav-link">히스토리 전체보기 ↗</a>
+      <div class="admin-top-nav">
+        <a href="?view=bar&admin=1" class="admin-top-btn">어메니티 편집</a>
+        <a href="?view=member_admin" class="admin-top-btn">멤버십 관리</a>
+        <a href="?view=block_admin" class="admin-top-btn">예약 캘린더</a>
+        <a href="?view=history_admin" class="admin-top-btn">전체 히스토리</a>
       </div>
-      <div style="display:flex; gap:10px; align-items:center;">
-        <button type="button" onclick="logoutAdmin()" style="background:none; border:1px solid #444; color:#aaa; padding:4px 8px; border-radius:6px; font-size:0.75rem; cursor:pointer;">로그아웃</button>
-        <a href="?view=tv" target="_blank" class="admin-nav-link">TV 새 창 ↗</a>
+      <div class="admin-system-nav">
+        <a href="?view=tv" target="_blank" class="admin-tv-btn">TV 새창</a>
+        <button type="button" onclick="logoutAdmin()" class="admin-logout-btn">로그아웃</button>
       </div>
     </div>
 
@@ -1373,7 +692,7 @@
         <div style="display: flex; align-items: center; gap: 6px;">
           <span id="occupancy-badge" class="tag-badge badge-blue">상태 확인 중...</span>
           <button type="button" id="btn-force-guest" onclick="resetToGuestScreen()" style="display: none; font-size: 0.72rem; padding: 3px 8px; border-radius: 6px; background: #374151; color: #f3f4f6; border: 1px solid #4b5563; cursor: pointer; white-space: nowrap;">
-            퇴실
+            🚪 퇴실 처리
           </button>
         </div>
       </div>
@@ -1384,23 +703,21 @@
     <!-- 공통 온오프 설정 -->
     <div class="admin-card" style="padding: 18px 22px; border-color: rgba(201, 169, 110, 0.4);">
       <div class="admin-title" style="font-size: 1rem; margin-bottom: 12px;">⚙️ 라운지 디스플레이 공통 설정</div>
-      <div class="global-display-toggles">
-        <div class="global-display-toggle-item">
-          <div class="toggle-label"><span>날씨</span><span class="toggle-sub">날씨 배지</span></div>
-          <label class="switch"><input type="checkbox" id="global-weather-toggle"><span class="slider"></span></label>
-        </div>
-        <div class="global-display-toggle-item">
-          <div class="toggle-label"><span>Wi-Fi QR</span><span class="toggle-sub">우측 하단</span></div>
-          <label class="switch"><input type="checkbox" id="global-wifi-toggle"><span class="slider"></span></label>
-        </div>
-        <div class="global-display-toggle-item">
-          <div class="toggle-label"><span>어메니티 QR</span><span class="toggle-sub">좌측 하단</span></div>
-          <label class="switch"><input type="checkbox" id="global-amenity-toggle"><span class="slider"></span></label>
-        </div>
-        <div class="global-display-toggle-item">
-          <div class="toggle-label"><span>OTT / Cast</span><span class="toggle-sub">하단 중앙 QR</span></div>
-          <label class="switch"><input type="checkbox" id="global-ott-toggle"><span class="slider"></span></label>
-        </div>
+      <div class="toggle-row">
+        <div class="toggle-label"><span>실시간 날씨 위젯 표시</span><span class="toggle-sub">상단 날씨 배지 On/Off</span></div>
+        <label class="switch"><input type="checkbox" id="global-weather-toggle"><span class="slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-label"><span>Guest Wi-Fi QR 위젯 표시</span><span class="toggle-sub">우측 하단 Wi-Fi QR On/Off</span></div>
+        <label class="switch"><input type="checkbox" id="global-wifi-toggle"><span class="slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-label"><span>Lounge Bar 어메니티 QR 표시</span><span class="toggle-sub">좌측 하단 미니바 QR On/Off</span></div>
+        <label class="switch"><input type="checkbox" id="global-amenity-toggle"><span class="slider"></span></label>
+      </div>
+      <div class="toggle-row" style="margin-bottom: 0;">
+        <div class="toggle-label"><span>OTT / Cast 가이드 QR 표시</span><span class="toggle-sub">하단 중앙 OTT 가이드 QR On/Off</span></div>
+        <label class="switch"><input type="checkbox" id="global-ott-toggle"><span class="slider"></span></label>
       </div>
     </div>
 
@@ -1409,68 +726,69 @@
       <div class="admin-title" id="unified-card-title">1. TV 즉시표출 & 예약제어</div>
 
       <div class="form-group">
-        <label>VIP 멤버십</label>
-        <select id="u-member-select" style="border-color: #3b4252;"><option value="">일반 대관 / 비회원</option></select>
+        <label>VIP 멤버십 회원 연동 (선택)</label>
+        <select id="u-member-select" style="border-color: #3b4252;"><option value="">-- 일반 대관 / 비회원 (선택 안 함) --</option></select>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-label"><span>앞자리 영문 경칭 (Mr., Dr. 등)</span><span class="toggle-sub">외국인 VIP 손님 방문 시</span></div>
+        <label class="switch"><input type="checkbox" id="u-prefix-toggle"><span class="slider"></span></label>
+      </div>
+
+      <div class="prefix-select-wrap" id="u-prefix-select-box">
+        <label style="margin-bottom: 6px;">영문 경칭 선택</label>
+        <select id="u-prefix-select">
+          <option value="Mr.">Mr. (남성)</option>
+          <option value="Ms.">Ms. (여성)</option>
+          <option value="Mrs.">Mrs. (기혼 여성)</option>
+          <option value="Dr.">Dr. (박사 / 의사 / 석학)</option>
+          <option value="Prof.">Prof. (교수)</option>
+          <option value="Sir">Sir (존칭)</option>
+        </select>
       </div>
 
       <div class="form-group">
-        <label>표출명</label>
-        <input type="text" id="u-name-input" placeholder="표출명 / 회사명">
-      </div>
-      <div class="form-group">
-        <label>모임명</label>
-        <input type="text" id="u-meeting-input" placeholder="선택 입력">
-      </div>
-      <div class="form-group">
-        <label>서브문구</label>
-        <textarea id="u-msg-input" rows="2" placeholder="선택 입력">라 콜론에 오신 것을 환영합니다.</textarea>
-        <button type="button" class="input-clear-btn" onclick="clearDisplayInputs()">입력 내용 지우기</button>
+        <label>표출 성함 / 회사명</label>
+        <input type="text" id="u-name-input" placeholder="비워둘 시 기본값 'Guest' 표출">
       </div>
 
-      <div class="admin-form-divider">
-        <div class="admin-form-section-label">표출 옵션</div>
-        <div class="admin-inline-options">
-          <div class="admin-inline-option">
-            <div class="admin-toggle-compact"><span class="option-label">Prefix</span><label class="switch"><input type="checkbox" id="u-prefix-toggle"><span class="slider"></span></label></div>
-            <div class="prefix-select-wrap" id="u-prefix-select-box" style="display:none; margin-top:7px;">
-              <select id="u-prefix-select"><option value="Mr.">Mr.</option><option value="Ms.">Ms.</option><option value="Mrs.">Mrs.</option><option value="Dr.">Dr.</option><option value="Prof.">Prof.</option><option value="Sir">Sir</option></select>
-            </div>
-          </div>
-          <div class="admin-inline-option">
-            <div class="admin-toggle-compact"><span class="option-label">Suffix · 님</span><label class="switch"><input type="checkbox" id="u-suffix-toggle"><span class="slider"></span></label></div>
-          </div>
-        </div>
+      <div class="toggle-row">
+        <div class="toggle-label"><span>이름 뒤 '님' 표기</span><span class="toggle-sub">이름 뒤 작고 섬세하게 배치</span></div>
+        <label class="switch"><input type="checkbox" id="u-suffix-toggle" checked><span class="slider"></span></label>
+      </div>
+
+      <div class="form-group">
+        <label>서브 환영 문구</label>
+        <input type="text" id="u-msg-input" value="라 콜론에 오신 것을 환영합니다.">
       </div>
 
       <div class="form-group">
         <label>배경 및 음악 선택</label>
         <select id="u-bg-select" style="margin-bottom: 8px;">
-          <optgroup label="── 시네마틱 비디오 릴레이 ──">
-            <option value="video1.mp4,video2.mp4">1. 라운지 릴레이 (Video 1 + 2 연속 재생)</option>
-            <option value="video1.mp4,video2.mp4,video3.mp4">2. 풀 컬렉션 릴레이 (Video 1 + 2 + 3)</option>
-            <option value="video1.mp4">3. 메인 라운지 단독 (video1.mp4)</option>
-            <option value="video2.mp4">4. 서브 라운지 단독 (video2.mp4)</option>
+          <optgroup label="── 🎬 시네마틱 비디오 릴레이 ──">
+            <option value="video1.mp4,video2.mp4">🎬 1. 라운지 릴레이 (Video 1 + 2 연속 재생)</option>
+            <option value="video1.mp4,video2.mp4,video3.mp4">🎬 2. 풀 컬렉션 릴레이 (Video 1 + 2 + 3)</option>
+            <option value="video1.mp4">🎬 3. 메인 라운지 단독 (video1.mp4)</option>
+            <option value="video2.mp4">🎬 4. 서브 라운지 단독 (video2.mp4)</option>
           </optgroup>
-          <optgroup label="── 인테리어 스틸 ──">
-            <option value="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2560&q=85">하이엔드 스톤 라운지</option>
-            <option value="https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&w=2560&q=85">클래식 딥 월넛 살롱</option>
+          <optgroup label="── 🖼 인테리어 스틸 ──">
+            <option value="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2560&q=85">🖼 하이엔드 스톤 라운지</option>
+            <option value="https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&w=2560&q=85">🖼 클래식 딥 월넛 살롱</option>
           </optgroup>
         </select>
         <select id="u-bgm-select">
-          <option value="jazz1.mp3">1. Autumn Leaves 클래식 재즈</option>
-          <option value="jazz2.mp3">2. 라운지 스윙 재즈 2</option>
-          <option value="none">음악 끄기 (BGM Off)</option>
+          <option value="jazz1.mp3">🎵 1. Autumn Leaves 클래식 재즈</option>
+          <option value="jazz2.mp3">🎵 2. 라운지 스윙 재즈 2</option>
+          <option value="none">🔇 음악 끄기 (BGM Off)</option>
         </select>
       </div>
 
       <div style="background: #1a1c24; border: 1px dashed #34394a; border-radius: 12px; padding: 14px; margin-bottom: 16px;">
-        <div style="font-size: 0.85rem; font-weight: 600; color: #93c5fd; margin-bottom: 10px;">예약 일정 지정 (즉시 표출 시 비워두세요)</div>
+        <div style="font-size: 0.85rem; font-weight: 600; color: #93c5fd; margin-bottom: 10px;">📅 예약 일정 지정 (즉시 표출 시 비워두세요)</div>
         <div class="schedule-datetime-stack">
           <div class="schedule-time-box">
-            <div class="schedule-field-row">
-              <label style="font-size: 0.76rem;">예약 날짜</label>
-              <input type="date" id="u-sched-date">
-            </div>
+            <label style="font-size: 0.76rem; margin-bottom: 2px;">예약 날짜</label>
+            <input type="date" id="u-sched-date">
             <div class="schedule-date-shortcuts">
               <button type="button" class="schedule-date-shortcut" onclick="setScheduleDateOffset(0)">오늘</button>
               <button type="button" class="schedule-date-shortcut" onclick="setScheduleDateOffset(1)">내일</button>
@@ -1478,38 +796,26 @@
             </div>
           </div>
           <div class="schedule-time-box">
-            <div class="schedule-field-row">
-              <label style="font-size: 0.76rem;">시작 시간</label>
-              <input type="time" id="u-sched-start-time" step="1800" placeholder="시작 시간">
-            </div>
+            <label style="font-size: 0.76rem; margin-bottom: 2px;">시작 시간</label>
+            <input type="time" id="u-sched-start-time" step="1800" placeholder="시작 시간">
             <div class="schedule-time-presets">
               <button type="button" class="schedule-time-preset" data-time="10:00" onclick="setScheduleStartTime('10:00')">10:00</button>
               <button type="button" class="schedule-time-preset" data-time="14:00" onclick="setScheduleStartTime('14:00')">14:00</button>
               <button type="button" class="schedule-time-preset" data-time="18:00" onclick="setScheduleStartTime('18:00')">18:00</button>
-              <button type="button" class="schedule-time-preset" data-time="now" onclick="setScheduleNow()">지금</button>
-              <div class="schedule-time-adjust"><button type="button" onclick="adjustScheduleTime(-5)">−5분</button><button type="button" onclick="adjustScheduleTime(5)">+5분</button></div>
             </div>
           </div>
           <div class="schedule-time-box">
-            <div class="schedule-field-row">
-              <label class="schedule-end-label" style="font-size: 0.76rem;">종료 시간 <span style="color:#7f8795;">(+3시간)</span></label>
-              <input type="time" id="u-sched-end-time" step="1800">
-            </div>
-            <div class="schedule-time-presets">
-              <div class="schedule-time-adjust"><button type="button" onclick="adjustScheduleEndTime(-5)">−5분</button><button type="button" onclick="adjustScheduleEndTime(5)">+5분</button></div>
-            </div>
+            <label style="font-size: 0.76rem; margin-bottom: 2px;">종료 시간 <span style="color:#7f8795;">(+3시간 자동)</span></label>
+            <input type="time" id="u-sched-end-time" step="1800">
           </div>
         </div>
         <input type="datetime-local" id="u-sched-start" style="display:none;">
         <input type="datetime-local" id="u-sched-end" style="display:none;">
       </div>
-      <div class="schedule-clear-wrap" style="display:flex; justify-content:flex-end;">
-        <button type="button" class="input-clear-btn" onclick="clearScheduleInputs()">일정 지우기</button>
-      </div>
 
       <div style="display: flex; gap: 10px;">
-        <button type="button" class="btn-primary" id="btn-action-now" style="flex: 1; margin-top: 0;">TV 즉시 표출</button>
-        <button type="button" class="btn-primary" id="btn-action-sched" style="flex: 1; margin-top: 0;">예약 일정 추가</button>
+        <button type="button" class="btn-primary" id="btn-action-now" style="flex: 1; margin-top: 0;">⚡ TV 즉시 표출</button>
+        <button type="button" class="btn-primary" id="btn-action-sched" style="flex: 1; margin-top: 0; background: #2563eb; color: #fff;">📅 예약 일정 추가</button>
       </div>
       <button type="button" class="btn-secondary" id="u-cancel-btn" style="display: none; margin-top: 8px;" onclick="cancelEditSchedule()">수정 취소</button>
       <div id="unified-log-box" style="margin-top: 10px; font-size: 0.84rem; display: none;"></div>
@@ -1519,7 +825,7 @@
     <div class="admin-card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
         <div class="admin-title" style="margin-bottom: 0;">2. 예약대기열</div>
-        <button type="button" onclick="loadSchedules()" title="목록 새로고침" style="background: none; border: 1px solid #444; color: #aaa; padding: 3px 8px; border-radius: 6px; font-size: 0.74rem; cursor: pointer;">새로고침</button>
+        <button type="button" onclick="loadSchedules()" title="목록 새로고침" style="background: none; border: 1px solid #444; color: #c9a96e; padding: 3px 10px; border-radius: 6px; font-size: 0.74rem; cursor: pointer;">🔄 새로고침</button>
       </div>
       <div id="schedule-list"><div style="color: #666; font-size: 0.85rem; text-align: center; padding: 15px 0;">대기 일정이 없습니다.</div></div>
     </div>
@@ -1644,14 +950,27 @@
     <div class="portal-sub">Lounge Reservation Calendar</div>
     
     <!-- 예약 모드 선택 탭 (일반 대관 vs 회원권 패스 차감) -->
-    <div class="booking-mode-tabs">
-      <button type="button" id="tab-mode-general" class="booking-mode-tab is-active" onclick="switchBookingMode('general')">일반예약</button>
-      <button type="button" id="tab-mode-member" class="booking-mode-tab" onclick="switchBookingMode('member')">회원 인증 예약</button>
+    <div style="display: flex; gap: 8px; margin-bottom: 16px; background: #16171b; padding: 6px; border-radius: 12px; border: 1px solid #282a32;">
+      <button type="button" id="tab-mode-general" onclick="switchBookingMode('general')" style="flex: 1; padding: 11px; border-radius: 8px; border: none; background: #c9a96e; color: #0d0e11; font-weight: 700; font-size: 0.88rem; cursor: pointer;">일반예약</button>
+      <button type="button" id="tab-mode-member" onclick="switchBookingMode('member')" style="flex: 1; padding: 11px; border-radius: 8px; border: none; background: transparent; color: #94a3b8; font-weight: 600; font-size: 0.88rem; cursor: pointer;">회원예약</button>
+    </div>
+
+    <button type="button" id="booking-lookup-trigger" class="booking-lookup-trigger" onclick="openBookingLookupModal()">예약 조회 · 취소</button>
+
+    <!-- 예약 조회/취소 선택 모달 -->
+    <div id="booking-lookup-modal" class="booking-lookup-modal" style="display:none;" onclick="if(event.target===this) closeBookingLookupModal()">
+      <div class="booking-lookup-dialog">
+        <button type="button" class="booking-lookup-close" onclick="closeBookingLookupModal()">×</button>
+        <div class="booking-lookup-title">예약 조회 · 취소</div>
+        <div class="booking-lookup-sub">조회하실 예약 유형을 선택해 주세요.</div>
+        <button type="button" class="booking-lookup-option" onclick="openGeneralBookingLookup()">일반예약 조회</button>
+        <button type="button" class="booking-lookup-option member" onclick="openMemberBookingLookup()">회원예약 조회</button>
+      </div>
     </div>
 
     <!-- 멤버십 로그인 인증 패널 -->
     <div class="admin-card" id="member-auth-panel" style="display: none; text-align: left; border-color: #c9a96e; background: #16171b;">
-      <div style="font-size: 0.95rem; font-weight: 600; color: #dfcfb2; margin-bottom: 6px;">회원 인증</div>
+      <div style="font-size: 0.95rem; font-weight: 600; color: #dfcfb2; margin-bottom: 6px;">💳 회원 인증</div>
       <div style="font-size: 0.78rem; color: #888; margin-bottom: 14px;">등록된 휴대폰 번호와 4자리 PIN 번호를 입력하세요.</div>
       <div class="form-group">
         <label>회원 연락처</label>
@@ -1663,6 +982,17 @@
       </div>
       <button type="button" class="btn-primary" onclick="verifyMemberAuthForBooking()">인증하기</button>
       <div id="auth-error-msg" style="color: #f87171; font-size: 0.8rem; margin-top: 10px; display: none; text-align: center;"></div>
+    </div>
+
+    <!-- 회원 상태 카드 -->
+    <div id="member-booking-card" class="member-booking-card" style="display:none; text-align:left;">
+      <div class="member-booking-kicker">MEMBERSHIP</div>
+      <div class="member-booking-name" id="member-booking-company">회원명</div>
+      <div class="member-booking-code" id="member-booking-code">LC-0000</div>
+      <div class="member-booking-stats">
+        <div><span>남은 세션</span><strong id="member-booking-remain">0회</strong></div>
+        <div><span>유효기간</span><strong id="member-booking-expire">-</strong></div>
+      </div>
     </div>
 
     <!-- 메인 예약 캘린더 패널 -->
@@ -1697,50 +1027,33 @@
         <div id="book-slots-container" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;"></div>
       </div>
 
-      <div class="booking-form-section">
-        <div class="booking-form-section-title">예약자 정보</div>
-        <div class="form-group">
-          <div class="booking-applicant-row">
-            <input type="text" id="book-name" placeholder="예약자명">
-            <input type="tel" id="book-phone" placeholder="연락처 (010-0000-0000)">
-          </div>
-          <div class="form-group" id="member-contact-phone-group" style="display:none; margin-top:10px;">
-            <label>실제 연락받을 번호 <span style="color:#aaa;">(선택)</span></label>
-            <input type="tel" id="member-contact-phone" placeholder="회원 연락처와 다를 경우 입력">
-            <div class="booking-form-help">비워두면 회원 등록 휴대폰 번호로 연락합니다.</div>
-          </div>
-        </div>
-
-        <!-- 멤버십 인증된 회원 정보 표출 배지 -->
-        <div id="active-member-badge" style="display: none; padding: 12px; margin-bottom: 14px;">
-          <b>[회원 인증 예약]</b> <span id="badge-member-info"></span> 회원의 세션 패스 1회가 차감됩니다.
-        </div>
-
-        <div class="form-group" id="general-pin-group">
-          <label>예약 확인/취소용 PIN</label>
-          <input type="password" id="book-pin" maxlength="4" inputmode="numeric" placeholder="숫자 4자리" style="letter-spacing: 4px;">
+      <div class="form-group">
+        <label>신청자 성함 / 연락처 (알림 수신용)</label>
+        <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+          <input type="text" id="book-name" placeholder="성함 입력" style="flex: 1;">
+          <input type="tel" id="book-phone" placeholder="연락처 (010-0000-0000)" style="flex: 1.4;">
         </div>
       </div>
 
-      <div class="booking-form-section">
-        <div class="booking-form-section-title">디스플레이 정보</div>
-        <div class="form-group">
-          <label>디스플레이 표출명 <span style="color:#aaa;">(선택)</span></label>
-          <input type="text" id="book-display-name" placeholder="TV에 보여질 이름 또는 호칭">
-          <div class="booking-form-help">비워두면 예약자명이 기본 표출명으로 사용됩니다.</div>
-        </div>
-        <div class="form-group">
-          <label>모임명 <span style="color:#aaa;">(선택)</span></label>
-          <input type="text" id="book-meeting-name" placeholder="예: ABC 투자자문 미팅">
-        </div>
-        <div class="form-group">
-          <label>디스플레이 서브문구 <span style="color:#aaa;">(선택)</span></label>
-          <textarea id="book-sub-msg" placeholder="TV에 표시할 환영 문구를 입력하세요."></textarea>
-          <div class="booking-form-help">비워두면 기본 환영 문구가 표시됩니다. 줄바꿈도 사용할 수 있습니다.</div>
-        </div>
+      <!-- 멤버십 인증된 회원 정보 표출 배지 -->
+      <div id="active-member-badge" style="display: none; background: rgba(201,169,110,0.12); border: 1px solid #c9a96e; border-radius: 10px; padding: 12px; margin-bottom: 15px; font-size: 0.85rem; color: #dfcfb2;">
+        ✨ <b>[VIP 회원권 적용]</b> <span id="badge-member-info"></span> 회원의 세션 패스 1회가 차감됩니다.
       </div>
 
-      <div class="booking-consent-box" style="padding: 12px; margin-bottom: 16px; font-size: 0.8rem; line-height:1.5;">
+      <div class="form-group" id="general-pin-group">
+        <label>예약 확인/취소용 PIN 번호 (숫자 4자리)</label>
+        <input type="password" id="book-pin" maxlength="4" placeholder="비회원 예약 관리용" style="letter-spacing: 4px;">
+      </div>
+      <div class="form-group">
+        <label>TV 표출용 성함 / 모임명</label>
+        <input type="text" id="book-display-name" placeholder="예: ABC 컴퍼니 / 홍길동 대표님 환영회">
+      </div>
+      <div class="form-group">
+        <label>모임 목적 / 서브 환영 문구</label>
+        <input type="text" id="book-sub-msg" value="라 콜론에 오신 것을 환영합니다.">
+      </div>
+
+      <div style="background: #11100e; border: 1px solid #322d28; border-radius: 10px; padding: 12px; margin-bottom: 16px; font-size: 0.8rem; color: #b8aba0;">
         <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer; color: #e5e7eb;">
           <input type="checkbox" id="book-consent-privacy" style="width: 16px; height: 16px; accent-color: #c9a96e;">
           <span><b>[필수]</b> 개인정보 수집 및 이용 동의 (예약 확정 및 안내용)</span>
@@ -1751,88 +1064,33 @@
         </label>
       </div>
 
-      <button type="button" class="booking-submit-btn" onclick="submitBookingRequest()">예약 신청 완료</button>
+      <button type="button" class="btn-primary" onclick="submitBookingRequest()" style="background: #2563eb; color: #fff;">예약 신청 완료</button>
       <div id="booking-error-msg" style="color: #f87171; font-size: 0.8rem; margin-top: 10px; display: none; text-align: center;"></div>
     </div>
 
-    <div class="booking-bottom-nav" style="margin-top: 20px; display: flex; justify-content: space-between;">
+    <div style="margin-top: 20px; text-align:center;">
       <a href="https://la-colonne.vercel.app/" style="color: #888; font-size: 0.8rem; text-decoration: none;">VISIT LA COLONNE ↗</a>
-      <a href="?view=my_booking" style="color: #93c5fd; font-size: 0.8rem; text-decoration: none; font-weight: 600;">내 예약 조회 · 취소 →</a>
     </div>
   </div>
 
-  <!-- [화면 8] 내 예약 (?view=my_booking) -->
-  <div id="my-booking-section" class="lc-my-booking">
+  <!-- [화면 8] 내 예약 조회 및 취소 (?view=my_booking) -->
+  <div id="my-booking-section">
     <div class="portal-brand" style="font-size: 2.1rem;">La Colonne</div>
-    <div class="portal-sub">My Reservation</div>
-
-    <div class="my-booking-card">
-      <div class="my-booking-label">RESERVATION LOOKUP</div>
-      <div style="font-size:13px; color:#777269; line-height:1.65; margin-bottom:20px;">예약 시 등록한 휴대폰 번호와 PIN으로 예약 내역을 확인할 수 있습니다.</div>
-      <div style="margin-bottom:13px;">
-        <label class="my-booking-label" for="my-phone-input">휴대폰 번호</label>
+    <div class="portal-sub">Reservation Lookup & Cancel</div>
+    <div class="admin-card" style="text-align: left; margin-top: 15px;">
+      <div class="form-group">
+        <label>등록된 휴대폰 번호</label>
         <input type="tel" id="my-phone-input" placeholder="010-1234-5678">
       </div>
-      <div style="margin-bottom:5px;">
-        <label class="my-booking-label" for="my-pin-input">예약 확인용 PIN</label>
-        <input type="password" id="my-pin-input" maxlength="4" inputmode="numeric" placeholder="4자리 숫자" style="letter-spacing:4px;">
+      <div class="form-group">
+        <label>예약 확인용 PIN 번호 (4자리)</label>
+        <input type="password" id="my-pin-input" maxlength="4" placeholder="PIN 입력" style="letter-spacing: 4px;">
       </div>
-      <button type="button" class="my-booking-submit" onclick="lookupMyBookings()">예약 내역 조회</button>
-      <div id="my-lookup-error" style="color:#8b5b55; font-size:12px; margin-top:10px; display:none; text-align:center;"></div>
+      <button type="button" class="btn-primary" onclick="lookupMyBookings()">내 예약 내역 조회</button>
+      <div id="my-lookup-error" style="color: #f87171; font-size: 0.8rem; margin-top: 10px; display: none; text-align: center;"></div>
     </div>
-
-    <div id="my-bookings-result" style="display:none;"></div>
-
-    <div id="my-info-edit-panel-home" style="display:none;"></div>
-    <div id="my-change-panel-home" style="display:none;"></div>
-
-    <div id="my-info-edit-panel" class="my-change-panel" style="display:none; margin-top:24px;">
-      <div class="my-booking-edit-head">
-        <div class="my-booking-edit-title">예약 정보 수정</div>
-        <button type="button" class="my-booking-close" onclick="closeMyInfoEdit()">닫기</button>
-      </div>
-      <div style="font-size:12px; color:#777269; line-height:1.6; margin-bottom:18px;">예약자명과 TV에 표시되는 정보를 수정할 수 있습니다. 회원 인증 예약의 예약자명은 회원정보와 연결되어 있어 수정할 수 없습니다. 예약 시작 후에는 수정할 수 없습니다.</div>
-      <div class="my-booking-edit-grid">
-        <div><label id="my-edit-reservation-name-label">예약자명</label><input id="my-edit-reservation-name" type="text"></div>
-        <div><label>디스플레이 표출명</label><input id="my-edit-display-name" type="text"></div>
-        <div><label>모임명</label><input id="my-edit-meeting-name" type="text"></div>
-        <div><label>디스플레이 서브문구</label><textarea id="my-edit-sub-message"></textarea></div>
-      </div>
-      <div class="my-change-actions">
-        <button type="button" onclick="closeMyInfoEdit()">취소</button>
-        <button type="button" class="save" onclick="saveMyInfoEdit()">수정 저장</button>
-      </div>
-      <div id="my-edit-error" style="display:none; margin-top:10px; color:#8b5b55; font-size:12px;"></div>
-    </div>
-
-    <div id="my-change-panel" class="my-change-panel" style="display:none; margin-top:24px;">
-      <div class="my-change-head">
-        <div class="my-change-title">예약 일정 변경</div>
-        <button type="button" class="my-booking-close" onclick="closeMyChange()">닫기</button>
-      </div>
-      <div style="font-size:12px; color:#777269; line-height:1.6; margin-bottom:18px;">예약 가능한 날짜와 세션을 다시 선택해주세요. 기존 예약은 변경이 완료될 때까지 유지됩니다.</div>
-      <div class="my-change-calendar-head">
-        <div id="my-change-month-title" class="my-change-month">2026년 9월 예약 현황</div>
-        <div class="my-change-calendar-nav">
-          <button type="button" onclick="changeMyChangeMonth(-1)">‹</button>
-          <button type="button" onclick="changeMyChangeMonth(1)">›</button>
-        </div>
-      </div>
-      <div class="my-change-week"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
-      <div id="my-change-calendar-grid" class="my-change-grid"></div>
-      <div id="my-change-session-title" class="my-change-session-title">날짜를 선택해주세요.</div>
-      <div id="my-change-session-list" class="my-change-session-list"></div>
-      <div class="my-change-actions">
-        <button type="button" onclick="closeMyChange()">취소</button>
-        <button type="button" class="save" onclick="saveMyChange()">일정 변경 저장</button>
-      </div>
-      <div id="my-change-error" style="display:none; margin-top:10px; color:#8b5b55; font-size:12px;"></div>
-    </div>
-
-    <div class="my-booking-link-row">
-      <a href="?view=booking">예약하기 →</a>
-      <a href="https://la-colonne.vercel.app/">VISIT LA COLONNE ↗</a>
-    </div>
+    <div id="my-bookings-result" style="display: none;"></div>
+    <div style="margin-top: 16px; display:flex; justify-content:space-between; gap:16px; align-items:center;"><a href="?view=booking" style="color: #888; font-size: 0.8rem; text-decoration: none;">예약하기 →</a><a href="https://la-colonne.vercel.app/" style="color: #888; font-size: 0.8rem; text-decoration: none;">VISIT LA COLONNE ↗</a></div>
   </div>
 
   <!-- [화면 5] VIP 멤버십 관리 (?view=member_admin) -->
@@ -1840,7 +1098,7 @@
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
       <div>
         <a href="?view=admin" style="color: #94a3b8; font-size: 0.82rem; text-decoration: none; display: inline-block; margin-bottom: 4px;">← 라운지 관리 홈</a>
-        <h2 style="font-size: 1.2rem; color: #dfcfb2; font-weight: 600;">VIP 멤버십 관리</h2>
+        <h2 style="font-size: 1.2rem; color: #dfcfb2; font-weight: 600;">VIP 멤버십 횟수 관리</h2>
         <div style="font-size: 0.78rem; color: #888;">기본 1회 = 3시간 프라이빗 세션</div>
       </div>
       <button type="button" onclick="loadMembersList()" style="background: none; border: 1px solid #444; color: #aaa; padding: 4px 10px; border-radius: 6px; font-size: 0.76rem; cursor: pointer;">새로고침</button>
@@ -1853,8 +1111,8 @@
         <input type="text" id="new-mem-code" placeholder="코드(예: LC-9001)" style="flex: 1; padding: 9px;">
       </div>
       <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-        <input type="tel" id="new-mem-phone" placeholder="회원 휴대폰 (010-0000-0000)" style="flex: 2; padding: 9px;">
-        <input type="text" id="new-mem-pin" placeholder="PIN(4자리)" maxlength="4" inputmode="numeric" style="flex: 1; padding: 9px;">
+        <input type="tel" id="new-mem-phone" placeholder="연락처 (010-0000-0000)" style="flex: 2; padding: 9px;">
+        <input type="text" id="new-mem-pin" placeholder="PIN(4자리)" maxlength="6" style="flex: 1; padding: 9px;">
       </div>
       <div style="display: flex; gap: 8px; margin-bottom: 8px;">
         <input type="number" id="new-mem-total" placeholder="총 횟수(예: 10)" style="flex: 1; padding: 9px;">
@@ -1862,45 +1120,19 @@
       </div>
       <button type="button" class="btn-primary" onclick="addNewMember()" style="padding: 10px; font-size: 0.88rem;">회원 등록 완료</button>
     </div>
-
-    <div id="member-edit-panel" class="admin-card" style="display:none; padding:18px; border-color:#c9a96e; margin-bottom:16px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <div style="font-size:0.9rem; font-weight:600; color:#c9a96e;">회원 정보 수정</div>
-        <button type="button" onclick="closeMemberEdit()" style="background:none; border:0; color:#aaa; cursor:pointer;">닫기</button>
-      </div>
-      <div style="font-size:0.75rem; color:#888; line-height:1.6; margin-bottom:12px;">회원번호(코드)는 기존 예약 및 회원 패스 이력과 연결되어 있어 변경하지 않습니다. 휴대폰 번호를 변경하면 아직 이용하지 않은 해당 회원 예약의 인증번호도 새 번호로 연결됩니다.</div>
-      <input type="hidden" id="edit-mem-id">
-      <input type="hidden" id="edit-mem-code">
-      <div style="display:flex; gap:8px; margin-bottom:8px;">
-        <input type="text" id="edit-mem-company" placeholder="회사명/VIP 성함" style="flex:2; padding:9px;">
-        <input type="text" id="edit-mem-code-view" readonly style="flex:1; padding:9px; background:#202020; color:#888;">
-      </div>
-      <div style="display:flex; gap:8px; margin-bottom:8px;">
-        <input type="tel" id="edit-mem-phone" placeholder="회원 휴대폰 (010-0000-0000)" style="flex:2; padding:9px;">
-        <input type="password" id="edit-mem-pin" placeholder="PIN(4자리)" maxlength="4" inputmode="numeric" style="flex:1; padding:9px;">
-      </div>
-      <div style="display:flex; gap:8px; margin-bottom:8px;">
-        <input type="number" id="edit-mem-total" placeholder="총 횟수" style="flex:1; padding:9px;">
-        <input type="date" id="edit-mem-expire" style="flex:1; padding:9px;">
-      </div>
-      <div style="display:flex; justify-content:flex-end; gap:7px;">
-        <button type="button" onclick="closeMemberEdit()" style="padding:9px 14px; background:#2a2a2a; border:1px solid #444; color:#aaa; border-radius:6px;">취소</button>
-        <button type="button" class="btn-primary" onclick="saveMemberEdit()" style="padding:9px 14px;">수정 저장</button>
-      </div>
-      <div id="member-edit-error" style="display:none; color:#f87171; font-size:0.78rem; margin-top:9px;"></div>
-    </div>
-
     <div id="members-list-container"><div style="text-align: center; color: #888; padding: 25px;">회원 목록을 불러오는 중...</div></div>
   </div>
 
   <!-- [화면 6] 손님용 멤버십 패스 확인 (?view=member) -->
   <div id="member-client-section">
     <div class="portal-brand" style="font-size: 2.1rem;">La Colonne</div>
-    <div class="portal-sub">VIP Membership Session Pass</div>
-    <div class="admin-card" style="text-align: left; margin-top: 15px;">
-      <div class="form-group"><label>등록된 휴대폰 번호</label><input type="tel" id="client-phone-input" placeholder="010-1234-5678 (숫자만 입력 가능)"></div>
-      <div class="form-group"><label>VIP 전용 PIN 코드 (4자리)</label><input type="password" id="client-pin-input" maxlength="6" placeholder="PIN 입력 후 Enter" style="letter-spacing: 4px;"></div>
-      <button type="button" class="btn-primary" onclick="queryMemberPass()">내 멤버십 패스 조회</button>
+    <div class="portal-sub">Membership Session</div>
+    <div class="member-client-intro">회원 인증 후 남은 세션과 유효기간을 확인하실 수 있습니다.</div>
+    <div class="admin-card member-client-login-card" style="text-align: left; margin-top: 15px;">
+      <div class="member-client-login-title">MEMBERSHIP</div>
+      <div class="form-group"><label>등록된 휴대폰 번호</label><input type="tel" id="client-phone-input" placeholder="010-0000-0000"></div>
+      <div class="form-group"><label>회원 PIN 번호 (4자리)</label><input type="password" id="client-pin-input" maxlength="4" placeholder="PIN 입력" style="letter-spacing: 4px;"></div>
+      <button type="button" class="btn-primary" onclick="queryMemberPass()">회원 세션 확인</button>
       <div id="client-login-error" style="color: #f87171; font-size: 0.8rem; margin-top: 10px; display: none; text-align: center;"></div>
     </div>
     <div id="member-pass-result" style="display: none;"></div>
@@ -2331,29 +1563,19 @@
         const authPanel = document.getElementById('member-auth-panel');
         const calWrapper = document.getElementById('calendar-wrapper');
 
-        const memberContactGroup = document.getElementById('member-contact-phone-group');
-        const memberContactInput = document.getElementById('member-contact-phone');
-        const bookNameInput = document.getElementById('book-name');
-        const bookPhoneInput = document.getElementById('book-phone');
-
         if (mode === 'general') {
-          btnGen.classList.add('is-active'); btnMem.classList.remove('is-active');
+          btnGen.style.background = '#c9a96e'; btnGen.style.color = '#0d0e11'; btnGen.style.fontWeight = '700';
+          btnMem.style.background = 'transparent'; btnMem.style.color = '#94a3b8'; btnMem.style.fontWeight = '600';
           authPanel.style.display = 'none';
           calWrapper.style.display = 'block';
+          renderMemberBookingCard();
           verifiedMember = null;
-          if (memberContactGroup) memberContactGroup.style.display = 'none';
-          if (memberContactInput) memberContactInput.value = '';
-          if (bookNameInput) { bookNameInput.readOnly = false; bookNameInput.style.background = ''; }
-          if (bookPhoneInput) { bookPhoneInput.readOnly = false; bookPhoneInput.style.background = ''; }
         } else {
-          btnMem.classList.add('is-active'); btnGen.classList.remove('is-active');
+          btnMem.style.background = '#c9a96e'; btnMem.style.color = '#0d0e11'; btnMem.style.fontWeight = '700';
+          btnGen.style.background = 'transparent'; btnGen.style.color = '#94a3b8'; btnGen.style.fontWeight = '600';
           authPanel.style.display = 'block';
           calWrapper.style.display = 'none';
           verifiedMember = null;
-          if (memberContactGroup) memberContactGroup.style.display = 'none';
-          if (memberContactInput) memberContactInput.value = '';
-          if (bookNameInput) { bookNameInput.readOnly = true; bookNameInput.style.background = '#24211e'; }
-          if (bookPhoneInput) { bookPhoneInput.readOnly = true; bookPhoneInput.style.background = '#24211e'; }
         }
         closeBookPanel();
       };
@@ -2363,11 +1585,21 @@
       const memberPhoneFromPortal = (params.get('phone') || '').replace(/[^0-9]/g, '');
       if (memberModeFromPortal) {
         switchBookingMode('member');
+        const activeSessionMember = getMemberAuthSession();
+        if (activeSessionMember) {
+          verifiedMember = activeSessionMember;
+          document.getElementById('member-auth-panel').style.display = 'none';
+          document.getElementById('calendar-wrapper').style.display = 'block';
+          renderMemberBookingCard();
+          renderBookCalendar();
+        }
         try {
           const savedMember = JSON.parse(sessionStorage.getItem(memberPortalStateKey) || 'null');
           if (savedMember && savedMember.id) {
             verifiedMember = savedMember;
+            saveMemberAuthSession(savedMember);
             document.getElementById('member-auth-panel').style.display = 'none';
+            renderMemberBookingCard();
             document.getElementById('calendar-wrapper').style.display = 'block';
             showToast(`✨ [인증 완료] ${savedMember.company_name} 님 (잔여 ${Math.max(0, (parseInt(savedMember.total_passes) || 0) - (parseInt(savedMember.used_passes) || 0))}회)`);
             sessionStorage.removeItem(memberPortalStateKey);
@@ -2379,6 +1611,47 @@
           if (memberPhoneFromPortal) document.getElementById('auth-member-phone').value = memberPhoneFromPortal;
         }
       }
+
+      const MEMBER_SESSION_KEY = 'la_colonne_member_auth_v1';
+      const MEMBER_SESSION_MS = 30 * 60 * 1000;
+      function saveMemberAuthSession(member) {
+        try {
+          sessionStorage.setItem(MEMBER_SESSION_KEY, JSON.stringify({ member, expiresAt: Date.now() + MEMBER_SESSION_MS }));
+        } catch(e) {}
+      }
+      function getMemberAuthSession() {
+        try {
+          const raw = JSON.parse(sessionStorage.getItem(MEMBER_SESSION_KEY) || 'null');
+          if (!raw || !raw.member || !raw.expiresAt || raw.expiresAt <= Date.now()) { sessionStorage.removeItem(MEMBER_SESSION_KEY); return null; }
+          return raw.member;
+        } catch(e) { return null; }
+      }
+      function renderMemberBookingCard() {
+        const card = document.getElementById('member-booking-card');
+        const m = verifiedMember || getMemberAuthSession();
+        if (!card || !m) return;
+        verifiedMember = m;
+        const remain = Math.max(0, (parseInt(m.total_passes)||0) - (parseInt(m.used_passes)||0));
+        document.getElementById('member-booking-company').innerText = m.company_name || '회원';
+        document.getElementById('member-booking-code').innerText = m.member_code || '';
+        document.getElementById('member-booking-remain').innerText = `${remain}회`;
+        document.getElementById('member-booking-expire').innerText = m.expire_date ? `${m.expire_date}` : '-';
+        card.style.display = 'block';
+      }
+      function clearMemberBookingCard() { const card=document.getElementById('member-booking-card'); if(card) card.style.display='none'; }
+
+      window.openBookingLookupModal = function(){ const el=document.getElementById('booking-lookup-modal'); if(el) el.style.display='flex'; };
+      window.closeBookingLookupModal = function(){ const el=document.getElementById('booking-lookup-modal'); if(el) el.style.display='none'; };
+      window.openGeneralBookingLookup = function(){ closeBookingLookupModal(); location.href='?view=my_booking'; };
+      window.openMemberBookingLookup = function(){
+        closeBookingLookupModal();
+        const m=getMemberAuthSession();
+        if(m){ verifiedMember=m; switchBookingMode('member'); renderMemberBookingCard(); showToast('✓ 회원 인증이 유지되고 있습니다.'); return; }
+        switchBookingMode('member');
+        document.getElementById('member-auth-panel').scrollIntoView({behavior:'smooth',block:'center'});
+      };
+
+      document.addEventListener('keydown', e => { if(e.key === 'Escape') closeBookingLookupModal(); });
 
       window.verifyMemberAuthForBooking = async function() {
         const phone = document.getElementById('auth-member-phone').value.trim().replace(/[^0-9]/g, '');
@@ -2396,6 +1669,7 @@
             errEl.style.display = 'block'; return;
           }
           verifiedMember = data[0];
+          saveMemberAuthSession(verifiedMember);
           const remain = Math.max(0, (parseInt(verifiedMember.total_passes) || 0) - (parseInt(verifiedMember.used_passes) || 0));
           if (remain <= 0) {
             errEl.innerText = '⚠️ 보유하신 잔여 세션 패스가 없습니다 (0회).';
@@ -2504,18 +1778,10 @@
           document.getElementById('badge-member-info').innerText = `[${verifiedMember.member_code}] ${verifiedMember.company_name}`;
           badge.style.display = 'block';
           document.getElementById('book-name').value = verifiedMember.company_name;
-          document.getElementById('book-name').readOnly = true;
           document.getElementById('book-phone').value = verifiedMember.phone || '';
-          document.getElementById('book-phone').readOnly = true;
-          document.getElementById('member-contact-phone-group').style.display = 'block';
-          document.getElementById('member-contact-phone').value = '';
         } else {
           pinGroup.style.display = 'block';
           badge.style.display = 'none';
-          document.getElementById('book-name').readOnly = false;
-          document.getElementById('book-phone').readOnly = false;
-          document.getElementById('member-contact-phone-group').style.display = 'none';
-          document.getElementById('member-contact-phone').value = '';
         }
 
         const container = document.getElementById('book-slots-container');
@@ -2570,18 +1836,15 @@
       window.submitBookingRequest = async function() {
         const name = document.getElementById('book-name').value.trim();
         const phone = document.getElementById('book-phone').value.trim().replace(/[^0-9]/g, '');
-        const memberContactPhone = document.getElementById('member-contact-phone').value.trim().replace(/[^0-9]/g, '');
-        const contactPhone = currentBookingMode === 'member' ? (memberContactPhone || phone) : phone;
         const pin = document.getElementById('book-pin').value.trim();
         const displayName = document.getElementById('book-display-name').value.trim();
-        const meetingName = document.getElementById('book-meeting-name').value.trim();
         const subMsg = document.getElementById('book-sub-msg').value.trim();
         const privacy = document.getElementById('book-consent-privacy').checked;
         const smsConsent = document.getElementById('book-consent-sms').checked;
         const errEl = document.getElementById('booking-error-msg');
         errEl.style.display = 'none';
 
-        if (!selectedDateStr || !name || !phone) return (errEl.innerText = '날짜, 예약자명, 연락처를 확인해 주세요.', errEl.style.display = 'block');
+        if (!selectedDateStr || !name || !phone || !displayName) return (errEl.innerText = '날짜, 신청자 성함, 연락처, 모임명을 모두 입력하세요.', errEl.style.display = 'block');
         if (!privacy) return (errEl.innerText = '개인정보 수집 및 이용 동의(필수)에 체크해 주세요.', errEl.style.display = 'block');
 
         let finalPin = pin;
@@ -2619,17 +1882,15 @@
             p_sms_consent: smsConsent,
             p_start_time: finalStart, 
             p_end_time: finalEnd,
-            p_guest_name: displayName,
-            p_meeting_name: meetingName,
-            p_sub_message: subMsg,
-            p_pin_code: finalPin,
-            p_contact_phone: contactPhone,
+            p_guest_name: displayName, 
+            p_sub_message: subMsg || '라 콜론에 오신 것을 환영합니다.',
+            p_pin_code: finalPin,  // 9번째 인자 완벽 대응
             p_member_id: memberId
           });
           const result = await res.json();
 
           if (result && result.success) {
-            showModal('예약 신청 완료', `${name} 님의 라운지 이용 예약이 접수되었습니다.${memberId ? '\n(VIP 회원권 패스 1회가 차감되었습니다)' : ''}\n추후 '내 예약 조회'에서 확인 및 취소가 가능합니다.`);
+            showModal('예약 신청 완료', `${name} 님의 라운지 이용 예약이 접수되었습니다.${memberId ? '\n(VIP 회원권 패스 1회가 차감되었습니다)' : ''}\n예약 화면의 '예약 조회 · 취소'에서 확인 및 취소가 가능합니다.`);
             setTimeout(() => { location.href = '?'; }, 2000);
           } else {
             throw new Error(result.message || '예약 실패');
@@ -2645,331 +1906,63 @@
     // ─────────────────────────────────────────────
     } else if (isMyBooking) {
       document.getElementById('my-booking-section').style.display = 'block';
-      const [phoneIn, pinIn, errEl, resEl] = [
-        document.getElementById('my-phone-input'),
-        document.getElementById('my-pin-input'),
-        document.getElementById('my-lookup-error'),
-        document.getElementById('my-bookings-result')
-      ];
-
+      const [phoneIn, pinIn, errEl, resEl] = [document.getElementById('my-phone-input'), document.getElementById('my-pin-input'), document.getElementById('my-lookup-error'), document.getElementById('my-bookings-result')];
+      
       let myLookupFailCount = 0;
       let myLookupLockUntil = 0;
-      let myBookingCache = [];
-      let myEditingInfoId = null;
-      let myChangeId = null;
-      let myChangeYear = new Date().getFullYear();
-      let myChangeMonth = new Date().getMonth();
-      let myChangeDate = '';
-
-      [phoneIn, pinIn].forEach(el => el.addEventListener('keydown', e => {
-        if (e.key === 'Enter') lookupMyBookings();
-      }));
-
-      function isMyBookingStarted(b) {
-        return new Date(b.start_time).getTime() <= Date.now();
-      }
-
-      function renderMyBookingCards(bookings, phone, pin) {
-        let html = '<div class="my-booking-list-title">나의 예약</div>';
-        bookings.forEach(b => {
-          if (b.guest_name === '[CLOSED_BLOCK]') return;
-          const started = isMyBookingStarted(b);
-          const modified = !!b.customer_modified_at;
-          const reservationName = b.reservation_name || b.guest_name || '—';
-          const displayName = b.guest_name || reservationName || '—';
-          const meetingName = b.meeting_name || '—';
-          const contactPhone = b.contact_phone || b.phone || '—';
-          const subMessage = b.sub_message || '라 콜론에 오신 것을 환영합니다.';
-          html += `
-            <div class="my-booking-item" data-booking-id="${b.id}">
-              <div class="my-booking-date">
-                ${escapeHtml(fmtDate(b.start_time))} ~ ${escapeHtml(fmtDate(b.end_time, 'time'))}
-                ${started ? '<span class="my-booking-status">이용 중</span>' : ''}
-                ${modified ? '<span class="my-booking-status">변경됨</span>' : ''}
-              </div>
-              <div class="my-booking-main">
-                <div class="key">예약자</div><div class="value">${escapeHtml(reservationName)}</div>
-                <div class="key">표출명</div><div class="value">${escapeHtml(displayName)}</div>
-                <div class="key">모임명</div><div class="value">${escapeHtml(meetingName)}</div>
-                <div class="key">연락받을 번호</div><div class="value">${escapeHtml(contactPhone)}</div>
-                <div class="key">디스플레이 문구</div><div class="value">${escapeHtml(subMessage)}</div>
-              </div>
-              <div class="my-booking-actions">
-                <button type="button" class="my-booking-action" ${started ? 'disabled' : ''} onclick="openMyInfoEdit(${b.id})">예약 정보 수정</button>
-                <button type="button" class="my-booking-action" ${started ? 'disabled' : ''} onclick="openMyChange(${b.id})">일정 변경</button>
-                <button type="button" class="my-booking-action danger" onclick="cancelMyBooking(${b.id}, '${escapeHtml(phone)}', '${escapeHtml(pin)}')">예약 취소</button>
-              </div>
-              ${modified && b.customer_change_note ? `<div style="margin-top:10px; color:#9b8058; font-size:11px;">${escapeHtml(b.customer_change_note)}</div>` : ''}
-            </div>`;
-        });
-        resEl.innerHTML = html;
-        resEl.style.display = 'block';
-      }
 
       window.lookupMyBookings = async function() {
         const now = Date.now();
         if (now < myLookupLockUntil) {
           const remMin = Math.ceil((myLookupLockUntil - now) / 60000);
-          errEl.innerText = `조회 시도 횟수 초과로 ${remMin}분간 잠금되었습니다.`;
-          errEl.style.display = 'block';
-          return;
+          errEl.innerText = `⚠️ 조회 시도 횟수 초과로 ${remMin}분간 잠금되었습니다.`;
+          errEl.style.display = 'block'; return;
         }
 
         const phone = phoneIn.value.trim().replace(/[^0-9]/g, '');
         const pin = pinIn.value.trim();
         errEl.style.display = 'none';
 
-        if (!phone || !/^\d{4}$/.test(pin)) {
-          errEl.innerText = '휴대폰 번호와 PIN 번호 4자리를 모두 입력해주세요.';
-          errEl.style.display = 'block';
-          return;
-        }
+        if (!phone || !pin) return (errEl.innerText = '휴대폰 번호와 PIN 번호 4자리를 모두 입력하세요.', errEl.style.display = 'block');
 
         try {
           const res = await apiCall('rpc/lookup_my_bookings', 'POST', { p_phone: phone, p_pin: pin });
           const bookings = res.ok ? await res.json() : [];
+          
           if (!bookings.length) {
             myLookupFailCount++;
             if (myLookupFailCount >= 5) {
               myLookupLockUntil = Date.now() + 15 * 60000;
               myLookupFailCount = 0;
-              errEl.innerText = '5회 불일치로 15분간 조회가 잠금되었습니다.';
+              errEl.innerText = '⚠️ 5회 불일치로 15분간 조회가 잠금되었습니다.';
             } else {
               errEl.innerText = `일치하는 예약 내역이 없거나 연락처/PIN 번호가 올바르지 않습니다. (${myLookupFailCount}/5회 실패)`;
             }
-            errEl.style.display = 'block';
-            resEl.style.display = 'none';
+            errEl.style.display = 'block'; resEl.style.display = 'none';
             return;
           }
           myLookupFailCount = 0;
-          myBookingCache = bookings;
-          renderMyBookingCards(bookings, phone, pin);
-        } catch(e) {
-          errEl.innerText = '조회 중 오류가 발생했습니다.';
-          errEl.style.display = 'block';
-        }
-      };
 
-      window.openMyInfoEdit = function(id) {
-        const b = myBookingCache.find(x => Number(x.id) === Number(id));
-        if (!b) return;
-        if (isMyBookingStarted(b)) return alert('이미 시작된 예약은 고객이 수정할 수 없습니다.');
-        myEditingInfoId = id;
-        myChangeId = null;
-        myChangeDate = '';
-        const editPanel = document.getElementById('my-info-edit-panel');
-        const slot = document.querySelector(`.my-booking-item[data-booking-id="${id}"] .my-booking-edit-slot`);
-        if (!slot) return;
-        document.getElementById('my-change-panel').style.display = 'none';
-        const changePanel = document.getElementById('my-change-panel');
-        const changeHome = document.getElementById('my-change-panel-home');
-        if (changePanel && changeHome) changeHome.appendChild(changePanel);
-        slot.appendChild(editPanel);
-        const isMemberBooking = !!b.member_name;
-        document.getElementById('my-edit-reservation-name').value = b.reservation_name || b.guest_name || '';
-        document.getElementById('my-edit-reservation-name').readOnly = isMemberBooking;
-        document.getElementById('my-edit-reservation-name').style.background = isMemberBooking ? '#f1eee8' : '';
-        document.getElementById('my-edit-reservation-name-label').innerText = isMemberBooking ? '예약자명 (회원명 · 수정 불가)' : '예약자명';
-        document.getElementById('my-edit-display-name').value = b.guest_name || b.reservation_name || '';
-        document.getElementById('my-edit-meeting-name').value = b.meeting_name || '';
-        document.getElementById('my-edit-sub-message').value = b.sub_message || '';
-        document.getElementById('my-edit-error').style.display = 'none';
-        editPanel.style.display = 'block';
-        editPanel.scrollIntoView({ behavior:'smooth', block:'start' });
-      };
-
-      window.closeMyInfoEdit = function() {
-        myEditingInfoId = null;
-        const panel = document.getElementById('my-info-edit-panel');
-        const home = document.getElementById('my-info-edit-panel-home');
-        if (panel && home) home.appendChild(panel);
-        if (panel) panel.style.display = 'none';
-      };
-
-      window.saveMyInfoEdit = async function() {
-        if (!myEditingInfoId) return;
-        const reservationName = document.getElementById('my-edit-reservation-name').value.trim();
-        const displayName = document.getElementById('my-edit-display-name').value.trim();
-        const meetingName = document.getElementById('my-edit-meeting-name').value.trim();
-        const subMessage = document.getElementById('my-edit-sub-message').value.trim();
-        const editErr = document.getElementById('my-edit-error');
-        editErr.style.display = 'none';
-        if (!reservationName) {
-          editErr.innerText = '예약자명을 입력해주세요.';
-          editErr.style.display = 'block';
-          return;
-        }
-        try {
-          const res = await apiCall('rpc/update_customer_booking', 'POST', {
-            p_id: myEditingInfoId,
-            p_phone: phoneIn.value.trim().replace(/[^0-9]/g, ''),
-            p_pin: pinIn.value.trim(),
-            p_reservation_name: reservationName,
-            p_guest_name: displayName,
-            p_meeting_name: meetingName,
-            p_sub_message: subMessage
+          let html = '<div style="margin-top: 20px; text-align: left;"><div style="font-size: 0.9rem; font-weight: 600; color: #dfcfb2; margin-bottom: 12px;">📅 나의 예약 내역</div>';
+          bookings.forEach(b => {
+            if (b.guest_name === '[CLOSED_BLOCK]') return;
+            html += `
+              <div class="schedule-item">
+                <div>
+                  <div style="font-size: 0.8rem; color: #c9a96e; font-weight: 600; margin-bottom: 3px;">📅 ${fmtDate(b.start_time)} ~ ${fmtDate(b.end_time, 'time')}</div>
+                  <div style="font-size: 1rem; font-weight: 600;">${escapeHtml(b.guest_name)}</div>
+                  <div style="font-size: 0.78rem; color: #9ca3af; margin-top: 2px;">"${escapeHtml(b.sub_message)}"</div>
+                </div>
+                <div class="action-btn-group" style="justify-content: flex-end;">
+                  <button class="btn-delete" onclick="cancelMyBooking(${b.id}, '${phone}', '${pin}')">예약 취소하기</button>
+                </div>
+              </div>`;
           });
-          const result = res.ok ? await res.json() : null;
-          if (!result || !result.success) throw new Error((result && result.message) || '수정에 실패했습니다.');
-          closeMyInfoEdit();
-          showToast('예약 정보가 수정되었습니다.');
-          await lookupMyBookings();
+          html += '</div>';
+          resEl.innerHTML = html;
+          resEl.style.display = 'block';
         } catch(e) {
-          editErr.innerText = e.message || '수정에 실패했습니다.';
-          editErr.style.display = 'block';
-        }
-      };
-
-      window.openMyChange = function(id) {
-        const b = myBookingCache.find(x => Number(x.id) === Number(id));
-        if (!b) return;
-        if (isMyBookingStarted(b)) return alert('이미 시작된 예약은 일정을 변경할 수 없습니다.');
-        myChangeId = id;
-        myEditingInfoId = null;
-        const editPanel = document.getElementById('my-info-edit-panel');
-        const editHome = document.getElementById('my-info-edit-panel-home');
-        if (editPanel && editHome) editHome.appendChild(editPanel);
-        if (editPanel) editPanel.style.display = 'none';
-        const changePanel = document.getElementById('my-change-panel');
-        const slot = document.querySelector(`.my-booking-item[data-booking-id="${id}"] .my-booking-change-slot`);
-        if (!slot) return;
-        slot.appendChild(changePanel);
-        const d = new Date(b.start_time);
-        myChangeYear = d.getFullYear();
-        myChangeMonth = d.getMonth();
-        myChangeDate = '';
-        document.getElementById('my-change-error').style.display = 'none';
-        document.getElementById('my-change-panel').style.display = 'block';
-        document.getElementById('my-change-panel').scrollIntoView({ behavior:'smooth', block:'start' });
-        renderMyChangeCalendar();
-      };
-
-      window.closeMyChange = function() {
-        myChangeId = null;
-        myChangeDate = '';
-        const panel = document.getElementById('my-change-panel');
-        const home = document.getElementById('my-change-panel-home');
-        if (panel && home) home.appendChild(panel);
-        if (panel) panel.style.display = 'none';
-        document.getElementById('my-change-session-list').innerHTML = '';
-        document.getElementById('my-change-session-title').innerText = '날짜를 선택해주세요.';
-      };
-
-      window.changeMyChangeMonth = function(delta) {
-        myChangeMonth += delta;
-        if (myChangeMonth > 11) { myChangeMonth = 0; myChangeYear++; }
-        if (myChangeMonth < 0) { myChangeMonth = 11; myChangeYear--; }
-        renderMyChangeCalendar();
-      };
-
-      async function renderMyChangeCalendar() {
-        const title = document.getElementById('my-change-month-title');
-        const grid = document.getElementById('my-change-calendar-grid');
-        title.innerText = `${myChangeYear}년 ${myChangeMonth + 1}월 예약 현황`;
-        grid.innerHTML = '<div style="grid-column:span 7; text-align:center; padding:22px 0; color:#777269; font-size:12px;">캘린더 로딩 중...</div>';
-        const firstDayIndex = new Date(myChangeYear, myChangeMonth, 1).getDay();
-        const lastDayDate = new Date(myChangeYear, myChangeMonth + 1, 0).getDate();
-        const monthStart = new Date(myChangeYear, myChangeMonth, 1, 0, 0, 0);
-        const monthEnd = new Date(myChangeYear, myChangeMonth, lastDayDate, 23, 59, 59);
-        const todayStr = new Date().toLocaleDateString('en-CA');
-        try {
-          const res = await apiCall(`welcome_schedules?start_time=gte.${toISOStringSafe(monthStart)}&start_time=lte.${toISOStringSafe(monthEnd)}&select=id,start_time,end_time,guest_name`);
-          const schedules = (res.ok ? await res.json() : []).filter(s => Number(s.id) !== Number(myChangeId));
-          let html = '';
-          for (let i = 0; i < firstDayIndex; i++) html += '<div class="my-change-empty"></div>';
-          for (let d = 1; d <= lastDayDate; d++) {
-            const dateStr = `${myChangeYear}-${String(myChangeMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-            const isPastDay = dateStr < todayStr;
-            const sessionChecks = [[10,13],[14,17],[18,21]].map(([sh,eh]) => {
-              const s = new Date(myChangeYear,myChangeMonth,d,sh,0,0);
-              const e = new Date(myChangeYear,myChangeMonth,d,eh,0,0);
-              return isPastDay || (dateStr === todayStr && e <= new Date()) || schedules.some(ex => s < new Date(ex.end_time) && e > new Date(ex.start_time));
-            });
-            const blocked = sessionChecks.every(Boolean);
-            const statuses = sessionChecks.map((v,i)=>v?`${i+1}부마감`:'').filter(Boolean);
-            html += `<button type="button" class="my-change-day ${blocked?'is-blocked':''} ${myChangeDate===dateStr?'is-selected':''}" ${blocked?'disabled':''} onclick="selectMyChangeDate('${dateStr}')">
-              <div class="day-num">${d}</div><div class="day-status">${blocked?'전체마감':statuses.join('<br>')}</div>
-            </button>`;
-          }
-          grid.innerHTML = html;
-        } catch(e) {
-          grid.innerHTML = '<div style="grid-column:span 7; color:#8b5b55; text-align:center; padding:20px;">캘린더를 불러오지 못했습니다.</div>';
-        }
-      }
-
-      window.selectMyChangeDate = async function(dateStr) {
-        myChangeDate = dateStr;
-        document.getElementById('my-change-session-title').innerText = `${dateStr} · 이용 세션 선택`;
-        const list = document.getElementById('my-change-session-list');
-        const err = document.getElementById('my-change-error');
-        err.style.display = 'none';
-        list.innerHTML = '<div style="padding:10px 0; color:#777269; font-size:12px;">세션 확인 중...</div>';
-        renderMyChangeCalendar();
-
-        const [y,m,d] = dateStr.split('-').map(Number);
-        const sessions = [
-          {id:1,name:'1부',start:'10:00',end:'13:00',s:new Date(y,m-1,d,10,0,0),e:new Date(y,m-1,d,13,0,0)},
-          {id:2,name:'2부',start:'14:00',end:'17:00',s:new Date(y,m-1,d,14,0,0),e:new Date(y,m-1,d,17,0,0)},
-          {id:3,name:'3부',start:'18:00',end:'21:00',s:new Date(y,m-1,d,18,0,0),e:new Date(y,m-1,d,21,0,0)}
-        ];
-        try {
-          const dayStart = new Date(y,m-1,d,0,0,0);
-          const dayEnd = new Date(y,m-1,d,23,59,59);
-          const res = await apiCall(`welcome_schedules?start_time=gte.${toISOStringSafe(dayStart)}&start_time=lte.${toISOStringSafe(dayEnd)}&select=id,start_time,end_time,guest_name`);
-          const existing = (res.ok ? await res.json() : []).filter(x => Number(x.id) !== Number(myChangeId));
-          const current = myBookingCache.find(x => Number(x.id) === Number(myChangeId));
-          const now = new Date();
-          const currentStart = current ? new Date(current.start_time) : null;
-          const currentEnd = current ? new Date(current.end_time) : null;
-          let html = '';
-          sessions.forEach(sess => {
-            const past = dateStr < now.toLocaleDateString('en-CA') || (dateStr === now.toLocaleDateString('en-CA') && sess.e <= now);
-            const overlap = existing.some(ex => sess.s < new Date(ex.end_time) && sess.e > new Date(ex.start_time));
-            const blocked = past || overlap;
-            const selected = !!(currentStart && currentEnd && currentStart.getTime() === sess.s.getTime() && currentEnd.getTime() === sess.e.getTime());
-            html += `<button type="button" class="my-change-session ${blocked?'is-blocked':''} ${selected?'is-selected':''}" data-start="${toISOStringSafe(sess.s)}" data-end="${toISOStringSafe(sess.e)}" data-slot-id="${sess.id}" ${blocked?'disabled':''} aria-pressed="${selected?'true':'false'}" onclick="toggleMyChangeSlot(this)">
-              <span class="session-name">${sess.name}</span><span class="session-time">${sess.start} ~ ${sess.end}</span><span class="session-status">${blocked?'마감':'선택 가능'}</span>
-            </button>`;
-          });
-          list.innerHTML = html;
-        } catch(e) {
-          list.innerHTML = '<div style="color:#8b5b55; font-size:12px;">세션을 불러오지 못했습니다.</div>';
-        }
-      };
-
-      window.toggleMyChangeSlot = function(button) {
-        if (!button || button.disabled) return;
-        const selected = button.classList.toggle('is-selected');
-        button.setAttribute('aria-pressed', selected ? 'true' : 'false');
-      };
-
-      window.saveMyChange = async function() {
-        if (!myChangeId || !myChangeDate) {
-          const e = document.getElementById('my-change-error'); e.innerText='변경할 날짜와 세션을 선택해주세요.'; e.style.display='block'; return;
-        }
-        const slots = Array.from(document.querySelectorAll('.my-change-session.is-selected'))
-          .sort((a,b)=>Number(a.dataset.slotId)-Number(b.dataset.slotId));
-        const e = document.getElementById('my-change-error'); e.style.display='none';
-        if (!slots.length) { e.innerText='이용할 세션을 최소 1개 이상 선택해주세요.'; e.style.display='block'; return; }
-        for (let i=0;i<slots.length-1;i++) {
-          if (Number(slots[i+1].dataset.slotId)-Number(slots[i].dataset.slotId) !== 1) { e.innerText='연속된 세션만 선택할 수 있습니다.'; e.style.display='block'; return; }
-        }
-        try {
-          const res = await apiCall('rpc/change_customer_booking','POST',{
-            p_id: myChangeId,
-            p_phone: phoneIn.value.trim().replace(/[^0-9]/g,''),
-            p_pin: pinIn.value.trim(),
-            p_start_time: slots[0].dataset.start,
-            p_end_time: slots[slots.length-1].dataset.end
-          });
-          const result = res.ok ? await res.json() : null;
-          if (!result || !result.success) throw new Error((result && result.message) || '일정 변경에 실패했습니다.');
-          closeMyChange();
-          showToast('예약 일정이 변경되었습니다.');
-          await lookupMyBookings();
-        } catch(err) {
-          e.innerText = err.message || '일정 변경에 실패했습니다.';
-          e.style.display='block';
+          errEl.innerText = '조회 중 오류가 발생했습니다.'; errEl.style.display = 'block';
         }
       };
 
@@ -2979,8 +1972,8 @@
           const res = await apiCall('rpc/cancel_my_booking', 'POST', { p_id: id, p_phone: phone, p_pin: pin });
           const success = res.ok ? await res.json() : false;
           if (success) {
-            showToast('예약이 취소되었습니다.');
-            await lookupMyBookings();
+            showToast('✓ 예약이 취소되었습니다.');
+            lookupMyBookings();
           } else {
             alert('취소 실패 (정보 불일치)');
           }
@@ -3101,10 +2094,7 @@
                     <button class="page-btn" onclick="adjustPass(${m.id}, -1)">- 1회 차감</button>
                     <button class="page-btn" onclick="adjustPass(${m.id}, 1)">+ 1회 복구</button>
                   </div>
-                  <div style="display:flex; gap:6px;">
-                    <button class="btn-edit" onclick="openMemberEdit(${m.id})">수정</button>
-                    <button class="btn-delete" onclick="deleteMember(${m.id})">삭제</button>
-                  </div>
+                  <button class="btn-delete" onclick="deleteMember(${m.id})">삭제</button>
                 </div>
               </div>`;
           });
@@ -3123,65 +2113,13 @@
       };
 
       window.addNewMember = async () => {
-        const [c, code, rawPhone, pin, t, ex] = ['new-mem-company','new-mem-code','new-mem-phone','new-mem-pin','new-mem-total','new-mem-expire'].map(id => document.getElementById(id).value.trim());
-        const p = rawPhone.replace(/[^0-9]/g, '');
+        const [c, code, p, pin, t, ex] = ['new-mem-company','new-mem-code','new-mem-phone','new-mem-pin','new-mem-total','new-mem-expire'].map(id => document.getElementById(id).value.trim());
         if (!c || !code || !p || !pin || !t) return alert('모든 회원 정보를 입력하세요.');
-        if (!/^010\d{8}$/.test(p)) return alert('회원 연락처는 010으로 시작하는 휴대폰 번호만 등록할 수 있습니다.');
         try {
           if (await callAdminRpc('add_admin_member', { p_company: c, p_code: code, p_phone: p, p_pin: pin, p_total: parseInt(t), p_expire: ex })) {
             showToast('✓ 회원 등록 완료'); document.getElementById('new-mem-company').value = ''; loadMembersList();
           }
         } catch(e) { alert('등록 실패: 코드 중복 등'); }
-      };
-
-      window.openMemberEdit = async id => {
-        try {
-          const members = await callAdminRpc('get_admin_members');
-          const m = (members || []).find(x => Number(x.id) === Number(id));
-          if (!m) return alert('회원 정보를 찾을 수 없습니다.');
-          document.getElementById('edit-mem-id').value = m.id;
-          document.getElementById('edit-mem-code').value = m.member_code || '';
-          document.getElementById('edit-mem-code-view').value = m.member_code || '';
-          document.getElementById('edit-mem-company').value = m.company_name || '';
-          document.getElementById('edit-mem-phone').value = m.phone || '';
-          document.getElementById('edit-mem-pin').value = m.pin_code || '';
-          document.getElementById('edit-mem-total').value = m.total_passes ?? '';
-          document.getElementById('edit-mem-expire').value = m.expire_date || '';
-          document.getElementById('member-edit-error').style.display = 'none';
-          document.getElementById('member-edit-panel').style.display = 'block';
-          document.getElementById('member-edit-panel').scrollIntoView({ behavior:'smooth', block:'start' });
-        } catch(e) { alert('회원 정보를 불러오지 못했습니다.'); }
-      };
-
-      window.closeMemberEdit = function() {
-        document.getElementById('member-edit-panel').style.display = 'none';
-      };
-
-      window.saveMemberEdit = async () => {
-        const id = parseInt(document.getElementById('edit-mem-id').value, 10);
-        const company = document.getElementById('edit-mem-company').value.trim();
-        const phone = document.getElementById('edit-mem-phone').value.trim().replace(/[^0-9]/g, '');
-        const pin = document.getElementById('edit-mem-pin').value.trim();
-        const total = parseInt(document.getElementById('edit-mem-total').value, 10);
-        const expire = document.getElementById('edit-mem-expire').value;
-        const err = document.getElementById('member-edit-error');
-        err.style.display = 'none';
-        if (!id || !company || !phone || !/^010\d{8}$/.test(phone) || !/^\d{4}$/.test(pin) || !Number.isInteger(total) || total <= 0 || !expire) {
-          err.innerText = '회사명, 010 휴대폰 번호, PIN 4자리, 총 횟수, 유효기간을 확인해주세요.';
-          err.style.display = 'block'; return;
-        }
-        try {
-          const ok = await callAdminRpc('update_admin_member', {
-            p_id: id, p_company: company, p_phone: phone, p_pin: pin, p_total: total, p_expire: expire
-          });
-          if (!ok) throw new Error('수정 실패');
-          closeMemberEdit();
-          showToast('✓ 회원 정보 수정 완료');
-          loadMembersList();
-        } catch(e) {
-          err.innerText = '수정 실패: 회원번호/휴대폰 중복 또는 서버 오류를 확인해주세요.';
-          err.style.display = 'block';
-        }
       };
 
       window.deleteMember = async id => {
@@ -3355,14 +2293,13 @@
       }
       [vidA, vidB].forEach(v => v.ontimeupdate = () => { if (videoPlaylist.length > 1 && v.duration && (v.duration - v.currentTime <= 0.8)) crossfade(); });
 
-      function updateBoard(prefix, name, suffix, msg, bgUrl, bgmUrl, meetingName) {
+      function updateBoard(prefix, name, suffix, msg, bgUrl, bgmUrl) {
         const dName = (name && name.trim()) ? name.trim() : 'Guest';
         const dMsg = (msg && msg.trim()) ? msg.trim() : '라 콜론에 오신 것을 환영합니다.';
-        const dMeeting = (meetingName && meetingName.trim()) ? meetingName.trim() : '';
-        const key = `${prefix}|${dName}|${suffix}|${dMeeting}|${dMsg}|${bgUrl}|${bgmUrl}`;
+        const key = `${prefix}|${dName}|${suffix}|${dMsg}|${bgUrl}|${bgmUrl}`;
         
         try {
-          localStorage.setItem('la_colonne_cached_display', JSON.stringify({ prefix, name: dName, suffix, meetingName: dMeeting, msg: dMsg, bgUrl, bgmUrl }));
+          localStorage.setItem('la_colonne_cached_display', JSON.stringify({ prefix, name: dName, suffix, msg: dMsg, bgUrl, bgmUrl }));
         } catch(e) {}
 
         if (key === currentDataKey) return;
@@ -3374,9 +2311,6 @@
           document.getElementById('guest-prefix').innerText = (dName === 'Guest') ? '' : (prefix || '');
           document.getElementById('guest-name').innerText = dName;
           document.getElementById('guest-suffix').innerText = (dName === 'Guest') ? '' : (suffix || '');
-          const meetingEl = document.getElementById('guest-meeting');
-          meetingEl.innerText = dMeeting;
-          meetingEl.style.display = dMeeting ? 'block' : 'none';
           document.getElementById('guest-msg').innerText = dMsg;
           box.style.opacity = '1';
         }, 400);
@@ -3405,7 +2339,7 @@
       function loadOfflineFallback() {
         try {
           const cached = JSON.parse(localStorage.getItem('la_colonne_cached_display'));
-          if (cached) updateBoard(cached.prefix, cached.name, cached.suffix, cached.msg, cached.bgUrl, cached.bgmUrl, cached.meetingName || '');
+          if (cached) updateBoard(cached.prefix, cached.name, cached.suffix, cached.msg, cached.bgUrl, cached.bgmUrl);
         } catch(e) {}
       }
 
@@ -3446,8 +2380,7 @@ async function syncTV() {
           s[0].suffix,
           s[0].sub_message,
           s[0].bg_source,
-          s[0].bgm_source,
-          s[0].meeting_name
+          s[0].bgm_source
         );
       }
 
@@ -3478,8 +2411,7 @@ async function syncTV() {
           d[0].suffix,
           d[0].sub_message,
           d[0].bg_source,
-          d[0].bgm_source,
-          d[0].meeting_name || ''
+          d[0].bgm_source
         );
       }
     } else {
@@ -3728,8 +2660,7 @@ async function syncTV() {
           const name = rawName || (memberName ? memberName : 'Guest');
           return {
             name, memberId, memberCode, memberName,
-            meetingName: document.getElementById('u-meeting-input').value.trim(),
-            msg: document.getElementById('u-msg-input').value.trim(),
+            msg: document.getElementById('u-msg-input').value.trim() || '라 콜론에 오신 것을 환영합니다.',
             prefix: (name === 'Guest' || !document.getElementById('u-prefix-toggle').checked) ? '' : document.getElementById('u-prefix-select').value,
             suffix: (name === 'Guest' || !document.getElementById('u-suffix-toggle').checked) ? '' : '님',
             bg: document.getElementById('u-bg-select').value,
@@ -3758,7 +2689,7 @@ async function syncTV() {
             // POST upsert 대신 UPDATE(PATCH)를 사용한다.
             // POST upsert는 INSERT 정책까지 검사되어 401이 발생할 수 있다.
             const res = await apiCall('welcome_screen?id=eq.1', 'PATCH', {
-              prefix: f.prefix, guest_name: f.name, suffix: f.suffix, meeting_name: f.meetingName, sub_message: f.msg,
+              prefix: f.prefix, guest_name: f.name, suffix: f.suffix, sub_message: f.msg,
               bg_source: f.bg, bgm_source: f.bgm, member_code: f.memberCode, member_name: f.memberName,
               updated_at: toISOStringSafe(new Date())
             });
@@ -3809,7 +2740,7 @@ async function syncTV() {
           try {
             const payload = {
               start_time: toISOStringSafe(nStart), end_time: toISOStringSafe(nEnd), prefix: f.prefix, guest_name: f.name,
-              meeting_name: f.meetingName, suffix: f.suffix, sub_message: f.msg, bg_source: f.bg, bgm_source: f.bgm, member_code: f.memberCode, member_name: f.memberName, pin_code: '0000'
+              suffix: f.suffix, sub_message: f.msg, bg_source: f.bg, bgm_source: f.bgm, member_code: f.memberCode, member_name: f.memberName, pin_code: '0000'
             };
             const res = editingId ? await apiCall(`welcome_schedules?id=eq.${editingId}`, 'PATCH', payload) : await apiCall('welcome_schedules', 'POST', payload);
             if (res.ok) {
@@ -3863,63 +2794,6 @@ async function syncTV() {
           syncScheduleDateTimeFields(true);
         };
 
-        window.setScheduleNow = function() {
-          const now = new Date();
-          const pad = n => String(n).padStart(2, '0');
-          document.getElementById('u-sched-date').value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
-          document.getElementById('u-sched-start-time').value = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
-          document.querySelectorAll('.schedule-time-preset').forEach(btn => btn.classList.remove('active'));
-          syncScheduleDateTimeFields(true);
-        };
-
-        window.clearDisplayInputs = function() {
-          document.getElementById('u-name-input').value = '';
-          document.getElementById('u-meeting-input').value = '';
-          document.getElementById('u-msg-input').value = '';
-        };
-
-        window.clearScheduleInputs = function() {
-          ['u-sched-date','u-sched-start-time','u-sched-end-time','u-sched-start','u-sched-end'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.value = '';
-          });
-          document.querySelectorAll('.schedule-time-preset').forEach(btn => btn.classList.remove('active'));
-        };
-
-        window.adjustScheduleEndTime = function(minutes) {
-          const endEl = document.getElementById('u-sched-end');
-          if (!endEl.value) return alert('먼저 종료 시간을 지정하세요.');
-          const end = new Date(endEl.value);
-          if (isNaN(end.getTime())) return;
-          end.setMinutes(end.getMinutes() + minutes);
-          const startEl = document.getElementById('u-sched-start');
-          if (startEl.value) {
-            const start = new Date(startEl.value);
-            if (!isNaN(start.getTime()) && end <= start) return alert('종료 시각은 시작 시각보다 뒤여야 합니다.');
-          }
-          const pad = n => String(n).padStart(2, '0');
-          document.getElementById('u-sched-end-time').value = `${pad(end.getHours())}:${pad(end.getMinutes())}`;
-          endEl.value = fmtDate(end, 'iso');
-        };
-
-        window.adjustScheduleTime = function(minutes) {
-          const startEl = document.getElementById('u-sched-start');
-          const endEl = document.getElementById('u-sched-end');
-          if (!startEl.value) return alert('먼저 시작 시간을 지정하세요.');
-          const start = new Date(startEl.value);
-          const end = endEl.value ? new Date(endEl.value) : new Date(start.getTime() + 3 * 60 * 60 * 1000);
-          if (isNaN(start.getTime()) || isNaN(end.getTime())) return;
-          start.setMinutes(start.getMinutes() + minutes);
-          end.setMinutes(end.getMinutes() + minutes);
-          const pad = n => String(n).padStart(2, '0');
-          document.getElementById('u-sched-date').value = `${start.getFullYear()}-${pad(start.getMonth()+1)}-${pad(start.getDate())}`;
-          document.getElementById('u-sched-start-time').value = `${pad(start.getHours())}:${pad(start.getMinutes())}`;
-          document.getElementById('u-sched-end-time').value = `${pad(end.getHours())}:${pad(end.getMinutes())}`;
-          startEl.value = fmtDate(start, 'iso');
-          endEl.value = fmtDate(end, 'iso');
-          document.querySelectorAll('.schedule-time-preset').forEach(btn => btn.classList.toggle('active', btn.dataset.time === document.getElementById('u-sched-start-time').value));
-        };
-
         document.getElementById('u-sched-date').onchange = function() { syncScheduleDateTimeFields(false); };
         document.getElementById('u-sched-start-time').onchange = function() {
           document.querySelectorAll('.schedule-time-preset').forEach(btn => btn.classList.toggle('active', btn.dataset.time === this.value));
@@ -3935,39 +2809,12 @@ async function syncTV() {
           document.getElementById('u-prefix-select-box').style.display = this.checked ? 'block' : 'none';
         };
 
-        // 관리자 '님' 토글 기본값을 브라우저에 기억한다.
-        // 예약/TV 데이터 자체의 suffix와는 별개로, 관리자 화면의 다음 진입 시 마지막 선택을 유지한다.
-        const ADMIN_SUFFIX_PREF_KEY = 'la_colonne_admin_suffix_enabled';
-        const suffixToggle = document.getElementById('u-suffix-toggle');
-        if (suffixToggle) {
-          try {
-            const savedSuffixPref = localStorage.getItem(ADMIN_SUFFIX_PREF_KEY);
-            if (savedSuffixPref !== null) suffixToggle.checked = savedSuffixPref === '1';
-          } catch (_) {}
-          suffixToggle.addEventListener('change', function() {
-            try {
-              localStorage.setItem(ADMIN_SUFFIX_PREF_KEY, this.checked ? '1' : '0');
-            } catch (_) {}
-          });
-        }
-
         window.scheduleOpenDates = window.scheduleOpenDates || new Set();
         window.scheduleOpenDatesInitialized = window.scheduleOpenDatesInitialized || false;
         window.toggleScheduleDay = function(dateKey) {
-          const group = document.querySelector(`.schedule-day-group[data-date-key="${dateKey}"]`);
-          if (!group) return;
-          const body = group.querySelector('.schedule-day-body');
-          const arrow = group.querySelector('.day-arrow');
-          const isOpen = window.scheduleOpenDates.has(dateKey);
-          if (isOpen) {
-            window.scheduleOpenDates.delete(dateKey);
-            if (body) body.classList.add('is-collapsed');
-            if (arrow) arrow.textContent = '▶';
-          } else {
-            window.scheduleOpenDates.add(dateKey);
-            if (body) body.classList.remove('is-collapsed');
-            if (arrow) arrow.textContent = '▼';
-          }
+          if (window.scheduleOpenDates.has(dateKey)) window.scheduleOpenDates.delete(dateKey);
+          else window.scheduleOpenDates.add(dateKey);
+          loadSchedules();
         };
 
         window.loadSchedules = async function() {
@@ -4001,7 +2848,7 @@ async function syncTV() {
               const title = `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일 (${['일','월','화','수','목','금','토'][d.getDay()]})`;
               const isOpen = window.scheduleOpenDates.has(dateKey);
               const isToday = dateKey === todayKey;
-              html += `<div class="schedule-day-group" data-date-key="${dateKey}">
+              html += `<div class="schedule-day-group">
                 <button type="button" class="schedule-day-header" onclick="toggleScheduleDay('${dateKey}')">
                   <span style="display:flex; align-items:center; gap:7px; min-width:0;">
                     <span class="day-arrow">${isOpen ? '▼' : '▶'}</span>
@@ -4009,41 +2856,26 @@ async function syncTV() {
                     <span class="day-count">${groups[dateKey].length}건</span>
                   </span>
                 </button>
-                <div class="schedule-day-body${isOpen ? '' : ' is-collapsed'}">${groups[dateKey].map(s => {
+                ${isOpen ? `<div class="schedule-day-body">${groups[dateKey].map(s => {
                   const isCur = (currentSchedId && currentSchedId === s.id);
                   const enc = encodeURIComponent(JSON.stringify(s));
                   const memberBadge = s.member_name
                     ? `<button type="button" class="tag-badge badge-gold" onclick="event.stopPropagation(); showMemberInfo('${encodeURIComponent(s.member_code || '')}', '${encodeURIComponent(s.member_name || '')}')" title="멤버십 회원정보 보기" style="cursor:pointer; border:1px solid rgba(201,169,110,0.4); padding:3px 6px;">💳</button>`
                     : '';
-                  const reservationName = s.reservation_name || s.guest_name || '';
-                  const name = `${escapeHtml(s.prefix ? s.prefix+' ' : '')}${escapeHtml(reservationName)}${escapeHtml(s.suffix ? ' '+s.suffix : '')}`;
-                  const displayName = s.guest_name || reservationName || '—';
-                  const meetingName = s.meeting_name || '—';
-                  const subMessage = s.sub_message || '—';
-                  return `<div class="schedule-host-item">
-                    <div class="schedule-compact-row" style="${isCur ? 'background:#141f1a; border-radius:7px;' : ''}" onclick="toggleHostBrief(this, '${enc}')" title="예약 상세 보기">
-                      <div class="schedule-compact-time">${fmtDate(s.start_time, 'time')}–${fmtDate(s.end_time, 'time')}</div>
-                      <div class="schedule-compact-name">
-                        <span class="name-text">${name}</span>
-                        ${memberBadge}
-                        ${isCur ? '<span class="tag-badge badge-green">● 진행 중</span>' : ''}
-                        ${s.customer_modified_at ? '<span class="tag-badge badge-gold">예약 변경됨</span>' : ''}
-                      </div>
-                      <div class="schedule-compact-actions">
-                        <button class="btn-edit" onclick="event.stopPropagation(); editSchedule('${enc}')">수정</button>
-                        <button class="btn-delete" onclick="event.stopPropagation(); deleteSchedule(${s.id}, ${isCur}, '${enc}')">${isCur ? '🚪 퇴실' : '취소'}</button>
-                      </div>
+                  const name = `${escapeHtml(s.prefix ? s.prefix+' ' : '')}${escapeHtml(s.guest_name)}${escapeHtml(s.suffix ? ' '+s.suffix : '')}`;
+                  return `<div class="schedule-compact-row" style="${isCur ? 'background:#141f1a; border-radius:7px;' : ''}">
+                    <div class="schedule-compact-time">${fmtDate(s.start_time, 'time')}–${fmtDate(s.end_time, 'time')}</div>
+                    <div class="schedule-compact-name">
+                      <span class="name-text">${name}</span>
+                      ${memberBadge}
+                      ${isCur ? '<span class="tag-badge badge-green">● 진행 중</span>' : ''}
                     </div>
-                    <div class="schedule-host-brief">
-                      <div class="schedule-host-brief-row"><span class="schedule-host-brief-label">예약자</span><span class="schedule-host-brief-value">${escapeHtml(reservationName || '—')}</span></div>
-                      ${(s.member_code && s.member_name && s.contact_phone && s.contact_phone !== s.phone) ? `<div class="schedule-host-brief-row"><span class="schedule-host-brief-label">연락받을 번호</span><span class="schedule-host-brief-value">${escapeHtml(s.contact_phone)}</span></div>` : ''}
-                      <div class="schedule-host-brief-row"><span class="schedule-host-brief-label">디스플레이 표출명</span><span class="schedule-host-brief-value">${escapeHtml(displayName)}</span></div>
-                      <div class="schedule-host-brief-row"><span class="schedule-host-brief-label">모임명</span><span class="schedule-host-brief-value">${escapeHtml(meetingName)}</span></div>
-                      <div class="schedule-host-brief-row"><span class="schedule-host-brief-label">디스플레이 문구</span><span class="schedule-host-brief-value">${escapeHtml(subMessage)}</span></div>
-                      ${s.customer_modified_at ? `<div class="schedule-host-brief-row"><span class="schedule-host-brief-label">고객 변경</span><span class="schedule-host-brief-value" style="color:#9b8058;">${escapeHtml(s.customer_change_note || '예약 변경됨')}</span></div>` : ''}
+                    <div class="schedule-compact-actions">
+                      <button class="btn-edit" onclick="editSchedule('${enc}')">수정</button>
+                      <button class="btn-delete" onclick="deleteSchedule(${s.id}, ${isCur}, '${enc}')">${isCur ? '🚪 퇴실' : '취소'}</button>
                     </div>
                   </div>`;
-                }).join('')}</div>
+                }).join('')}</div>` : ''}
               </div>`;
             });
             list.innerHTML = html;
@@ -4054,18 +2886,6 @@ async function syncTV() {
                 <button type="button" onclick="loadSchedules()" style="margin-top:9px; background:#212329; border:1px solid #555; color:#c9a96e; padding:6px 12px; border-radius:7px; cursor:pointer;">↻ 다시 시도</button>
               </div>`;
           }
-        };
-
-        window.toggleHostBrief = function(rowEl) {
-          const item = rowEl && rowEl.closest('.schedule-host-item');
-          if (!item) return;
-          const brief = item.querySelector('.schedule-host-brief');
-          if (!brief) return;
-          const wasOpen = brief.classList.contains('is-open');
-          document.querySelectorAll('.schedule-host-brief.is-open').forEach(el => {
-            if (el !== brief) el.classList.remove('is-open');
-          });
-          brief.classList.toggle('is-open', !wasOpen);
         };
 
         async function initScheduleQueue() {
@@ -4117,8 +2937,7 @@ async function syncTV() {
           document.getElementById('u-sched-end').value = fmtDate(endDate, 'iso');
           document.querySelectorAll('.schedule-time-preset').forEach(btn => btn.classList.toggle('active', btn.dataset.time === document.getElementById('u-sched-start-time').value));
           document.getElementById('u-name-input').value = s.guest_name;
-          document.getElementById('u-meeting-input').value = s.meeting_name || '';
-          document.getElementById('u-msg-input').value = s.sub_message || '';
+          document.getElementById('u-msg-input').value = s.sub_message;
           document.getElementById('u-prefix-toggle').checked = !!s.prefix;
           document.getElementById('u-prefix-select-box').style.display = s.prefix ? 'block' : 'none';
           if (s.prefix) document.getElementById('u-prefix-select').value = s.prefix;
@@ -4143,11 +2962,10 @@ async function syncTV() {
         window.cancelEditSchedule = () => {
           editingId = null;
           document.getElementById('unified-card-title').innerText = '1. TV 즉시표출 & 예약제어';
-          document.getElementById('btn-action-sched').innerText = '예약 일정 추가';
+          document.getElementById('btn-action-sched').innerText = '📅 예약 일정 추가';
           document.getElementById('btn-action-now').style.display = 'block';
           document.getElementById('u-cancel-btn').style.display = 'none';
-          ['u-name-input','u-meeting-input','u-sched-date','u-sched-start-time','u-sched-end-time','u-sched-start','u-sched-end'].forEach(id => document.getElementById(id).value = '');
-          document.getElementById('u-msg-input').value = '라 콜론에 오신 것을 환영합니다.';
+          ['u-name-input','u-sched-date','u-sched-start-time','u-sched-end-time','u-sched-start','u-sched-end'].forEach(id => document.getElementById(id).value = '');
           document.querySelectorAll('.schedule-time-preset').forEach(btn => btn.classList.remove('active'));
           document.getElementById('u-member-select').value = '';
           document.getElementById('u-prefix-toggle').checked = false;
