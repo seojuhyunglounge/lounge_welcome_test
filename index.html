@@ -168,6 +168,8 @@
     .schedule-date-shortcuts { display: flex; gap: 6px; margin-top: 6px; }
     .schedule-date-shortcut { background: transparent; border: 1px solid #3a3e49; color: #9ca3af; padding: 5px 9px; border-radius: 7px; font-size: 0.72rem; cursor: pointer; }
     .schedule-date-shortcut:hover { border-color: #c9a96e; color: #dfcfb2; }
+    .input-clear-btn { background: transparent; border: 0; color: #8d929d; padding: 2px 0; font-size: 0.72rem; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+    .input-clear-btn:hover { color: #c9a96e; }
     .schedule-datetime-stack { display: flex; flex-direction: column; gap: 12px; }
     .schedule-datetime-stack .schedule-time-box { background: #202229; border: 1px solid #333640; border-radius: 10px; padding: 10px 12px; }
     .schedule-datetime-stack input[type="date"], .schedule-datetime-stack input[type="time"] { padding: 10px; font-size: 0.92rem; background: transparent; border: 0; width: 100%; }
@@ -937,6 +939,7 @@
       <div class="form-group">
         <label>서브문구</label>
         <textarea id="u-msg-input" rows="2" placeholder="선택 입력">라 콜론에 오신 것을 환영합니다.</textarea>
+        <button type="button" class="input-clear-btn" onclick="clearDisplayInputs()">입력 내용 지우기</button>
       </div>
 
       <div class="admin-form-divider">
@@ -1001,10 +1004,17 @@
           <div class="schedule-time-box">
             <label style="font-size: 0.76rem; margin-bottom: 2px;">종료 시간 <span style="color:#7f8795;">(+3시간 자동)</span></label>
             <input type="time" id="u-sched-end-time" step="1800">
+            <div class="schedule-time-adjust">
+              <button type="button" onclick="adjustScheduleEndTime(-5)">−5분</button>
+              <button type="button" onclick="adjustScheduleEndTime(5)">+5분</button>
+            </div>
           </div>
         </div>
         <input type="datetime-local" id="u-sched-start" style="display:none;">
         <input type="datetime-local" id="u-sched-end" style="display:none;">
+      </div>
+      <div style="display:flex; justify-content:flex-end; margin-top:8px;">
+        <button type="button" class="input-clear-btn" onclick="clearScheduleInputs()">일정 지우기</button>
       </div>
 
       <div style="display: flex; gap: 10px;">
@@ -2795,7 +2805,7 @@ async function syncTV() {
           return {
             name, memberId, memberCode, memberName,
             meetingName: document.getElementById('u-meeting-input').value.trim(),
-            msg: document.getElementById('u-msg-input').value.trim() || '라 콜론에 오신 것을 환영합니다.',
+            msg: document.getElementById('u-msg-input').value.trim(),
             prefix: (name === 'Guest' || !document.getElementById('u-prefix-toggle').checked) ? '' : document.getElementById('u-prefix-select').value,
             suffix: (name === 'Guest' || !document.getElementById('u-suffix-toggle').checked) ? '' : '님',
             bg: document.getElementById('u-bg-select').value,
@@ -2938,6 +2948,36 @@ async function syncTV() {
           syncScheduleDateTimeFields(true);
         };
 
+        window.clearDisplayInputs = function() {
+          document.getElementById('u-name-input').value = '';
+          document.getElementById('u-meeting-input').value = '';
+          document.getElementById('u-msg-input').value = '';
+        };
+
+        window.clearScheduleInputs = function() {
+          ['u-sched-date','u-sched-start-time','u-sched-end-time','u-sched-start','u-sched-end'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+          });
+          document.querySelectorAll('.schedule-time-preset').forEach(btn => btn.classList.remove('active'));
+        };
+
+        window.adjustScheduleEndTime = function(minutes) {
+          const endEl = document.getElementById('u-sched-end');
+          if (!endEl.value) return alert('먼저 종료 시간을 지정하세요.');
+          const end = new Date(endEl.value);
+          if (isNaN(end.getTime())) return;
+          end.setMinutes(end.getMinutes() + minutes);
+          const startEl = document.getElementById('u-sched-start');
+          if (startEl.value) {
+            const start = new Date(startEl.value);
+            if (!isNaN(start.getTime()) && end <= start) return alert('종료 시각은 시작 시각보다 뒤여야 합니다.');
+          }
+          const pad = n => String(n).padStart(2, '0');
+          document.getElementById('u-sched-end-time').value = `${pad(end.getHours())}:${pad(end.getMinutes())}`;
+          endEl.value = fmtDate(end, 'iso');
+        };
+
         window.adjustScheduleTime = function(minutes) {
           const startEl = document.getElementById('u-sched-start');
           const endEl = document.getElementById('u-sched-end');
@@ -3065,7 +3105,6 @@ async function syncTV() {
                         ${isCur ? '<span class="tag-badge badge-green">● 진행 중</span>' : ''}
                       </div>
                       <div class="schedule-compact-actions">
-                        <button class="btn-now" onclick="event.stopPropagation(); showScheduleNow('${enc}')">즉시표출</button>
                         <button class="btn-edit" onclick="event.stopPropagation(); editSchedule('${enc}')">수정</button>
                         <button class="btn-delete" onclick="event.stopPropagation(); deleteSchedule(${s.id}, ${isCur}, '${enc}')">${isCur ? '🚪 퇴실' : '취소'}</button>
                       </div>
@@ -3139,30 +3178,6 @@ async function syncTV() {
           loadSchedules(); updateStatus();
         };
 
-        window.showScheduleNow = async enc => {
-          const s = JSON.parse(decodeURIComponent(enc));
-          if (currentSchedId && currentSchedId !== s.id) {
-            if (!confirm('현재 진행 중인 다른 예약이 있습니다. 이 예약을 TV에 즉시 표출할까요?')) return;
-          }
-          const log = document.getElementById('unified-log-box');
-          log.style.display = 'block'; log.innerText = '즉시 표출 중...';
-          try {
-            const res = await apiCall('welcome_screen?id=eq.1', 'PATCH', {
-              prefix: s.prefix || '', guest_name: s.guest_name || 'Guest', suffix: s.suffix || '',
-              meeting_name: s.meeting_name || '', sub_message: s.sub_message || '라 콜론에 오신 것을 환영합니다.',
-              bg_source: s.bg_source || 'video1.mp4,video2.mp4', bgm_source: s.bgm_source || 'jazz1.mp3',
-              member_code: s.member_code || '', member_name: s.member_name || '', updated_at: toISOStringSafe(new Date())
-            });
-            if (!res.ok) throw new Error(`TV 표출 저장 실패 (${res.status})`);
-            log.innerText = `✓ [${s.guest_name}] TV 즉시 표출`;
-            showToast(`✓ [${s.guest_name}] TV에 즉시 표출했습니다.`);
-            updateStatus();
-          } catch (e) {
-            log.innerText = '표출 실패';
-            alert(e && e.message ? e.message : 'TV 즉시 표출에 실패했습니다.');
-          }
-        };
-
         window.editSchedule = enc => {
           const s = JSON.parse(decodeURIComponent(enc)); editingId = s.id;
           const startDate = new Date(s.start_time);
@@ -3205,6 +3220,7 @@ async function syncTV() {
           document.getElementById('btn-action-now').style.display = 'block';
           document.getElementById('u-cancel-btn').style.display = 'none';
           ['u-name-input','u-meeting-input','u-sched-date','u-sched-start-time','u-sched-end-time','u-sched-start','u-sched-end'].forEach(id => document.getElementById(id).value = '');
+          document.getElementById('u-msg-input').value = '라 콜론에 오신 것을 환영합니다.';
           document.querySelectorAll('.schedule-time-preset').forEach(btn => btn.classList.remove('active'));
           document.getElementById('u-member-select').value = '';
           document.getElementById('u-prefix-toggle').checked = false;
