@@ -252,6 +252,138 @@
 }
 
 </style>
+
+<style>
+/* La Colonne — Reservation v2: session selection */
+#booking-section #book-form-panel {
+  background: #f4f1ea !important;
+  border: 1px solid rgba(41,39,34,.12) !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  color: #292722 !important;
+  padding: 22px 20px !important;
+}
+#booking-section #book-form-panel #selected-date-title {
+  color: #292722 !important;
+  font-family: "Noto Sans KR", sans-serif !important;
+  font-size: .98rem !important;
+  font-weight: 500 !important;
+  letter-spacing: -.01em;
+}
+#booking-section #book-form-panel > div:first-child {
+  margin-bottom: 18px !important;
+}
+#booking-section #book-form-panel > div:first-child button {
+  color: #777269 !important;
+  font-size: .78rem !important;
+}
+#booking-section #book-slots-container {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+  margin-bottom: 18px !important;
+}
+#booking-section .booking-session-option {
+  position: relative !important;
+  min-width: 0 !important;
+  min-height: 82px !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  padding: 10px 5px !important;
+  background: #faf9f6 !important;
+  border: 1px solid rgba(41,39,34,.14) !important;
+  border-radius: 8px !important;
+  color: #292722 !important;
+  cursor: pointer !important;
+  opacity: 1 !important;
+  text-align: center !important;
+  transition: background .15s ease, border-color .15s ease, box-shadow .15s ease, color .15s ease !important;
+}
+#booking-section .booking-session-option:hover {
+  border-color: rgba(155,128,88,.55) !important;
+}
+#booking-section .booking-session-option:has(input:checked) {
+  background: #eee9df !important;
+  border-color: #9b8058 !important;
+  box-shadow: inset 0 0 0 1px rgba(155,128,88,.18) !important;
+}
+#booking-section .booking-session-option.is-blocked {
+  background: #eeece7 !important;
+  border-color: rgba(41,39,34,.08) !important;
+  cursor: not-allowed !important;
+  opacity: .52 !important;
+}
+#booking-section .booking-session-option input[type="checkbox"] {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+#booking-section .booking-session-option:focus-within {
+  outline: 2px solid rgba(155,128,88,.35) !important;
+  outline-offset: 2px !important;
+}
+#booking-section .booking-session-name {
+  display: block !important;
+  color: #292722 !important;
+  font-size: .88rem !important;
+  line-height: 1.25 !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+}
+#booking-section .booking-session-time {
+  display: block !important;
+  color: #777269 !important;
+  font-size: .69rem !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+}
+#booking-section .booking-session-status {
+  display: block !important;
+  color: #9b8058 !important;
+  font-size: .62rem !important;
+  line-height: 1.2 !important;
+  font-weight: 500 !important;
+  white-space: nowrap !important;
+}
+#booking-section .booking-session-option.is-blocked .booking-session-name,
+#booking-section .booking-session-option.is-blocked .booking-session-time,
+#booking-section .booking-session-option.is-blocked .booking-session-status {
+  color: #777269 !important;
+}
+@media (max-width: 360px) {
+  #booking-section #book-slots-container { gap: 5px !important; }
+  #booking-section .booking-session-option { min-height: 78px !important; padding-left: 2px !important; padding-right: 2px !important; }
+  #booking-section .booking-session-name { font-size: .82rem !important; }
+  #booking-section .booking-session-time { font-size: .62rem !important; }
+  #booking-section .booking-session-status { font-size: .57rem !important; }
+}
+/* Calendar status labels: keep them compact and on one line. */
+#booking-section #book-calendar-grid .booking-calendar-status {
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: clip !important;
+  font-size: .60rem !important;
+  line-height: 1.15 !important;
+  letter-spacing: -.02em !important;
+}
+@media (max-width: 360px) {
+  #booking-section #book-calendar-grid .booking-calendar-status { font-size: .55rem !important; }
+}
+</style>
 </head>
 <body>
 
@@ -1340,13 +1472,13 @@
             let subText = '';
             let blockedCount = (is1Blocked ? 1 : 0) + (is2Blocked ? 1 : 0) + (is3Blocked ? 1 : 0);
             if (isFullyBlocked) {
-              subText = '전체 마감';
+              subText = '전체마감';
             } else if (blockedCount > 0) {
               let closedParts = [];
               if (is1Blocked) closedParts.push('1부');
               if (is2Blocked) closedParts.push('2부');
               if (is3Blocked) closedParts.push('3부');
-              subText = `${closedParts.join(', ')} 마감`;
+              subText = closedParts.map(part => `${part}마감`).join(' · ');
             }
 
             html += `
@@ -1354,7 +1486,7 @@
                 <div style="font-size: 0.82rem; font-weight: 600; color: ${isFullyBlocked ? '#555' : '#dfcfb2'}; text-align: center;">
                   ${d}
                 </div>
-                <div style="font-size: 0.62rem; text-align: center; color: ${isFullyBlocked ? '#9ca3af' : '#c9a96e'}; font-weight: 500; line-height: 1.1;">
+                <div class="booking-calendar-status" style="font-size: 0.62rem; text-align: center; color: ${isFullyBlocked ? '#777269' : '#9b8058'}; font-weight: 500; line-height: 1.1;">
                   ${subText}
                 </div>
               </div>`;
@@ -1416,12 +1548,11 @@
             const isBlocked = isPast || isOverlapped;
 
             html += `
-              <label style="display: flex; align-items: center; justify-content: space-between; background: ${isBlocked ? '#1a1214' : '#212329'}; border: 1px solid ${isBlocked ? '#7f1d1d' : '#333640'}; border-radius: 10px; padding: 10px 12px; cursor: ${isBlocked ? 'not-allowed' : 'pointer'}; opacity: ${isBlocked ? '0.5' : '1'};">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                  <input type="checkbox" name="book-slot" value="${sess.id}" data-start="${toISOStringSafe(sess.startObj)}" data-end="${toISOStringSafe(sess.endObj)}" ${isBlocked ? 'disabled' : ''} style="width: 16px; height: 16px; accent-color: #c9a96e;">
-                  <span style="font-weight: 600; font-size: 0.88rem; color: ${isBlocked ? '#f87171' : '#fff'};">${sess.name} (${sess.start} ~ ${sess.end})</span>
-                </div>
-                <span class="tag-badge ${isBlocked ? 'badge-blue' : 'badge-gold'}" style="background: ${isBlocked ? '#7f1d1d' : ''}; color: ${isBlocked ? '#fca5a5' : ''};">${isBlocked ? '마감' : '선택가능'}</span>
+              <label class="booking-session-option ${isBlocked ? 'is-blocked' : ''}" aria-label="${sess.name} ${isBlocked ? '마감' : '선택 가능'}">
+                <input type="checkbox" name="book-slot" value="${sess.id}" data-start="${toISOStringSafe(sess.startObj)}" data-end="${toISOStringSafe(sess.endObj)}" ${isBlocked ? 'disabled' : ''}>
+                <span class="booking-session-name">${sess.name.split(' (')[0]}</span>
+                <span class="booking-session-time">${sess.start} ~ ${sess.end}</span>
+                <span class="booking-session-status">${isBlocked ? '마감' : '선택 가능'}</span>
               </label>`;
           });
           container.innerHTML = html;
