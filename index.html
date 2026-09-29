@@ -2892,6 +2892,22 @@ async function syncTV() {
           document.getElementById('u-prefix-select-box').style.display = this.checked ? 'block' : 'none';
         };
 
+        // 관리자 '님' 토글 기본값을 브라우저에 기억한다.
+        // 예약/TV 데이터 자체의 suffix와는 별개로, 관리자 화면의 다음 진입 시 마지막 선택을 유지한다.
+        const ADMIN_SUFFIX_PREF_KEY = 'la_colonne_admin_suffix_enabled';
+        const suffixToggle = document.getElementById('u-suffix-toggle');
+        if (suffixToggle) {
+          try {
+            const savedSuffixPref = localStorage.getItem(ADMIN_SUFFIX_PREF_KEY);
+            if (savedSuffixPref !== null) suffixToggle.checked = savedSuffixPref === '1';
+          } catch (_) {}
+          suffixToggle.addEventListener('change', function() {
+            try {
+              localStorage.setItem(ADMIN_SUFFIX_PREF_KEY, this.checked ? '1' : '0');
+            } catch (_) {}
+          });
+        }
+
         window.scheduleOpenDates = window.scheduleOpenDates || new Set();
         window.scheduleOpenDatesInitialized = window.scheduleOpenDatesInitialized || false;
         window.toggleScheduleDay = function(dateKey) {
