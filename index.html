@@ -537,6 +537,174 @@
   #booking-section #book-calendar-grid .booking-calendar-status { font-size: .55rem !important; }
 }
 </style>
+
+<style>
+/* La Colonne — Reservation Stage 3: booking form */
+#booking-section {
+  background: #f1eee7;
+  color: #292722;
+  border-radius: 12px;
+  padding: 34px 22px 28px;
+  box-sizing: border-box;
+}
+#booking-section .portal-brand {
+  color: #292722 !important;
+  font-family: "Cormorant Garamond", serif !important;
+  font-weight: 400 !important;
+}
+#booking-section .portal-sub {
+  color: #777269 !important;
+  font-family: "Pretendard", sans-serif !important;
+  font-weight: 300 !important;
+}
+#booking-section .booking-mode-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 18px;
+  padding: 4px;
+  background: transparent;
+  border: 1px solid rgba(41,39,34,.12);
+  border-radius: 8px;
+}
+#booking-section .booking-mode-tab {
+  min-height: 42px;
+  padding: 9px 10px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  background: transparent;
+  color: #777269;
+  font-family: "Pretendard", sans-serif;
+  font-size: .82rem;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all .15s ease;
+}
+#booking-section .booking-mode-tab.is-active {
+  background: #faf9f6;
+  border-color: rgba(155,128,88,.5);
+  color: #292722;
+  font-weight: 500;
+}
+#booking-section #member-auth-panel {
+  background: #faf9f6 !important;
+  border: 1px solid rgba(155,128,88,.35) !important;
+  border-radius: 8px !important;
+  color: #292722 !important;
+  box-shadow: none !important;
+}
+#booking-section #member-auth-panel label,
+#booking-section #book-form-panel label {
+  color: #777269 !important;
+  font-family: "Pretendard", sans-serif !important;
+  font-size: .76rem !important;
+  font-weight: 400 !important;
+}
+#booking-section #member-auth-panel input,
+#booking-section #book-form-panel input,
+#booking-section #book-form-panel textarea {
+  background: #faf9f6 !important;
+  border: 1px solid rgba(41,39,34,.16) !important;
+  border-radius: 5px !important;
+  color: #292722 !important;
+  font-family: "Pretendard", sans-serif !important;
+  font-size: .88rem !important;
+  box-shadow: none !important;
+}
+#booking-section #book-form-panel input:focus,
+#booking-section #book-form-panel textarea:focus {
+  border-color: rgba(155,128,88,.65) !important;
+  outline: none !important;
+}
+#booking-section .booking-form-section {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(41,39,34,.12);
+}
+#booking-section .booking-form-section:first-of-type {
+  margin-top: 2px;
+  padding-top: 0;
+  border-top: 0;
+}
+#booking-section .booking-form-section-title {
+  margin: 0 0 14px;
+  font-family: "Pretendard", sans-serif;
+  font-size: .73rem;
+  font-weight: 500;
+  letter-spacing: .13em;
+  color: #9b8058;
+}
+#booking-section .booking-applicant-row {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 8px;
+}
+#booking-section #active-member-badge {
+  background: rgba(155,128,88,.08) !important;
+  border: 1px solid rgba(155,128,88,.32) !important;
+  border-radius: 6px !important;
+  color: #777269 !important;
+  font-size: .78rem !important;
+}
+#booking-section #active-member-badge b {
+  color: #9b8058 !important;
+}
+#booking-section #book-sub-msg {
+  min-height: 92px;
+  resize: vertical;
+  line-height: 1.65;
+  padding: 11px 12px !important;
+}
+#booking-section .booking-form-help {
+  margin-top: 5px;
+  color: #9a948b;
+  font-size: .7rem;
+  line-height: 1.5;
+}
+#booking-section .booking-consent-box {
+  background: #faf9f6 !important;
+  border: 1px solid rgba(41,39,34,.12) !important;
+  border-radius: 6px !important;
+  color: #777269 !important;
+}
+#booking-section .booking-consent-box label {
+  color: #777269 !important;
+}
+#booking-section .booking-submit-btn {
+  width: 100%;
+  min-height: 46px;
+  margin-top: 2px;
+  padding: 11px 16px;
+  background: #292722 !important;
+  border: 1px solid #292722 !important;
+  border-radius: 5px !important;
+  color: #f7f4ed !important;
+  font-family: "Pretendard", sans-serif !important;
+  font-size: .88rem !important;
+  font-weight: 500 !important;
+  letter-spacing: .03em;
+  cursor: pointer;
+}
+#booking-section .booking-submit-btn:hover { background: #3a3730 !important; }
+#booking-section .booking-bottom-nav a:first-child { color: #777269 !important; }
+#booking-section .booking-bottom-nav a:last-child { color: #9b8058 !important; }
+@media (max-width: 420px) {
+  #booking-section { padding-left: 16px; padding-right: 16px; }
+  #booking-section .booking-applicant-row { grid-template-columns: 1fr; }
+  #booking-section .booking-mode-tab { font-size: .78rem; }
+}
+
+/* TV: meeting name is an optional second line; sub-message preserves line breaks. */
+#tv-section .guest-meeting {
+  margin: 0 0 12px;
+  font-size: 1.18rem;
+  color: #dfcfb2;
+  font-weight: 400;
+  letter-spacing: .04em;
+  text-shadow: 0 2px 12px rgba(0,0,0,.85);
+}
+#tv-section .sub-desc { white-space: pre-line; }
+</style>
 </head>
 <body>
 
@@ -598,6 +766,7 @@
         <span class="guest-core-name" id="guest-name"></span>
         <span class="honorific-suffix" id="guest-suffix"></span>
       </div>
+      <div class="guest-meeting" id="guest-meeting" style="display:none;"></div>
       <div class="sub-desc" id="guest-msg"></div>
     </div>
 
@@ -917,9 +1086,9 @@
     <div class="portal-sub">Lounge Reservation Calendar</div>
     
     <!-- 예약 모드 선택 탭 (일반 대관 vs 회원권 패스 차감) -->
-    <div style="display: flex; gap: 8px; margin-bottom: 16px; background: #16171b; padding: 6px; border-radius: 12px; border: 1px solid #282a32;">
-      <button type="button" id="tab-mode-general" onclick="switchBookingMode('general')" style="flex: 1; padding: 11px; border-radius: 8px; border: none; background: #c9a96e; color: #0d0e11; font-weight: 700; font-size: 0.88rem; cursor: pointer;">일반 대관 예약</button>
-      <button type="button" id="tab-mode-member" onclick="switchBookingMode('member')" style="flex: 1; padding: 11px; border-radius: 8px; border: none; background: transparent; color: #94a3b8; font-weight: 600; font-size: 0.88rem; cursor: pointer;">💳 회원권 패스 차감 예약</button>
+    <div class="booking-mode-tabs">
+      <button type="button" id="tab-mode-general" class="booking-mode-tab is-active" onclick="switchBookingMode('general')">일반예약</button>
+      <button type="button" id="tab-mode-member" class="booking-mode-tab" onclick="switchBookingMode('member')">회원예약</button>
     </div>
 
     <!-- 멤버십 로그인 인증 패널 -->
@@ -970,33 +1139,45 @@
         <div id="book-slots-container" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px;"></div>
       </div>
 
-      <div class="form-group">
-        <label>신청자 성함 / 연락처 (알림 수신용)</label>
-        <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-          <input type="text" id="book-name" placeholder="성함 입력" style="flex: 1;">
-          <input type="tel" id="book-phone" placeholder="연락처 (010-0000-0000)" style="flex: 1.4;">
+      <div class="booking-form-section">
+        <div class="booking-form-section-title">예약자 정보</div>
+        <div class="form-group">
+          <div class="booking-applicant-row">
+            <input type="text" id="book-name" placeholder="예약자명">
+            <input type="tel" id="book-phone" placeholder="연락처 (010-0000-0000)">
+          </div>
+        </div>
+
+        <!-- 멤버십 인증된 회원 정보 표출 배지 -->
+        <div id="active-member-badge" style="display: none; padding: 12px; margin-bottom: 14px;">
+          <b>[회원예약]</b> <span id="badge-member-info"></span> 회원의 세션 패스 1회가 차감됩니다.
+        </div>
+
+        <div class="form-group" id="general-pin-group">
+          <label>예약 확인/취소용 PIN</label>
+          <input type="password" id="book-pin" maxlength="4" inputmode="numeric" placeholder="숫자 4자리" style="letter-spacing: 4px;">
         </div>
       </div>
 
-      <!-- 멤버십 인증된 회원 정보 표출 배지 -->
-      <div id="active-member-badge" style="display: none; background: rgba(201,169,110,0.12); border: 1px solid #c9a96e; border-radius: 10px; padding: 12px; margin-bottom: 15px; font-size: 0.85rem; color: #dfcfb2;">
-        ✨ <b>[VIP 회원권 적용]</b> <span id="badge-member-info"></span> 회원의 세션 패스 1회가 차감됩니다.
+      <div class="booking-form-section">
+        <div class="booking-form-section-title">디스플레이 정보</div>
+        <div class="form-group">
+          <label>디스플레이 표출명 <span style="color:#aaa;">(선택)</span></label>
+          <input type="text" id="book-display-name" placeholder="TV에 보여질 이름 또는 호칭">
+          <div class="booking-form-help">비워두면 예약자명이 기본 표출명으로 사용됩니다.</div>
+        </div>
+        <div class="form-group">
+          <label>모임명 <span style="color:#aaa;">(선택)</span></label>
+          <input type="text" id="book-meeting-name" placeholder="예: ABC 투자자문 미팅">
+        </div>
+        <div class="form-group">
+          <label>디스플레이 서브문구 <span style="color:#aaa;">(선택)</span></label>
+          <textarea id="book-sub-msg" placeholder="TV에 표시할 환영 문구를 입력하세요."></textarea>
+          <div class="booking-form-help">비워두면 기본 환영 문구가 표시됩니다. 줄바꿈도 사용할 수 있습니다.</div>
+        </div>
       </div>
 
-      <div class="form-group" id="general-pin-group">
-        <label>예약 확인/취소용 PIN 번호 (숫자 4자리)</label>
-        <input type="password" id="book-pin" maxlength="4" placeholder="비회원 예약 관리용" style="letter-spacing: 4px;">
-      </div>
-      <div class="form-group">
-        <label>TV 표출용 성함 / 모임명</label>
-        <input type="text" id="book-display-name" placeholder="예: ABC 컴퍼니 / 홍길동 대표님 환영회">
-      </div>
-      <div class="form-group">
-        <label>모임 목적 / 서브 환영 문구</label>
-        <input type="text" id="book-sub-msg" value="라 콜론에 오신 것을 환영합니다.">
-      </div>
-
-      <div style="background: #11100e; border: 1px solid #322d28; border-radius: 10px; padding: 12px; margin-bottom: 16px; font-size: 0.8rem; color: #b8aba0;">
+      <div class="booking-consent-box" style="padding: 12px; margin-bottom: 16px; font-size: 0.8rem; line-height:1.5;">
         <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; cursor: pointer; color: #e5e7eb;">
           <input type="checkbox" id="book-consent-privacy" style="width: 16px; height: 16px; accent-color: #c9a96e;">
           <span><b>[필수]</b> 개인정보 수집 및 이용 동의 (예약 확정 및 안내용)</span>
@@ -1007,11 +1188,11 @@
         </label>
       </div>
 
-      <button type="button" class="btn-primary" onclick="submitBookingRequest()" style="background: #2563eb; color: #fff;">예약 신청 완료</button>
+      <button type="button" class="booking-submit-btn" onclick="submitBookingRequest()">예약 신청 완료</button>
       <div id="booking-error-msg" style="color: #f87171; font-size: 0.8rem; margin-top: 10px; display: none; text-align: center;"></div>
     </div>
 
-    <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+    <div class="booking-bottom-nav" style="margin-top: 20px; display: flex; justify-content: space-between;">
       <a href="https://la-colonne.vercel.app/" style="color: #888; font-size: 0.8rem; text-decoration: none;">VISIT LA COLONNE ↗</a>
       <a href="?view=my_booking" style="color: #93c5fd; font-size: 0.8rem; text-decoration: none; font-weight: 600;">🔍 내 예약 조회 / 취소 →</a>
     </div>
@@ -1506,14 +1687,12 @@
         const calWrapper = document.getElementById('calendar-wrapper');
 
         if (mode === 'general') {
-          btnGen.style.background = '#c9a96e'; btnGen.style.color = '#0d0e11'; btnGen.style.fontWeight = '700';
-          btnMem.style.background = 'transparent'; btnMem.style.color = '#94a3b8'; btnMem.style.fontWeight = '600';
+          btnGen.classList.add('is-active'); btnMem.classList.remove('is-active');
           authPanel.style.display = 'none';
           calWrapper.style.display = 'block';
           verifiedMember = null;
         } else {
-          btnMem.style.background = '#c9a96e'; btnMem.style.color = '#0d0e11'; btnMem.style.fontWeight = '700';
-          btnGen.style.background = 'transparent'; btnGen.style.color = '#94a3b8'; btnGen.style.fontWeight = '600';
+          btnMem.classList.add('is-active'); btnGen.classList.remove('is-active');
           authPanel.style.display = 'block';
           calWrapper.style.display = 'none';
           verifiedMember = null;
@@ -1727,13 +1906,14 @@
         const phone = document.getElementById('book-phone').value.trim().replace(/[^0-9]/g, '');
         const pin = document.getElementById('book-pin').value.trim();
         const displayName = document.getElementById('book-display-name').value.trim();
+        const meetingName = document.getElementById('book-meeting-name').value.trim();
         const subMsg = document.getElementById('book-sub-msg').value.trim();
         const privacy = document.getElementById('book-consent-privacy').checked;
         const smsConsent = document.getElementById('book-consent-sms').checked;
         const errEl = document.getElementById('booking-error-msg');
         errEl.style.display = 'none';
 
-        if (!selectedDateStr || !name || !phone || !displayName) return (errEl.innerText = '날짜, 신청자 성함, 연락처, 모임명을 모두 입력하세요.', errEl.style.display = 'block');
+        if (!selectedDateStr || !name || !phone) return (errEl.innerText = '날짜, 예약자명, 연락처를 확인해 주세요.', errEl.style.display = 'block');
         if (!privacy) return (errEl.innerText = '개인정보 수집 및 이용 동의(필수)에 체크해 주세요.', errEl.style.display = 'block');
 
         let finalPin = pin;
@@ -1771,8 +1951,9 @@
             p_sms_consent: smsConsent,
             p_start_time: finalStart, 
             p_end_time: finalEnd,
-            p_guest_name: displayName, 
-            p_sub_message: subMsg || '라 콜론에 오신 것을 환영합니다.',
+            p_guest_name: displayName,
+            p_meeting_name: meetingName,
+            p_sub_message: subMsg,
             p_pin_code: finalPin,  // 9번째 인자 완벽 대응
             p_member_id: memberId
           });
@@ -2182,13 +2363,14 @@
       }
       [vidA, vidB].forEach(v => v.ontimeupdate = () => { if (videoPlaylist.length > 1 && v.duration && (v.duration - v.currentTime <= 0.8)) crossfade(); });
 
-      function updateBoard(prefix, name, suffix, msg, bgUrl, bgmUrl) {
+      function updateBoard(prefix, name, suffix, msg, bgUrl, bgmUrl, meetingName) {
         const dName = (name && name.trim()) ? name.trim() : 'Guest';
         const dMsg = (msg && msg.trim()) ? msg.trim() : '라 콜론에 오신 것을 환영합니다.';
-        const key = `${prefix}|${dName}|${suffix}|${dMsg}|${bgUrl}|${bgmUrl}`;
+        const dMeeting = (meetingName && meetingName.trim()) ? meetingName.trim() : '';
+        const key = `${prefix}|${dName}|${suffix}|${dMeeting}|${dMsg}|${bgUrl}|${bgmUrl}`;
         
         try {
-          localStorage.setItem('la_colonne_cached_display', JSON.stringify({ prefix, name: dName, suffix, msg: dMsg, bgUrl, bgmUrl }));
+          localStorage.setItem('la_colonne_cached_display', JSON.stringify({ prefix, name: dName, suffix, meetingName: dMeeting, msg: dMsg, bgUrl, bgmUrl }));
         } catch(e) {}
 
         if (key === currentDataKey) return;
@@ -2200,6 +2382,9 @@
           document.getElementById('guest-prefix').innerText = (dName === 'Guest') ? '' : (prefix || '');
           document.getElementById('guest-name').innerText = dName;
           document.getElementById('guest-suffix').innerText = (dName === 'Guest') ? '' : (suffix || '');
+          const meetingEl = document.getElementById('guest-meeting');
+          meetingEl.innerText = dMeeting;
+          meetingEl.style.display = dMeeting ? 'block' : 'none';
           document.getElementById('guest-msg').innerText = dMsg;
           box.style.opacity = '1';
         }, 400);
@@ -2228,7 +2413,7 @@
       function loadOfflineFallback() {
         try {
           const cached = JSON.parse(localStorage.getItem('la_colonne_cached_display'));
-          if (cached) updateBoard(cached.prefix, cached.name, cached.suffix, cached.msg, cached.bgUrl, cached.bgmUrl);
+          if (cached) updateBoard(cached.prefix, cached.name, cached.suffix, cached.msg, cached.bgUrl, cached.bgmUrl, cached.meetingName || '');
         } catch(e) {}
       }
 
@@ -2269,7 +2454,8 @@ async function syncTV() {
           s[0].suffix,
           s[0].sub_message,
           s[0].bg_source,
-          s[0].bgm_source
+          s[0].bgm_source,
+          s[0].meeting_name
         );
       }
 
@@ -2300,7 +2486,8 @@ async function syncTV() {
           d[0].suffix,
           d[0].sub_message,
           d[0].bg_source,
-          d[0].bgm_source
+          d[0].bgm_source,
+          ''
         );
       }
     } else {
