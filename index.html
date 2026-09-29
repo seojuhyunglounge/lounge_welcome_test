@@ -159,8 +159,8 @@
     .admin-inline-option .option-label { display: block; font-size: 0.72rem; color: #8f8a82; margin-bottom: 5px; }
     .admin-toggle-compact { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     .admin-toggle-compact .option-label { margin: 0; }
-    .schedule-time-adjust { display: flex; gap: 6px; margin-top: 6px; }
-    .schedule-time-adjust button { flex: 1; background: transparent; border: 1px solid #3a3e49; color: #9ca3af; padding: 5px 7px; border-radius: 7px; font-size: 0.7rem; cursor: pointer; }
+    .schedule-time-adjust { display: flex; gap: 7px; margin-top: 0; }
+    .schedule-time-adjust button { flex: 0 0 auto; min-width: 68px; background: transparent; border: 1px solid #3a3e49; color: #9ca3af; padding: 5px 9px; border-radius: 7px; font-size: 0.7rem; cursor: pointer; }
     .schedule-time-adjust button:hover { border-color: #c9a96e; color: #dfcfb2; }
     .schedule-time-presets { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 6px; }
     .schedule-time-preset { background: #212329; border: 1px solid #3a3e49; color: #cbd5e1; padding: 6px 11px; border-radius: 8px; font-size: 0.76rem; cursor: pointer; }
@@ -172,13 +172,16 @@
     .input-clear-btn:hover { color: #c9a96e; }
     .admin-nav-link { color: #aaa; font-size: 0.82rem; text-decoration: none; font-weight: 500; }
     .admin-nav-link:hover { color: #dfcfb2; }
-    .schedule-datetime-stack { display: flex; flex-direction: column; gap: 12px; }
+    .schedule-datetime-stack { display: flex; flex-direction: column; gap: 10px; }
     .schedule-datetime-stack .schedule-time-box { background: #202229; border: 1px solid #333640; border-radius: 10px; padding: 10px 12px; }
-    .schedule-datetime-stack .schedule-time-box > label { display: inline-block; vertical-align: middle; width: 72px; margin: 0 !important; }
-    .schedule-datetime-stack .schedule-time-box > input[type="date"], .schedule-datetime-stack .schedule-time-box > input[type="time"] { display: inline-block; vertical-align: middle; width: calc(100% - 76px); padding: 6px 8px; }
-    .schedule-date-shortcuts, .schedule-time-presets, .schedule-time-adjust { margin-top: 4px; }
-    .schedule-time-adjust.schedule-end-adjust { max-width: 190px; margin-left: auto; }
-    .schedule-datetime-stack input[type="date"], .schedule-datetime-stack input[type="time"] { padding: 10px; font-size: 0.92rem; background: transparent; border: 0; width: 100%; }
+    .schedule-field-row { display: flex; align-items: center; gap: 12px; }
+    .schedule-field-row > label { flex: 0 0 68px; margin: 0 !important; }
+    .schedule-datetime-stack input[type="date"], .schedule-datetime-stack input[type="time"] { padding: 6px 8px; font-size: 0.92rem; background: transparent; border: 0; flex: 1; min-width: 0; }
+    .schedule-time-presets { align-items: center; }
+    .schedule-date-shortcuts { margin-left: 80px; }
+    .schedule-end-label { white-space: nowrap; }
+    .schedule-clear-wrap { margin-top: 14px !important; margin-bottom: 18px !important; }
+    .schedule-clear-wrap .input-clear-btn { color: #c0c4cc; font-size: 0.76rem; }
     @media (max-width: 520px) {
       .schedule-compact-row { align-items: flex-start; flex-wrap: wrap; }
       .schedule-compact-time { width: 82px; padding-top: 2px; }
@@ -988,8 +991,10 @@
         <div style="font-size: 0.85rem; font-weight: 600; color: #93c5fd; margin-bottom: 10px;">예약 일정 지정 (즉시 표출 시 비워두세요)</div>
         <div class="schedule-datetime-stack">
           <div class="schedule-time-box">
-            <label style="font-size: 0.76rem; margin-bottom: 2px;">예약 날짜</label>
-            <input type="date" id="u-sched-date">
+            <div class="schedule-field-row">
+              <label style="font-size: 0.76rem;">예약 날짜</label>
+              <input type="date" id="u-sched-date">
+            </div>
             <div class="schedule-date-shortcuts">
               <button type="button" class="schedule-date-shortcut" onclick="setScheduleDateOffset(0)">오늘</button>
               <button type="button" class="schedule-date-shortcut" onclick="setScheduleDateOffset(1)">내일</button>
@@ -997,8 +1002,10 @@
             </div>
           </div>
           <div class="schedule-time-box">
-            <label style="font-size: 0.76rem; margin-bottom: 2px;">시작 시간</label>
-            <input type="time" id="u-sched-start-time" step="1800" placeholder="시작 시간">
+            <div class="schedule-field-row">
+              <label style="font-size: 0.76rem;">시작 시간</label>
+              <input type="time" id="u-sched-start-time" step="1800" placeholder="시작 시간">
+            </div>
             <div class="schedule-time-presets">
               <button type="button" class="schedule-time-preset" data-time="10:00" onclick="setScheduleStartTime('10:00')">10:00</button>
               <button type="button" class="schedule-time-preset" data-time="14:00" onclick="setScheduleStartTime('14:00')">14:00</button>
@@ -1008,18 +1015,19 @@
             </div>
           </div>
           <div class="schedule-time-box">
-            <label style="font-size: 0.76rem; margin-bottom: 2px;">종료 시간 <span style="color:#7f8795;">(+3시간)</span></label>
-            <input type="time" id="u-sched-end-time" step="1800">
-            <div class="schedule-time-adjust schedule-end-adjust">
-              <button type="button" onclick="adjustScheduleEndTime(-5)">−5분</button>
-              <button type="button" onclick="adjustScheduleEndTime(5)">+5분</button>
+            <div class="schedule-field-row">
+              <label class="schedule-end-label" style="font-size: 0.76rem;">종료 시간 <span style="color:#7f8795;">(+3시간)</span></label>
+              <input type="time" id="u-sched-end-time" step="1800">
+            </div>
+            <div class="schedule-time-presets">
+              <div class="schedule-time-adjust"><button type="button" onclick="adjustScheduleEndTime(-5)">−5분</button><button type="button" onclick="adjustScheduleEndTime(5)">+5분</button></div>
             </div>
           </div>
         </div>
         <input type="datetime-local" id="u-sched-start" style="display:none;">
         <input type="datetime-local" id="u-sched-end" style="display:none;">
       </div>
-      <div style="display:flex; justify-content:flex-end; margin-top:8px;">
+      <div class="schedule-clear-wrap" style="display:flex; justify-content:flex-end;">
         <button type="button" class="input-clear-btn" onclick="clearScheduleInputs()">일정 지우기</button>
       </div>
 
