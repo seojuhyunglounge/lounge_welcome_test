@@ -170,8 +170,14 @@
     .schedule-date-shortcut:hover { border-color: #c9a96e; color: #dfcfb2; }
     .input-clear-btn { background: transparent; border: 0; color: #8d929d; padding: 2px 0; font-size: 0.72rem; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
     .input-clear-btn:hover { color: #c9a96e; }
+    .admin-nav-link { color: #aaa; font-size: 0.82rem; text-decoration: none; font-weight: 500; }
+    .admin-nav-link:hover { color: #dfcfb2; }
     .schedule-datetime-stack { display: flex; flex-direction: column; gap: 12px; }
     .schedule-datetime-stack .schedule-time-box { background: #202229; border: 1px solid #333640; border-radius: 10px; padding: 10px 12px; }
+    .schedule-datetime-stack .schedule-time-box > label { display: inline-block; vertical-align: middle; width: 72px; margin: 0 !important; }
+    .schedule-datetime-stack .schedule-time-box > input[type="date"], .schedule-datetime-stack .schedule-time-box > input[type="time"] { display: inline-block; vertical-align: middle; width: calc(100% - 76px); padding: 6px 8px; }
+    .schedule-date-shortcuts, .schedule-time-presets, .schedule-time-adjust { margin-top: 4px; }
+    .schedule-time-adjust.schedule-end-adjust { max-width: 190px; margin-left: auto; }
     .schedule-datetime-stack input[type="date"], .schedule-datetime-stack input[type="time"] { padding: 10px; font-size: 0.92rem; background: transparent; border: 0; width: 100%; }
     @media (max-width: 520px) {
       .schedule-compact-row { align-items: flex-start; flex-wrap: wrap; }
@@ -870,14 +876,14 @@
   <div id="admin-section">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
       <div style="display: flex; gap: 12px; flex-wrap: wrap;">
-        <a href="?view=bar&admin=1" style="color: #93c5fd; font-size: 0.85rem; text-decoration: none; font-weight: 500;">🍸 어메니티 편집</a>
-        <a href="?view=member_admin" style="color: #dfcfb2; font-size: 0.85rem; text-decoration: none; font-weight: 600;">💳 멤버십 횟수 관리</a>
-        <a href="?view=block_admin" style="color: #c9a96e; font-size: 0.85rem; text-decoration: none; font-weight: 600;">🔒 예약 캘린더 관리 ↗</a>
-        <a href="?view=history_admin" style="color: #c9a96e; font-size: 0.85rem; text-decoration: none; font-weight: 600;">📚 히스토리 전체보기 ↗</a>
+        <a href="?view=bar&admin=1" class="admin-nav-link">어메니티 편집</a>
+        <a href="?view=member_admin" class="admin-nav-link">멤버십 횟수 관리</a>
+        <a href="?view=block_admin" class="admin-nav-link">예약 캘린더 관리 ↗</a>
+        <a href="?view=history_admin" class="admin-nav-link">히스토리 전체보기 ↗</a>
       </div>
       <div style="display:flex; gap:10px; align-items:center;">
         <button type="button" onclick="logoutAdmin()" style="background:none; border:1px solid #444; color:#aaa; padding:4px 8px; border-radius:6px; font-size:0.75rem; cursor:pointer;">로그아웃</button>
-        <a href="?view=tv" target="_blank" style="color: #c9a96e; font-size: 0.85rem; text-decoration: none;">📺 TV 새 창 ↗</a>
+        <a href="?view=tv" target="_blank" class="admin-nav-link">TV 새 창 ↗</a>
       </div>
     </div>
 
@@ -888,7 +894,7 @@
         <div style="display: flex; align-items: center; gap: 6px;">
           <span id="occupancy-badge" class="tag-badge badge-blue">상태 확인 중...</span>
           <button type="button" id="btn-force-guest" onclick="resetToGuestScreen()" style="display: none; font-size: 0.72rem; padding: 3px 8px; border-radius: 6px; background: #374151; color: #f3f4f6; border: 1px solid #4b5563; cursor: pointer; white-space: nowrap;">
-            🚪 퇴실 처리
+            퇴실
           </button>
         </div>
       </div>
@@ -960,26 +966,26 @@
       <div class="form-group">
         <label>배경 및 음악 선택</label>
         <select id="u-bg-select" style="margin-bottom: 8px;">
-          <optgroup label="── 🎬 시네마틱 비디오 릴레이 ──">
-            <option value="video1.mp4,video2.mp4">🎬 1. 라운지 릴레이 (Video 1 + 2 연속 재생)</option>
-            <option value="video1.mp4,video2.mp4,video3.mp4">🎬 2. 풀 컬렉션 릴레이 (Video 1 + 2 + 3)</option>
-            <option value="video1.mp4">🎬 3. 메인 라운지 단독 (video1.mp4)</option>
-            <option value="video2.mp4">🎬 4. 서브 라운지 단독 (video2.mp4)</option>
+          <optgroup label="── 시네마틱 비디오 릴레이 ──">
+            <option value="video1.mp4,video2.mp4">1. 라운지 릴레이 (Video 1 + 2 연속 재생)</option>
+            <option value="video1.mp4,video2.mp4,video3.mp4">2. 풀 컬렉션 릴레이 (Video 1 + 2 + 3)</option>
+            <option value="video1.mp4">3. 메인 라운지 단독 (video1.mp4)</option>
+            <option value="video2.mp4">4. 서브 라운지 단독 (video2.mp4)</option>
           </optgroup>
-          <optgroup label="── 🖼 인테리어 스틸 ──">
-            <option value="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2560&q=85">🖼 하이엔드 스톤 라운지</option>
-            <option value="https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&w=2560&q=85">🖼 클래식 딥 월넛 살롱</option>
+          <optgroup label="── 인테리어 스틸 ──">
+            <option value="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2560&q=85">하이엔드 스톤 라운지</option>
+            <option value="https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&w=2560&q=85">클래식 딥 월넛 살롱</option>
           </optgroup>
         </select>
         <select id="u-bgm-select">
-          <option value="jazz1.mp3">🎵 1. Autumn Leaves 클래식 재즈</option>
-          <option value="jazz2.mp3">🎵 2. 라운지 스윙 재즈 2</option>
-          <option value="none">🔇 음악 끄기 (BGM Off)</option>
+          <option value="jazz1.mp3">1. Autumn Leaves 클래식 재즈</option>
+          <option value="jazz2.mp3">2. 라운지 스윙 재즈 2</option>
+          <option value="none">음악 끄기 (BGM Off)</option>
         </select>
       </div>
 
       <div style="background: #1a1c24; border: 1px dashed #34394a; border-radius: 12px; padding: 14px; margin-bottom: 16px;">
-        <div style="font-size: 0.85rem; font-weight: 600; color: #93c5fd; margin-bottom: 10px;">📅 예약 일정 지정 (즉시 표출 시 비워두세요)</div>
+        <div style="font-size: 0.85rem; font-weight: 600; color: #93c5fd; margin-bottom: 10px;">예약 일정 지정 (즉시 표출 시 비워두세요)</div>
         <div class="schedule-datetime-stack">
           <div class="schedule-time-box">
             <label style="font-size: 0.76rem; margin-bottom: 2px;">예약 날짜</label>
@@ -1002,9 +1008,9 @@
             </div>
           </div>
           <div class="schedule-time-box">
-            <label style="font-size: 0.76rem; margin-bottom: 2px;">종료 시간 <span style="color:#7f8795;">(+3시간 자동)</span></label>
+            <label style="font-size: 0.76rem; margin-bottom: 2px;">종료 시간 <span style="color:#7f8795;">(+3시간)</span></label>
             <input type="time" id="u-sched-end-time" step="1800">
-            <div class="schedule-time-adjust">
+            <div class="schedule-time-adjust schedule-end-adjust">
               <button type="button" onclick="adjustScheduleEndTime(-5)">−5분</button>
               <button type="button" onclick="adjustScheduleEndTime(5)">+5분</button>
             </div>
@@ -1018,8 +1024,8 @@
       </div>
 
       <div style="display: flex; gap: 10px;">
-        <button type="button" class="btn-primary" id="btn-action-now" style="flex: 1; margin-top: 0;">⚡ TV 즉시 표출</button>
-        <button type="button" class="btn-primary" id="btn-action-sched" style="flex: 1; margin-top: 0; background: #2563eb; color: #fff;">📅 예약 일정 추가</button>
+        <button type="button" class="btn-primary" id="btn-action-now" style="flex: 1; margin-top: 0;">TV 즉시 표출</button>
+        <button type="button" class="btn-primary" id="btn-action-sched" style="flex: 1; margin-top: 0;">예약 일정 추가</button>
       </div>
       <button type="button" class="btn-secondary" id="u-cancel-btn" style="display: none; margin-top: 8px;" onclick="cancelEditSchedule()">수정 취소</button>
       <div id="unified-log-box" style="margin-top: 10px; font-size: 0.84rem; display: none;"></div>
@@ -1029,7 +1035,7 @@
     <div class="admin-card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
         <div class="admin-title" style="margin-bottom: 0;">2. 예약대기열</div>
-        <button type="button" onclick="loadSchedules()" title="목록 새로고침" style="background: none; border: 1px solid #444; color: #c9a96e; padding: 3px 10px; border-radius: 6px; font-size: 0.74rem; cursor: pointer;">🔄 새로고침</button>
+        <button type="button" onclick="loadSchedules()" title="목록 새로고침" style="background: none; border: 1px solid #444; color: #aaa; padding: 3px 8px; border-radius: 6px; font-size: 0.74rem; cursor: pointer;">새로고침</button>
       </div>
       <div id="schedule-list"><div style="color: #666; font-size: 0.85rem; text-align: center; padding: 15px 0;">대기 일정이 없습니다.</div></div>
     </div>
@@ -3216,7 +3222,7 @@ async function syncTV() {
         window.cancelEditSchedule = () => {
           editingId = null;
           document.getElementById('unified-card-title').innerText = '1. TV 즉시표출 & 예약제어';
-          document.getElementById('btn-action-sched').innerText = '📅 예약 일정 추가';
+          document.getElementById('btn-action-sched').innerText = '예약 일정 추가';
           document.getElementById('btn-action-now').style.display = 'block';
           document.getElementById('u-cancel-btn').style.display = 'none';
           ['u-name-input','u-meeting-input','u-sched-date','u-sched-start-time','u-sched-end-time','u-sched-start','u-sched-end'].forEach(id => document.getElementById(id).value = '');
