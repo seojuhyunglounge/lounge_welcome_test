@@ -240,10 +240,14 @@
 #booking-section #calendar-wrapper > .admin-card > div:nth-child(3) > div:first-child { color: #a06f68 !important; }
 #booking-section #calendar-wrapper > .admin-card > div:nth-child(3) > div:last-child { color: #68839a !important; }
 #booking-section #book-calendar-grid {
+  grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
   gap: 6px !important;
+  min-width: 0 !important;
 }
 #booking-section #book-calendar-grid > div {
   box-sizing: border-box;
+  min-width: 0 !important;
+  max-width: 100% !important;
 }
 #booking-section #book-calendar-grid > div[style*="background: #11100e"] {
   background: transparent !important;
@@ -251,6 +255,20 @@
   min-height: 76px !important;
 }
 
+#booking-section #book-calendar-grid .booking-calendar-status {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+#booking-section #book-calendar-grid .booking-calendar-status span {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: clip;
+  white-space: nowrap;
+}
 </style>
 
 <style>
@@ -1469,25 +1487,24 @@
 
             const isFullyBlocked = is1Blocked && is2Blocked && is3Blocked;
 
-            let subText = '';
+            let statusLines = [];
             let blockedCount = (is1Blocked ? 1 : 0) + (is2Blocked ? 1 : 0) + (is3Blocked ? 1 : 0);
             if (isFullyBlocked) {
-              subText = '전체마감';
-            } else if (blockedCount > 0) {
-              let closedParts = [];
-              if (is1Blocked) closedParts.push('1부');
-              if (is2Blocked) closedParts.push('2부');
-              if (is3Blocked) closedParts.push('3부');
-              subText = closedParts.map(part => `${part}마감`).join(' · ');
+              statusLines = ['전체마감'];
+            } else {
+              if (is1Blocked) statusLines.push('1부마감');
+              if (is2Blocked) statusLines.push('2부마감');
+              if (is3Blocked) statusLines.push('3부마감');
             }
+            const statusHtml = statusLines.map(line => `<span>${line}</span>`).join('');
 
             html += `
               <div onclick="${isFullyBlocked ? '' : `selectBookingDate('${dateStr}')`}" style="background: ${isFullyBlocked ? '#121214' : '#1c1917'}; border: 1px solid ${selectedDateStr === dateStr ? '#c9a96e' : '#322d28'}; border-radius: 8px; padding: 6px; display: flex; flex-direction: column; justify-content: space-between; min-height: 75px; cursor: ${isFullyBlocked ? 'not-allowed' : 'pointer'}; opacity: ${isFullyBlocked ? '0.4' : '1'};">
                 <div style="font-size: 0.82rem; font-weight: 600; color: ${isFullyBlocked ? '#555' : '#dfcfb2'}; text-align: center;">
                   ${d}
                 </div>
-                <div class="booking-calendar-status" style="font-size: 0.62rem; text-align: center; color: ${isFullyBlocked ? '#777269' : '#9b8058'}; font-weight: 500; line-height: 1.1;">
-                  ${subText}
+                <div class="booking-calendar-status" style="font-size: 0.62rem; text-align: center; color: ${isFullyBlocked ? '#777269' : '#9b8058'}; font-weight: 500; line-height: 1.15; min-height: 2.3em; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; white-space: nowrap; overflow: hidden;">
+                  ${statusHtml}
                 </div>
               </div>`;
           }
