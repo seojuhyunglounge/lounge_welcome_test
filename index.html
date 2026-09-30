@@ -1,6 +1,6 @@
 <!--
   La Colonne
-  VERSION: V2.5
+  VERSION: V2.5.1 — STEP 1
   UPDATED: 2026-09-30
 --> 
 <!DOCTYPE html>
@@ -1256,6 +1256,58 @@
 #tv-section .sub-desc { white-space: pre-line; }
 </style>
 
+
+<style>
+/* ============================================================
+   La Colonne V2.5.1 — Step 1: Customer Common Theme
+   Customer canvas = Ivory / UI = Pretendard / Brand = Cormorant.
+   Admin and TV are intentionally excluded.
+   ============================================================ */
+body.lc-customer-view {
+  background:#f7f4ed !important;
+  color:#292722 !important;
+}
+
+body.lc-customer-view #guest-portal-section.lc-hub,
+body.lc-customer-view #booking-section,
+body.lc-customer-view #my-booking-section.lc-my-booking,
+body.lc-customer-view #member-client-section,
+body.lc-customer-view #bar-section {
+  font-family:"Pretendard", -apple-system, sans-serif !important;
+}
+
+body.lc-customer-view .portal-brand {
+  font-family:"Cormorant Garamond", serif !important;
+  color:#292722 !important;
+}
+
+body.lc-customer-view .portal-sub {
+  font-family:"Pretendard", -apple-system, sans-serif !important;
+  color:#777269 !important;
+}
+
+body.lc-customer-view #booking-section,
+body.lc-customer-view #my-booking-section.lc-my-booking,
+body.lc-customer-view #member-client-section,
+body.lc-customer-view #bar-section {
+  background:#f7f4ed !important;
+  color:#292722 !important;
+}
+
+body.lc-customer-view label,
+body.lc-customer-view input,
+body.lc-customer-view textarea,
+body.lc-customer-view select,
+body.lc-customer-view button,
+body.lc-customer-view a {
+  font-family:"Pretendard", -apple-system, sans-serif;
+}
+
+body.lc-customer-view .lc-hub-brand {
+  font-family:"Cormorant Garamond", serif !important;
+}
+</style>
+
 <style>
 /* ============================================================
    La Colonne V2.5 — Customer Ivory completion layer
@@ -2167,6 +2219,10 @@
       viewParam === 'tv', viewParam === 'bar', viewParam === 'bar' && params.get('admin') === '1',
       viewParam === 'member_admin', viewParam === 'member', viewParam === 'booking', viewParam === 'my_booking', viewParam === 'block_admin', viewParam === 'history_admin', viewParam === 'admin'
     ];
+
+    // Customer-facing views use the Ivory canvas. Admin / TV remain Dark.
+    const isCustomerView = !viewParam || isBooking || isMyBooking || isMemberClient || (isBar && !isBarAdmin);
+    document.body.classList.toggle('lc-customer-view', isCustomerView);
 
     function showModal(title, desc) {
       document.getElementById('modal-title').innerText = title;
