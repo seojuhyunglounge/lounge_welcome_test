@@ -1260,7 +1260,7 @@
 <style>
 /* ============================================================
    La Colonne V2.5.1 — Step 1: Customer Common Theme
-   Updated through V2.5.4 — Step 4: Customer Brand Typography
+   Updated through V2.5.5 — Step 5: Customer Ivory Interior UI
    Customer canvas = Ivory / UI = Pretendard / Brand = Cormorant.
    Admin and TV are intentionally excluded.
    ============================================================ */
@@ -1593,6 +1593,139 @@ body.lc-customer-view .portal-brand {
   font-weight:500 !important;
   letter-spacing:.12em !important;
 }
+</style>
+
+
+<style>
+/* ============================================================
+   La Colonne V2.5.5 — Step 5: Customer Ivory Interior UI
+   Customer Reservation / Membership / Amenities interiors only.
+   Admin / TV remain untouched.
+   ============================================================ */
+
+/* Reservation: remove legacy dark inline presentation from customer calendar/form. */
+body.lc-customer-view #booking-section #calendar-wrapper > .admin-card,
+body.lc-customer-view #booking-section #book-form-panel {
+  background:#f4f1ea !important;
+  color:#292722 !important;
+  border-color:rgba(41,39,34,.12) !important;
+  box-shadow:none !important;
+}
+body.lc-customer-view #booking-section #calendar-wrapper > .admin-card > div:first-child > div:first-child,
+body.lc-customer-view #booking-section #selected-date-title {
+  color:#292722 !important;
+}
+body.lc-customer-view #booking-section #calendar-wrapper > .admin-card > div:nth-child(2) {
+  color:#777269 !important;
+}
+body.lc-customer-view #booking-section #calendar-wrapper > .admin-card > div:nth-child(3) {
+  color:#777269 !important;
+}
+body.lc-customer-view #booking-section #calendar-wrapper > .admin-card > div:nth-child(3) > div:first-child {
+  color:#a06f68 !important;
+}
+body.lc-customer-view #booking-section #calendar-wrapper > .admin-card > div:nth-child(3) > div:last-child {
+  color:#68839a !important;
+}
+body.lc-customer-view #booking-section #calendar-wrapper #book-calendar-grid > div:not(.booking-calendar-status) {
+  background:#faf9f6 !important;
+  border:1px solid rgba(41,39,34,.10) !important;
+  color:#292722 !important;
+  opacity:1 !important;
+}
+body.lc-customer-view #booking-section #calendar-wrapper #book-calendar-grid > div[style*="border: 1px solid #c9a96e"] {
+  border-color:#9b8058 !important;
+  background:#eee9df !important;
+}
+body.lc-customer-view #booking-section #calendar-wrapper #book-calendar-grid > div[style*="opacity: 0.4"] {
+  background:#eeece7 !important;
+  border-color:rgba(41,39,34,.08) !important;
+  opacity:.58 !important;
+}
+body.lc-customer-view #booking-section #calendar-wrapper #book-calendar-grid > div > div:first-child {
+  color:#292722 !important;
+}
+body.lc-customer-view #booking-section #book-form-panel > div:first-child button {
+  color:#777269 !important;
+}
+body.lc-customer-view #booking-section #book-form-panel .booking-consent-box label,
+body.lc-customer-view #booking-section #book-form-panel .booking-consent-box label span {
+  color:#777269 !important;
+}
+body.lc-customer-view #booking-section #book-form-panel .booking-consent-box input[type="checkbox"] {
+  accent-color:#9b8058 !important;
+}
+
+/* Membership: the login card and generated pass result use the same Ivory system. */
+body.lc-customer-view #member-client-section > .admin-card {
+  background:#f4f1ea !important;
+  color:#292722 !important;
+  border:1px solid rgba(41,39,34,.12) !important;
+  border-radius:10px !important;
+  box-shadow:none !important;
+}
+body.lc-customer-view #member-client-section .pass-card-ui {
+  background:#f4f1ea !important;
+  color:#292722 !important;
+  border:1px solid rgba(155,128,88,.35) !important;
+  box-shadow:none !important;
+}
+body.lc-customer-view #member-client-section .pass-card-ui > div:first-child > span:last-child {
+  color:#777269 !important;
+}
+body.lc-customer-view #member-client-section .pass-card-ui > div:nth-child(2) {
+  color:#292722 !important;
+}
+body.lc-customer-view #member-client-section .pass-card-ui > div:nth-child(3) {
+  color:#777269 !important;
+}
+body.lc-customer-view #member-client-section .pass-card-ui > div:nth-child(4) {
+  background:#faf9f6 !important;
+  border:1px solid rgba(41,39,34,.10) !important;
+  color:#292722 !important;
+}
+body.lc-customer-view #member-client-section .pass-card-ui > div:nth-child(4) span:first-child {
+  color:#777269 !important;
+}
+body.lc-customer-view #member-client-section .pass-card-ui > div:nth-child(4) div span:first-child {
+  color:#9b8058 !important;
+}
+body.lc-customer-view #member-client-section .pass-card-ui > div:nth-child(4) div span:last-child {
+  color:#777269 !important;
+}
+
+/* Amenities: customer item rows and quantity controls. */
+body.lc-customer-view #bar-section #bar-items-container > .compact-row {
+  background:#faf9f6 !important;
+  color:#292722 !important;
+  border-color:rgba(41,39,34,.12) !important;
+}
+body.lc-customer-view #bar-section #bar-items-container h4 {
+  color:#292722 !important;
+}
+body.lc-customer-view #bar-section #bar-items-container p {
+  color:#9b8058 !important;
+}
+body.lc-customer-view #bar-section #bar-items-container > .compact-row > div:last-child {
+  background:#eee9df !important;
+  border:1px solid rgba(41,39,34,.10) !important;
+}
+body.lc-customer-view #bar-section #bar-items-container > .compact-row > div:last-child span {
+  color:#292722 !important;
+}
+body.lc-customer-view #bar-section #bar-items-container .page-btn {
+  background:transparent !important;
+  color:#6f665b !important;
+  border-color:rgba(41,39,34,.12) !important;
+}
+body.lc-customer-view #bar-section #client-total-card {
+  background:#f4f1ea !important;
+  color:#292722 !important;
+}
+body.lc-customer-view #bar-section #client-total-card #bar-total-display {
+  color:#292722 !important;
+}
+
 </style>
 
 </head>
