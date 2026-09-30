@@ -2368,7 +2368,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
       </div>
       <div class="my-change-actions">
         <button type="button" onclick="closeMyInfoEdit()">취소</button>
-        <button type="button" class="save" onclick="saveMyInfoEdit()">수정 저장</button>
+        <button type="button" class="save" onclick="saveActiveInfoEdit()">수정 저장</button>
       </div>
       <div id="my-edit-error" style="display:none; margin-top:10px; color:#8b5b55; font-size:12px;"></div>
     </div>
@@ -2392,7 +2392,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
       <div id="my-change-session-list" class="my-change-session-list"></div>
       <div class="my-change-actions">
         <button type="button" onclick="closeMyChange()">취소</button>
-        <button type="button" class="save" onclick="saveMyChange()">일정 변경 저장</button>
+        <button type="button" class="save" onclick="saveActiveChange()">일정 변경 저장</button>
       </div>
       <div id="my-change-error" style="display:none; margin-top:10px; color:#8b5b55; font-size:12px;"></div>
     </div>
@@ -2950,16 +2950,174 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         if (!bookings.length) {
           content.innerHTML = '<div style="padding:12px 0; color:#777269; font-size:12px;">현재 예약된 일정이 없습니다.</div>';
         } else {
-          content.innerHTML = bookings.map(b => `
-            <div style="padding:14px 0; border-top:1px solid rgba(41,39,34,.12);">
-              <div style="font-size:12px; color:#777269; margin-bottom:5px;">${formatMemberBookingDate(b.start_time, b.end_time)}</div>
-              <div style="font-size:14px; font-weight:600; color:#292722;">${escapeHtml(b.reservation_name || b.guest_name || '예약')}</div>
-              ${b.meeting_name ? `<div style="font-size:12px; color:#777269; margin-top:4px;">${escapeHtml(b.meeting_name)}</div>` : ''}
-              ${b.customer_modified_at ? '<div style="font-size:11px; color:#9b8058; margin-top:5px;">최근 예약 정보가 변경되었습니다.</div>' : ''}
-            </div>`).join('');
+          content.innerHTML = bookings.filter(b => b.guest_name !== '[CLOSED_BLOCK]').map(b => {
+            const started = isMemberBookingStarted(b);
+            const reservationName = b.reservation_name || b.guest_name || '예약';
+            const displayName = b.guest_name || reservationName || '—';
+            const meetingName = b.meeting_name || '—';
+            return `
+            <div class="my-booking-item" data-booking-id="${b.id}">
+              <div class="my-booking-date">${escapeHtml(fmtDate(b.start_time))} ~ ${escapeHtml(fmtDate(b.end_time, 'time'))}${started ? '<span class="my-booking-status">이용 중</span>' : ''}</div>
+              <div class="my-booking-main">
+                <div class="key">표출명</div><div class="value">${escapeHtml(displayName)}</div>
+                <div class="key">모임명</div><div class="value">${escapeHtml(meetingName)}</div>
+              </div>
+              <div class="my-booking-actions">
+                <button type="button" class="my-booking-action" ${started ? 'disabled' : ''} onclick="openMemberInfoEdit(${b.id})">예약 정보 수정</button>
+                <button type="button" class="my-booking-action" ${started ? 'disabled' : ''} onclick="openMemberChange(${b.id})">일정 변경</button>
+                <button type="button" class="my-booking-action danger" onclick="cancelMemberBooking(${b.id})">예약 취소</button>
+              </div>
+              <div class="my-booking-edit-slot"></div>
+              <div class="my-booking-change-slot"></div>
+            </div>`;
+          }).join('');
         }
         wrap.style.display = 'block';
       }
+
+      function isMemberBookingStarted(b) {
+        return new Date(b.start_time).getTime() <= Date.now();
+      }
+
+      function getMemberBookingById(id) {
+        return memberBookingCache.find(x => Number(x.id) === Number(id));
+      }
+
+      window.saveActiveChange = function() {
+        if (memberBookingPhone && memberBookingPin && myChangeId && getMemberBookingById(myChangeId)) {
+          return saveMemberChange();
+        }
+        return saveMyChange();
+      };
+
+      window.saveMemberChange = async function() {
+        if (!myChangeId) return;
+        const selected = document.querySelector('.my-change-session.is-selected');
+        const err = document.getElementById('my-change-error');
+        if (!selected) {
+          err.innerText='변경할 세션을 선택해주세요.';
+          err.style.display='block';
+          return;
+        }
+        try {
+          const res = await apiCall('rpc/change_customer_booking', 'POST', {
+            p_id: myChangeId, p_phone: memberBookingPhone, p_pin: memberBookingPin,
+            p_start_time: selected.dataset.start, p_end_time: selected.dataset.end
+          });
+          const result = res.ok ? await res.json() : null;
+          if (!res.ok || !result || !result.success) throw new Error((result && result.message) || '일정 변경에 실패했습니다.');
+          const panel=document.getElementById('my-change-panel');
+          const home=document.getElementById('my-change-panel-home');
+          if(panel && home) home.appendChild(panel);
+          panel.style.display='none';
+          myChangeId=null; myChangeDate='';
+          showToast('예약 일정이 변경되었습니다.');
+          await loadMemberBookingHistory();
+        } catch(e) {
+          err.innerText=e.message || '일정 변경에 실패했습니다.';
+          err.style.display='block';
+        }
+      };
+
+      window.saveActiveInfoEdit = function() {
+        if (memberBookingPhone && memberBookingPin && myEditingInfoId && getMemberBookingById(myEditingInfoId)) {
+          return saveMemberInfoEdit();
+        }
+        return saveMyInfoEdit();
+      };
+
+      window.openMemberInfoEdit = function(id) {
+        const b = getMemberBookingById(id);
+        if (!b || isMemberBookingStarted(b)) return;
+        const panel = document.getElementById('my-info-edit-panel');
+        const slot = document.querySelector(`.my-booking-item[data-booking-id="${id}"] .my-booking-edit-slot`);
+        if (!panel || !slot) return;
+        const home = document.getElementById('my-info-edit-panel-home');
+        const changePanel = document.getElementById('my-change-panel');
+        const changeHome = document.getElementById('my-change-panel-home');
+        if (changePanel && changeHome) changeHome.appendChild(changePanel);
+        panel.style.display = 'none';
+        slot.appendChild(panel);
+        document.getElementById('my-edit-reservation-name').value = b.reservation_name || b.guest_name || '';
+        document.getElementById('my-edit-reservation-name').readOnly = true;
+        document.getElementById('my-edit-reservation-name').style.background = '#f1eee8';
+        document.getElementById('my-edit-reservation-name-label').innerText = '예약자명 (회원명 · 수정 불가)';
+        document.getElementById('my-edit-display-name').value = b.guest_name || b.reservation_name || '';
+        document.getElementById('my-edit-meeting-name').value = b.meeting_name || '';
+        document.getElementById('my-edit-sub-message').value = b.sub_message || '';
+        document.getElementById('my-edit-error').style.display = 'none';
+        panel.style.display = 'block';
+        panel.scrollIntoView({behavior:'smooth', block:'start'});
+      };
+
+      window.saveMemberInfoEdit = async function() {
+        const b = getMemberBookingById(myEditingInfoId);
+        if (!b) return;
+        const reservationName = document.getElementById('my-edit-reservation-name').value.trim();
+        const displayName = document.getElementById('my-edit-display-name').value.trim();
+        const meetingName = document.getElementById('my-edit-meeting-name').value.trim();
+        const subMessage = document.getElementById('my-edit-sub-message').value.trim();
+        const err = document.getElementById('my-edit-error');
+        err.style.display = 'none';
+        try {
+          const res = await apiCall('rpc/update_customer_booking', 'POST', {
+            p_id: myEditingInfoId, p_phone: memberBookingPhone, p_pin: memberBookingPin,
+            p_reservation_name: reservationName, p_guest_name: displayName,
+            p_meeting_name: meetingName, p_sub_message: subMessage
+          });
+          const result = res.ok ? await res.json() : null;
+          if (!res.ok || !result || !result.success) throw new Error((result && result.message) || '수정에 실패했습니다.');
+          const panel=document.getElementById('my-info-edit-panel');
+          const home=document.getElementById('my-info-edit-panel-home');
+          if(panel && home) home.appendChild(panel);
+          panel.style.display='none';
+          myEditingInfoId=null;
+          showToast('예약 정보가 수정되었습니다.');
+          await loadMemberBookingHistory();
+        } catch(e) {
+          err.innerText=e.message || '수정에 실패했습니다.';
+          err.style.display='block';
+        }
+      };
+
+      window.openMemberChange = function(id) {
+        const b = getMemberBookingById(id);
+        if (!b || isMemberBookingStarted(b)) return;
+        const panel = document.getElementById('my-change-panel');
+        const slot = document.querySelector(`.my-booking-item[data-booking-id="${id}"] .my-booking-change-slot`);
+        if (!panel || !slot) return;
+        const home = document.getElementById('my-change-panel-home');
+        const editPanel = document.getElementById('my-info-edit-panel');
+        const editHome = document.getElementById('my-info-edit-panel-home');
+        if (editPanel && editHome) editHome.appendChild(editPanel);
+        panel.style.display = 'none';
+        slot.appendChild(panel);
+        const d = new Date(b.start_time);
+        myChangeId = id;
+        myEditingInfoId = null;
+        myChangeYear = d.getFullYear();
+        myChangeMonth = d.getMonth();
+        myChangeDate = '';
+        document.getElementById('my-change-error').style.display = 'none';
+        panel.style.display = 'block';
+        panel.scrollIntoView({behavior:'smooth', block:'start'});
+        renderMyChangeCalendar();
+      };
+
+      window.cancelMemberBooking = async function(id) {
+        if (!confirm('정말로 이 예약을 취소하시겠습니까?')) return;
+        try {
+          const res = await apiCall('rpc/cancel_my_booking', 'POST', {
+            p_id: id, p_phone: memberBookingPhone, p_pin: memberBookingPin
+          });
+          const success = res.ok ? await res.json() : false;
+          if (!success) throw new Error('취소 실패 (정보 불일치)');
+          showToast('예약이 취소되었습니다.');
+          await loadMemberBookingHistory();
+        } catch(e) {
+          alert(e.message || '서버 오류');
+        }
+      };
 
       async function loadMemberBookingHistory() {
         if (!memberBookingPhone || !/^\d{4}$/.test(memberBookingPin)) {
@@ -3178,7 +3336,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         const todayStr = nowKST.toLocaleDateString('en-CA');
 
         try {
-          const res = await apiCall(`welcome_schedules?start_time=gte.${toISOStringSafe(startDateObj)}&start_time=lte.${toISOStringSafe(endDateObj)}&select=id,start_time,end_time,guest_name`);
+          const res = await apiCall('rpc/get_customer_schedule_slots', 'POST', { p_start_time: toISOStringSafe(startDateObj), p_end_time: toISOStringSafe(endDateObj) });
           const schedules = res.ok ? await res.json() : [];
 
           let html = '';
@@ -3276,7 +3434,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         try {
           const startDayObj = new Date(y, m-1, d, 0, 0, 0);
           const endDayObj = new Date(y, m-1, d, 23, 59, 59);
-          const res = await apiCall(`welcome_schedules?start_time=gte.${toISOStringSafe(startDayObj)}&start_time=lte.${toISOStringSafe(endDayObj)}&select=start_time,end_time`);
+          const res = await apiCall('rpc/get_customer_schedule_slots', 'POST', { p_start_time: toISOStringSafe(startDayObj), p_end_time: toISOStringSafe(endDayObj) });
           const existing = res.ok ? await res.json() : [];
           const nowKST = new Date();
           const todayStr = nowKST.toLocaleDateString('en-CA');
@@ -3547,8 +3705,8 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         try {
           const res = await apiCall('rpc/update_customer_booking', 'POST', {
             p_id: myEditingInfoId,
-            p_phone: phoneIn.value.trim().replace(/[^0-9]/g, ''),
-            p_pin: pinIn.value.trim(),
+            p_phone: (memberBookingPhone || phoneIn.value.trim().replace(/[^0-9]/g, '')),
+            p_pin: (memberBookingPin || pinIn.value.trim()),
             p_reservation_name: reservationName,
             p_guest_name: displayName,
             p_meeting_name: meetingName,
@@ -3619,7 +3777,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         const monthEnd = new Date(myChangeYear, myChangeMonth, lastDayDate, 23, 59, 59);
         const todayStr = new Date().toLocaleDateString('en-CA');
         try {
-          const res = await apiCall(`welcome_schedules?start_time=gte.${toISOStringSafe(monthStart)}&start_time=lte.${toISOStringSafe(monthEnd)}&select=id,start_time,end_time,guest_name`);
+          const res = await apiCall('rpc/get_customer_schedule_slots', 'POST', { p_start_time: toISOStringSafe(monthStart), p_end_time: toISOStringSafe(monthEnd) });
           const schedules = (res.ok ? await res.json() : []).filter(s => Number(s.id) !== Number(myChangeId));
           let html = '';
           for (let i = 0; i < firstDayIndex; i++) html += '<div class="my-change-empty"></div>';
@@ -3661,7 +3819,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         try {
           const dayStart = new Date(y,m-1,d,0,0,0);
           const dayEnd = new Date(y,m-1,d,23,59,59);
-          const res = await apiCall(`welcome_schedules?start_time=gte.${toISOStringSafe(dayStart)}&start_time=lte.${toISOStringSafe(dayEnd)}&select=id,start_time,end_time,guest_name`);
+          const res = await apiCall('rpc/get_customer_schedule_slots', 'POST', { p_start_time: toISOStringSafe(dayStart), p_end_time: toISOStringSafe(dayEnd) });
           const existing = (res.ok ? await res.json() : []).filter(x => Number(x.id) !== Number(myChangeId));
           const current = myBookingCache.find(x => Number(x.id) === Number(myChangeId));
           const now = new Date();
@@ -3704,7 +3862,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
           const res = await apiCall('rpc/change_customer_booking','POST',{
             p_id: myChangeId,
             p_phone: phoneIn.value.trim().replace(/[^0-9]/g,''),
-            p_pin: pinIn.value.trim(),
+            p_pin: (memberBookingPin || pinIn.value.trim()),
             p_start_time: slots[0].dataset.start,
             p_end_time: slots[slots.length-1].dataset.end
           });
@@ -3713,7 +3871,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
           if (!result || !result.success) throw new Error((result && result.message) || '일정 변경에 실패했습니다.');
           closeMyChange();
           showToast('예약 일정이 변경되었습니다.');
-          await lookupMyBookings();
+          if (memberBookingPhone && memberBookingPin) await loadMemberBookingHistory(); else await lookupMyBookings();
         } catch(err) {
           e.innerText = err.message || '일정 변경에 실패했습니다.';
           e.style.display='block';
@@ -4162,19 +4320,13 @@ async function syncTV() {
     const fiveMin = toISOStringSafe(new Date(Date.now() + 300000));
     const encodedBlock = encodeURIComponent('[CLOSED_BLOCK]');
 
-    const scheduleUrl =
-      `welcome_schedules?start_time=lte.${fiveMin}` +
-      `&end_time=gte.${nowISO}` +
-      `&guest_name=neq.${encodedBlock}` +
-      `&order=start_time.asc&limit=1`;
-
-    const sRes = await apiCall(scheduleUrl);
+    const sRes = await apiCall('rpc/get_tv_active_schedule', 'POST', {});
 
     // 🔎 TV 예약 조회 진단 로그
     console.log('[La Colonne TV 예약조회]', {
       nowISO,
       fiveMin,
-      url: scheduleUrl,
+      endpoint: 'rpc/get_tv_active_schedule',
       status: sRes.status,
       ok: sRes.ok
     });
