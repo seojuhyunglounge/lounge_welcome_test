@@ -1598,7 +1598,7 @@ body.lc-customer-view .portal-brand {
 
 <style>
 /* ============================================================
-   La Colonne V2.5.5 — Step 5: Customer Ivory Interior UI
+   La Colonne V2.5.6 — Step 5.1: Customer CTA & Header Refinement
    Customer Reservation / Membership / Amenities interiors only.
    Admin / TV remain untouched.
    ============================================================ */
@@ -1728,6 +1728,60 @@ body.lc-customer-view #bar-section #client-total-card #bar-total-display {
 
 </style>
 
+
+<style>
+/* ============================================================
+   La Colonne V2.5.6 — Step 5.1: Customer CTA & Header Refinement
+   Customer-only refinement. Admin / TV intentionally untouched.
+   ============================================================ */
+body.lc-customer-view #member-client-section .portal-brand,
+body.lc-customer-view #bar-section .portal-brand,
+body.lc-customer-view #booking-section .portal-brand,
+body.lc-customer-view #my-booking-section .portal-brand {
+  text-align:center !important;
+  display:block !important;
+}
+
+/* Membership pass CTA: retain the dark, high-visibility action treatment. */
+body.lc-customer-view #member-client-section .pass-card-ui .btn-primary {
+  background:#292722 !important;
+  color:#f7f4ed !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+
+/* Membership pass result: preserve readable Ivory typography against legacy inline colors. */
+body.lc-customer-view #member-client-section .pass-card-ui > div:first-child > span:first-child {
+  color:#8b7048 !important;
+}
+
+/* Amenities account information: fully convert the legacy dark block to Ivory. */
+body.lc-customer-view #bar-section #client-total-card > div:nth-child(3) {
+  background:#faf9f6 !important;
+  border:1px dashed rgba(41,39,34,.16) !important;
+  color:#292722 !important;
+}
+body.lc-customer-view #bar-section #client-total-card > div:nth-child(3) > div:first-child {
+  color:#8b7048 !important;
+}
+body.lc-customer-view #bar-section #client-total-card #account-text {
+  color:#292722 !important;
+}
+body.lc-customer-view #bar-section #client-total-card > div:nth-child(3) button {
+  background:#f7f4ed !important;
+  border:1px solid rgba(41,39,34,.18) !important;
+  color:#6f665b !important;
+}
+
+/* Amenities final action: same dark CTA language as Membership. */
+body.lc-customer-view #bar-section #btn-submit-bar {
+  background:#292722 !important;
+  color:#f7f4ed !important;
+  border:0 !important;
+  box-shadow:none !important;
+}
+</style>
+
 </head>
 <body>
 
@@ -1740,7 +1794,7 @@ body.lc-customer-view #bar-section #client-total-card #bar-total-display {
       <p class="lc-hub-intro">라 콜론을 이용하시는 방법을 선택해 주세요.</p>
       <nav class="lc-hub-nav" aria-label="La Colonne customer access">
         <a href="?view=booking" class="lc-hub-link"><span class="lc-hub-num">01</span><span class="lc-hub-copy"><span class="lc-hub-label">Reservation</span><span class="lc-hub-desc">라운지 이용 예약</span></span><span class="lc-hub-arrow" aria-hidden="true">→</span></a>
-        <a href="?view=my_booking" class="lc-hub-link"><span class="lc-hub-num">02</span><span class="lc-hub-copy"><span class="lc-hub-label">My Reservation</span><span class="lc-hub-desc">예약 조회 및 취소</span></span><span class="lc-hub-arrow" aria-hidden="true">→</span></a>
+        <a href="?view=booking" class="lc-hub-link"><span class="lc-hub-num">02</span><span class="lc-hub-copy"><span class="lc-hub-label">My Reservation</span><span class="lc-hub-desc">예약 조회 및 취소</span></span><span class="lc-hub-arrow" aria-hidden="true">→</span></a>
         <a href="?view=member" class="lc-hub-link"><span class="lc-hub-num">03</span><span class="lc-hub-copy"><span class="lc-hub-label">Membership</span><span class="lc-hub-desc">회원권 세션 확인</span></span><span class="lc-hub-arrow" aria-hidden="true">→</span></a>
         <a href="?view=bar" class="lc-hub-link"><span class="lc-hub-num">04</span><span class="lc-hub-copy"><span class="lc-hub-label">Amenities</span><span class="lc-hub-desc">어메니티 &amp; 미니바 셀프 정산</span></span><span class="lc-hub-arrow" aria-hidden="true">→</span></a>
       </nav>
@@ -3653,7 +3707,7 @@ body.lc-customer-view #bar-section #client-total-card #bar-total-display {
                 <span style="font-size:0.9rem; color:#cbd5e1;">잔여 세션</span>
                 <div><span style="font-size:2rem; font-weight:700; color:#dfcfb2;">${remain}</span><span style="color:#888;"> / ${m.total_passes}회</span></div>
               </div>
-              ${remain > 0 ? `<button type="button" class="btn-primary" onclick="goMemberBooking('${escapeHtml(phoneIn.value.replace(/[^0-9]/g, ''))}')" style="margin-top:14px;">💳 멤버십 예약하기</button>` : `<div style="margin-top:14px; text-align:center; color:#888; font-size:0.82rem;">잔여 세션이 없어 예약할 수 없습니다.</div>`}
+              ${remain > 0 ? `<button type="button" class="btn-primary" onclick="goMemberBooking('${escapeHtml(phoneIn.value.replace(/[^0-9]/g, ''))}')" style="margin-top:14px;">멤버십 예약하기 →</button>` : `<div style="margin-top:14px; text-align:center; color:#888; font-size:0.82rem;">잔여 세션이 없어 예약할 수 없습니다.</div>`}
             </div>`;
           resEl.style.display = 'block';
         } catch(e) { errEl.innerText = '서버 연결 오류'; errEl.style.display = 'block'; }
