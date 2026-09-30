@@ -1,6 +1,6 @@
 <!--
   La Colonne
-  VERSION: V2.5.1 — STEP 1
+  VERSION: V2.5.2 — STEP 1
   UPDATED: 2026-09-30
 --> 
 <!DOCTYPE html>
@@ -1314,6 +1314,66 @@ body.lc-customer-view .lc-hub-brand {
    Admin / TV styles are intentionally left untouched.
    ============================================================ */
 
+/* Step 2 — Reservation lookup inline panel */
+#booking-section .booking-lookup-panel {
+  margin: 0 0 18px;
+  padding: 16px 0 2px;
+  border-top: 1px solid rgba(41,39,34,.12);
+  border-bottom: 1px solid rgba(41,39,34,.12);
+  text-align: left;
+}
+#booking-section .booking-lookup-panel .booking-lookup-title {
+  font-size: .92rem;
+  font-weight: 600;
+  color: #292722 !important;
+}
+#booking-section .booking-lookup-panel .booking-lookup-sub {
+  margin: 5px 0 12px;
+  color: #777269 !important;
+  font-size: .74rem;
+}
+#booking-section .booking-lookup-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding-bottom: 14px;
+}
+#booking-section .booking-lookup-panel .booking-lookup-option {
+  width: 100%;
+  min-height: 58px;
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(41,39,34,.14);
+  background: #faf9f6;
+  color: #292722;
+  font-family: "Pretendard", sans-serif;
+  font-size: .82rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+#booking-section .booking-lookup-panel .booking-lookup-option span {
+  display:block;
+}
+#booking-section .booking-lookup-panel .booking-lookup-option small {
+  display:block;
+  margin-top:4px;
+  color:#777269;
+  font-size:.67rem;
+  font-weight:400;
+  line-height:1.35;
+}
+#booking-section .booking-lookup-panel .booking-lookup-option:hover {
+  border-color: rgba(155,128,88,.55);
+  background:#f7f4ed;
+}
+#booking-section .booking-lookup-panel .booking-lookup-option.member {
+  border-color: rgba(155,128,88,.42);
+}
+@media (max-width: 420px) {
+  #booking-section .booking-lookup-options { grid-template-columns: 1fr; }
+}
+
 /* Reservation lookup */
 #booking-section .booking-lookup-trigger {
   display:block !important;
@@ -1912,17 +1972,19 @@ body.lc-customer-view .lc-hub-brand {
     </div>
 
     <button type="button" id="booking-lookup-trigger" class="booking-lookup-trigger"
-      onclick="openBookingLookupModal()">예약 조회 · 취소</button>
+      onclick="toggleBookingLookup()" aria-expanded="false" aria-controls="booking-lookup-panel">예약 조회 · 취소</button>
 
-    <!-- 예약 조회/취소 선택 모달 -->
-    <div id="booking-lookup-modal" class="booking-lookup-modal" style="display:none;"
-      onclick="if(event.target===this) closeBookingLookupModal()">
-      <div class="booking-lookup-dialog">
-        <button type="button" class="booking-lookup-close" onclick="closeBookingLookupModal()">×</button>
-        <div class="booking-lookup-title">예약 조회 · 취소</div>
-        <div class="booking-lookup-sub">조회하실 예약 유형을 선택해 주세요.</div>
-        <button type="button" class="booking-lookup-option" onclick="openGeneralBookingLookup()">일반예약 조회</button>
-        <button type="button" class="booking-lookup-option member" onclick="openMemberBookingLookup()">회원예약 조회</button>
+    <!-- 예약 조회/취소 인라인 선택 패널 -->
+    <div id="booking-lookup-panel" class="booking-lookup-panel" style="display:none;">
+      <div class="booking-lookup-title">예약 조회 · 취소</div>
+      <div class="booking-lookup-sub">조회하실 예약 유형을 선택해 주세요.</div>
+      <div class="booking-lookup-options">
+        <button type="button" class="booking-lookup-option" onclick="openGeneralBookingLookup()">
+          <span>일반예약 조회</span><small>예약자 연락처 + PIN으로 조회</small>
+        </button>
+        <button type="button" class="booking-lookup-option member" onclick="openMemberBookingLookup()">
+          <span>회원예약 조회</span><small>회원 인증 후 예약을 조회</small>
+        </button>
       </div>
     </div>
 
@@ -2706,13 +2768,19 @@ body.lc-customer-view .lc-hub-brand {
         if (card) card.style.display='none';
       }
 
-      window.openBookingLookupModal = function(){
-        const el = document.getElementById('booking-lookup-modal');
-        if (el) el.style.display='flex';
+      window.toggleBookingLookup = function(){
+        const panel = document.getElementById('booking-lookup-panel');
+        const trigger = document.getElementById('booking-lookup-trigger');
+        if (!panel || !trigger) return;
+        const isOpen = panel.style.display !== 'none';
+        panel.style.display = isOpen ? 'none' : 'block';
+        trigger.setAttribute('aria-expanded', String(!isOpen));
       };
       window.closeBookingLookupModal = function(){
-        const el = document.getElementById('booking-lookup-modal');
-        if (el) el.style.display='none';
+        const panel = document.getElementById('booking-lookup-panel');
+        const trigger = document.getElementById('booking-lookup-trigger');
+        if (panel) panel.style.display='none';
+        if (trigger) trigger.setAttribute('aria-expanded','false');
       };
       window.openGeneralBookingLookup = function(){
         closeBookingLookupModal();
