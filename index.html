@@ -1,6 +1,6 @@
 <!--
   La Colonne
-  VERSION: V2.5.2 — STEP 1
+  VERSION: V2.5.3 — STEP 3
   UPDATED: 2026-09-30
 --> 
 <!DOCTYPE html>
@@ -2677,6 +2677,21 @@ body.lc-customer-view .lc-hub-brand {
       let currentBookingMode = 'general';
       let verifiedMember = null;
 
+      // 회원예약 인증 세션: 같은 탭에서 30분간 유지
+      const MEMBER_SESSION_KEY = 'la_colonne_member_auth_session';
+      const MEMBER_SESSION_MS = 30 * 60 * 1000;
+
+      function showVerifiedMemberBooking(member, toastMessage) {
+        verifiedMember = member;
+        const authPanel = document.getElementById('member-auth-panel');
+        const calWrapper = document.getElementById('calendar-wrapper');
+        if (authPanel) authPanel.style.display = 'none';
+        renderMemberBookingCard();
+        if (calWrapper) calWrapper.style.display = 'block';
+        if (toastMessage) showToast(toastMessage);
+        renderBookCalendar();
+      }
+
       window.switchBookingMode = function(mode) {
         currentBookingMode = mode;
         const btnGen = document.getElementById('tab-mode-general');
@@ -2694,19 +2709,27 @@ body.lc-customer-view .lc-hub-brand {
           authPanel.style.display = 'none';
           calWrapper.style.display = 'block';
           verifiedMember = null;
+          clearMemberBookingCard();
           if (memberContactGroup) memberContactGroup.style.display = 'none';
           if (memberContactInput) memberContactInput.value = '';
           if (bookNameInput) { bookNameInput.readOnly = false; bookNameInput.style.background = ''; }
           if (bookPhoneInput) { bookPhoneInput.readOnly = false; bookPhoneInput.style.background = ''; }
         } else {
           btnMem.classList.add('is-active'); btnGen.classList.remove('is-active');
-          authPanel.style.display = 'block';
-          calWrapper.style.display = 'none';
-          verifiedMember = null;
           if (memberContactGroup) memberContactGroup.style.display = 'none';
           if (memberContactInput) memberContactInput.value = '';
           if (bookNameInput) { bookNameInput.readOnly = true; bookNameInput.style.background = '#24211e'; }
           if (bookPhoneInput) { bookPhoneInput.readOnly = true; bookPhoneInput.style.background = '#24211e'; }
+
+          const savedMember = getMemberAuthSession();
+          if (savedMember) {
+            showVerifiedMemberBooking(savedMember, '✓ 회원 인증이 유지되고 있습니다.');
+          } else {
+            verifiedMember = null;
+            clearMemberBookingCard();
+            authPanel.style.display = 'block';
+            calWrapper.style.display = 'none';
+          }
         }
         closeBookPanel();
       };
@@ -2790,10 +2813,7 @@ body.lc-customer-view .lc-hub-brand {
         closeBookingLookupModal();
         const m = getMemberAuthSession();
         if (m) {
-          verifiedMember = m;
           switchBookingMode('member');
-          renderMemberBookingCard();
-          showToast('✓ 회원 인증이 유지되고 있습니다.');
           return;
         }
         switchBookingMode('member');
@@ -2827,10 +2847,11 @@ body.lc-customer-view .lc-hub-brand {
             errEl.style.display = 'block'; verifiedMember = null; return;
           }
 
-          showToast(`✨ [인증 완료] ${verifiedMember.company_name} 님 (잔여 ${remain}회)`);
-          document.getElementById('member-auth-panel').style.display = 'none';
-          document.getElementById('calendar-wrapper').style.display = 'block';
-          renderBookCalendar();
+          saveMemberAuthSession(verifiedMember);
+          showVerifiedMemberBooking(
+            verifiedMember,
+            `✨ [인증 완료] ${verifiedMember.company_name} 님 (잔여 ${remain}회)`
+          );
 } catch(e) {
   errEl.innerText = e.message || '서버 연결 오류';
   errEl.style.display = 'block';
