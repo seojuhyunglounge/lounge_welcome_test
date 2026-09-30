@@ -1,6 +1,6 @@
 <!--
   La Colonne
-  VERSION: V2.6.0 — BASELINE FROM V2.5.6 + MEMBERSHIP PASS HEADER FIX
+  VERSION: V2.6.1 — RESERVATION LOOKUP FIX
   UPDATED: 2026-09-30
 --> 
 <!DOCTYPE html>
@@ -2228,6 +2228,11 @@ body.lc-customer-view #bar-section #btn-submit-bar {
       </div>
     </div>
 
+    <div id="member-booking-history" class="member-booking-card" style="display:none; text-align:left; margin-top:12px;">
+      <div class="member-booking-kicker">MY RESERVATIONS</div>
+      <div id="member-booking-history-content"></div>
+    </div>
+
     <!-- 메인 예약 캘린더 패널 -->
     <div id="calendar-wrapper" style="display: block;">
       <div class="admin-card" style="padding: 16px; border-color: rgba(201, 169, 110, 0.4); background: #161412; text-align: left; margin-top: 5px;">
@@ -2890,6 +2895,11 @@ body.lc-customer-view #bar-section #btn-submit-bar {
       let selectedDateStr = '';
       let currentBookingMode = 'general';
       let verifiedMember = null;
+      // 회원예약 조회용 인증 정보는 현재 탭의 메모리에만 보관합니다.
+      // PIN을 sessionStorage/localStorage에 저장하지 않습니다.
+      let memberBookingPhone = '';
+      let memberBookingPin = '';
+      let memberBookingCache = [];
 
       // 회원예약 인증 세션: 같은 탭에서 30분간 유지
       const MEMBER_SESSION_KEY = 'la_colonne_member_auth_session';
@@ -2904,6 +2914,74 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         if (calWrapper) calWrapper.style.display = 'block';
         if (toastMessage) showToast(toastMessage);
         renderBookCalendar();
+        if (memberBookingPhone && memberBookingPin) {
+          loadMemberBookingHistory();
+        } else {
+          clearMemberBookingHistory();
+        }
+      }
+
+      function formatMemberBookingDate(startTime, endTime) {
+        const s = new Date(startTime);
+        const e = new Date(endTime);
+        if (Number.isNaN(s.getTime()) || Number.isNaN(e.getTime())) return '일정 확인 필요';
+        const dateText = new Intl.DateTimeFormat('ko-KR', {
+          timeZone: 'Asia/Seoul', month: 'numeric', day: 'numeric', weekday: 'short'
+        }).format(s);
+        const timeText = new Intl.DateTimeFormat('ko-KR', {
+          timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit', hour12: false
+        }).format(s) + '–' + new Intl.DateTimeFormat('ko-KR', {
+          timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit', hour12: false
+        }).format(e);
+        return `${dateText} · ${timeText}`;
+      }
+
+      function clearMemberBookingHistory() {
+        const wrap = document.getElementById('member-booking-history');
+        const content = document.getElementById('member-booking-history-content');
+        if (content) content.innerHTML = '';
+        if (wrap) wrap.style.display = 'none';
+      }
+
+      function renderMemberBookingHistory(bookings) {
+        const wrap = document.getElementById('member-booking-history');
+        const content = document.getElementById('member-booking-history-content');
+        if (!wrap || !content) return;
+        if (!bookings.length) {
+          content.innerHTML = '<div style="padding:12px 0; color:#777269; font-size:12px;">현재 예약된 일정이 없습니다.</div>';
+        } else {
+          content.innerHTML = bookings.map(b => `
+            <div style="padding:14px 0; border-top:1px solid rgba(41,39,34,.12);">
+              <div style="font-size:12px; color:#777269; margin-bottom:5px;">${formatMemberBookingDate(b.start_time, b.end_time)}</div>
+              <div style="font-size:14px; font-weight:600; color:#292722;">${escapeHtml(b.reservation_name || b.guest_name || '예약')}</div>
+              ${b.meeting_name ? `<div style="font-size:12px; color:#777269; margin-top:4px;">${escapeHtml(b.meeting_name)}</div>` : ''}
+              ${b.customer_modified_at ? '<div style="font-size:11px; color:#9b8058; margin-top:5px;">최근 예약 정보가 변경되었습니다.</div>' : ''}
+            </div>`).join('');
+        }
+        wrap.style.display = 'block';
+      }
+
+      async function loadMemberBookingHistory() {
+        if (!memberBookingPhone || !/^\d{4}$/.test(memberBookingPin)) {
+          clearMemberBookingHistory();
+          return;
+        }
+        const content = document.getElementById('member-booking-history-content');
+        const wrap = document.getElementById('member-booking-history');
+        if (wrap) wrap.style.display = 'block';
+        if (content) content.innerHTML = '<div style="padding:12px 0; color:#777269; font-size:12px;">예약 내역을 불러오는 중...</div>';
+        try {
+          const res = await apiCall('rpc/lookup_my_bookings', 'POST', {
+            p_phone: memberBookingPhone,
+            p_pin: memberBookingPin
+          });
+          if (!res.ok) throw new Error('예약 내역 조회 서버 오류');
+          const bookings = await res.json();
+          memberBookingCache = Array.isArray(bookings) ? bookings : [];
+          renderMemberBookingHistory(memberBookingCache);
+        } catch (e) {
+          if (content) content.innerHTML = '<div style="padding:12px 0; color:#8b5b55; font-size:12px;">예약 내역을 불러오지 못했습니다.</div>';
+        }
       }
 
       window.switchBookingMode = function(mode) {
@@ -2923,7 +3001,11 @@ body.lc-customer-view #bar-section #btn-submit-bar {
           authPanel.style.display = 'none';
           calWrapper.style.display = 'block';
           verifiedMember = null;
+          memberBookingPhone = '';
+          memberBookingPin = '';
+          memberBookingCache = [];
           clearMemberBookingCard();
+          clearMemberBookingHistory();
           if (memberContactGroup) memberContactGroup.style.display = 'none';
           if (memberContactInput) memberContactInput.value = '';
           if (bookNameInput) { bookNameInput.readOnly = false; bookNameInput.style.background = ''; }
@@ -3055,6 +3137,9 @@ body.lc-customer-view #bar-section #btn-submit-bar {
             errEl.style.display = 'block'; return;
           }
           verifiedMember = data[0];
+          // 인증 성공 시에만 현재 탭 메모리에 보관하여 예약 내역 조회에 사용합니다.
+          memberBookingPhone = phone;
+          memberBookingPin = pin;
           const remain = Math.max(0, (parseInt(verifiedMember.total_passes) || 0) - (parseInt(verifiedMember.used_passes) || 0));
           if (remain <= 0) {
             errEl.innerText = '⚠️ 보유하신 잔여 세션 패스가 없습니다 (0회).';
@@ -3470,6 +3555,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
             p_sub_message: subMessage
           });
           const result = res.ok ? await res.json() : null;
+          if (!res.ok) throw new Error((result && result.message) || '예약 정보 수정 서버 오류');
           if (!result || !result.success) throw new Error((result && result.message) || '수정에 실패했습니다.');
           closeMyInfoEdit();
           showToast('예약 정보가 수정되었습니다.');
@@ -3623,6 +3709,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
             p_end_time: slots[slots.length-1].dataset.end
           });
           const result = res.ok ? await res.json() : null;
+          if (!res.ok) throw new Error((result && result.message) || '일정 변경 서버 오류');
           if (!result || !result.success) throw new Error((result && result.message) || '일정 변경에 실패했습니다.');
           closeMyChange();
           showToast('예약 일정이 변경되었습니다.');
