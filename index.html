@@ -1,6 +1,6 @@
 <!--
   La Colonne
-  VERSION: V2.6.10 — RESERVATION LOOKUP FIX
+  VERSION: V2.6.11 — RESERVATION LOOKUP FIX
   UPDATED: 2026-10-01
 --> 
 <!DOCTYPE html>
@@ -1869,6 +1869,232 @@ body.lc-customer-view #bar-section #btn-submit-bar {
 }
 </style>
 
+<style id="member-change-match-general-v2-6-11">
+/* V2.6.11 — Member schedule-change UI mirrors General Reservation change panel */
+#booking-section.member-change-ux #calendar-wrapper { margin-top: 18px !important; }
+#booking-section.member-change-ux #calendar-wrapper > .admin-card {
+  background:#f4f1ea !important;
+  border:1px solid rgba(41,39,34,.12) !important;
+  border-radius:10px !important;
+  box-shadow:none !important;
+  color:#292722 !important;
+  padding:22px 20px !important;
+}
+#booking-section.member-change-ux #calendar-wrapper > .admin-card::before {
+  content:'예약 일정 변경';
+  display:block;
+  margin:0 0 10px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:27px;
+  font-weight:400;
+  line-height:1.1;
+  color:#292722;
+}
+#booking-section.member-change-ux #calendar-wrapper > .admin-card > div:first-child {
+  margin-bottom:14px !important;
+}
+#booking-section.member-change-ux #calendar-wrapper #book-cal-title {
+  color:#292722 !important;
+  font-family:'Noto Sans KR',sans-serif !important;
+  font-size:.88rem !important;
+  font-weight:500 !important;
+}
+#booking-section.member-change-ux #calendar-wrapper .page-btn {
+  width:30px !important;
+  height:30px !important;
+  min-width:30px !important;
+  padding:0 !important;
+  border:1px solid rgba(41,39,34,.14) !important;
+  border-radius:50% !important;
+  background:#faf9f6 !important;
+  color:#5f5a52 !important;
+  font-size:.68rem !important;
+  box-shadow:none !important;
+}
+#booking-section.member-change-ux #calendar-wrapper > .admin-card > div:nth-child(2) {
+  color:#777269 !important;
+  font-size:12px !important;
+  line-height:1.6 !important;
+  margin-bottom:18px !important;
+}
+#booking-section.member-change-ux #member-change-context {
+  margin:0 0 14px !important;
+  padding:0 0 12px !important;
+  border:0 !important;
+  border-bottom:1px solid rgba(41,39,34,.10) !important;
+  border-radius:0 !important;
+  background:transparent !important;
+  color:#292722 !important;
+}
+#booking-section.member-change-ux #member-change-context > div:first-child {
+  font-size:10px !important;
+  letter-spacing:.10em !important;
+  color:#9b8058 !important;
+  margin-bottom:4px !important;
+}
+#booking-section.member-change-ux #member-change-context > div:last-child {
+  font-size:12px !important;
+  color:#777269 !important;
+  margin-top:0 !important;
+}
+#booking-section.member-change-ux #calendar-wrapper > .admin-card > div:nth-child(4) {
+  color:#777269 !important;
+  font-size:11px !important;
+}
+#booking-section.member-change-ux #calendar-wrapper > .admin-card > div:nth-child(4) > div:first-child { color:#a06f68 !important; }
+#booking-section.member-change-ux #calendar-wrapper > .admin-card > div:nth-child(4) > div:last-child { color:#68839a !important; }
+#booking-section.member-change-ux #book-calendar-grid {
+  grid-template-columns:repeat(7,minmax(0,1fr)) !important;
+  gap:5px !important;
+}
+#booking-section.member-change-ux #book-calendar-grid > div {
+  box-sizing:border-box !important;
+  min-width:0 !important;
+  max-width:100% !important;
+  min-height:62px !important;
+  padding:7px 4px !important;
+  background:#faf9f6 !important;
+  border:1px solid rgba(41,39,34,.12) !important;
+  border-radius:5px !important;
+  color:#292722 !important;
+}
+#booking-section.member-change-ux #book-calendar-grid > div[style*="cursor: not-allowed"] {
+  background:#f0ede7 !important;
+  opacity:.38 !important;
+}
+#booking-section.member-change-ux #book-calendar-grid > div[style*="border: 1px solid #c9a96e"],
+#booking-section.member-change-ux #book-calendar-grid > div[style*="border:1px solid #c9a96e"] {
+  background:#eee9df !important;
+  border-color:#9b8058 !important;
+}
+#booking-section.member-change-ux #book-calendar-grid > div > div:first-child {
+  color:#292722 !important;
+  font-size:.74rem !important;
+}
+#booking-section.member-change-ux #book-calendar-grid .booking-calendar-status {
+  color:#9b8058 !important;
+  font-size:.58rem !important;
+  line-height:1.25 !important;
+}
+#booking-section.member-change-ux #book-calendar-grid .booking-calendar-status span {
+  color:#9b8058 !important;
+  font-size:.58rem !important;
+}
+#booking-section.member-change-ux #book-form-panel {
+  margin-top:18px !important;
+  background:#f4f1ea !important;
+  border:1px solid rgba(41,39,34,.12) !important;
+  border-radius:10px !important;
+  box-shadow:none !important;
+  color:#292722 !important;
+  padding:22px 20px !important;
+}
+#booking-section.member-change-ux #book-form-panel #selected-date-title {
+  color:#292722 !important;
+  font-family:'Noto Sans KR',sans-serif !important;
+  font-size:.88rem !important;
+  font-weight:500 !important;
+}
+#booking-section.member-change-ux #book-form-panel > div:first-child {
+  margin-bottom:18px !important;
+}
+#booking-section.member-change-ux #book-form-panel > div:first-child button {
+  color:#777269 !important;
+  font-size:.78rem !important;
+}
+#booking-section.member-change-ux #book-slots-container {
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:7px !important;
+  margin-bottom:18px !important;
+}
+#booking-section.member-change-ux .member-change-slot-card {
+  position:relative !important;
+  min-width:0 !important;
+  min-height:76px !important;
+  box-sizing:border-box !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:5px !important;
+  padding:10px 5px !important;
+  background:#faf9f6 !important;
+  border:1px solid rgba(41,39,34,.14) !important;
+  border-radius:8px !important;
+  color:#292722 !important;
+  text-align:center !important;
+  opacity:1 !important;
+}
+#booking-section.member-change-ux .member-change-slot-card:has(input:checked) {
+  background:#eee9df !important;
+  border-color:#9b8058 !important;
+  box-shadow:inset 0 0 0 1px rgba(155,128,88,.18) !important;
+}
+#booking-section.member-change-ux .member-change-slot-card:has(input:disabled) {
+  background:#eeece7 !important;
+  border-color:rgba(41,39,34,.08) !important;
+  opacity:.52 !important;
+}
+#booking-section.member-change-ux .member-change-slot-card input[type="radio"] {
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+}
+#booking-section.member-change-ux .member-change-slot-card > span {
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:5px !important;
+  line-height:1.25 !important;
+}
+#booking-section.member-change-ux .member-change-slot-card > span b {
+  color:#292722 !important;
+  font-size:.82rem !important;
+  font-weight:600 !important;
+}
+#booking-section.member-change-ux .member-change-slot-card > span small {
+  color:#777269 !important;
+  font-size:.65rem !important;
+  line-height:1.2 !important;
+}
+#booking-section.member-change-ux .member-change-confirm-row {
+  display:block !important;
+  margin-top:18px !important;
+  padding-top:0 !important;
+  border-top:0 !important;
+}
+#booking-section.member-change-ux .member-change-help { display:none !important; }
+#booking-section.member-change-ux .member-change-confirm-actions {
+  display:flex !important;
+  gap:8px !important;
+  width:100% !important;
+  justify-content:stretch !important;
+}
+#booking-section.member-change-ux .member-change-confirm-actions .my-booking-action {
+  flex:1 !important;
+  min-width:0 !important;
+  height:auto !important;
+  padding:12px !important;
+  border:1px solid rgba(41,39,34,.18) !important;
+  border-radius:5px !important;
+  background:#faf9f6 !important;
+  color:#292722 !important;
+  font-size:.78rem !important;
+}
+#booking-section.member-change-ux .member-change-confirm-actions .my-booking-action.save {
+  min-width:0 !important;
+  background:#292722 !important;
+  color:#f7f4ed !important;
+  border-color:#292722 !important;
+}
+@media (max-width:600px){
+  #booking-section.member-change-ux .member-change-confirm-actions { flex-direction:row !important; }
+}
+</style>
 <style id="member-change-layout-fix-v2-6-10">
 .member-change-confirm-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:24px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(80,70,55,.12);}
 .member-change-help{font-size:13px;line-height:1.5;color:#777269;text-align:left;}
@@ -3204,6 +3430,9 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         myChangeId = id;
         myEditingInfoId = null;
         memberChangeMode = true;
+        document.getElementById('booking-section')?.classList.add('member-change-ux');
+        const memberChangeHelp = document.querySelector('#booking-section #calendar-wrapper > .admin-card > div:nth-child(3)');
+        if (memberChangeHelp) memberChangeHelp.innerText = '예약 가능한 날짜와 세션을 다시 선택해주세요. 기존 예약은 변경이 완료될 때까지 유지됩니다.';
         memberChangeSelectedStart = '';
         memberChangeSelectedEnd = '';
         const d = new Date(b.start_time);
@@ -3235,6 +3464,9 @@ body.lc-customer-view #bar-section #btn-submit-bar {
 
       window.cancelMemberChangeMode = function() {
         memberChangeMode = false;
+        document.getElementById('booking-section')?.classList.remove('member-change-ux');
+        const memberChangeHelp = document.querySelector('#booking-section #calendar-wrapper > .admin-card > div:nth-child(3)');
+        if (memberChangeHelp) memberChangeHelp.innerText = '• 날짜 터치 시 세부 세션 선택 (전체 마감일은 터치 불가)';
         memberChangeSelectedStart = '';
         memberChangeSelectedEnd = '';
         myChangeId = null;
@@ -3270,6 +3502,9 @@ body.lc-customer-view #bar-section #btn-submit-bar {
           const result = res.ok ? await res.json() : null;
           if (!res.ok || !result || !result.success) throw new Error((result && result.message) || '일정 변경에 실패했습니다.');
           memberChangeMode = false;
+          document.getElementById('booking-section')?.classList.remove('member-change-ux');
+          const memberChangeHelp = document.querySelector('#booking-section #calendar-wrapper > .admin-card > div:nth-child(3)');
+          if (memberChangeHelp) memberChangeHelp.innerText = '• 날짜 터치 시 세부 세션 선택 (전체 마감일은 터치 불가)';
           memberChangeSelectedStart = '';
           memberChangeSelectedEnd = '';
           myChangeId = null;
