@@ -1,7 +1,7 @@
 <!--
   La Colonne
-  VERSION: V2.6.7 — RESERVATION LOOKUP FIX
-  UPDATED: 2026-09-30
+  VERSION: V2.6.8 — RESERVATION LOOKUP FIX
+  UPDATED: 2026-10-01
 --> 
 <!DOCTYPE html>
 <html lang="ko">
@@ -1801,6 +1801,74 @@ body.lc-customer-view #bar-section #btn-submit-bar {
 }
 </style>
 
+
+<style id="v268-my-reservation-fix">
+/* V2.6.8 — customer my-reservation visual consistency */
+#my-booking-section.lc-my-booking .my-change-month {
+  background:#faf9f6 !important;
+  color:#292722 !important;
+  border:1px solid rgba(41,39,34,.14) !important;
+}
+#my-booking-section.lc-my-booking .my-change-day {
+  background:#faf9f6 !important;
+  color:#292722 !important;
+  border-color:rgba(41,39,34,.12) !important;
+}
+#my-booking-section.lc-my-booking .my-change-day:hover:not(:disabled),
+#my-booking-section.lc-my-booking .my-change-day.is-selected {
+  background:#eee9df !important;
+  border-color:#9b8058 !important;
+}
+#my-booking-section.lc-my-booking .my-change-day .day-num { color:#292722 !important; }
+#my-booking-section.lc-my-booking .my-change-day .day-status { color:#9b8058 !important; }
+#my-booking-section.lc-my-booking .my-change-day.is-blocked {
+  background:#f0ede7 !important;
+  border-color:rgba(41,39,34,.10) !important;
+}
+#my-booking-section.lc-my-booking .my-change-day.is-blocked .day-num,
+#my-booking-section.lc-my-booking .my-change-day.is-blocked .day-status { color:#aaa39a !important; }
+#my-booking-section.lc-my-booking .my-change-session {
+  background:#faf9f6 !important;
+  color:#292722 !important;
+}
+#my-booking-section.lc-my-booking .my-change-session.is-selected {
+  background:#eee9df !important;
+  border-color:#9b8058 !important;
+}
+#my-booking-section.lc-my-booking .my-change-actions button {
+  background:#faf9f6 !important;
+  color:#292722 !important;
+  border:1px solid rgba(41,39,34,.16) !important;
+}
+#my-booking-section.lc-my-booking .my-change-actions button.save {
+  background:#292722 !important;
+  color:#faf9f6 !important;
+  border-color:#292722 !important;
+}
+#my-booking-section.lc-my-booking .my-change-own-marker {
+  margin-top:3px; color:#9b8058; font-size:.55rem; font-weight:600; white-space:nowrap;
+}
+/* Member booking main-calendar session cards */
+#booking-section .member-change-slot-card {
+  min-height:82px; box-sizing:border-box;
+  display:grid !important;
+  grid-template-columns:20px 1fr;
+  align-items:center; gap:10px;
+  padding:12px 14px !important;
+  text-align:left;
+}
+#booking-section .member-change-slot-card input[type="radio"] { margin:0; width:16px; height:16px; }
+#booking-section .member-change-slot-card > span {
+  display:flex; flex-direction:column; justify-content:center; gap:4px;
+  line-height:1.35; min-width:0;
+}
+#booking-section .member-change-slot-card > span b { display:block; font-size:14px; }
+#booking-section .member-change-slot-card > span small { display:block; font-size:12px; line-height:1.4; color:#777269; }
+@media (max-width:700px) {
+  #booking-section .member-change-slot-card { padding:11px 10px !important; }
+}
+</style>
+
 </head>
 <body>
 
@@ -2387,7 +2455,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
       </div>
       <div class="my-change-actions">
         <button type="button" onclick="closeMyInfoEdit()">취소</button>
-        <button type="button" class="save" onclick="saveActiveInfoEdit()">수정 저장</button>
+        <button type="button" class="save" onclick="saveMyInfoEdit()">수정 저장</button>
       </div>
       <div id="my-edit-error" style="display:none; margin-top:10px; color:#8b5b55; font-size:12px;"></div>
     </div>
@@ -2411,7 +2479,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
       <div id="my-change-session-list" class="my-change-session-list"></div>
       <div class="my-change-actions">
         <button type="button" onclick="closeMyChange()">취소</button>
-        <button type="button" class="save" onclick="saveActiveChange()">일정 변경 저장</button>
+        <button type="button" class="save" onclick="saveMyChange()">일정 변경 저장</button>
       </div>
       <div id="my-change-error" style="display:none; margin-top:10px; color:#8b5b55; font-size:12px;"></div>
     </div>
@@ -3531,7 +3599,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
               const now=new Date(), today=now.toLocaleDateString('en-CA');
               const blocked=dateStr<today || (dateStr===today && now>=eo) || existing.some(ex=>so<new Date(ex.end_time)&&eo>new Date(ex.start_time));
               const currentSlot=current && new Date(current.start_time).getTime()===so.getTime() && new Date(current.end_time).getTime()===eo.getTime();
-              return `<label style="display:flex;align-items:center;gap:10px;padding:12px;border:1px solid ${currentSlot?'#c9a96e':'rgba(201,169,110,.2)'};border-radius:8px;background:${currentSlot?'rgba(201,169,110,.08)':'#faf9f6'};color:#292722;opacity:${blocked&&!currentSlot?'.45':'1'};"><input type="radio" name="member-change-slot" ${blocked&&!currentSlot?'disabled':''} ${currentSlot?'checked':''} onchange="selectMemberChangeSession('${toISOStringSafe(so)}','${toISOStringSafe(eo)}')"><span><b>${name.split(' (')[0]}</b><br><small>${st} ~ ${en}${currentSlot?' · 현재 예약':''}${blocked&&!currentSlot?' · 마감':''}</small></span></label>`;
+              return `<label class="member-change-slot-card" style="display:flex;align-items:center;gap:10px;padding:12px;border:1px solid ${currentSlot?'#c9a96e':'rgba(201,169,110,.2)'};border-radius:8px;background:${currentSlot?'rgba(201,169,110,.08)':'#faf9f6'};color:#292722;opacity:${blocked&&!currentSlot?'.45':'1'};"><input type="radio" name="member-change-slot" ${blocked&&!currentSlot?'disabled':''} ${currentSlot?'checked':''} onchange="selectMemberChangeSession('${toISOStringSafe(so)}','${toISOStringSafe(eo)}')"><span><b>${name.split(' (')[0]}</b><br><small>${st} ~ ${en}${currentSlot?' · 현재 예약':''}${blocked&&!currentSlot?' · 마감':''}</small></span></label>`;
             }).join('')+`<div style="margin-top:12px;font-size:12px;color:#777269;">변경할 날짜와 시간을 선택한 후 저장하세요.</div><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px;"><button type="button" class="my-booking-action" onclick="cancelMemberChangeMode()">취소</button><button type="button" class="my-booking-action save" onclick="saveMemberChangeFromMainCalendar()">일정 변경 확정</button></div>`;
             const first=document.querySelector('input[name="member-change-slot"]:checked');
             if(first && current) { memberChangeSelectedStart=current.start_time; memberChangeSelectedEnd=current.end_time; }
@@ -3857,7 +3925,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
           const res = await apiCall('rpc/update_customer_booking', 'POST', {
             p_id: myEditingInfoId,
             p_phone: (memberBookingPhone || phoneIn.value.trim().replace(/[^0-9]/g, '')),
-            p_pin: (memberBookingPin || pinIn.value.trim()),
+            p_pin: pinIn.value.trim(),
             p_reservation_name: reservationName,
             p_guest_name: displayName,
             p_meeting_name: meetingName,
@@ -3940,10 +4008,13 @@ body.lc-customer-view #bar-section #btn-submit-bar {
               const e = new Date(myChangeYear,myChangeMonth,d,eh,0,0);
               return isPastDay || (dateStr === todayStr && e <= new Date()) || schedules.some(ex => s < new Date(ex.end_time) && e > new Date(ex.start_time));
             });
-            const blocked = sessionChecks.every(Boolean);
+            const ownBookings = myBookingCache.filter(b => b.guest_name !== '[CLOSED_BLOCK]' && new Date(b.start_time).toLocaleDateString('en-CA') === dateStr);
+            const hasOwnBooking = ownBookings.some(b => Number(b.id) === Number(myChangeId));
+            const blocked = sessionChecks.every(Boolean) && !hasOwnBooking;
             const statuses = sessionChecks.map((v,i)=>v?`${i+1}부마감`:'').filter(Boolean);
+            const ownMarker = ownBookings.length ? '<div class="my-change-own-marker">● 내 예약</div>' : '';
             html += `<button type="button" class="my-change-day ${blocked?'is-blocked':''} ${myChangeDate===dateStr?'is-selected':''}" ${blocked?'disabled':''} onclick="selectMyChangeDate('${dateStr}')">
-              <div class="day-num">${d}</div><div class="day-status">${blocked?'전체마감':statuses.join('<br>')}</div>
+              <div class="day-num">${d}</div><div class="day-status">${blocked?'전체마감':statuses.join('<br>')}${ownMarker}</div>
             </button>`;
           }
           grid.innerHTML = html;
@@ -3972,7 +4043,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
           const dayEnd = new Date(y,m-1,d,23,59,59);
           const res = await apiCall('rpc/get_customer_schedule_slots', 'POST', { p_start_time: toISOStringSafe(dayStart), p_end_time: toISOStringSafe(dayEnd) });
           const existing = (res.ok ? await res.json() : []).filter(x => Number(x.id) !== Number(myChangeId));
-          const current = (memberBookingPhone && memberBookingPin ? memberBookingCache : myBookingCache).find(x => Number(x.id) === Number(myChangeId));
+          const current = myBookingCache.find(x => Number(x.id) === Number(myChangeId));
           const now = new Date();
           const currentStart = current ? new Date(current.start_time) : null;
           const currentEnd = current ? new Date(current.end_time) : null;
@@ -4022,7 +4093,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
           if (!result || !result.success) throw new Error((result && result.message) || '일정 변경에 실패했습니다.');
           closeMyChange();
           showToast('예약 일정이 변경되었습니다.');
-          if (memberBookingSessionToken) await loadMemberBookingHistory(); else await lookupMyBookings();
+          await lookupMyBookings();
         } catch(err) {
           e.innerText = err.message || '일정 변경에 실패했습니다.';
           e.style.display='block';
