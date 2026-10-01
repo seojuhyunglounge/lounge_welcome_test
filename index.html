@@ -1,6 +1,6 @@
 <!--
   La Colonne
-  VERSION: V2.6.9 — RESERVATION LOOKUP FIX
+  VERSION: V2.6.10 — RESERVATION LOOKUP FIX
   UPDATED: 2026-10-01
 --> 
 <!DOCTYPE html>
@@ -1869,6 +1869,14 @@ body.lc-customer-view #bar-section #btn-submit-bar {
 }
 </style>
 
+<style id="member-change-layout-fix-v2-6-10">
+.member-change-confirm-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:24px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(80,70,55,.12);}
+.member-change-help{font-size:13px;line-height:1.5;color:#777269;text-align:left;}
+.member-change-confirm-actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;white-space:nowrap;}
+.member-change-confirm-actions .my-booking-action{margin:0;min-width:76px;height:42px;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;}
+.member-change-confirm-actions .my-booking-action.save{min-width:112px;}
+@media (max-width:600px){.member-change-confirm-row{grid-template-columns:1fr;gap:12px;}.member-change-confirm-actions{justify-content:flex-end;}.member-change-confirm-actions .my-booking-action{min-width:82px;}}
+</style>
 </head>
 <body>
 
