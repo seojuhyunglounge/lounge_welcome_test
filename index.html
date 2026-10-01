@@ -1,6 +1,6 @@
 <!--
   La Colonne
-  VERSION: V2.6.14 — MEMBER CHANGE UI EXACT MATCH + LOOKUP ACCORDION
+  VERSION: V2.6.15 — RESTORE GENERAL CALENDAR + MEMBER INLINE ACCORDION
   UPDATED: 2026-09-30
 --> 
 <!DOCTYPE html>
@@ -1869,334 +1869,6 @@ body.lc-customer-view #bar-section #btn-submit-bar {
 }
 </style>
 
-<style id="v2-6-12-exact-member-change-and-lookup">
-/* V2.6.14 — Member change uses the exact same visual component as General Reservation change. */
-#booking-section .member-change-shared-panel {
-  display:block;
-  margin-top:18px !important;
-  background:#f4f1ea !important;
-  border:1px solid rgba(41,39,34,.12) !important;
-  border-radius:10px !important;
-  box-shadow:none !important;
-  color:#292722 !important;
-  padding:22px 20px !important;
-  text-align:left !important;
-}
-#booking-section .member-change-shared-panel .my-change-title {
-  font-family:'Cormorant Garamond',serif !important;
-  font-size:27px !important;
-  font-weight:400 !important;
-  color:#292722 !important;
-}
-#booking-section .member-change-shared-panel .my-change-calendar-head { margin-bottom:12px !important; }
-#booking-section .member-change-shared-panel .my-change-month {
-  font-family:'Noto Sans KR',sans-serif !important;
-  font-size:.88rem !important; font-weight:500 !important; color:#292722 !important;
-}
-#booking-section .member-change-shared-panel .my-change-calendar-nav button {
-  width:30px !important; height:30px !important; padding:0 !important;
-  border:1px solid rgba(41,39,34,.14) !important; border-radius:50% !important;
-  background:#faf9f6 !important; color:#5f5a52 !important; font-size:.68rem !important;
-}
-#booking-section .member-change-shared-panel .my-change-week {
-  color:#777269 !important; font-size:.70rem !important; font-weight:400 !important; margin-bottom:6px !important;
-}
-#booking-section .member-change-shared-panel .my-change-grid { gap:5px !important; }
-#booking-section .member-change-shared-panel .my-change-day {
-  min-height:62px !important; padding:7px 4px !important;
-  background:#faf9f6 !important; border:1px solid rgba(41,39,34,.12) !important; border-radius:5px !important;
-}
-#booking-section .member-change-shared-panel .my-change-day.is-selected { border-color:#9b8058 !important; background:#eee9df !important; }
-#booking-section .member-change-shared-panel .my-change-day .day-num { font-size:.74rem !important; }
-#booking-section .member-change-shared-panel .my-change-day .day-status { margin-top:10px !important; font-size:.58rem !important; line-height:1.25 !important; color:#9b8058 !important; }
-#booking-section .member-change-shared-panel .my-change-session-title {
-  margin:18px 0 10px !important; font-size:.70rem !important; color:#777269 !important; letter-spacing:.05em !important;
-}
-#booking-section .member-change-shared-panel .my-change-session-list {
-  display:grid !important; grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:7px !important;
-}
-#booking-section .member-change-shared-panel .my-change-session {
-  position:relative !important; min-width:0 !important; min-height:76px !important;
-  display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important;
-  gap:5px !important; padding:10px 5px !important; background:#faf9f6 !important;
-  border:1px solid rgba(41,39,34,.14) !important; border-radius:8px !important; text-align:center !important;
-}
-#booking-section .member-change-shared-panel .my-change-session.is-selected {
-  background:#eee9df !important; border-color:#9b8058 !important; box-shadow:inset 0 0 0 1px rgba(155,128,88,.18) !important;
-}
-#booking-section .member-change-shared-panel .my-change-session input[type="radio"],
-#booking-section .member-change-shared-panel .my-change-session input[type="checkbox"] {
-  position:absolute !important; width:1px !important; height:1px !important; opacity:0 !important; pointer-events:none !important;
-}
-#booking-section .member-change-shared-panel .my-change-session .session-name { color:#292722 !important; font-size:.82rem !important; font-weight:600 !important; }
-#booking-section .member-change-shared-panel .my-change-session .session-time { color:#777269 !important; font-size:.65rem !important; }
-#booking-section .member-change-shared-panel .my-change-session .session-status { color:#9b8058 !important; font-size:.62rem !important; }
-#booking-section .member-change-shared-panel .my-change-actions { display:flex !important; gap:8px !important; margin-top:18px !important; }
-#booking-section .member-change-shared-panel .my-change-actions button {
-  flex:1 !important; padding:12px !important; border:1px solid rgba(41,39,34,.18) !important;
-  background:#faf9f6 !important; color:#292722 !important; cursor:pointer !important; border-radius:5px !important;
-}
-#booking-section .member-change-shared-panel .my-change-actions button.save {
-  background:#292722 !important; color:#f7f4ed !important; border-color:#292722 !important;
-}
-#booking-section .member-change-shared-panel .my-change-head { margin-bottom:18px !important; }
-#booking-section .member-change-shared-panel .my-booking-close { color:#777269 !important; font-size:12px !important; }
-
-/* V2.6.14 — Lookup trigger + choices form one quiet accordion group. */
-#booking-section .booking-lookup-trigger {
-  border:1px solid rgba(41,39,34,.12) !important;
-  border-radius:7px !important;
-  padding:10px 12px 11px !important;
-  margin:0 !important;
-  transition:background .28s ease,border-color .28s ease,border-radius .28s ease !important;
-}
-#booking-section .booking-lookup-trigger.is-open {
-  border-radius:7px 7px 0 0 !important;
-  border-bottom-color:transparent !important;
-  background:#f7f4ed !important;
-}
-#booking-section .booking-lookup-panel {
-  max-height:0; opacity:0; overflow:hidden; transform:translateY(-4px);
-  margin:0 !important; padding:0 12px !important;
-  border:1px solid rgba(41,39,34,.12) !important; border-top:0 !important;
-  border-radius:0 0 7px 7px !important; background:#f7f4ed !important;
-  transition:max-height .36s ease,opacity .28s ease,transform .36s ease,padding .36s ease !important;
-}
-#booking-section .booking-lookup-panel.is-open {
-  max-height:240px; opacity:1; transform:translateY(0); padding:14px 12px 12px !important;
-}
-#booking-section .booking-lookup-panel .booking-lookup-title { font-size:.90rem !important; }
-#booking-section .booking-lookup-panel .booking-lookup-sub { margin:4px 0 11px !important; }
-#booking-section .booking-lookup-options { padding-bottom:0 !important; }
-#booking-section .booking-lookup-panel .booking-lookup-option { background:#faf9f6 !important; }
-</style>
-
-<style id="member-change-match-general-v2-6-12">
-/* V2.6.14 — Member schedule-change calendar render fix */
-#booking-section.member-change-ux #calendar-wrapper { margin-top: 18px !important; }
-#booking-section.member-change-ux #calendar-wrapper > .admin-card {
-  background:#f4f1ea !important;
-  border:1px solid rgba(41,39,34,.12) !important;
-  border-radius:10px !important;
-  box-shadow:none !important;
-  color:#292722 !important;
-  padding:22px 20px !important;
-}
-#booking-section.member-change-ux #calendar-wrapper > .admin-card::before {
-  content:'예약 일정 변경';
-  display:block;
-  margin:0 0 10px;
-  font-family:'Cormorant Garamond',serif;
-  font-size:27px;
-  font-weight:400;
-  line-height:1.1;
-  color:#292722;
-}
-#booking-section.member-change-ux #calendar-wrapper > .admin-card > div:first-child {
-  margin-bottom:14px !important;
-}
-#booking-section.member-change-ux #calendar-wrapper #book-cal-title {
-  color:#292722 !important;
-  font-family:'Noto Sans KR',sans-serif !important;
-  font-size:.88rem !important;
-  font-weight:500 !important;
-}
-#booking-section.member-change-ux #calendar-wrapper .page-btn {
-  width:30px !important;
-  height:30px !important;
-  min-width:30px !important;
-  padding:0 !important;
-  border:1px solid rgba(41,39,34,.14) !important;
-  border-radius:50% !important;
-  background:#faf9f6 !important;
-  color:#5f5a52 !important;
-  font-size:.68rem !important;
-  box-shadow:none !important;
-}
-#booking-section.member-change-ux #calendar-wrapper > .admin-card > div:nth-child(2) {
-  color:#777269 !important;
-  font-size:12px !important;
-  line-height:1.6 !important;
-  margin-bottom:18px !important;
-}
-#booking-section.member-change-ux #member-change-context {
-  margin:0 0 14px !important;
-  padding:0 0 12px !important;
-  border:0 !important;
-  border-bottom:1px solid rgba(41,39,34,.10) !important;
-  border-radius:0 !important;
-  background:transparent !important;
-  color:#292722 !important;
-}
-#booking-section.member-change-ux #member-change-context > div:first-child {
-  font-size:10px !important;
-  letter-spacing:.10em !important;
-  color:#9b8058 !important;
-  margin-bottom:4px !important;
-}
-#booking-section.member-change-ux #member-change-context > div:last-child {
-  font-size:12px !important;
-  color:#777269 !important;
-  margin-top:0 !important;
-}
-#booking-section.member-change-ux #calendar-wrapper > .admin-card > div:nth-child(4) {
-  color:#777269 !important;
-  font-size:11px !important;
-}
-#booking-section.member-change-ux #calendar-wrapper > .admin-card > div:nth-child(4) > div:first-child { color:#a06f68 !important; }
-#booking-section.member-change-ux #calendar-wrapper > .admin-card > div:nth-child(4) > div:last-child { color:#68839a !important; }
-#booking-section.member-change-ux #book-calendar-grid {
-  grid-template-columns:repeat(7,minmax(0,1fr)) !important;
-  gap:5px !important;
-}
-#booking-section.member-change-ux #book-calendar-grid > div {
-  box-sizing:border-box !important;
-  min-width:0 !important;
-  max-width:100% !important;
-  min-height:62px !important;
-  padding:7px 4px !important;
-  background:#faf9f6 !important;
-  border:1px solid rgba(41,39,34,.12) !important;
-  border-radius:5px !important;
-  color:#292722 !important;
-}
-#booking-section.member-change-ux #book-calendar-grid > div[style*="cursor: not-allowed"] {
-  background:#f0ede7 !important;
-  opacity:.38 !important;
-}
-#booking-section.member-change-ux #book-calendar-grid > div[style*="border: 1px solid #c9a96e"],
-#booking-section.member-change-ux #book-calendar-grid > div[style*="border:1px solid #c9a96e"] {
-  background:#eee9df !important;
-  border-color:#9b8058 !important;
-}
-#booking-section.member-change-ux #book-calendar-grid > div > div:first-child {
-  color:#292722 !important;
-  font-size:.74rem !important;
-}
-#booking-section.member-change-ux #book-calendar-grid .booking-calendar-status {
-  color:#9b8058 !important;
-  font-size:.58rem !important;
-  line-height:1.25 !important;
-}
-#booking-section.member-change-ux #book-calendar-grid .booking-calendar-status span {
-  color:#9b8058 !important;
-  font-size:.58rem !important;
-}
-#booking-section.member-change-ux #book-form-panel {
-  margin-top:18px !important;
-  background:#f4f1ea !important;
-  border:1px solid rgba(41,39,34,.12) !important;
-  border-radius:10px !important;
-  box-shadow:none !important;
-  color:#292722 !important;
-  padding:22px 20px !important;
-}
-#booking-section.member-change-ux #book-form-panel #selected-date-title {
-  color:#292722 !important;
-  font-family:'Noto Sans KR',sans-serif !important;
-  font-size:.88rem !important;
-  font-weight:500 !important;
-}
-#booking-section.member-change-ux #book-form-panel > div:first-child {
-  margin-bottom:18px !important;
-}
-#booking-section.member-change-ux #book-form-panel > div:first-child button {
-  color:#777269 !important;
-  font-size:.78rem !important;
-}
-#booking-section.member-change-ux #book-slots-container {
-  display:grid !important;
-  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
-  gap:7px !important;
-  margin-bottom:18px !important;
-}
-#booking-section.member-change-ux .member-change-slot-card {
-  position:relative !important;
-  min-width:0 !important;
-  min-height:76px !important;
-  box-sizing:border-box !important;
-  display:flex !important;
-  flex-direction:column !important;
-  align-items:center !important;
-  justify-content:center !important;
-  gap:5px !important;
-  padding:10px 5px !important;
-  background:#faf9f6 !important;
-  border:1px solid rgba(41,39,34,.14) !important;
-  border-radius:8px !important;
-  color:#292722 !important;
-  text-align:center !important;
-  opacity:1 !important;
-}
-#booking-section.member-change-ux .member-change-slot-card:has(input:checked) {
-  background:#eee9df !important;
-  border-color:#9b8058 !important;
-  box-shadow:inset 0 0 0 1px rgba(155,128,88,.18) !important;
-}
-#booking-section.member-change-ux .member-change-slot-card:has(input:disabled) {
-  background:#eeece7 !important;
-  border-color:rgba(41,39,34,.08) !important;
-  opacity:.52 !important;
-}
-#booking-section.member-change-ux .member-change-slot-card input[type="radio"] {
-  position:absolute !important;
-  width:1px !important;
-  height:1px !important;
-  opacity:0 !important;
-  pointer-events:none !important;
-}
-#booking-section.member-change-ux .member-change-slot-card > span {
-  display:flex !important;
-  flex-direction:column !important;
-  align-items:center !important;
-  justify-content:center !important;
-  gap:5px !important;
-  line-height:1.25 !important;
-}
-#booking-section.member-change-ux .member-change-slot-card > span b {
-  color:#292722 !important;
-  font-size:.82rem !important;
-  font-weight:600 !important;
-}
-#booking-section.member-change-ux .member-change-slot-card > span small {
-  color:#777269 !important;
-  font-size:.65rem !important;
-  line-height:1.2 !important;
-}
-#booking-section.member-change-ux .member-change-confirm-row {
-  display:block !important;
-  margin-top:18px !important;
-  padding-top:0 !important;
-  border-top:0 !important;
-}
-#booking-section.member-change-ux .member-change-help { display:none !important; }
-#booking-section.member-change-ux .member-change-confirm-actions {
-  display:flex !important;
-  gap:8px !important;
-  width:100% !important;
-  justify-content:stretch !important;
-}
-#booking-section.member-change-ux .member-change-confirm-actions .my-booking-action {
-  flex:1 !important;
-  min-width:0 !important;
-  height:auto !important;
-  padding:12px !important;
-  border:1px solid rgba(41,39,34,.18) !important;
-  border-radius:5px !important;
-  background:#faf9f6 !important;
-  color:#292722 !important;
-  font-size:.78rem !important;
-}
-#booking-section.member-change-ux .member-change-confirm-actions .my-booking-action.save {
-  min-width:0 !important;
-  background:#292722 !important;
-  color:#f7f4ed !important;
-  border-color:#292722 !important;
-}
-@media (max-width:600px){
-  #booking-section.member-change-ux .member-change-confirm-actions { flex-direction:row !important; }
-}
-</style>
 <style id="member-change-layout-fix-v2-6-10">
 .member-change-confirm-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:24px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(80,70,55,.12);}
 .member-change-help{font-size:13px;line-height:1.5;color:#777269;text-align:left;}
@@ -2206,34 +1878,67 @@ body.lc-customer-view #bar-section #btn-submit-bar {
 @media (max-width:600px){.member-change-confirm-row{grid-template-columns:1fr;gap:12px;}.member-change-confirm-actions{justify-content:flex-end;}.member-change-confirm-actions .my-booking-action{min-width:82px;}}
 </style>
 
-<style id="v2-6-14-accordion-fix">
-/* V2.6.14 — member booking inline accordion panels */
-.member-booking-change-slot { margin-top:0; }
-.member-inline-edit, .member-booking-change-slot {
-  display:grid !important;
-  grid-template-rows:0fr;
-  transition:grid-template-rows .34s ease, opacity .28s ease, margin-top .34s ease;
-  opacity:0;
-  overflow:hidden;
-  margin-top:0 !important;
+<style id="v2-6-15-lookup-accordion">
+#booking-section .booking-lookup-trigger {
+  border:1px solid rgba(41,39,34,.12) !important;
+  border-radius:7px !important;
+  background:#f7f4ed !important;
+  padding:10px 12px 11px !important;
+  margin:0 !important;
+  transition:background .28s ease,border-color .28s ease,border-radius .28s ease !important;
 }
-.member-inline-edit.is-open, .member-booking-change-slot.is-open {
-  grid-template-rows:1fr;
-  opacity:1;
-  margin-top:14px !important;
+#booking-section .booking-lookup-trigger.is-open {
+  border-radius:7px 7px 0 0 !important;
+  border-bottom-color:transparent !important;
 }
-.member-inline-edit > .accordion-inner, .member-booking-change-slot > .accordion-inner { min-height:0; overflow:hidden; }
-.member-inline-toggle[aria-expanded="true"] {
-  background:#eee9df !important; border-color:rgba(155,128,88,.55) !important;
+#booking-section .booking-lookup-panel {
+  display:block !important;
+  max-height:0; opacity:0; overflow:hidden; transform:translateY(-5px);
+  margin:0 0 18px !important; padding:0 12px !important;
+  border:1px solid rgba(41,39,34,.12) !important; border-top:0 !important;
+  border-radius:0 0 7px 7px !important; background:#f7f4ed !important;
+  transition:max-height .36s ease,opacity .28s ease,transform .36s ease,padding .36s ease !important;
 }
-/* The shared change panel must keep the same calendar grid regardless of its parent. */
-.my-change-panel .my-change-grid {
-  display:grid !important;
-  grid-template-columns:repeat(7,minmax(0,1fr)) !important;
-  gap:5px !important;
-  visibility:visible !important;
+#booking-section .booking-lookup-panel.is-open {
+  max-height:240px; opacity:1; transform:translateY(0); padding:14px 12px 12px !important;
 }
-.my-change-panel .my-change-day { display:block !important; min-height:62px; }
+</style>
+
+<style id="v2-6-15-member-inline-change">
+#booking-section .member-inline-change-panel {
+  margin-top:14px !important; padding:18px 16px !important;
+  background:#f4f1ea !important; color:#292722 !important;
+  border:1px solid rgba(41,39,34,.12) !important; border-radius:10px !important;
+}
+#booking-section .member-inline-change-panel .my-change-title { font-family:"Cormorant Garamond",serif; font-size:1.55rem; font-weight:400; color:#292722; }
+#booking-section .member-inline-change-panel .my-change-calendar-head { margin-bottom:12px; }
+#booking-section .member-inline-change-panel .my-change-month { font-family:"Noto Sans KR",sans-serif; font-size:.88rem; font-weight:500; color:#292722; }
+#booking-section .member-inline-change-panel .my-change-calendar-nav button { width:30px; height:30px; padding:0; border:1px solid rgba(41,39,34,.14); border-radius:50%; background:#faf9f6; color:#5f5a52; font-size:.68rem; }
+#booking-section .member-inline-change-panel .my-change-week { color:#777269; font-size:.70rem; font-weight:400; margin-bottom:6px; }
+#booking-section .member-inline-change-panel .my-change-grid { display:grid; grid-template-columns:repeat(7,minmax(0,1fr)); gap:5px; }
+#booking-section .member-inline-change-panel .my-change-day { min-height:62px; padding:7px 4px; background:#faf9f6; border:1px solid rgba(41,39,34,.12); border-radius:5px; cursor:pointer; text-align:center; }
+#booking-section .member-inline-change-panel .my-change-day.is-selected { border-color:#9b8058; background:#eee9df; }
+#booking-section .member-inline-change-panel .my-change-day.is-blocked { opacity:.35; cursor:not-allowed; }
+#booking-section .member-inline-change-panel .my-change-day .day-num { font-size:.74rem; color:#292722; }
+#booking-section .member-inline-change-panel .my-change-day .day-status { margin-top:10px; font-size:.58rem; line-height:1.25; color:#9b8058; }
+#booking-section .member-inline-change-panel .my-change-session-title { margin:18px 0 10px; font-size:.70rem; color:#777269; letter-spacing:.05em; }
+#booking-section .member-inline-change-panel .my-change-session-list { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:7px; }
+#booking-section .member-inline-change-panel .my-change-session { position:relative; min-width:0; min-height:76px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; padding:10px 5px; background:#faf9f6; border:1px solid rgba(41,39,34,.14); border-radius:8px; text-align:center; cursor:pointer; }
+#booking-section .member-inline-change-panel .my-change-session.is-selected { background:#eee9df; border-color:#9b8058; box-shadow:inset 0 0 0 1px rgba(155,128,88,.18); }
+#booking-section .member-inline-change-panel .my-change-session.is-blocked { opacity:.35; cursor:not-allowed; }
+#booking-section .member-inline-change-panel .my-change-session .session-name { color:#292722; font-size:.82rem; font-weight:600; }
+#booking-section .member-inline-change-panel .my-change-session .session-time { color:#777269; font-size:.65rem; }
+#booking-section .member-inline-change-panel .my-change-session .session-status { color:#9b8058; font-size:.62rem; }
+#booking-section .member-inline-change-panel .my-change-actions { display:flex; gap:8px; margin-top:18px; }
+#booking-section .member-inline-change-panel .my-change-actions button { flex:1; padding:11px 10px; border:1px solid rgba(41,39,34,.18); background:#faf9f6; color:#292722; border-radius:5px; cursor:pointer; }
+#booking-section .member-inline-change-panel .my-change-actions button.save { background:#292722; color:#f7f4ed; border-color:#292722; }
+#booking-section .member-inline-change-panel .my-booking-close { color:#777269; font-size:12px; background:none; border:0; cursor:pointer; }
+@media (max-width:420px){ #booking-section .member-inline-change-panel .my-change-session-list{grid-template-columns:1fr;} }
+</style>
+
+<style id="v2-6-15-member-history-spacing">
+#booking-section #member-booking-history .member-booking-change-slot { margin-top:0; }
+#booking-section #member-booking-history-content .my-booking-item { overflow:visible; }
 </style>
 </head>
 <body>
@@ -2681,6 +2386,30 @@ body.lc-customer-view #bar-section #btn-submit-bar {
       <div class="member-booking-kicker">MY RESERVATIONS</div>
       <div id="member-booking-history-content"></div>
     </div>
+    <div id="member-inline-change-panel-home" style="display:none;"></div>
+    <div id="member-inline-change-panel" class="member-inline-change-panel" style="display:none;">
+      <div class="my-change-head">
+        <div class="my-change-title">예약 일정 변경</div>
+        <button type="button" class="my-booking-close" onclick="closeMemberInlineChange()">닫기</button>
+      </div>
+      <div style="font-size:12px; color:#777269; line-height:1.6; margin-bottom:18px;">예약 가능한 날짜와 세션을 다시 선택해주세요. 기존 예약은 변경이 완료될 때까지 유지됩니다.</div>
+      <div class="my-change-calendar-head">
+        <div id="member-inline-change-month-title" class="my-change-month">2026년 10월 예약 현황</div>
+        <div class="my-change-calendar-nav">
+          <button type="button" onclick="changeMemberInlineChangeMonth(-1)">‹</button>
+          <button type="button" onclick="changeMemberInlineChangeMonth(1)">›</button>
+        </div>
+      </div>
+      <div class="my-change-week"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
+      <div id="member-inline-change-calendar-grid" class="my-change-grid"></div>
+      <div id="member-inline-change-session-title" class="my-change-session-title">날짜를 선택해주세요.</div>
+      <div id="member-inline-change-session-list" class="my-change-session-list"></div>
+      <div class="my-change-actions">
+        <button type="button" onclick="closeMemberInlineChange()">취소</button>
+        <button type="button" class="save" onclick="saveMemberInlineChange()">일정 변경 저장</button>
+      </div>
+      <div id="member-inline-change-error" style="display:none; margin-top:10px; color:#8b5b55; font-size:12px;"></div>
+    </div>
 
     <!-- 메인 예약 캘린더 패널 -->
     <div id="calendar-wrapper" style="display: block;">
@@ -2845,7 +2574,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
       <div id="my-change-session-list" class="my-change-session-list"></div>
       <div class="my-change-actions">
         <button type="button" onclick="closeMyChange()">취소</button>
-        <button type="button" class="save" onclick="saveActiveChange()">일정 변경 저장</button>
+        <button type="button" class="save" onclick="saveMyChange()">일정 변경 저장</button>
       </div>
       <div id="my-change-error" style="display:none; margin-top:10px; color:#8b5b55; font-size:12px;"></div>
     </div>
@@ -3425,6 +3154,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
                 <button type="button" class="my-booking-action" ${started ? 'disabled' : ''} onclick="openMemberChange(${b.id})">일정 변경</button>
                 <button type="button" class="my-booking-action danger" onclick="cancelMemberBooking(${b.id})">예약 취소</button>
               </div>
+              <div class="member-booking-change-slot"></div>
               <div id="member-inline-edit-${b.id}" class="member-inline-edit" style="display:none; margin-top:14px; padding-top:14px; border-top:1px solid rgba(155,128,88,.18);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                   <div style="font-family:Georgia,serif; font-size:20px; color:#292722;">예약 정보 수정</div>
@@ -3453,7 +3183,6 @@ body.lc-customer-view #bar-section #btn-submit-bar {
                 </div>
                 <div data-field="error" style="display:none;margin-top:9px;color:#8b5b55;font-size:11px;"></div>
               </div>
-              <div class="my-booking-change-slot" data-change-slot="${b.id}"></div>
             </div>`;
           }).join('');
         }
@@ -3515,20 +3244,17 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         if (!b || isMemberBookingStarted(b)) return;
         const edit = document.getElementById(`member-inline-edit-${id}`);
         if (!edit) return;
-        const wasOpen = edit.classList.contains('is-open');
-        // Toggle: clicking the same button again closes the panel.
-        document.querySelectorAll('.member-inline-edit.is-open').forEach(el => el.classList.remove('is-open'));
-        document.querySelectorAll('.member-booking-change-slot.is-open').forEach(el => el.classList.remove('is-open'));
-        myChangeId = null;
-        if (wasOpen) { myEditingInfoId = null; return; }
+        if (edit.style.display !== 'none' && edit.style.display !== '') { closeMemberInfoEdit(id); return; }
+        closeMemberInlineChange();
         myEditingInfoId = id;
-        edit.classList.add('is-open');
+        document.querySelectorAll('.member-inline-edit').forEach(el => { if (el !== edit) el.style.display = 'none'; });
+        edit.style.display = 'block';
         edit.scrollIntoView({behavior:'smooth', block:'nearest'});
       };
 
       window.closeMemberInfoEdit = function(id) {
         const edit = document.getElementById(`member-inline-edit-${id}`);
-        if (edit) edit.classList.remove('is-open');
+        if (edit) edit.style.display = 'none';
         if (Number(myEditingInfoId) === Number(id)) myEditingInfoId = null;
       };
 
@@ -3559,114 +3285,171 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         }
       };
 
+      let memberInlineChangeId = null;
+      let memberInlineChangeYear = 0;
+      let memberInlineChangeMonth = 0;
+      let memberInlineChangeDate = '';
+      let memberInlineChangeSelectedStart = '';
+      let memberInlineChangeSelectedEnd = '';
+
       window.openMemberChange = function(id) {
         const b = getMemberBookingById(id);
         if (!b || isMemberBookingStarted(b)) return;
-        const panel = document.getElementById('my-change-panel');
-        const home = document.getElementById('my-change-panel-home');
-        const slot = document.querySelector(`.my-booking-item[data-booking-id="${id}"] .my-booking-change-slot`);
-        if (!panel || !home || !slot) return;
-
-        // Toggle the same booking's change panel; only one inline accordion is open at a time.
-        const alreadyOpen = panel.parentElement === slot && panel.style.display !== 'none' && panel.classList.contains('is-open');
-        document.querySelectorAll('.member-inline-edit.is-open').forEach(el => el.classList.remove('is-open'));
-        document.querySelectorAll('.member-booking-change-slot.is-open').forEach(el => el.classList.remove('is-open'));
-        myEditingInfoId = null;
-        if (alreadyOpen) {
-          closeMyChange();
+        const slot = document.querySelector(`.my-booking-item[data-booking-id="${id}"] .member-booking-change-slot`);
+        const panel = document.getElementById('member-inline-change-panel');
+        const home = document.getElementById('member-inline-change-panel-home');
+        if (!slot || !panel) return;
+        if (Number(memberInlineChangeId) === Number(id) && panel.style.display !== 'none') {
+          closeMemberInlineChange();
           return;
         }
-
-        myChangeId = id;
+        closeMemberInlineChange();
+        document.querySelectorAll('.member-inline-edit').forEach(el => el.style.display='none');
+        memberInlineChangeId = id;
         const d = new Date(b.start_time);
-        myChangeYear = d.getFullYear();
-        myChangeMonth = d.getMonth();
-        myChangeDate = '';
-        memberChangeMode = false;
-        memberChangeSelectedStart = '';
-        memberChangeSelectedEnd = '';
-
-        // Reuse the exact same change panel markup as general reservation lookup, but place it under the clicked booking.
-        home.appendChild(panel);
-        slot.appendChild(panel);
-        panel.classList.add('member-change-shared-panel','is-open');
-        slot.classList.add('is-open');
-        panel.style.display = 'block';
-        const title = panel.querySelector('.my-change-title');
-        if (title) title.innerText = '예약 일정 변경';
-        const closeBtn = panel.querySelector('.my-booking-close');
-        if (closeBtn) closeBtn.innerText = '닫기';
-        const desc = panel.querySelector('.my-change-title')?.parentElement?.nextElementSibling;
-        if (desc) desc.innerText = '예약 가능한 날짜와 세션을 다시 선택해주세요. 기존 예약은 변경이 완료될 때까지 유지됩니다.';
-        const saveBtn = panel.querySelector('.my-change-actions .save');
-        if (saveBtn) { saveBtn.innerText = '일정 변경 저장'; saveBtn.setAttribute('onclick','saveActiveChange()'); }
-        const err = document.getElementById('my-change-error');
+        memberInlineChangeYear = d.getFullYear();
+        memberInlineChangeMonth = d.getMonth();
+        memberInlineChangeDate = '';
+        memberInlineChangeSelectedStart = '';
+        memberInlineChangeSelectedEnd = '';
+        const err = document.getElementById('member-inline-change-error');
         if (err) { err.innerText=''; err.style.display='none'; }
-        renderMyChangeCalendar();
+        const title = document.getElementById('member-inline-change-session-title');
+        if (title) title.innerText='날짜를 선택해주세요.';
+        const list = document.getElementById('member-inline-change-session-list');
+        if (list) list.innerHTML='';
+        slot.appendChild(panel);
+        panel.style.display='block';
         panel.scrollIntoView({behavior:'smooth', block:'nearest'});
+        renderMemberInlineChangeCalendar();
       };
 
-      window.cancelMemberChangeMode = function() {
-        memberChangeMode = false;
-        document.getElementById('booking-section')?.classList.remove('member-change-ux');
-        const memberChangeHelp = document.querySelector('#booking-section #calendar-wrapper > .admin-card > div:nth-child(3)');
-        if (memberChangeHelp) memberChangeHelp.innerText = '• 날짜 터치 시 세부 세션 선택 (전체 마감일은 터치 불가)';
-        memberChangeSelectedStart = '';
-        memberChangeSelectedEnd = '';
-        myChangeId = null;
-        selectedDateStr = '';
-        const context = document.getElementById('member-change-context');
-        if (context) context.style.display = 'none';
-        const bookingForm = document.getElementById('book-form-panel');
-        if (bookingForm) {
-          const fields = bookingForm.querySelectorAll('.booking-form-section, .booking-consent-box, .booking-submit-btn, #booking-error-msg');
-          fields.forEach(el => el.style.display = '');
-          const title = document.getElementById('selected-date-title');
-          if (title) title.innerText = '선택일: --';
-          const closeBtn = bookingForm.querySelector('button[onclick="closeBookPanel()"]');
-          if (closeBtn) closeBtn.innerText = '✕ 닫기';
-          const slotLabel = bookingForm.querySelector('.form-group > label');
-          if (slotLabel) slotLabel.innerText = '이용 세션 선택 (연속된 세션만 선택 가능)';
-          bookingForm.style.display = 'none';
-        }
-        renderBookCalendar();
+      window.closeMemberInlineChange = function() {
+        const panel = document.getElementById('member-inline-change-panel');
+        const home = document.getElementById('member-inline-change-panel-home');
+        if (panel && home) home.appendChild(panel);
+        if (panel) panel.style.display='none';
+        memberInlineChangeId = null;
+        memberInlineChangeDate = '';
+        memberInlineChangeSelectedStart = '';
+        memberInlineChangeSelectedEnd = '';
+        const list = document.getElementById('member-inline-change-session-list');
+        const title = document.getElementById('member-inline-change-session-title');
+        const err = document.getElementById('member-inline-change-error');
+        if (list) list.innerHTML='';
+        if (title) title.innerText='날짜를 선택해주세요.';
+        if (err) { err.innerText=''; err.style.display='none'; }
       };
 
-      window.saveMemberChangeFromMainCalendar = async function() {
-        if (!myChangeId || !memberChangeSelectedStart || !memberChangeSelectedEnd) {
-          const err = document.getElementById('booking-error-msg');
-          if (err) { err.innerText='변경할 세션을 선택해주세요.'; err.style.display='block'; }
-          return;
-        }
+      window.changeMemberInlineChangeMonth = function(delta) {
+        memberInlineChangeMonth += delta;
+        if (memberInlineChangeMonth > 11) { memberInlineChangeMonth=0; memberInlineChangeYear++; }
+        if (memberInlineChangeMonth < 0) { memberInlineChangeMonth=11; memberInlineChangeYear--; }
+        memberInlineChangeDate='';
+        memberInlineChangeSelectedStart='';
+        memberInlineChangeSelectedEnd='';
+        const title=document.getElementById('member-inline-change-session-title'); if(title) title.innerText='날짜를 선택해주세요.';
+        const list=document.getElementById('member-inline-change-session-list'); if(list) list.innerHTML='';
+        renderMemberInlineChangeCalendar();
+      };
+
+      async function renderMemberInlineChangeCalendar() {
+        const title=document.getElementById('member-inline-change-month-title');
+        const grid=document.getElementById('member-inline-change-calendar-grid');
+        if(!title || !grid) return;
+        title.innerText=`${memberInlineChangeYear}년 ${memberInlineChangeMonth+1}월 예약 현황`;
+        const firstDayIndex=new Date(memberInlineChangeYear,memberInlineChangeMonth,1).getDay();
+        const lastDayDate=new Date(memberInlineChangeYear,memberInlineChangeMonth+1,0).getDate();
+        const monthStart=new Date(memberInlineChangeYear,memberInlineChangeMonth,1,0,0,0);
+        const monthEnd=new Date(memberInlineChangeYear,memberInlineChangeMonth,lastDayDate,23,59,59);
+        const todayStr=new Date().toLocaleDateString('en-CA');
+        grid.innerHTML=Array.from({length:firstDayIndex},()=>'<div class="my-change-empty"></div>').join('') + Array.from({length:lastDayDate},(_,i)=>`<button type="button" class="my-change-day" disabled><div class="day-num">${i+1}</div></button>`).join('');
         try {
-          const res = await apiCall('rpc/member_change_booking', 'POST', {
-            p_token: memberBookingSessionToken, p_id: myChangeId,
-            p_start_time: memberChangeSelectedStart, p_end_time: memberChangeSelectedEnd
-          });
-          const result = res.ok ? await res.json() : null;
-          if (!res.ok || !result || !result.success) throw new Error((result && result.message) || '일정 변경에 실패했습니다.');
-          memberChangeMode = false;
-          document.getElementById('booking-section')?.classList.remove('member-change-ux');
-          const memberChangeHelp = document.querySelector('#booking-section #calendar-wrapper > .admin-card > div:nth-child(3)');
-          if (memberChangeHelp) memberChangeHelp.innerText = '• 날짜 터치 시 세부 세션 선택 (전체 마감일은 터치 불가)';
-          memberChangeSelectedStart = '';
-          memberChangeSelectedEnd = '';
-          myChangeId = null;
-          selectedDateStr = '';
-          const context = document.getElementById('member-change-context');
-          if (context) context.style.display='none';
-          showToast('예약 일정이 변경되었습니다.');
-          const bookingForm = document.getElementById('book-form-panel');
-          if (bookingForm) bookingForm.style.display='none';
-          await loadMemberBookingHistory();
-          renderBookCalendar();
-          const history = document.getElementById('member-booking-history');
-          if (history) history.scrollIntoView({behavior:'smooth', block:'start'});
+          const res=await apiCall('rpc/get_customer_schedule_slots','POST',{p_start_time:toISOStringSafe(monthStart),p_end_time:toISOStringSafe(monthEnd)});
+          const schedules=(res.ok?await res.json():[]).filter(x=>Number(x.id)!==Number(memberInlineChangeId));
+          let html='';
+          for(let i=0;i<firstDayIndex;i++) html+='<div class="my-change-empty"></div>';
+          for(let d=1;d<=lastDayDate;d++){
+            const dateStr=`${memberInlineChangeYear}-${String(memberInlineChangeMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+            const isPastDay=dateStr<todayStr;
+            const checks=[[10,13],[14,17],[18,21]].map(([sh,eh])=>{
+              const ss=new Date(memberInlineChangeYear,memberInlineChangeMonth,d,sh,0,0), ee=new Date(memberInlineChangeYear,memberInlineChangeMonth,d,eh,0,0);
+              return isPastDay || (dateStr===todayStr && ee<=new Date()) || schedules.some(ex=>ss<new Date(ex.end_time)&&ee>new Date(ex.start_time));
+            });
+            const ownBookings=memberBookingCache.filter(b=>b.guest_name!=='[CLOSED_BLOCK]' && new Date(b.start_time).toLocaleDateString('en-CA')===dateStr);
+            const hasOwn=ownBookings.some(b=>Number(b.id)===Number(memberInlineChangeId));
+            const blocked=checks.every(Boolean)&&!hasOwn;
+            const statuses=checks.map((v,i)=>v?`${i+1}부마감`:'').filter(Boolean);
+            const marker=ownBookings.length?'<div class="my-change-own-marker">● 내 예약</div>':'';
+            html+=`<button type="button" class="my-change-day ${blocked?'is-blocked':''} ${memberInlineChangeDate===dateStr?'is-selected':''}" ${blocked?'disabled':''} onclick="selectMemberInlineChangeDate('${dateStr}')"><div class="day-num">${d}</div><div class="day-status">${blocked?'전체마감':statuses.join('<br>')}${marker}</div></button>`;
+          }
+          grid.innerHTML=html;
         } catch(e) {
-          const err = document.getElementById('booking-error-msg');
-          if (err) { err.innerText=e.message || '일정 변경에 실패했습니다.'; err.style.display='block'; }
+          grid.innerHTML='<div style="grid-column:span 7;color:#8b5b55;text-align:center;padding:20px;font-size:12px;">캘린더를 불러오지 못했습니다.</div>';
+        }
+      }
+
+      window.selectMemberInlineChangeDate = async function(dateStr) {
+        memberInlineChangeDate=dateStr;
+        const title=document.getElementById('member-inline-change-session-title');
+        const list=document.getElementById('member-inline-change-session-list');
+        const err=document.getElementById('member-inline-change-error');
+        if(title) title.innerText=`${dateStr} · 이용 세션 선택`;
+        if(err) err.style.display='none';
+        if(list) list.innerHTML='<div style="padding:10px 0;color:#777269;font-size:12px;">세션 확인 중...</div>';
+        await renderMemberInlineChangeCalendar();
+        const [y,m,d]=dateStr.split('-').map(Number);
+        const sessions=[
+          {id:1,name:'1부',start:'10:00',end:'13:00',s:new Date(y,m-1,d,10,0,0),e:new Date(y,m-1,d,13,0,0)},
+          {id:2,name:'2부',start:'14:00',end:'17:00',s:new Date(y,m-1,d,14,0,0),e:new Date(y,m-1,d,17,0,0)},
+          {id:3,name:'3부',start:'18:00',end:'21:00',s:new Date(y,m-1,d,18,0,0),e:new Date(y,m-1,d,21,0,0)}
+        ];
+        try {
+          const dayStart=new Date(y,m-1,d,0,0,0), dayEnd=new Date(y,m-1,d,23,59,59);
+          const res=await apiCall('rpc/get_customer_schedule_slots','POST',{p_start_time:toISOStringSafe(dayStart),p_end_time:toISOStringSafe(dayEnd)});
+          const existing=(res.ok?await res.json():[]).filter(x=>Number(x.id)!==Number(memberInlineChangeId));
+          const current=getMemberBookingById(memberInlineChangeId);
+          const now=new Date();
+          let html='';
+          sessions.forEach(sess=>{
+            const past=dateStr<now.toLocaleDateString('en-CA') || (dateStr===now.toLocaleDateString('en-CA')&&sess.e<=now);
+            const overlap=existing.some(ex=>sess.s<new Date(ex.end_time)&&sess.e>new Date(ex.start_time));
+            const blocked=past||overlap;
+            const selected=!!(current && new Date(current.start_time).getTime()===sess.s.getTime() && new Date(current.end_time).getTime()===sess.e.getTime());
+            html+=`<button type="button" class="my-change-session ${blocked&&!selected?'is-blocked':''} ${selected?'is-selected':''}" ${blocked&&!selected?'disabled':''} data-start="${toISOStringSafe(sess.s)}" data-end="${toISOStringSafe(sess.e)}" data-slot-id="${sess.id}" aria-pressed="${selected?'true':'false'}" onclick="toggleMemberInlineChangeSlot(this)"><span class="session-name">${sess.name}</span><span class="session-time">${sess.start} ~ ${sess.end}</span><span class="session-status">${selected?'현재 예약':(blocked?'마감':'선택 가능')}</span></button>`;
+          });
+          if(list) list.innerHTML=html;
+          const selectedBtn=list ? list.querySelector('.my-change-session.is-selected') : null;
+          if(selectedBtn){ memberInlineChangeSelectedStart=selectedBtn.dataset.start; memberInlineChangeSelectedEnd=selectedBtn.dataset.end; }
+        } catch(e) {
+          if(list) list.innerHTML='<div style="color:#8b5b55;font-size:12px;">세션을 불러오지 못했습니다.</div>';
         }
       };
+
+      window.toggleMemberInlineChangeSlot=function(button){
+        if(!button||button.disabled)return;
+        document.querySelectorAll('#member-inline-change-session-list .my-change-session').forEach(b=>b.classList.remove('is-selected'));
+        button.classList.add('is-selected');
+        memberInlineChangeSelectedStart=button.dataset.start||'';
+        memberInlineChangeSelectedEnd=button.dataset.end||'';
+      };
+
+      window.saveMemberInlineChange=async function(){
+        const err=document.getElementById('member-inline-change-error'); if(err){err.innerText='';err.style.display='none';}
+        if(!memberInlineChangeId||!memberInlineChangeDate||!memberInlineChangeSelectedStart||!memberInlineChangeSelectedEnd){ if(err){err.innerText='변경할 날짜와 세션을 선택해주세요.';err.style.display='block';} return; }
+        try{
+          const res=await apiCall('rpc/member_change_booking','POST',{p_token:memberBookingSessionToken,p_id:memberInlineChangeId,p_start_time:memberInlineChangeSelectedStart,p_end_time:memberInlineChangeSelectedEnd});
+          const result=res.ok?await res.json():null;
+          if(!res.ok||!result||!result.success) throw new Error((result&&result.message)||'일정 변경에 실패했습니다.');
+          closeMemberInlineChange();
+          showToast('예약 일정이 변경되었습니다.');
+          await loadMemberBookingHistory();
+        }catch(e){ if(err){err.innerText=e.message||'일정 변경에 실패했습니다.';err.style.display='block';} }
+      };
+
+      window.cancelMemberChangeMode = function() { closeMemberInlineChange(); };
+
+      window.saveMemberChangeFromMainCalendar = async function() { return saveMemberInlineChange(); };
 
       window.cancelMemberBooking = async function(id) {
         if (!confirm('정말로 이 예약을 취소하시겠습니까?')) return;
@@ -3815,27 +3598,14 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         const trigger = document.getElementById('booking-lookup-trigger');
         if (!panel || !trigger) return;
         const isOpen = panel.classList.contains('is-open');
-        if (isOpen) {
-          panel.classList.remove('is-open');
-          trigger.classList.remove('is-open');
-          trigger.setAttribute('aria-expanded','false');
-          window.setTimeout(() => { if (!panel.classList.contains('is-open')) panel.style.display='none'; }, 370);
-        } else {
-          panel.style.display='block';
-          requestAnimationFrame(() => {
-            panel.classList.add('is-open');
-            trigger.classList.add('is-open');
-          });
-          trigger.setAttribute('aria-expanded','true');
-        }
+        panel.classList.toggle('is-open', !isOpen);
+        trigger.classList.toggle('is-open', !isOpen);
+        trigger.setAttribute('aria-expanded', String(!isOpen));
       };
       window.closeBookingLookupModal = function(){
         const panel = document.getElementById('booking-lookup-panel');
         const trigger = document.getElementById('booking-lookup-trigger');
-        if (panel) {
-          panel.classList.remove('is-open');
-          window.setTimeout(() => { if (!panel.classList.contains('is-open')) panel.style.display='none'; }, 370);
-        }
+        if (panel) panel.classList.remove('is-open');
         if (trigger) { trigger.classList.remove('is-open'); trigger.setAttribute('aria-expanded','false'); }
       };
       window.openGeneralBookingLookup = function(){
@@ -4275,6 +4045,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         const b = myBookingCache.find(x => Number(x.id) === Number(id));
         if (!b) return;
         if (isMyBookingStarted(b)) return alert('이미 시작된 예약은 고객이 수정할 수 없습니다.');
+        if (Number(myEditingInfoId) === Number(id) && document.getElementById('my-info-edit-panel')?.style.display !== 'none') { closeMyInfoEdit(); return; }
         myEditingInfoId = id;
         myChangeId = null;
         myChangeDate = '';
@@ -4296,7 +4067,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         document.getElementById('my-edit-sub-message').value = b.sub_message || '';
         document.getElementById('my-edit-error').style.display = 'none';
         editPanel.style.display = 'block';
-        editPanel.scrollIntoView({ behavior:'smooth', block:'start' });
+        editPanel.scrollIntoView({ behavior:'smooth', block:'nearest' });
       };
 
       window.closeMyInfoEdit = function() {
@@ -4348,6 +4119,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         const b = myBookingCache.find(x => Number(x.id) === Number(id));
         if (!b) return;
         if (isMyBookingStarted(b)) return alert('이미 시작된 예약은 일정을 변경할 수 없습니다.');
+        if (Number(myChangeId) === Number(id) && document.getElementById('my-change-panel')?.style.display !== 'none') { closeMyChange(); return; }
         myChangeId = id;
         myEditingInfoId = null;
         const editPanel = document.getElementById('my-info-edit-panel');
@@ -4364,20 +4136,17 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         myChangeDate = '';
         document.getElementById('my-change-error').style.display = 'none';
         document.getElementById('my-change-panel').style.display = 'block';
-        document.getElementById('my-change-panel').scrollIntoView({ behavior:'smooth', block:'start' });
+        document.getElementById('my-change-panel').scrollIntoView({ behavior:'smooth', block:'nearest' });
         renderMyChangeCalendar();
       };
 
       window.closeMyChange = function() {
         myChangeId = null;
         myChangeDate = '';
-        myEditingInfoId = null;
         const panel = document.getElementById('my-change-panel');
         const home = document.getElementById('my-change-panel-home');
-        const slot = panel?.closest('.member-booking-change-slot');
-        if (slot) slot.classList.remove('is-open');
         if (panel && home) home.appendChild(panel);
-        if (panel) { panel.style.display = 'none'; panel.classList.remove('member-change-shared-panel','is-open'); }
+        if (panel) panel.style.display = 'none';
         document.getElementById('my-change-session-list').innerHTML = '';
         document.getElementById('my-change-session-title').innerText = '날짜를 선택해주세요.';
       };
@@ -4392,48 +4161,38 @@ body.lc-customer-view #bar-section #btn-submit-bar {
       async function renderMyChangeCalendar() {
         const title = document.getElementById('my-change-month-title');
         const grid = document.getElementById('my-change-calendar-grid');
-        if (!title || !grid) return;
         title.innerText = `${myChangeYear}년 ${myChangeMonth + 1}월 예약 현황`;
+        grid.innerHTML = '<div style="grid-column:span 7; text-align:center; padding:22px 0; color:#777269; font-size:12px;">캘린더 로딩 중...</div>';
         const firstDayIndex = new Date(myChangeYear, myChangeMonth, 1).getDay();
         const lastDayDate = new Date(myChangeYear, myChangeMonth + 1, 0).getDate();
+        const monthStart = new Date(myChangeYear, myChangeMonth, 1, 0, 0, 0);
+        const monthEnd = new Date(myChangeYear, myChangeMonth, lastDayDate, 23, 59, 59);
         const todayStr = new Date().toLocaleDateString('en-CA');
-        const renderDays = (schedules) => {
-          const safeSchedules = Array.isArray(schedules) ? schedules : [];
+        try {
+          const res = await apiCall('rpc/get_customer_schedule_slots', 'POST', { p_start_time: toISOStringSafe(monthStart), p_end_time: toISOStringSafe(monthEnd) });
+          const schedules = (res.ok ? await res.json() : []).filter(s => Number(s.id) !== Number(myChangeId));
           let html = '';
           for (let i = 0; i < firstDayIndex; i++) html += '<div class="my-change-empty"></div>';
-          const changeBookings = memberBookingSessionToken ? (Array.isArray(memberBookingCache) ? memberBookingCache : []) : (Array.isArray(myBookingCache) ? myBookingCache : []);
           for (let d = 1; d <= lastDayDate; d++) {
             const dateStr = `${myChangeYear}-${String(myChangeMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
             const isPastDay = dateStr < todayStr;
             const sessionChecks = [[10,13],[14,17],[18,21]].map(([sh,eh]) => {
               const s = new Date(myChangeYear,myChangeMonth,d,sh,0,0);
               const e = new Date(myChangeYear,myChangeMonth,d,eh,0,0);
-              return isPastDay || (dateStr === todayStr && e <= new Date()) || safeSchedules.some(ex => s < new Date(ex.end_time) && e > new Date(ex.start_time));
+              return isPastDay || (dateStr === todayStr && e <= new Date()) || schedules.some(ex => s < new Date(ex.end_time) && e > new Date(ex.start_time));
             });
-            const ownBookings = changeBookings.filter(b => b.guest_name !== '[CLOSED_BLOCK]' && new Date(b.start_time).toLocaleDateString('en-CA') === dateStr);
+            const ownBookings = myBookingCache.filter(b => b.guest_name !== '[CLOSED_BLOCK]' && new Date(b.start_time).toLocaleDateString('en-CA') === dateStr);
             const hasOwnBooking = ownBookings.some(b => Number(b.id) === Number(myChangeId));
             const blocked = sessionChecks.every(Boolean) && !hasOwnBooking;
             const statuses = sessionChecks.map((v,i)=>v?`${i+1}부마감`:'').filter(Boolean);
             const ownMarker = ownBookings.length ? '<div class="my-change-own-marker">● 내 예약</div>' : '';
-            html += `<button type="button" class="my-change-day ${blocked?'is-blocked':''} ${myChangeDate===dateStr?'is-selected':''}" ${blocked?'disabled':''} onclick="selectMyChangeDate('${dateStr}')"><div class="day-num">${d}</div><div class="day-status">${blocked?'전체마감':statuses.join('<br>')}${ownMarker}</div></button>`;
+            html += `<button type="button" class="my-change-day ${blocked?'is-blocked':''} ${myChangeDate===dateStr?'is-selected':''}" ${blocked?'disabled':''} onclick="selectMyChangeDate('${dateStr}')">
+              <div class="day-num">${d}</div><div class="day-status">${blocked?'전체마감':statuses.join('<br>')}${ownMarker}</div>
+            </button>`;
           }
-          grid.style.display='grid';
-          grid.style.gridTemplateColumns='repeat(7,minmax(0,1fr))';
-          grid.style.visibility='visible';
-          grid.innerHTML=html;
-        };
-
-        // Render the date grid immediately. A failed/slow availability request must never make the calendar disappear.
-        renderDays([]);
-        const monthStart = new Date(myChangeYear, myChangeMonth, 1, 0, 0, 0);
-        const monthEnd = new Date(myChangeYear, myChangeMonth, lastDayDate, 23, 59, 59);
-        try {
-          const res = await apiCall('rpc/get_customer_schedule_slots', 'POST', { p_start_time: toISOStringSafe(monthStart), p_end_time: toISOStringSafe(monthEnd) });
-          const rawSchedules = res.ok ? await res.json() : [];
-          const schedules = Array.isArray(rawSchedules) ? rawSchedules.filter(s => Number(s.id) !== Number(myChangeId)) : [];
-          renderDays(schedules);
+          grid.innerHTML = html;
         } catch(e) {
-          // Keep the already-rendered calendar; unavailable schedule details are treated as open until refreshed.
+          grid.innerHTML = '<div style="grid-column:span 7; color:#8b5b55; text-align:center; padding:20px;">캘린더를 불러오지 못했습니다.</div>';
         }
       }
 
@@ -4457,8 +4216,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
           const dayEnd = new Date(y,m-1,d,23,59,59);
           const res = await apiCall('rpc/get_customer_schedule_slots', 'POST', { p_start_time: toISOStringSafe(dayStart), p_end_time: toISOStringSafe(dayEnd) });
           const existing = (res.ok ? await res.json() : []).filter(x => Number(x.id) !== Number(myChangeId));
-          const changeBookings = memberBookingSessionToken ? memberBookingCache : myBookingCache;
-          const current = changeBookings.find(x => Number(x.id) === Number(myChangeId));
+          const current = myBookingCache.find(x => Number(x.id) === Number(myChangeId));
           const now = new Date();
           const currentStart = current ? new Date(current.start_time) : null;
           const currentEnd = current ? new Date(current.end_time) : null;
