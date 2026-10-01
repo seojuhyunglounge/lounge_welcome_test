@@ -1,6 +1,6 @@
 <!--
   La Colonne
-  VERSION: V2.6.8 — RESERVATION LOOKUP FIX
+  VERSION: V2.6.9 — RESERVATION LOOKUP FIX
   UPDATED: 2026-10-01
 --> 
 <!DOCTYPE html>
@@ -3600,7 +3600,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
               const blocked=dateStr<today || (dateStr===today && now>=eo) || existing.some(ex=>so<new Date(ex.end_time)&&eo>new Date(ex.start_time));
               const currentSlot=current && new Date(current.start_time).getTime()===so.getTime() && new Date(current.end_time).getTime()===eo.getTime();
               return `<label class="member-change-slot-card" style="display:flex;align-items:center;gap:10px;padding:12px;border:1px solid ${currentSlot?'#c9a96e':'rgba(201,169,110,.2)'};border-radius:8px;background:${currentSlot?'rgba(201,169,110,.08)':'#faf9f6'};color:#292722;opacity:${blocked&&!currentSlot?'.45':'1'};"><input type="radio" name="member-change-slot" ${blocked&&!currentSlot?'disabled':''} ${currentSlot?'checked':''} onchange="selectMemberChangeSession('${toISOStringSafe(so)}','${toISOStringSafe(eo)}')"><span><b>${name.split(' (')[0]}</b><br><small>${st} ~ ${en}${currentSlot?' · 현재 예약':''}${blocked&&!currentSlot?' · 마감':''}</small></span></label>`;
-            }).join('')+`<div style="margin-top:12px;font-size:12px;color:#777269;">변경할 날짜와 시간을 선택한 후 저장하세요.</div><div style="display:flex;justify-content:flex-end;gap:8px;margin-top:14px;"><button type="button" class="my-booking-action" onclick="cancelMemberChangeMode()">취소</button><button type="button" class="my-booking-action save" onclick="saveMemberChangeFromMainCalendar()">일정 변경 확정</button></div>`;
+            }).join('')+`<div class="member-change-confirm-row"><div class="member-change-help">변경할 날짜와 시간을 선택한 후 저장하세요.</div><div class="member-change-confirm-actions"><button type="button" class="my-booking-action" onclick="cancelMemberChangeMode()">취소</button><button type="button" class="my-booking-action save" onclick="saveMemberChangeFromMainCalendar()">일정 변경 확정</button></div></div>`;
             const first=document.querySelector('input[name="member-change-slot"]:checked');
             if(first && current) { memberChangeSelectedStart=current.start_time; memberChangeSelectedEnd=current.end_time; }
             bookingForm.scrollIntoView({behavior:'smooth',block:'start'});
@@ -3924,7 +3924,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         try {
           const res = await apiCall('rpc/update_customer_booking', 'POST', {
             p_id: myEditingInfoId,
-            p_phone: (memberBookingPhone || phoneIn.value.trim().replace(/[^0-9]/g, '')),
+            p_phone: phoneIn.value.trim().replace(/[^0-9]/g, ''),
             p_pin: pinIn.value.trim(),
             p_reservation_name: reservationName,
             p_guest_name: displayName,
@@ -4084,7 +4084,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
           const res = await apiCall('rpc/change_customer_booking','POST',{
             p_id: myChangeId,
             p_phone: phoneIn.value.trim().replace(/[^0-9]/g,''),
-            p_pin: (memberBookingPin || pinIn.value.trim()),
+            p_pin: pinIn.value.trim(),
             p_start_time: slots[0].dataset.start,
             p_end_time: slots[slots.length-1].dataset.end
           });
