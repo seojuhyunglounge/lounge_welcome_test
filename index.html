@@ -1,6 +1,6 @@
 <!--
   La Colonne
-  VERSION: V2.6.12 — MEMBER CHANGE UI EXACT MATCH + LOOKUP ACCORDION
+  VERSION: V2.6.13 — MEMBER CHANGE UI EXACT MATCH + LOOKUP ACCORDION
   UPDATED: 2026-09-30
 --> 
 <!DOCTYPE html>
@@ -1870,7 +1870,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
 </style>
 
 <style id="v2-6-12-exact-member-change-and-lookup">
-/* V2.6.12 — Member change uses the exact same visual component as General Reservation change. */
+/* V2.6.13 — Member change uses the exact same visual component as General Reservation change. */
 #booking-section .member-change-shared-panel {
   display:block;
   margin-top:18px !important;
@@ -1942,7 +1942,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
 #booking-section .member-change-shared-panel .my-change-head { margin-bottom:18px !important; }
 #booking-section .member-change-shared-panel .my-booking-close { color:#777269 !important; font-size:12px !important; }
 
-/* V2.6.12 — Lookup trigger + choices form one quiet accordion group. */
+/* V2.6.13 — Lookup trigger + choices form one quiet accordion group. */
 #booking-section .booking-lookup-trigger {
   border:1px solid rgba(41,39,34,.12) !important;
   border-radius:7px !important;
@@ -1972,7 +1972,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
 </style>
 
 <style id="member-change-match-general-v2-6-12">
-/* V2.6.12 — Member schedule-change reuses the General Reservation change panel UI */
+/* V2.6.13 — Member schedule-change calendar render fix */
 #booking-section.member-change-ux #calendar-wrapper { margin-top: 18px !important; }
 #booking-section.member-change-ux #calendar-wrapper > .admin-card {
   background:#f4f1ea !important;
@@ -4362,7 +4362,14 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         const todayStr = new Date().toLocaleDateString('en-CA');
         try {
           const res = await apiCall('rpc/get_customer_schedule_slots', 'POST', { p_start_time: toISOStringSafe(monthStart), p_end_time: toISOStringSafe(monthEnd) });
-          const schedules = (res.ok ? await res.json() : []).filter(s => Number(s.id) !== Number(myChangeId));
+          const rawSchedules = res.ok ? await res.json() : [];
+          const schedules = Array.isArray(rawSchedules)
+            ? rawSchedules.filter(s => Number(s.id) !== Number(myChangeId))
+            : [];
+          // 회원예약에서 동일 패널을 이동해도 캘린더 grid 자체가 항상 렌더링되도록 명시한다.
+          grid.style.display = 'grid';
+          grid.style.gridTemplateColumns = 'repeat(7, minmax(0, 1fr))';
+          grid.style.visibility = 'visible';
           let html = '';
           for (let i = 0; i < firstDayIndex; i++) html += '<div class="my-change-empty"></div>';
           for (let d = 1; d <= lastDayDate; d++) {
