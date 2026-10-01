@@ -1,7 +1,7 @@
 <!--
   La Colonne
-  VERSION: V2.6.11 — RESERVATION LOOKUP FIX
-  UPDATED: 2026-10-01
+  VERSION: V2.6.12 — MEMBER CHANGE UI EXACT MATCH + LOOKUP ACCORDION
+  UPDATED: 2026-09-30
 --> 
 <!DOCTYPE html>
 <html lang="ko">
@@ -1869,8 +1869,110 @@ body.lc-customer-view #bar-section #btn-submit-bar {
 }
 </style>
 
-<style id="member-change-match-general-v2-6-11">
-/* V2.6.11 — Member schedule-change UI mirrors General Reservation change panel */
+<style id="v2-6-12-exact-member-change-and-lookup">
+/* V2.6.12 — Member change uses the exact same visual component as General Reservation change. */
+#booking-section .member-change-shared-panel {
+  display:block;
+  margin-top:18px !important;
+  background:#f4f1ea !important;
+  border:1px solid rgba(41,39,34,.12) !important;
+  border-radius:10px !important;
+  box-shadow:none !important;
+  color:#292722 !important;
+  padding:22px 20px !important;
+  text-align:left !important;
+}
+#booking-section .member-change-shared-panel .my-change-title {
+  font-family:'Cormorant Garamond',serif !important;
+  font-size:27px !important;
+  font-weight:400 !important;
+  color:#292722 !important;
+}
+#booking-section .member-change-shared-panel .my-change-calendar-head { margin-bottom:12px !important; }
+#booking-section .member-change-shared-panel .my-change-month {
+  font-family:'Noto Sans KR',sans-serif !important;
+  font-size:.88rem !important; font-weight:500 !important; color:#292722 !important;
+}
+#booking-section .member-change-shared-panel .my-change-calendar-nav button {
+  width:30px !important; height:30px !important; padding:0 !important;
+  border:1px solid rgba(41,39,34,.14) !important; border-radius:50% !important;
+  background:#faf9f6 !important; color:#5f5a52 !important; font-size:.68rem !important;
+}
+#booking-section .member-change-shared-panel .my-change-week {
+  color:#777269 !important; font-size:.70rem !important; font-weight:400 !important; margin-bottom:6px !important;
+}
+#booking-section .member-change-shared-panel .my-change-grid { gap:5px !important; }
+#booking-section .member-change-shared-panel .my-change-day {
+  min-height:62px !important; padding:7px 4px !important;
+  background:#faf9f6 !important; border:1px solid rgba(41,39,34,.12) !important; border-radius:5px !important;
+}
+#booking-section .member-change-shared-panel .my-change-day.is-selected { border-color:#9b8058 !important; background:#eee9df !important; }
+#booking-section .member-change-shared-panel .my-change-day .day-num { font-size:.74rem !important; }
+#booking-section .member-change-shared-panel .my-change-day .day-status { margin-top:10px !important; font-size:.58rem !important; line-height:1.25 !important; color:#9b8058 !important; }
+#booking-section .member-change-shared-panel .my-change-session-title {
+  margin:18px 0 10px !important; font-size:.70rem !important; color:#777269 !important; letter-spacing:.05em !important;
+}
+#booking-section .member-change-shared-panel .my-change-session-list {
+  display:grid !important; grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:7px !important;
+}
+#booking-section .member-change-shared-panel .my-change-session {
+  position:relative !important; min-width:0 !important; min-height:76px !important;
+  display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important;
+  gap:5px !important; padding:10px 5px !important; background:#faf9f6 !important;
+  border:1px solid rgba(41,39,34,.14) !important; border-radius:8px !important; text-align:center !important;
+}
+#booking-section .member-change-shared-panel .my-change-session.is-selected {
+  background:#eee9df !important; border-color:#9b8058 !important; box-shadow:inset 0 0 0 1px rgba(155,128,88,.18) !important;
+}
+#booking-section .member-change-shared-panel .my-change-session input[type="radio"],
+#booking-section .member-change-shared-panel .my-change-session input[type="checkbox"] {
+  position:absolute !important; width:1px !important; height:1px !important; opacity:0 !important; pointer-events:none !important;
+}
+#booking-section .member-change-shared-panel .my-change-session .session-name { color:#292722 !important; font-size:.82rem !important; font-weight:600 !important; }
+#booking-section .member-change-shared-panel .my-change-session .session-time { color:#777269 !important; font-size:.65rem !important; }
+#booking-section .member-change-shared-panel .my-change-session .session-status { color:#9b8058 !important; font-size:.62rem !important; }
+#booking-section .member-change-shared-panel .my-change-actions { display:flex !important; gap:8px !important; margin-top:18px !important; }
+#booking-section .member-change-shared-panel .my-change-actions button {
+  flex:1 !important; padding:12px !important; border:1px solid rgba(41,39,34,.18) !important;
+  background:#faf9f6 !important; color:#292722 !important; cursor:pointer !important; border-radius:5px !important;
+}
+#booking-section .member-change-shared-panel .my-change-actions button.save {
+  background:#292722 !important; color:#f7f4ed !important; border-color:#292722 !important;
+}
+#booking-section .member-change-shared-panel .my-change-head { margin-bottom:18px !important; }
+#booking-section .member-change-shared-panel .my-booking-close { color:#777269 !important; font-size:12px !important; }
+
+/* V2.6.12 — Lookup trigger + choices form one quiet accordion group. */
+#booking-section .booking-lookup-trigger {
+  border:1px solid rgba(41,39,34,.12) !important;
+  border-radius:7px !important;
+  padding:10px 12px 11px !important;
+  margin:0 !important;
+  transition:background .28s ease,border-color .28s ease,border-radius .28s ease !important;
+}
+#booking-section .booking-lookup-trigger.is-open {
+  border-radius:7px 7px 0 0 !important;
+  border-bottom-color:transparent !important;
+  background:#f7f4ed !important;
+}
+#booking-section .booking-lookup-panel {
+  max-height:0; opacity:0; overflow:hidden; transform:translateY(-4px);
+  margin:0 !important; padding:0 12px !important;
+  border:1px solid rgba(41,39,34,.12) !important; border-top:0 !important;
+  border-radius:0 0 7px 7px !important; background:#f7f4ed !important;
+  transition:max-height .36s ease,opacity .28s ease,transform .36s ease,padding .36s ease !important;
+}
+#booking-section .booking-lookup-panel.is-open {
+  max-height:240px; opacity:1; transform:translateY(0); padding:14px 12px 12px !important;
+}
+#booking-section .booking-lookup-panel .booking-lookup-title { font-size:.90rem !important; }
+#booking-section .booking-lookup-panel .booking-lookup-sub { margin:4px 0 11px !important; }
+#booking-section .booking-lookup-options { padding-bottom:0 !important; }
+#booking-section .booking-lookup-panel .booking-lookup-option { background:#faf9f6 !important; }
+</style>
+
+<style id="member-change-match-general-v2-6-12">
+/* V2.6.12 — Member schedule-change reuses the General Reservation change panel UI */
 #booking-section.member-change-ux #calendar-wrapper { margin-top: 18px !important; }
 #booking-section.member-change-ux #calendar-wrapper > .admin-card {
   background:#f4f1ea !important;
@@ -2713,7 +2815,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
       <div id="my-change-session-list" class="my-change-session-list"></div>
       <div class="my-change-actions">
         <button type="button" onclick="closeMyChange()">취소</button>
-        <button type="button" class="save" onclick="saveMyChange()">일정 변경 저장</button>
+        <button type="button" class="save" onclick="saveActiveChange()">일정 변경 저장</button>
       </div>
       <div id="my-change-error" style="display:none; margin-top:10px; color:#8b5b55; font-size:12px;"></div>
     </div>
@@ -3429,37 +3531,37 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         if (!b || isMemberBookingStarted(b)) return;
         myChangeId = id;
         myEditingInfoId = null;
-        memberChangeMode = true;
-        document.getElementById('booking-section')?.classList.add('member-change-ux');
-        const memberChangeHelp = document.querySelector('#booking-section #calendar-wrapper > .admin-card > div:nth-child(3)');
-        if (memberChangeHelp) memberChangeHelp.innerText = '예약 가능한 날짜와 세션을 다시 선택해주세요. 기존 예약은 변경이 완료될 때까지 유지됩니다.';
+        memberChangeMode = false;
         memberChangeSelectedStart = '';
         memberChangeSelectedEnd = '';
         const d = new Date(b.start_time);
-        bookYear = d.getFullYear();
-        bookMonth = d.getMonth();
-        selectedDateStr = '';
+        myChangeYear = d.getFullYear();
+        myChangeMonth = d.getMonth();
+        myChangeDate = '';
 
-        const context = document.getElementById('member-change-context');
-        const contextTitle = document.getElementById('member-change-context-title');
-        const contextDetail = document.getElementById('member-change-context-detail');
-        if (context) context.style.display = 'block';
-        if (contextTitle) contextTitle.innerText = '일정 변경 · 변경할 예약';
-        if (contextDetail) contextDetail.innerText = `${formatMemberBookingDate(b.start_time, b.end_time)} · ${b.guest_name || b.reservation_name || '예약'}`;
-
-        const selectedTitle = document.getElementById('selected-date-title');
-        const bookingForm = document.getElementById('book-form-panel');
-        const fields = bookingForm ? bookingForm.querySelectorAll('.booking-form-section, .booking-consent-box, .booking-submit-btn, #booking-error-msg') : [];
-        fields.forEach(el => el.style.display = 'none');
-        if (selectedTitle) selectedTitle.innerText = '일정 변경 · 날짜를 선택해주세요.';
-        const closeBtn = bookingForm ? bookingForm.querySelector('button[onclick="closeBookPanel()"]') : null;
-        if (closeBtn) closeBtn.innerText = '✕ 취소';
-        const slotLabel = bookingForm ? bookingForm.querySelector('.form-group > label') : null;
-        if (slotLabel) slotLabel.innerText = '변경할 이용 세션 선택';
-
-        renderBookCalendar();
-        const wrapper = document.getElementById('calendar-wrapper');
-        if (wrapper) wrapper.scrollIntoView({behavior:'smooth', block:'start'});
+        // 회원예약도 일반예약조회에서 사용하는 동일한 일정변경 패널을 그대로 재사용한다.
+        const panel = document.getElementById('my-change-panel');
+        const home = document.getElementById('my-change-panel-home');
+        const history = document.getElementById('member-booking-history');
+        const mainCalendar = document.getElementById('calendar-wrapper');
+        if (!panel || !history) return;
+        if (home) home.appendChild(panel);
+        history.appendChild(panel);
+        panel.style.display = 'block';
+        panel.classList.add('member-change-shared-panel');
+        const title = panel.querySelector('.my-change-title');
+        if (title) title.innerText = '예약 일정 변경';
+        const closeBtn = panel.querySelector('.my-booking-close');
+        if (closeBtn) closeBtn.innerText = '닫기';
+        const desc = panel.querySelector('.my-change-title')?.parentElement?.nextElementSibling;
+        if (desc) desc.innerText = '예약 가능한 날짜와 세션을 다시 선택해주세요. 기존 예약은 변경이 완료될 때까지 유지됩니다.';
+        const saveBtn = panel.querySelector('.my-change-actions .save');
+        if (saveBtn) { saveBtn.innerText = '일정 변경 저장'; saveBtn.setAttribute('onclick','saveActiveChange()'); }
+        const err = document.getElementById('my-change-error');
+        if (err) { err.innerText=''; err.style.display='none'; }
+        if (mainCalendar) mainCalendar.style.display = 'none';
+        renderMyChangeCalendar();
+        panel.scrollIntoView({behavior:'smooth', block:'start'});
       };
 
       window.cancelMemberChangeMode = function() {
@@ -3670,15 +3772,29 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         const panel = document.getElementById('booking-lookup-panel');
         const trigger = document.getElementById('booking-lookup-trigger');
         if (!panel || !trigger) return;
-        const isOpen = panel.style.display !== 'none';
-        panel.style.display = isOpen ? 'none' : 'block';
-        trigger.setAttribute('aria-expanded', String(!isOpen));
+        const isOpen = panel.classList.contains('is-open');
+        if (isOpen) {
+          panel.classList.remove('is-open');
+          trigger.classList.remove('is-open');
+          trigger.setAttribute('aria-expanded','false');
+          window.setTimeout(() => { if (!panel.classList.contains('is-open')) panel.style.display='none'; }, 370);
+        } else {
+          panel.style.display='block';
+          requestAnimationFrame(() => {
+            panel.classList.add('is-open');
+            trigger.classList.add('is-open');
+          });
+          trigger.setAttribute('aria-expanded','true');
+        }
       };
       window.closeBookingLookupModal = function(){
         const panel = document.getElementById('booking-lookup-panel');
         const trigger = document.getElementById('booking-lookup-trigger');
-        if (panel) panel.style.display='none';
-        if (trigger) trigger.setAttribute('aria-expanded','false');
+        if (panel) {
+          panel.classList.remove('is-open');
+          window.setTimeout(() => { if (!panel.classList.contains('is-open')) panel.style.display='none'; }, 370);
+        }
+        if (trigger) { trigger.classList.remove('is-open'); trigger.setAttribute('aria-expanded','false'); }
       };
       window.openGeneralBookingLookup = function(){
         closeBookingLookupModal();
@@ -4211,14 +4327,20 @@ body.lc-customer-view #bar-section #btn-submit-bar {
       };
 
       window.closeMyChange = function() {
+        const wasMemberChange = !!(memberBookingSessionToken && myChangeId && getMemberBookingById(myChangeId));
         myChangeId = null;
         myChangeDate = '';
         const panel = document.getElementById('my-change-panel');
         const home = document.getElementById('my-change-panel-home');
         if (panel && home) home.appendChild(panel);
-        if (panel) panel.style.display = 'none';
+        if (panel) { panel.style.display = 'none'; panel.classList.remove('member-change-shared-panel'); }
         document.getElementById('my-change-session-list').innerHTML = '';
         document.getElementById('my-change-session-title').innerText = '날짜를 선택해주세요.';
+        if (wasMemberChange) {
+          const mainCalendar = document.getElementById('calendar-wrapper');
+          if (mainCalendar) mainCalendar.style.display = 'block';
+          loadMemberBookingHistory();
+        }
       };
 
       window.changeMyChangeMonth = function(delta) {
@@ -4251,7 +4373,8 @@ body.lc-customer-view #bar-section #btn-submit-bar {
               const e = new Date(myChangeYear,myChangeMonth,d,eh,0,0);
               return isPastDay || (dateStr === todayStr && e <= new Date()) || schedules.some(ex => s < new Date(ex.end_time) && e > new Date(ex.start_time));
             });
-            const ownBookings = myBookingCache.filter(b => b.guest_name !== '[CLOSED_BLOCK]' && new Date(b.start_time).toLocaleDateString('en-CA') === dateStr);
+            const changeBookings = memberBookingSessionToken ? memberBookingCache : myBookingCache;
+            const ownBookings = changeBookings.filter(b => b.guest_name !== '[CLOSED_BLOCK]' && new Date(b.start_time).toLocaleDateString('en-CA') === dateStr);
             const hasOwnBooking = ownBookings.some(b => Number(b.id) === Number(myChangeId));
             const blocked = sessionChecks.every(Boolean) && !hasOwnBooking;
             const statuses = sessionChecks.map((v,i)=>v?`${i+1}부마감`:'').filter(Boolean);
@@ -4286,7 +4409,8 @@ body.lc-customer-view #bar-section #btn-submit-bar {
           const dayEnd = new Date(y,m-1,d,23,59,59);
           const res = await apiCall('rpc/get_customer_schedule_slots', 'POST', { p_start_time: toISOStringSafe(dayStart), p_end_time: toISOStringSafe(dayEnd) });
           const existing = (res.ok ? await res.json() : []).filter(x => Number(x.id) !== Number(myChangeId));
-          const current = myBookingCache.find(x => Number(x.id) === Number(myChangeId));
+          const changeBookings = memberBookingSessionToken ? memberBookingCache : myBookingCache;
+          const current = changeBookings.find(x => Number(x.id) === Number(myChangeId));
           const now = new Date();
           const currentStart = current ? new Date(current.start_time) : null;
           const currentEnd = current ? new Date(current.end_time) : null;
