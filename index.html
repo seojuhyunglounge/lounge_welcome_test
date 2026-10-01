@@ -1,6 +1,6 @@
 <!--
   La Colonne
-  VERSION: V2.6.1 — RESERVATION LOOKUP FIX
+  VERSION: V2.6.7 — RESERVATION LOOKUP FIX
   UPDATED: 2026-09-30
 --> 
 <!DOCTYPE html>
@@ -3749,6 +3749,8 @@ body.lc-customer-view #bar-section #btn-submit-bar {
                 <button type="button" class="my-booking-action" ${started ? 'disabled' : ''} onclick="openMyChange(${b.id})">일정 변경</button>
                 <button type="button" class="my-booking-action danger" onclick="cancelMyBooking(${b.id}, '${escapeHtml(phone)}', '${escapeHtml(pin)}')">예약 취소</button>
               </div>
+              <div class="my-booking-edit-slot"></div>
+              <div class="my-booking-change-slot"></div>
               ${modified && b.customer_change_note ? `<div style="margin-top:10px; color:#9b8058; font-size:11px;">${escapeHtml(b.customer_change_note)}</div>` : ''}
             </div>`;
         });
