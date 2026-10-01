@@ -1,6 +1,6 @@
 <!--
   La Colonne
-  VERSION: V2.6.13 — MEMBER CHANGE UI EXACT MATCH + LOOKUP ACCORDION
+  VERSION: V2.6.14 — MEMBER CHANGE UI EXACT MATCH + LOOKUP ACCORDION
   UPDATED: 2026-09-30
 --> 
 <!DOCTYPE html>
@@ -1870,7 +1870,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
 </style>
 
 <style id="v2-6-12-exact-member-change-and-lookup">
-/* V2.6.13 — Member change uses the exact same visual component as General Reservation change. */
+/* V2.6.14 — Member change uses the exact same visual component as General Reservation change. */
 #booking-section .member-change-shared-panel {
   display:block;
   margin-top:18px !important;
@@ -1942,7 +1942,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
 #booking-section .member-change-shared-panel .my-change-head { margin-bottom:18px !important; }
 #booking-section .member-change-shared-panel .my-booking-close { color:#777269 !important; font-size:12px !important; }
 
-/* V2.6.13 — Lookup trigger + choices form one quiet accordion group. */
+/* V2.6.14 — Lookup trigger + choices form one quiet accordion group. */
 #booking-section .booking-lookup-trigger {
   border:1px solid rgba(41,39,34,.12) !important;
   border-radius:7px !important;
@@ -1972,7 +1972,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
 </style>
 
 <style id="member-change-match-general-v2-6-12">
-/* V2.6.13 — Member schedule-change calendar render fix */
+/* V2.6.14 — Member schedule-change calendar render fix */
 #booking-section.member-change-ux #calendar-wrapper { margin-top: 18px !important; }
 #booking-section.member-change-ux #calendar-wrapper > .admin-card {
   background:#f4f1ea !important;
@@ -2204,6 +2204,36 @@ body.lc-customer-view #bar-section #btn-submit-bar {
 .member-change-confirm-actions .my-booking-action{margin:0;min-width:76px;height:42px;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;}
 .member-change-confirm-actions .my-booking-action.save{min-width:112px;}
 @media (max-width:600px){.member-change-confirm-row{grid-template-columns:1fr;gap:12px;}.member-change-confirm-actions{justify-content:flex-end;}.member-change-confirm-actions .my-booking-action{min-width:82px;}}
+</style>
+
+<style id="v2-6-14-accordion-fix">
+/* V2.6.14 — member booking inline accordion panels */
+.member-booking-change-slot { margin-top:0; }
+.member-inline-edit, .member-booking-change-slot {
+  display:grid !important;
+  grid-template-rows:0fr;
+  transition:grid-template-rows .34s ease, opacity .28s ease, margin-top .34s ease;
+  opacity:0;
+  overflow:hidden;
+  margin-top:0 !important;
+}
+.member-inline-edit.is-open, .member-booking-change-slot.is-open {
+  grid-template-rows:1fr;
+  opacity:1;
+  margin-top:14px !important;
+}
+.member-inline-edit > .accordion-inner, .member-booking-change-slot > .accordion-inner { min-height:0; overflow:hidden; }
+.member-inline-toggle[aria-expanded="true"] {
+  background:#eee9df !important; border-color:rgba(155,128,88,.55) !important;
+}
+/* The shared change panel must keep the same calendar grid regardless of its parent. */
+.my-change-panel .my-change-grid {
+  display:grid !important;
+  grid-template-columns:repeat(7,minmax(0,1fr)) !important;
+  gap:5px !important;
+  visibility:visible !important;
+}
+.my-change-panel .my-change-day { display:block !important; min-height:62px; }
 </style>
 </head>
 <body>
@@ -3423,6 +3453,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
                 </div>
                 <div data-field="error" style="display:none;margin-top:9px;color:#8b5b55;font-size:11px;"></div>
               </div>
+              <div class="my-booking-change-slot" data-change-slot="${b.id}"></div>
             </div>`;
           }).join('');
         }
@@ -3482,20 +3513,22 @@ body.lc-customer-view #bar-section #btn-submit-bar {
       window.openMemberInfoEdit = function(id) {
         const b = getMemberBookingById(id);
         if (!b || isMemberBookingStarted(b)) return;
-        myEditingInfoId = id;
-        myChangeId = null;
         const edit = document.getElementById(`member-inline-edit-${id}`);
         if (!edit) return;
-        document.querySelectorAll('.member-inline-edit').forEach(el => {
-          if (el !== edit) el.style.display = 'none';
-        });
-        edit.style.display = 'block';
+        const wasOpen = edit.classList.contains('is-open');
+        // Toggle: clicking the same button again closes the panel.
+        document.querySelectorAll('.member-inline-edit.is-open').forEach(el => el.classList.remove('is-open'));
+        document.querySelectorAll('.member-booking-change-slot.is-open').forEach(el => el.classList.remove('is-open'));
+        myChangeId = null;
+        if (wasOpen) { myEditingInfoId = null; return; }
+        myEditingInfoId = id;
+        edit.classList.add('is-open');
         edit.scrollIntoView({behavior:'smooth', block:'nearest'});
       };
 
       window.closeMemberInfoEdit = function(id) {
         const edit = document.getElementById(`member-inline-edit-${id}`);
-        if (edit) edit.style.display = 'none';
+        if (edit) edit.classList.remove('is-open');
         if (Number(myEditingInfoId) === Number(id)) myEditingInfoId = null;
       };
 
@@ -3529,26 +3562,36 @@ body.lc-customer-view #bar-section #btn-submit-bar {
       window.openMemberChange = function(id) {
         const b = getMemberBookingById(id);
         if (!b || isMemberBookingStarted(b)) return;
-        myChangeId = id;
+        const panel = document.getElementById('my-change-panel');
+        const home = document.getElementById('my-change-panel-home');
+        const slot = document.querySelector(`.my-booking-item[data-booking-id="${id}"] .my-booking-change-slot`);
+        if (!panel || !home || !slot) return;
+
+        // Toggle the same booking's change panel; only one inline accordion is open at a time.
+        const alreadyOpen = panel.parentElement === slot && panel.style.display !== 'none' && panel.classList.contains('is-open');
+        document.querySelectorAll('.member-inline-edit.is-open').forEach(el => el.classList.remove('is-open'));
+        document.querySelectorAll('.member-booking-change-slot.is-open').forEach(el => el.classList.remove('is-open'));
         myEditingInfoId = null;
-        memberChangeMode = false;
-        memberChangeSelectedStart = '';
-        memberChangeSelectedEnd = '';
+        if (alreadyOpen) {
+          closeMyChange();
+          return;
+        }
+
+        myChangeId = id;
         const d = new Date(b.start_time);
         myChangeYear = d.getFullYear();
         myChangeMonth = d.getMonth();
         myChangeDate = '';
+        memberChangeMode = false;
+        memberChangeSelectedStart = '';
+        memberChangeSelectedEnd = '';
 
-        // 회원예약도 일반예약조회에서 사용하는 동일한 일정변경 패널을 그대로 재사용한다.
-        const panel = document.getElementById('my-change-panel');
-        const home = document.getElementById('my-change-panel-home');
-        const history = document.getElementById('member-booking-history');
-        const mainCalendar = document.getElementById('calendar-wrapper');
-        if (!panel || !history) return;
-        if (home) home.appendChild(panel);
-        history.appendChild(panel);
+        // Reuse the exact same change panel markup as general reservation lookup, but place it under the clicked booking.
+        home.appendChild(panel);
+        slot.appendChild(panel);
+        panel.classList.add('member-change-shared-panel','is-open');
+        slot.classList.add('is-open');
         panel.style.display = 'block';
-        panel.classList.add('member-change-shared-panel');
         const title = panel.querySelector('.my-change-title');
         if (title) title.innerText = '예약 일정 변경';
         const closeBtn = panel.querySelector('.my-booking-close');
@@ -3559,9 +3602,8 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         if (saveBtn) { saveBtn.innerText = '일정 변경 저장'; saveBtn.setAttribute('onclick','saveActiveChange()'); }
         const err = document.getElementById('my-change-error');
         if (err) { err.innerText=''; err.style.display='none'; }
-        if (mainCalendar) mainCalendar.style.display = 'none';
         renderMyChangeCalendar();
-        panel.scrollIntoView({behavior:'smooth', block:'start'});
+        panel.scrollIntoView({behavior:'smooth', block:'nearest'});
       };
 
       window.cancelMemberChangeMode = function() {
@@ -4327,20 +4369,17 @@ body.lc-customer-view #bar-section #btn-submit-bar {
       };
 
       window.closeMyChange = function() {
-        const wasMemberChange = !!(memberBookingSessionToken && myChangeId && getMemberBookingById(myChangeId));
         myChangeId = null;
         myChangeDate = '';
+        myEditingInfoId = null;
         const panel = document.getElementById('my-change-panel');
         const home = document.getElementById('my-change-panel-home');
+        const slot = panel?.closest('.member-booking-change-slot');
+        if (slot) slot.classList.remove('is-open');
         if (panel && home) home.appendChild(panel);
-        if (panel) { panel.style.display = 'none'; panel.classList.remove('member-change-shared-panel'); }
+        if (panel) { panel.style.display = 'none'; panel.classList.remove('member-change-shared-panel','is-open'); }
         document.getElementById('my-change-session-list').innerHTML = '';
         document.getElementById('my-change-session-title').innerText = '날짜를 선택해주세요.';
-        if (wasMemberChange) {
-          const mainCalendar = document.getElementById('calendar-wrapper');
-          if (mainCalendar) mainCalendar.style.display = 'block';
-          loadMemberBookingHistory();
-        }
       };
 
       window.changeMyChangeMonth = function(delta) {
@@ -4353,46 +4392,48 @@ body.lc-customer-view #bar-section #btn-submit-bar {
       async function renderMyChangeCalendar() {
         const title = document.getElementById('my-change-month-title');
         const grid = document.getElementById('my-change-calendar-grid');
+        if (!title || !grid) return;
         title.innerText = `${myChangeYear}년 ${myChangeMonth + 1}월 예약 현황`;
-        grid.innerHTML = '<div style="grid-column:span 7; text-align:center; padding:22px 0; color:#777269; font-size:12px;">캘린더 로딩 중...</div>';
         const firstDayIndex = new Date(myChangeYear, myChangeMonth, 1).getDay();
         const lastDayDate = new Date(myChangeYear, myChangeMonth + 1, 0).getDate();
-        const monthStart = new Date(myChangeYear, myChangeMonth, 1, 0, 0, 0);
-        const monthEnd = new Date(myChangeYear, myChangeMonth, lastDayDate, 23, 59, 59);
         const todayStr = new Date().toLocaleDateString('en-CA');
-        try {
-          const res = await apiCall('rpc/get_customer_schedule_slots', 'POST', { p_start_time: toISOStringSafe(monthStart), p_end_time: toISOStringSafe(monthEnd) });
-          const rawSchedules = res.ok ? await res.json() : [];
-          const schedules = Array.isArray(rawSchedules)
-            ? rawSchedules.filter(s => Number(s.id) !== Number(myChangeId))
-            : [];
-          // 회원예약에서 동일 패널을 이동해도 캘린더 grid 자체가 항상 렌더링되도록 명시한다.
-          grid.style.display = 'grid';
-          grid.style.gridTemplateColumns = 'repeat(7, minmax(0, 1fr))';
-          grid.style.visibility = 'visible';
+        const renderDays = (schedules) => {
+          const safeSchedules = Array.isArray(schedules) ? schedules : [];
           let html = '';
           for (let i = 0; i < firstDayIndex; i++) html += '<div class="my-change-empty"></div>';
+          const changeBookings = memberBookingSessionToken ? (Array.isArray(memberBookingCache) ? memberBookingCache : []) : (Array.isArray(myBookingCache) ? myBookingCache : []);
           for (let d = 1; d <= lastDayDate; d++) {
             const dateStr = `${myChangeYear}-${String(myChangeMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
             const isPastDay = dateStr < todayStr;
             const sessionChecks = [[10,13],[14,17],[18,21]].map(([sh,eh]) => {
               const s = new Date(myChangeYear,myChangeMonth,d,sh,0,0);
               const e = new Date(myChangeYear,myChangeMonth,d,eh,0,0);
-              return isPastDay || (dateStr === todayStr && e <= new Date()) || schedules.some(ex => s < new Date(ex.end_time) && e > new Date(ex.start_time));
+              return isPastDay || (dateStr === todayStr && e <= new Date()) || safeSchedules.some(ex => s < new Date(ex.end_time) && e > new Date(ex.start_time));
             });
-            const changeBookings = memberBookingSessionToken ? memberBookingCache : myBookingCache;
             const ownBookings = changeBookings.filter(b => b.guest_name !== '[CLOSED_BLOCK]' && new Date(b.start_time).toLocaleDateString('en-CA') === dateStr);
             const hasOwnBooking = ownBookings.some(b => Number(b.id) === Number(myChangeId));
             const blocked = sessionChecks.every(Boolean) && !hasOwnBooking;
             const statuses = sessionChecks.map((v,i)=>v?`${i+1}부마감`:'').filter(Boolean);
             const ownMarker = ownBookings.length ? '<div class="my-change-own-marker">● 내 예약</div>' : '';
-            html += `<button type="button" class="my-change-day ${blocked?'is-blocked':''} ${myChangeDate===dateStr?'is-selected':''}" ${blocked?'disabled':''} onclick="selectMyChangeDate('${dateStr}')">
-              <div class="day-num">${d}</div><div class="day-status">${blocked?'전체마감':statuses.join('<br>')}${ownMarker}</div>
-            </button>`;
+            html += `<button type="button" class="my-change-day ${blocked?'is-blocked':''} ${myChangeDate===dateStr?'is-selected':''}" ${blocked?'disabled':''} onclick="selectMyChangeDate('${dateStr}')"><div class="day-num">${d}</div><div class="day-status">${blocked?'전체마감':statuses.join('<br>')}${ownMarker}</div></button>`;
           }
-          grid.innerHTML = html;
+          grid.style.display='grid';
+          grid.style.gridTemplateColumns='repeat(7,minmax(0,1fr))';
+          grid.style.visibility='visible';
+          grid.innerHTML=html;
+        };
+
+        // Render the date grid immediately. A failed/slow availability request must never make the calendar disappear.
+        renderDays([]);
+        const monthStart = new Date(myChangeYear, myChangeMonth, 1, 0, 0, 0);
+        const monthEnd = new Date(myChangeYear, myChangeMonth, lastDayDate, 23, 59, 59);
+        try {
+          const res = await apiCall('rpc/get_customer_schedule_slots', 'POST', { p_start_time: toISOStringSafe(monthStart), p_end_time: toISOStringSafe(monthEnd) });
+          const rawSchedules = res.ok ? await res.json() : [];
+          const schedules = Array.isArray(rawSchedules) ? rawSchedules.filter(s => Number(s.id) !== Number(myChangeId)) : [];
+          renderDays(schedules);
         } catch(e) {
-          grid.innerHTML = '<div style="grid-column:span 7; color:#8b5b55; text-align:center; padding:20px;">캘린더를 불러오지 못했습니다.</div>';
+          // Keep the already-rendered calendar; unavailable schedule details are treated as open until refreshed.
         }
       }
 
