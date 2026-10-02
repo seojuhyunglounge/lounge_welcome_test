@@ -1,6 +1,6 @@
 <!--
   La Colonne
-  VERSION: V2.6.17 — SESSION ADD + MY RESERVATION MARKERS
+  VERSION: V2.6.18 — PORTAL NAVIGATION POLISH
   UPDATED: 2026-10-02
 --> 
 <!DOCTYPE html>
@@ -1963,6 +1963,29 @@ body.lc-customer-view #bar-section #btn-submit-bar {
 .session-add-error{margin-top:9px;color:#8b5b55;font-size:11px;line-height:1.5;}
 @media(max-width:420px){.session-add-options,.session-add-choice-row{grid-template-columns:1fr;}}
 </style>
+<style id="v2-6-18-portal-navigation">
+  /* 회원권 세션 확인: GO TO PORTAL 우측 정렬 */
+  #member-client-section > div:last-child {
+    text-align: right;
+  }
+  /* 어메니티: GO TO PORTAL 우측 하단 고정 */
+  #bar-section .amenity-portal-link {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    z-index: 50;
+    color: #888;
+    font-size: 0.8rem;
+    text-decoration: none;
+    letter-spacing: 0.2px;
+  }
+  #bar-section .amenity-portal-link:hover {
+    color: #b5a27f;
+  }
+  @media (max-width: 520px) {
+    #bar-section .amenity-portal-link { right: 18px; bottom: 18px; }
+  }
+</style>
 </head>
 <body>
 
@@ -1980,7 +2003,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         <a href="?view=bar" class="lc-hub-link"><span class="lc-hub-num">04</span><span class="lc-hub-copy"><span class="lc-hub-label">Amenities</span><span class="lc-hub-desc">어메니티 &amp; 미니바 셀프 정산</span></span><span class="lc-hub-arrow" aria-hidden="true">→</span></a>
       </nav>
       <div class="lc-hub-footer">
-        <a href="https://la-colonne.vercel.app/" class="lc-hub-home">GO TO PORTAL →</a>
+        <a href="https://lounge-welcome-test.vercel.app/" class="lc-hub-home">GO TO PORTAL →</a>
         <a href="?view=admin" class="lc-hub-admin">ADMIN ACCESS</a>
       </div>
     </div>
@@ -2349,6 +2372,8 @@ body.lc-customer-view #bar-section #btn-submit-bar {
       <button type="button" class="btn-primary" onclick="submitBarOrder()" id="btn-submit-bar">이용 내역 전송 및 입금 완료</button>
       <div id="bar-status-msg" style="margin-top: 10px; font-size: 0.82rem; display: none;"></div>
     </div>
+
+    <a href="https://lounge-welcome-test.vercel.app/" class="amenity-portal-link">GO TO PORTAL →</a>
   </div>
 
   <!-- [화면 7] 손님용 캘린더 예약 포털 (?view=booking) -->
@@ -2555,7 +2580,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
     </div>
 
     <div class="booking-bottom-nav" style="margin-top: 20px; display: flex; justify-content: flex-end;">
-      <a href="https://la-colonne.vercel.app/" style="color: #888; font-size: 0.8rem; text-decoration: none;">GO TO PORTAL →</a>
+      <a href="https://lounge-welcome-test.vercel.app/" style="color: #888; font-size: 0.8rem; text-decoration: none;">GO TO PORTAL →</a>
     </div>
   </div>
 
@@ -2628,7 +2653,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
     </div>
 
     <div class="my-booking-link-row">
-      <a href="https://la-colonne.vercel.app/">GO TO PORTAL →</a>
+      <a href="https://lounge-welcome-test.vercel.app/">GO TO PORTAL →</a>
     </div>
   </div>
 
@@ -2701,7 +2726,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
       <div id="client-login-error" style="color: #f87171; font-size: 0.8rem; margin-top: 10px; display: none; text-align: center;"></div>
     </div>
     <div id="member-pass-result" style="display: none;"></div>
-    <div style="margin-top: 16px;"><a href="https://la-colonne.vercel.app/" style="color: #888; font-size: 0.8rem; text-decoration: none;">GO TO PORTAL →</a></div>
+    <div style="margin-top: 16px;"><a href="https://lounge-welcome-test.vercel.app/" style="color: #888; font-size: 0.8rem; text-decoration: none;">GO TO PORTAL →</a></div>
   </div>
 
   <!-- 럭셔리 커스텀 알림 모달 -->
