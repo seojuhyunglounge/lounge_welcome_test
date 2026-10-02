@@ -1,6 +1,6 @@
 <!--
   La Colonne
-  VERSION: V2.6.21 — CURRENT SESSION STATE & HORIZONTAL SESSION UI
+  VERSION: V2.6.22 — CUSTOMER CHANGE SESSION LOAD FIX & CURRENT SESSION STATE
   UPDATED: 2026-10-02
 --> 
 <!DOCTYPE html>
@@ -4440,6 +4440,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
           sessions.forEach(sess => {
             const past = dateStr < now.toLocaleDateString('en-CA') || (dateStr === now.toLocaleDateString('en-CA') && sess.e <= now);
             const overlap = existing.some(ex => sess.s < new Date(ex.end_time) && sess.e > new Date(ex.start_time));
+            const blocked = past || overlap;
             const isCurrent = !!(dateStr === currentStart?.toLocaleDateString('en-CA') && currentStart && currentEnd && currentStart.getTime() <= sess.s.getTime() && currentEnd.getTime() >= sess.e.getTime());
             const unavailable = blocked || isCurrent;
             html += `<button type="button" class="my-change-session ${blocked?'is-blocked':''} ${isCurrent?'is-current':''}" data-start="${toISOStringSafe(sess.s)}" data-end="${toISOStringSafe(sess.e)}" data-slot-id="${sess.id}" ${unavailable?'disabled':''} aria-pressed="false" onclick="toggleMyChangeSlot(this)">
