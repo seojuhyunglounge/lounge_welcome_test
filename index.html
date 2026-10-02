@@ -1,6 +1,6 @@
 <!--
   La Colonne
-  VERSION: V2.6.20 — MY RESERVATION CALENDAR UNIFICATION
+  VERSION: V2.6.21 — CURRENT SESSION STATE & HORIZONTAL SESSION UI
   UPDATED: 2026-10-02
 --> 
 <!DOCTYPE html>
@@ -680,6 +680,28 @@
       background:#eee9df; border-color:rgba(155,128,88,.45);
     }
     #my-booking-section.lc-my-booking .my-change-actions .save:hover { background:#3a3730; }
+
+    /* V2.6.21 — 일정 변경: 현재 예약 세션은 상태만 표시하고 선택 불가 */
+    /* 세션 버튼은 1부 / 2부 / 3부를 항상 가로 3열로 표시 */
+    #my-booking-section.lc-my-booking .my-change-session-list {
+      display:grid !important;
+      grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+      gap:8px;
+    }
+    #my-booking-section.lc-my-booking .my-change-session.is-current {
+      background:#eeece7 !important;
+      border-color:rgba(41,39,34,.10) !important;
+      box-shadow:none !important;
+      cursor:not-allowed !important;
+      opacity:.72;
+    }
+    #my-booking-section.lc-my-booking .my-change-session.is-current .session-name,
+    #my-booking-section.lc-my-booking .my-change-session.is-current .session-time {
+      color:#777269 !important;
+    }
+    #my-booking-section.lc-my-booking .my-change-session.is-current .session-status {
+      color:#9b8058 !important;
+    }
 
     @media (max-width: 560px) {
       #my-booking-section.lc-my-booking { width:90%; max-width:480px; margin:40px auto 60px; padding:28px 18px 24px; }
@@ -3594,12 +3616,15 @@ body.lc-customer-view #bar-section #btn-submit-bar {
             const past=dateStr<now.toLocaleDateString('en-CA') || (dateStr===now.toLocaleDateString('en-CA')&&sess.e<=now);
             const overlap=existing.some(ex=>sess.s<new Date(ex.end_time)&&sess.e>new Date(ex.start_time));
             const blocked=past||overlap;
-            const selected=!!(current && new Date(current.start_time).getTime()===sess.s.getTime() && new Date(current.end_time).getTime()===sess.e.getTime());
-            html+=`<button type="button" class="my-change-session ${blocked&&!selected?'is-blocked':''} ${selected?'is-selected':''}" ${blocked&&!selected?'disabled':''} data-start="${toISOStringSafe(sess.s)}" data-end="${toISOStringSafe(sess.e)}" data-slot-id="${sess.id}" aria-pressed="${selected?'true':'false'}" onclick="toggleMemberInlineChangeSlot(this)"><span class="session-name">${sess.name}</span><span class="session-time">${sess.start} ~ ${sess.end}</span><span class="session-status">${selected?'현재 예약':(blocked?'마감':'선택 가능')}</span></button>`;
+            const currentStart=current?new Date(current.start_time):null;
+            const currentEnd=current?new Date(current.end_time):null;
+            const isCurrent=!!(currentStart && currentEnd && currentStart.toLocaleDateString('en-CA')===dateStr && currentStart.getTime()<=sess.s.getTime() && currentEnd.getTime()>=sess.e.getTime());
+            const unavailable=blocked||isCurrent;
+            html+=`<button type="button" class="my-change-session ${blocked?'is-blocked':''} ${isCurrent?'is-current':''}" ${unavailable?'disabled':''} data-start="${toISOStringSafe(sess.s)}" data-end="${toISOStringSafe(sess.e)}" data-slot-id="${sess.id}" aria-pressed="false" onclick="toggleMemberInlineChangeSlot(this)"><span class="session-name">${sess.name}</span><span class="session-time">${sess.start} ~ ${sess.end}</span><span class="session-status">${isCurrent?'현재 예약':(blocked?'마감':'선택 가능')}</span></button>`;
           });
           if(list) list.innerHTML=html;
-          const selectedBtn=list ? list.querySelector('.my-change-session.is-selected') : null;
-          if(selectedBtn){ memberInlineChangeSelectedStart=selectedBtn.dataset.start; memberInlineChangeSelectedEnd=selectedBtn.dataset.end; }
+          memberInlineChangeSelectedStart='';
+          memberInlineChangeSelectedEnd='';
         } catch(e) {
           if(list) list.innerHTML='<div style="color:#8b5b55;font-size:12px;">세션을 불러오지 못했습니다.</div>';
         }
@@ -4415,10 +4440,10 @@ body.lc-customer-view #bar-section #btn-submit-bar {
           sessions.forEach(sess => {
             const past = dateStr < now.toLocaleDateString('en-CA') || (dateStr === now.toLocaleDateString('en-CA') && sess.e <= now);
             const overlap = existing.some(ex => sess.s < new Date(ex.end_time) && sess.e > new Date(ex.start_time));
-            const blocked = past || overlap;
-            const selected = !!(currentStart && currentEnd && currentStart.getTime() === sess.s.getTime() && currentEnd.getTime() === sess.e.getTime());
-            html += `<button type="button" class="my-change-session ${blocked?'is-blocked':''} ${selected?'is-selected':''}" data-start="${toISOStringSafe(sess.s)}" data-end="${toISOStringSafe(sess.e)}" data-slot-id="${sess.id}" ${blocked?'disabled':''} aria-pressed="${selected?'true':'false'}" onclick="toggleMyChangeSlot(this)">
-              <span class="session-name">${sess.name}</span><span class="session-time">${sess.start} ~ ${sess.end}</span><span class="session-status">${blocked?'마감':'선택 가능'}</span>
+            const isCurrent = !!(dateStr === currentStart?.toLocaleDateString('en-CA') && currentStart && currentEnd && currentStart.getTime() <= sess.s.getTime() && currentEnd.getTime() >= sess.e.getTime());
+            const unavailable = blocked || isCurrent;
+            html += `<button type="button" class="my-change-session ${blocked?'is-blocked':''} ${isCurrent?'is-current':''}" data-start="${toISOStringSafe(sess.s)}" data-end="${toISOStringSafe(sess.e)}" data-slot-id="${sess.id}" ${unavailable?'disabled':''} aria-pressed="false" onclick="toggleMyChangeSlot(this)">
+              <span class="session-name">${sess.name}</span><span class="session-time">${sess.start} ~ ${sess.end}</span><span class="session-status">${isCurrent?'현재 예약':(blocked?'마감':'선택 가능')}</span>
             </button>`;
           });
           list.innerHTML = html;
