@@ -1,6 +1,6 @@
 <!--
   La Colonne
-  VERSION: V2.6.22 — CUSTOMER CHANGE SESSION LOAD FIX & CURRENT SESSION STATE
+  VERSION: V2.6.23 — CUSTOMER CHANGE SESSION LOAD FIX & CURRENT SESSION STATE
   UPDATED: 2026-10-02
 --> 
 <!DOCTYPE html>
@@ -3632,19 +3632,48 @@ body.lc-customer-view #bar-section #btn-submit-bar {
 
       window.toggleMemberInlineChangeSlot=function(button){
         if(!button||button.disabled)return;
-        document.querySelectorAll('#member-inline-change-session-list .my-change-session').forEach(b=>b.classList.remove('is-selected'));
-        button.classList.add('is-selected');
-        memberInlineChangeSelectedStart=button.dataset.start||'';
-        memberInlineChangeSelectedEnd=button.dataset.end||'';
+        const buttons=Array.from(document.querySelectorAll('#member-inline-change-session-list .my-change-session'));
+        const selectedIds=buttons.filter(b=>b.classList.contains('is-selected')).map(b=>Number(b.dataset.slotId));
+        const id=Number(button.dataset.slotId);
+        if(button.classList.contains('is-selected')){
+          button.classList.remove('is-selected');
+        }else{
+          button.classList.add('is-selected');
+        }
+        const nowSelected=buttons.filter(b=>b.classList.contains('is-selected')).sort((a,b)=>Number(a.dataset.slotId)-Number(b.dataset.slotId));
+        for(let i=0;i<nowSelected.length-1;i++){
+          if(Number(nowSelected[i+1].dataset.slotId)-Number(nowSelected[i].dataset.slotId)!==1){
+            button.classList.remove('is-selected');
+            break;
+          }
+        }
+        const finalSelected=buttons.filter(b=>b.classList.contains('is-selected')).sort((a,b)=>Number(a.dataset.slotId)-Number(b.dataset.slotId));
+        memberInlineChangeSelectedStart=finalSelected[0]?.dataset.start||'';
+        memberInlineChangeSelectedEnd=finalSelected[finalSelected.length-1]?.dataset.end||'';
+        finalSelected.forEach(b=>b.setAttribute('aria-pressed','true'));
+        buttons.filter(b=>!b.classList.contains('is-selected')).forEach(b=>b.setAttribute('aria-pressed','false'));
       };
 
       window.saveMemberInlineChange=async function(){
         const err=document.getElementById('member-inline-change-error'); if(err){err.innerText='';err.style.display='none';}
-        if(!memberInlineChangeId||!memberInlineChangeDate||!memberInlineChangeSelectedStart||!memberInlineChangeSelectedEnd){ if(err){err.innerText='변경할 날짜와 세션을 선택해주세요.';err.style.display='block';} return; }
+        const selected=Array.from(document.querySelectorAll('#member-inline-change-session-list .my-change-session.is-selected')).sort((a,b)=>Number(a.dataset.slotId)-Number(b.dataset.slotId));
+        if(!memberInlineChangeId||!memberInlineChangeDate||!selected.length){ if(err){err.innerText='변경할 날짜와 세션을 선택해주세요.';err.style.display='block';} return; }
+        for(let i=0;i<selected.length-1;i++){
+          if(Number(selected[i+1].dataset.slotId)-Number(selected[i].dataset.slotId)!==1){ if(err){err.innerText='연속된 세션만 선택할 수 있습니다.';err.style.display='block';} return; }
+        }
+        let payload={p_token:memberBookingSessionToken,p_id:memberInlineChangeId,p_start_time:selected[0].dataset.start,p_end_time:selected[selected.length-1].dataset.end,p_allow_reduction:false};
         try{
-          const res=await apiCall('rpc/member_change_booking','POST',{p_token:memberBookingSessionToken,p_id:memberInlineChangeId,p_start_time:memberInlineChangeSelectedStart,p_end_time:memberInlineChangeSelectedEnd});
-          const result=res.ok?await res.json():null;
-          if(!res.ok||!result||!result.success) throw new Error((result&&result.message)||'일정 변경에 실패했습니다.');
+          let res=await apiCall('rpc/member_change_booking','POST',payload);
+          let result=res.ok?await res.json():null;
+          if(!res.ok) throw new Error((result&&result.message)||'일정 변경에 실패했습니다.');
+          if(result&&result.requires_confirmation){
+            const ok=confirm(`현재 ${result.old_session_count}세션 예약이 ${result.new_session_count}세션으로 줄어듭니다.\n\n줄어드는 ${Math.abs(result.session_delta || (result.new_session_count-result.old_session_count))}세션은 부분 취소 처리됩니다.\n계속하시겠습니까?`);
+            if(!ok)return;
+            payload.p_allow_reduction=true;
+            res=await apiCall('rpc/member_change_booking','POST',payload);
+            result=res.ok?await res.json():null;
+          }
+          if(!result||!result.success) throw new Error((result&&result.message)||'일정 변경에 실패했습니다.');
           closeMemberInlineChange();
           showToast('예약 일정이 변경되었습니다.');
           await loadMemberBookingHistory();
@@ -4471,15 +4500,24 @@ body.lc-customer-view #bar-section #btn-submit-bar {
           if (Number(slots[i+1].dataset.slotId)-Number(slots[i].dataset.slotId) !== 1) { e.innerText='연속된 세션만 선택할 수 있습니다.'; e.style.display='block'; return; }
         }
         try {
-          const res = await apiCall('rpc/change_customer_booking','POST',{
+          const payload = {
             p_id: myChangeId,
             p_phone: phoneIn.value.trim().replace(/[^0-9]/g,''),
             p_pin: pinIn.value.trim(),
             p_start_time: slots[0].dataset.start,
-            p_end_time: slots[slots.length-1].dataset.end
-          });
-          const result = res.ok ? await res.json() : null;
+            p_end_time: slots[slots.length-1].dataset.end,
+            p_allow_reduction: false
+          };
+          let res = await apiCall('rpc/change_customer_booking','POST',payload);
+          let result = res.ok ? await res.json() : null;
           if (!res.ok) throw new Error((result && result.message) || '일정 변경 서버 오류');
+          if (result && result.requires_confirmation) {
+            const ok = confirm(`현재 ${result.old_session_count}세션 예약이 ${result.new_session_count}세션으로 줄어듭니다.\n\n줄어드는 ${Math.abs(result.session_delta || (result.new_session_count-result.old_session_count))}세션은 부분 취소 처리됩니다.\n계속하시겠습니까?`);
+            if (!ok) return;
+            payload.p_allow_reduction = true;
+            res = await apiCall('rpc/change_customer_booking','POST',payload);
+            result = res.ok ? await res.json() : null;
+          }
           if (!result || !result.success) throw new Error((result && result.message) || '일정 변경에 실패했습니다.');
           closeMyChange();
           showToast('예약 일정이 변경되었습니다.');
