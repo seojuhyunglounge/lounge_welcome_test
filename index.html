@@ -1,7 +1,7 @@
 <!--
   La Colonne
-  VERSION: V2.6.15 — RESTORE GENERAL CALENDAR + MEMBER INLINE ACCORDION
-  UPDATED: 2026-09-30
+  VERSION: V2.6.17 — SESSION ADD + MY RESERVATION MARKERS
+  UPDATED: 2026-10-02
 --> 
 <!DOCTYPE html>
 <html lang="ko">
@@ -1940,6 +1940,29 @@ body.lc-customer-view #bar-section #btn-submit-bar {
 #booking-section #member-booking-history .member-booking-change-slot { margin-top:0; }
 #booking-section #member-booking-history-content .my-booking-item { overflow:visible; }
 </style>
+<style id="v2-6-17-session-add">
+#booking-section .member-booking-session-add-slot{margin-top:0;}
+#booking-section .member-inline-session-add-panel{margin-top:14px;padding:18px 16px;background:#f4f1ea;color:#292722;border:1px solid rgba(41,39,34,.12);border-radius:10px;}
+.session-add-head{display:flex;justify-content:space-between;align-items:center;font-family:"Cormorant Garamond",serif;font-size:1.55rem;color:#292722;}
+.session-add-head button{background:none;border:0;color:#777269;font-size:12px;cursor:pointer;}
+.session-add-context{margin-top:7px;font-size:12px;line-height:1.6;color:#777269;}
+.session-add-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:14px;}
+.session-add-option{padding:12px 9px;background:#faf9f6;border:1px solid rgba(41,39,34,.14);border-radius:8px;color:#292722;cursor:pointer;text-align:center;}
+.session-add-option.is-unavailable{opacity:.42;cursor:not-allowed;}
+.session-add-option strong{display:block;font-size:.82rem;}
+.session-add-option span{display:block;margin-top:4px;font-size:.65rem;color:#777269;}
+.session-add-divider{border-top:1px solid rgba(41,39,34,.10);margin:16px 0 12px;}
+.session-add-question{font-size:12px;color:#777269;margin-bottom:9px;}
+.session-add-choice-row{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
+.session-add-choice{padding:9px 7px;border:1px solid rgba(41,39,34,.14);background:#faf9f6;border-radius:7px;color:#777269;font-size:11px;cursor:pointer;}
+.session-add-choice.is-active{border-color:#9b8058;background:#eee9df;color:#292722;}
+#member-session-add-different-fields{display:grid;gap:7px;}
+#member-session-add-different-fields input,#member-session-add-different-fields textarea{background:#fff;border:1px solid rgba(41,39,34,.16);color:#292722;border-radius:6px;padding:9px;font:inherit;font-size:12px;}
+#member-session-add-different-fields textarea{min-height:58px;resize:vertical;}
+.session-add-submit{width:100%;margin-top:10px;padding:11px;border:1px solid #292722;background:#292722;color:#f7f4ed;border-radius:5px;cursor:pointer;}
+.session-add-error{margin-top:9px;color:#8b5b55;font-size:11px;line-height:1.5;}
+@media(max-width:420px){.session-add-options,.session-add-choice-row{grid-template-columns:1fr;}}
+</style>
 </head>
 <body>
 
@@ -1957,7 +1980,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         <a href="?view=bar" class="lc-hub-link"><span class="lc-hub-num">04</span><span class="lc-hub-copy"><span class="lc-hub-label">Amenities</span><span class="lc-hub-desc">어메니티 &amp; 미니바 셀프 정산</span></span><span class="lc-hub-arrow" aria-hidden="true">→</span></a>
       </nav>
       <div class="lc-hub-footer">
-        <a href="https://la-colonne.vercel.app/" class="lc-hub-home">VISIT LA COLONNE ↗</a>
+        <a href="https://la-colonne.vercel.app/" class="lc-hub-home">GO TO PORTAL →</a>
         <a href="?view=admin" class="lc-hub-admin">ADMIN ACCESS</a>
       </div>
     </div>
@@ -2387,6 +2410,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
       <div id="member-booking-history-content"></div>
     </div>
     <div id="member-inline-change-panel-home" style="display:none;"></div>
+    <div id="member-inline-session-add-panel-home" style="display:none;"></div>
     <div id="member-inline-change-panel" class="member-inline-change-panel" style="display:none;">
       <div class="my-change-head">
         <div class="my-change-title">예약 일정 변경</div>
@@ -2409,6 +2433,30 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         <button type="button" class="save" onclick="saveMemberInlineChange()">일정 변경 저장</button>
       </div>
       <div id="member-inline-change-error" style="display:none; margin-top:10px; color:#8b5b55; font-size:12px;"></div>
+    </div>
+
+    <div id="member-inline-session-add-panel" class="member-inline-session-add-panel" style="display:none;">
+      <div class="session-add-head">
+        <div>세션 추가</div>
+        <button type="button" onclick="closeMemberSessionAdd()">닫기</button>
+      </div>
+      <div id="member-session-add-context" class="session-add-context"></div>
+      <div id="member-session-add-options" class="session-add-options"></div>
+      <div id="member-session-add-form" style="display:none;">
+        <div class="session-add-divider"></div>
+        <div class="session-add-question">추가 세션의 이용 정보를 선택해주세요.</div>
+        <div class="session-add-choice-row">
+          <button type="button" class="session-add-choice is-active" data-same="true" onclick="selectMemberSessionAddMode(true)">기존 예약과 같은 정보</button>
+          <button type="button" class="session-add-choice" data-same="false" onclick="selectMemberSessionAddMode(false)">다른 회의로 추가</button>
+        </div>
+        <div id="member-session-add-different-fields" style="display:none; margin-top:10px;">
+          <input id="member-session-add-guest" placeholder="표출명">
+          <input id="member-session-add-meeting" placeholder="모임명">
+          <textarea id="member-session-add-message" placeholder="디스플레이 서브문구"></textarea>
+        </div>
+        <button type="button" class="session-add-submit" onclick="submitMemberSessionAdd()">세션 추가</button>
+        <div id="member-session-add-error" class="session-add-error" style="display:none;"></div>
+      </div>
     </div>
 
     <!-- 메인 예약 캘린더 패널 -->
@@ -2507,7 +2555,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
     </div>
 
     <div class="booking-bottom-nav" style="margin-top: 20px; display: flex; justify-content: flex-end;">
-      <a href="https://la-colonne.vercel.app/" style="color: #888; font-size: 0.8rem; text-decoration: none;">VISIT LA COLONNE ↗</a>
+      <a href="https://la-colonne.vercel.app/" style="color: #888; font-size: 0.8rem; text-decoration: none;">GO TO PORTAL →</a>
     </div>
   </div>
 
@@ -2580,8 +2628,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
     </div>
 
     <div class="my-booking-link-row">
-      <a href="?view=booking">예약하기 →</a>
-      <a href="https://la-colonne.vercel.app/">VISIT LA COLONNE ↗</a>
+      <a href="https://la-colonne.vercel.app/">GO TO PORTAL →</a>
     </div>
   </div>
 
@@ -2654,7 +2701,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
       <div id="client-login-error" style="color: #f87171; font-size: 0.8rem; margin-top: 10px; display: none; text-align: center;"></div>
     </div>
     <div id="member-pass-result" style="display: none;"></div>
-    <div style="margin-top: 16px;"><a href="https://la-colonne.vercel.app/" style="color: #888; font-size: 0.8rem; text-decoration: none;">VISIT LA COLONNE ↗</a></div>
+    <div style="margin-top: 16px;"><a href="https://la-colonne.vercel.app/" style="color: #888; font-size: 0.8rem; text-decoration: none;">GO TO PORTAL →</a></div>
   </div>
 
   <!-- 럭셔리 커스텀 알림 모달 -->
@@ -3152,9 +3199,11 @@ body.lc-customer-view #bar-section #btn-submit-bar {
               <div class="my-booking-actions">
                 <button type="button" class="my-booking-action" ${started ? 'disabled' : ''} onclick="openMemberInfoEdit(${b.id})">예약 정보 수정</button>
                 <button type="button" class="my-booking-action" ${started ? 'disabled' : ''} onclick="openMemberChange(${b.id})">일정 변경</button>
+                <button type="button" class="my-booking-action" ${started ? 'disabled' : ''} onclick="openMemberSessionAdd(${b.id})">세션 추가</button>
                 <button type="button" class="my-booking-action danger" onclick="cancelMemberBooking(${b.id})">예약 취소</button>
               </div>
               <div class="member-booking-change-slot"></div>
+              <div class="member-booking-session-add-slot"></div>
               <div id="member-inline-edit-${b.id}" class="member-inline-edit" style="display:none; margin-top:14px; padding-top:14px; border-top:1px solid rgba(155,128,88,.18);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                   <div style="font-family:Georgia,serif; font-size:20px; color:#292722;">예약 정보 수정</div>
@@ -3291,6 +3340,100 @@ body.lc-customer-view #bar-section #btn-submit-bar {
       let memberInlineChangeDate = '';
       let memberInlineChangeSelectedStart = '';
       let memberInlineChangeSelectedEnd = '';
+
+      let memberSessionAddId = null;
+      let memberSessionAddDirection = '';
+      let memberSessionAddSameInfo = true;
+
+      window.openMemberSessionAdd = async function(id) {
+        const b = getMemberBookingById(id);
+        if (!b || isMemberBookingStarted(b)) return;
+        const slot = document.querySelector(`.my-booking-item[data-booking-id="${id}"] .member-booking-session-add-slot`);
+        const panel = document.getElementById('member-inline-session-add-panel');
+        const home = document.getElementById('member-inline-session-add-panel-home');
+        if (!slot || !panel) return;
+        if (Number(memberSessionAddId) === Number(id) && panel.style.display !== 'none') { closeMemberSessionAdd(); return; }
+        closeMemberSessionAdd();
+        closeMemberInlineChange();
+        document.querySelectorAll('.member-inline-edit').forEach(el => el.style.display='none');
+        memberSessionAddId = id;
+        memberSessionAddDirection = '';
+        memberSessionAddSameInfo = true;
+        slot.appendChild(panel);
+        panel.style.display='block';
+        const context = document.getElementById('member-session-add-context');
+        if (context) context.innerText = `${formatMemberBookingDate(b.start_time,b.end_time)} · 인접한 1세션을 추가할 수 있습니다. 추가 시 회원 패스 1회가 차감됩니다.`;
+        selectMemberSessionAddMode(true);
+        await renderMemberSessionAddOptions(b);
+        panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+      };
+
+      window.closeMemberSessionAdd = function() {
+        const panel=document.getElementById('member-inline-session-add-panel');
+        const home=document.getElementById('member-inline-session-add-panel-home');
+        if(panel && home) home.appendChild(panel);
+        if(panel) panel.style.display='none';
+        memberSessionAddId=null; memberSessionAddDirection='';
+        const form=document.getElementById('member-session-add-form'); if(form) form.style.display='none';
+        const err=document.getElementById('member-session-add-error'); if(err){err.innerText='';err.style.display='none';}
+      };
+
+      window.selectMemberSessionAddMode = function(same) {
+        memberSessionAddSameInfo = !!same;
+        document.querySelectorAll('.session-add-choice').forEach(b=>b.classList.toggle('is-active',b.dataset.same===String(!!same)));
+        const fields=document.getElementById('member-session-add-different-fields');
+        if(fields) fields.style.display=same?'none':'grid';
+      };
+
+      async function renderMemberSessionAddOptions(b) {
+        const wrap=document.getElementById('member-session-add-options'); if(!wrap) return;
+        wrap.innerHTML='<div style="grid-column:1/-1;color:#777269;font-size:12px;padding:8px 0;">추가 가능한 세션 확인 중...</div>';
+        const s=new Date(b.start_time), e=new Date(b.end_time);
+        const candidates=[];
+        const sh=s.toLocaleString('en-US',{timeZone:'Asia/Seoul',hour:'2-digit',hour12:false});
+        const eh=e.toLocaleString('en-US',{timeZone:'Asia/Seoul',hour:'2-digit',hour12:false});
+        if (sh==='14' || sh==='18') candidates.push({dir:'BEFORE',label:sh==='14'?'10:00–13:00':'14:00–17:00'});
+        if (eh==='13' || eh==='17') candidates.push({dir:'AFTER',label:eh==='13'?'14:00–17:00':'18:00–21:00'});
+        if(!candidates.length){wrap.innerHTML='<div style="grid-column:1/-1;color:#777269;font-size:12px;padding:8px 0;">추가 가능한 인접 세션이 없습니다.</div>';return;}
+        try{
+          const dayStart=new Date(s); dayStart.setHours(0,0,0,0); const dayEnd=new Date(s); dayEnd.setHours(23,59,59,999);
+          const res=await apiCall('rpc/get_customer_schedule_slots','POST',{p_start_time:toISOStringSafe(dayStart),p_end_time:toISOStringSafe(dayEnd)});
+          const existing=res.ok?await res.json():[];
+          wrap.innerHTML=candidates.map(c=>{
+            const ns=new Date(s), ne=new Date(s); const base=c.dir==='BEFORE'?s:e;
+            let start,end;
+            if(c.dir==='BEFORE'){start=new Date(base.getTime()-4*3600000);end=new Date(base.getTime()-1*3600000);} else {start=new Date(base.getTime()+3600000);end=new Date(base.getTime()+4*3600000);}
+            const conflict=existing.some(x=>Number(x.id)!==Number(b.id)&&start<new Date(x.end_time)&&end>new Date(x.start_time));
+            return `<button type="button" class="session-add-option ${conflict?'is-unavailable':''}" ${conflict?'disabled':''} onclick="chooseMemberSessionAdd('${c.dir}')"><strong>${c.label}</strong><span>${conflict?'이미 예약됨':'추가 가능'}</span></button>`;
+          }).join('');
+        }catch(e){wrap.innerHTML='<div style="grid-column:1/-1;color:#8b5b55;font-size:12px;padding:8px 0;">추가 가능한 세션을 확인하지 못했습니다.</div>';}
+      }
+
+      window.chooseMemberSessionAdd = function(direction){
+        memberSessionAddDirection=direction;
+        const form=document.getElementById('member-session-add-form'); if(form) form.style.display='block';
+        const err=document.getElementById('member-session-add-error'); if(err){err.innerText='';err.style.display='none';}
+      };
+
+      window.submitMemberSessionAdd = async function(){
+        if(!memberSessionAddId || !memberSessionAddDirection) return;
+        const err=document.getElementById('member-session-add-error'); if(err){err.innerText='';err.style.display='none';}
+        try{
+          const res=await apiCall('rpc/member_add_booking_session','POST',{
+            p_token:memberBookingSessionToken,p_id:memberSessionAddId,p_direction:memberSessionAddDirection,
+            p_same_info:memberSessionAddSameInfo,
+            p_guest_name:document.getElementById('member-session-add-guest')?.value?.trim()||null,
+            p_meeting_name:document.getElementById('member-session-add-meeting')?.value?.trim()||null,
+            p_sub_message:document.getElementById('member-session-add-message')?.value?.trim()||null
+          });
+          const result=res.ok?await res.json():null;
+          if(!res.ok||!result||!result.success) throw new Error((result&&result.message)||'세션 추가에 실패했습니다.');
+          closeMemberSessionAdd();
+          showToast('세션이 추가되었습니다. 회원 패스 1회가 차감되었습니다.');
+          await loadMemberBookingHistory();
+          renderBookCalendar();
+        }catch(e){if(err){err.innerText=e.message||'세션 추가에 실패했습니다.';err.style.display='block';}}
+      };
 
       window.openMemberChange = function(id) {
         const b = getMemberBookingById(id);
@@ -3723,7 +3866,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
               if (is3Blocked) statusLines.push('3부마감');
             }
             const statusHtml = statusLines.map(line => `<span>${line}</span>`).join('');
-            const ownBookings = memberChangeMode ? memberBookingCache.filter(b => b.guest_name !== '[CLOSED_BLOCK]' && new Date(b.start_time).toLocaleDateString('en-CA') === dateStr) : [];
+            const ownBookings = currentBookingMode === 'member' ? memberBookingCache.filter(b => b.guest_name !== '[CLOSED_BLOCK]' && new Date(b.start_time).toLocaleDateString('en-CA') === dateStr) : [];
             const ownMarker = ownBookings.length ? '<span style="display:inline-block;margin-top:3px;font-size:9px;color:#c9a96e;letter-spacing:.02em;">● 내 예약</span>' : '';
             const canSelect = !isFullyBlocked || ownBookings.some(b => Number(b.id) === Number(myChangeId));
             html += `
