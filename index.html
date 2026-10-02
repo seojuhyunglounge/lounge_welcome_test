@@ -1,6 +1,6 @@
 <!--
   La Colonne
-  VERSION: V2.6.18 — PORTAL NAVIGATION POLISH
+  VERSION: V2.6.20 — MY RESERVATION CALENDAR UNIFICATION
   UPDATED: 2026-10-02
 --> 
 <!DOCTYPE html>
@@ -2235,6 +2235,16 @@ body.lc-customer-view #bar-section #btn-submit-bar {
               <div class="schedule-time-adjust"><button type="button" onclick="adjustScheduleEndTime(-5)">−5분</button><button type="button" onclick="adjustScheduleEndTime(5)">+5분</button></div>
             </div>
           </div>
+          <div class="schedule-time-box">
+            <div class="schedule-field-row">
+              <label style="font-size: 0.76rem;">TV 표출 시작</label>
+              <input type="datetime-local" id="u-welcome-display-at" step="300">
+            </div>
+            <div style="font-size:0.7rem;color:#7f8795;line-height:1.45;margin-top:7px;">비워두면 예약 시작 시 자동 표출 · 필요할 때만 수동 지정</div>
+            <div class="schedule-time-presets" style="margin-top:6px;">
+              <button type="button" class="schedule-date-shortcut" onclick="clearWelcomeDisplayAt()">자동</button>
+            </div>
+          </div>
         </div>
         <input type="datetime-local" id="u-sched-start" style="display:none;">
         <input type="datetime-local" id="u-sched-end" style="display:none;">
@@ -2606,6 +2616,30 @@ body.lc-customer-view #bar-section #btn-submit-bar {
 
     <div id="my-bookings-result" style="display:none;"></div>
 
+    <div id="my-reservation-calendar" class="my-change-panel" style="display:none; margin-top:24px;">
+      <div class="my-change-head">
+        <div class="my-change-title">예약현황</div>
+        <div style="font-size:11px;color:#8b8479;">● 내 예약</div>
+      </div>
+      <div id="my-change-context" style="display:none; margin:0 0 18px; padding:13px 14px; background:#f3f0ea; border-left:2px solid #b49a6a; color:#5f594f; font-size:12px; line-height:1.6;"></div>
+      <div class="my-change-calendar-head">
+        <div id="my-change-month-title" class="my-change-month">2026년 10월 예약 현황</div>
+        <div class="my-change-calendar-nav">
+          <button type="button" onclick="changeMyChangeMonth(-1)">‹</button>
+          <button type="button" onclick="changeMyChangeMonth(1)">›</button>
+        </div>
+      </div>
+      <div class="my-change-week"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
+      <div id="my-change-calendar-grid" class="my-change-grid"></div>
+      <div id="my-change-session-title" class="my-change-session-title" style="display:none;">날짜를 선택해주세요.</div>
+      <div id="my-change-session-list" class="my-change-session-list" style="display:none;"></div>
+      <div id="my-change-actions" class="my-change-actions" style="display:none;">
+        <button type="button" onclick="closeMyChange()">취소</button>
+        <button type="button" class="save" onclick="saveMyChange()">일정 변경 저장</button>
+      </div>
+      <div id="my-change-error" style="display:none; margin-top:10px; color:#8b5b55; font-size:12px;"></div>
+    </div>
+
     <div id="my-info-edit-panel-home" style="display:none;"></div>
     <div id="my-change-panel-home" style="display:none;"></div>
 
@@ -2628,29 +2662,6 @@ body.lc-customer-view #bar-section #btn-submit-bar {
       <div id="my-edit-error" style="display:none; margin-top:10px; color:#8b5b55; font-size:12px;"></div>
     </div>
 
-    <div id="my-change-panel" class="my-change-panel" style="display:none; margin-top:24px;">
-      <div class="my-change-head">
-        <div class="my-change-title">예약 일정 변경</div>
-        <button type="button" class="my-booking-close" onclick="closeMyChange()">닫기</button>
-      </div>
-      <div style="font-size:12px; color:#777269; line-height:1.6; margin-bottom:18px;">예약 가능한 날짜와 세션을 다시 선택해주세요. 기존 예약은 변경이 완료될 때까지 유지됩니다.</div>
-      <div class="my-change-calendar-head">
-        <div id="my-change-month-title" class="my-change-month">2026년 9월 예약 현황</div>
-        <div class="my-change-calendar-nav">
-          <button type="button" onclick="changeMyChangeMonth(-1)">‹</button>
-          <button type="button" onclick="changeMyChangeMonth(1)">›</button>
-        </div>
-      </div>
-      <div class="my-change-week"><div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div></div>
-      <div id="my-change-calendar-grid" class="my-change-grid"></div>
-      <div id="my-change-session-title" class="my-change-session-title">날짜를 선택해주세요.</div>
-      <div id="my-change-session-list" class="my-change-session-list"></div>
-      <div class="my-change-actions">
-        <button type="button" onclick="closeMyChange()">취소</button>
-        <button type="button" class="save" onclick="saveMyChange()">일정 변경 저장</button>
-      </div>
-      <div id="my-change-error" style="display:none; margin-top:10px; color:#8b5b55; font-size:12px;"></div>
-    </div>
 
     <div class="my-booking-link-row">
       <a href="https://lounge-welcome-test.vercel.app/">GO TO PORTAL →</a>
@@ -4163,6 +4174,8 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         });
         resEl.innerHTML = html;
         resEl.style.display = 'block';
+        const calendar = document.getElementById('my-reservation-calendar');
+        if (calendar) { calendar.style.display = 'block'; renderMyChangeCalendar(); }
       }
 
       window.lookupMyBookings = async function() {
@@ -4198,6 +4211,8 @@ body.lc-customer-view #bar-section #btn-submit-bar {
             }
             errEl.style.display = 'block';
             resEl.style.display = 'none';
+            const calendar = document.getElementById('my-reservation-calendar');
+            if (calendar) calendar.style.display = 'none';
             return;
           }
           myLookupFailCount = 0;
@@ -4220,10 +4235,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         const editPanel = document.getElementById('my-info-edit-panel');
         const slot = document.querySelector(`.my-booking-item[data-booking-id="${id}"] .my-booking-edit-slot`);
         if (!slot) return;
-        document.getElementById('my-change-panel').style.display = 'none';
-        const changePanel = document.getElementById('my-change-panel');
-        const changeHome = document.getElementById('my-change-panel-home');
-        if (changePanel && changeHome) changeHome.appendChild(changePanel);
+        closeMyChange();
         slot.appendChild(editPanel);
         const isMemberBooking = !!b.member_name;
         document.getElementById('my-edit-reservation-name').value = b.reservation_name || b.guest_name || '';
@@ -4287,36 +4299,45 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         const b = myBookingCache.find(x => Number(x.id) === Number(id));
         if (!b) return;
         if (isMyBookingStarted(b)) return alert('이미 시작된 예약은 일정을 변경할 수 없습니다.');
-        if (Number(myChangeId) === Number(id) && document.getElementById('my-change-panel')?.style.display !== 'none') { closeMyChange(); return; }
+        if (Number(myChangeId) === Number(id)) { closeMyChange(); return; }
         myChangeId = id;
         myEditingInfoId = null;
         const editPanel = document.getElementById('my-info-edit-panel');
         const editHome = document.getElementById('my-info-edit-panel-home');
         if (editPanel && editHome) editHome.appendChild(editPanel);
         if (editPanel) editPanel.style.display = 'none';
-        const changePanel = document.getElementById('my-change-panel');
-        const slot = document.querySelector(`.my-booking-item[data-booking-id="${id}"] .my-booking-change-slot`);
-        if (!slot) return;
-        slot.appendChild(changePanel);
         const d = new Date(b.start_time);
         myChangeYear = d.getFullYear();
         myChangeMonth = d.getMonth();
         myChangeDate = '';
+        const context = document.getElementById('my-change-context');
+        if (context) {
+          context.innerText = `일정 변경 · 현재 예약 ${fmtDate(b.start_time)} ~ ${fmtDate(b.end_time, 'time')}`;
+          context.style.display = 'block';
+        }
+        document.getElementById('my-change-session-title').style.display = 'block';
+        document.getElementById('my-change-session-list').style.display = 'block';
+        document.getElementById('my-change-actions').style.display = 'flex';
         document.getElementById('my-change-error').style.display = 'none';
-        document.getElementById('my-change-panel').style.display = 'block';
-        document.getElementById('my-change-panel').scrollIntoView({ behavior:'smooth', block:'nearest' });
-        renderMyChangeCalendar();
+        const calendar = document.getElementById('my-reservation-calendar');
+        if (calendar) { calendar.style.display = 'block'; renderMyChangeCalendar(); calendar.scrollIntoView({ behavior:'smooth', block:'start' }); }
       };
 
       window.closeMyChange = function() {
         myChangeId = null;
         myChangeDate = '';
-        const panel = document.getElementById('my-change-panel');
-        const home = document.getElementById('my-change-panel-home');
-        if (panel && home) home.appendChild(panel);
-        if (panel) panel.style.display = 'none';
-        document.getElementById('my-change-session-list').innerHTML = '';
-        document.getElementById('my-change-session-title').innerText = '날짜를 선택해주세요.';
+        const context = document.getElementById('my-change-context');
+        if (context) { context.innerText = ''; context.style.display = 'none'; }
+        const title = document.getElementById('my-change-session-title');
+        const list = document.getElementById('my-change-session-list');
+        const actions = document.getElementById('my-change-actions');
+        if (title) { title.innerText = '날짜를 선택해주세요.'; title.style.display = 'none'; }
+        if (list) { list.innerHTML = ''; list.style.display = 'none'; }
+        if (actions) actions.style.display = 'none';
+        const err = document.getElementById('my-change-error');
+        if (err) { err.innerText = ''; err.style.display = 'none'; }
+        const calendar = document.getElementById('my-reservation-calendar');
+        if (calendar && calendar.style.display !== 'none') renderMyChangeCalendar();
       };
 
       window.changeMyChangeMonth = function(delta) {
@@ -4338,7 +4359,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         const todayStr = new Date().toLocaleDateString('en-CA');
         try {
           const res = await apiCall('rpc/get_customer_schedule_slots', 'POST', { p_start_time: toISOStringSafe(monthStart), p_end_time: toISOStringSafe(monthEnd) });
-          const schedules = (res.ok ? await res.json() : []).filter(s => Number(s.id) !== Number(myChangeId));
+          const schedules = (res.ok ? await res.json() : []).filter(s => !myChangeId || Number(s.id) !== Number(myChangeId));
           let html = '';
           for (let i = 0; i < firstDayIndex; i++) html += '<div class="my-change-empty"></div>';
           for (let d = 1; d <= lastDayDate; d++) {
@@ -4354,7 +4375,8 @@ body.lc-customer-view #bar-section #btn-submit-bar {
             const blocked = sessionChecks.every(Boolean) && !hasOwnBooking;
             const statuses = sessionChecks.map((v,i)=>v?`${i+1}부마감`:'').filter(Boolean);
             const ownMarker = ownBookings.length ? '<div class="my-change-own-marker">● 내 예약</div>' : '';
-            html += `<button type="button" class="my-change-day ${blocked?'is-blocked':''} ${myChangeDate===dateStr?'is-selected':''}" ${blocked?'disabled':''} onclick="selectMyChangeDate('${dateStr}')">
+            const selectable = !!myChangeId && !blocked;
+            html += `<button type="button" class="my-change-day ${blocked?'is-blocked':''} ${myChangeDate===dateStr?'is-selected':''}" ${(!selectable)?'disabled':''} onclick="selectMyChangeDate('${dateStr}')">
               <div class="day-num">${d}</div><div class="day-status">${blocked?'전체마감':statuses.join('<br>')}${ownMarker}</div>
             </button>`;
           }
@@ -4365,6 +4387,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
       }
 
       window.selectMyChangeDate = async function(dateStr) {
+        if (!myChangeId) return;
         myChangeDate = dateStr;
         document.getElementById('my-change-session-title').innerText = `${dateStr} · 이용 세션 선택`;
         const list = document.getElementById('my-change-session-list');
@@ -5271,7 +5294,8 @@ async function syncTV() {
           try {
             const payload = {
               start_time: toISOStringSafe(nStart), end_time: toISOStringSafe(nEnd), prefix: f.prefix, guest_name: f.name,
-              meeting_name: f.meetingName, suffix: f.suffix, sub_message: f.msg, bg_source: f.bg, bgm_source: f.bgm, member_code: f.memberCode, member_name: f.memberName, pin_code: '0000'
+              meeting_name: f.meetingName, suffix: f.suffix, sub_message: f.msg, bg_source: f.bg, bgm_source: f.bgm, member_code: f.memberCode, member_name: f.memberName, pin_code: '0000',
+              welcome_display_at: document.getElementById('u-welcome-display-at').value ? toISOStringSafe(new Date(document.getElementById('u-welcome-display-at').value)) : null
             };
             const res = editingId ? await apiCall(`welcome_schedules?id=eq.${editingId}`, 'PATCH', payload) : await apiCall('welcome_schedules', 'POST', payload);
             if (res.ok) {
@@ -5283,6 +5307,22 @@ async function syncTV() {
             alert('저장 실패 (세션 복구됨)');
           }
         };
+
+        window.clearWelcomeDisplayAt = function() {
+          const el = document.getElementById('u-welcome-display-at');
+          if (el) el.value = '';
+        };
+
+        function syncWelcomeDisplayDate() {
+          const el = document.getElementById('u-welcome-display-at');
+          const date = document.getElementById('u-sched-date').value;
+          if (!el || !date || !el.value) return;
+          const current = new Date(el.value);
+          if (isNaN(current.getTime())) return;
+          const pad = n => String(n).padStart(2, '0');
+          const hh = pad(current.getHours()), mm = pad(current.getMinutes());
+          el.value = `${date}T${hh}:${mm}`;
+        }
 
         function syncScheduleDateTimeFields(autoEnd = false) {
           const date = document.getElementById('u-sched-date').value;
@@ -5316,6 +5356,7 @@ async function syncTV() {
           d.setDate(d.getDate() + offset);
           const pad = n => String(n).padStart(2, '0');
           document.getElementById('u-sched-date').value = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+          syncWelcomeDisplayDate();
           syncScheduleDateTimeFields(false);
         };
 
@@ -5383,6 +5424,7 @@ async function syncTV() {
         };
 
         document.getElementById('u-sched-date').onchange = function() { syncScheduleDateTimeFields(false); };
+        document.getElementById('u-sched-date').onchange = function() { syncWelcomeDisplayDate(); syncScheduleDateTimeFields(false); };
         document.getElementById('u-sched-start-time').onchange = function() {
           document.querySelectorAll('.schedule-time-preset').forEach(btn => btn.classList.toggle('active', btn.dataset.time === this.value));
           syncScheduleDateTimeFields(true);
@@ -5575,6 +5617,9 @@ async function syncTV() {
           document.getElementById('u-sched-date').value = `${startDate.getFullYear()}-${pad(startDate.getMonth()+1)}-${pad(startDate.getDate())}`;
           document.getElementById('u-sched-start-time').value = `${pad(startDate.getHours())}:${pad(startDate.getMinutes())}`;
           document.getElementById('u-sched-end-time').value = `${pad(endDate.getHours())}:${pad(endDate.getMinutes())}`;
+          if (document.getElementById('u-welcome-display-at')) {
+            document.getElementById('u-welcome-display-at').value = s.welcome_display_at ? fmtDate(new Date(s.welcome_display_at), 'iso') : '';
+          }
           document.getElementById('u-sched-start').value = fmtDate(startDate, 'iso');
           document.getElementById('u-sched-end').value = fmtDate(endDate, 'iso');
           document.querySelectorAll('.schedule-time-preset').forEach(btn => btn.classList.toggle('active', btn.dataset.time === document.getElementById('u-sched-start-time').value));
@@ -5608,7 +5653,7 @@ async function syncTV() {
           document.getElementById('btn-action-sched').innerText = '예약 일정 추가';
           document.getElementById('btn-action-now').style.display = 'block';
           document.getElementById('u-cancel-btn').style.display = 'none';
-          ['u-name-input','u-meeting-input','u-sched-date','u-sched-start-time','u-sched-end-time','u-sched-start','u-sched-end'].forEach(id => document.getElementById(id).value = '');
+          ['u-name-input','u-meeting-input','u-sched-date','u-sched-start-time','u-sched-end-time','u-sched-start','u-sched-end','u-welcome-display-at'].forEach(id => document.getElementById(id).value = '');
           document.getElementById('u-msg-input').value = '라 콜론에 오신 것을 환영합니다.';
           document.querySelectorAll('.schedule-time-preset').forEach(btn => btn.classList.remove('active'));
           document.getElementById('u-member-select').value = '';
