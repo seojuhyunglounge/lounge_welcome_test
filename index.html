@@ -3331,7 +3331,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
           if(panel && home) home.appendChild(panel);
           panel.style.display='none';
           myChangeId=null; myChangeDate='';
-          showToast('예약 일정이 변경되었습니다.');
+          showToast(result.session_delta > 0 ? `예약 일정이 변경되었습니다. (${result.session_delta}세션 추가 차감)` : result.session_delta < 0 ? `예약 일정이 변경되었습니다. (${Math.abs(result.session_delta)}세션 반환)` : '예약 일정이 변경되었습니다.');
           await loadMemberBookingHistory();
         } catch(e) {
           err.innerText=e.message || '일정 변경에 실패했습니다.';
@@ -3675,7 +3675,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
           }
           if(!result||!result.success) throw new Error((result&&result.message)||'일정 변경에 실패했습니다.');
           closeMemberInlineChange();
-          showToast('예약 일정이 변경되었습니다.');
+          showToast(result.session_delta > 0 ? `예약 일정이 변경되었습니다. (${result.session_delta}세션 추가 차감)` : result.session_delta < 0 ? `예약 일정이 변경되었습니다. (${Math.abs(result.session_delta)}세션 반환)` : '예약 일정이 변경되었습니다.');
           await loadMemberBookingHistory();
         }catch(e){ if(err){err.innerText=e.message||'일정 변경에 실패했습니다.';err.style.display='block';} }
       };
@@ -4151,7 +4151,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
           const result = await res.json();
 
           if (result && result.success) {
-            showModal('예약 신청 완료', `${name} 님의 라운지 이용 예약이 접수되었습니다.${memberId ? '\n(VIP 회원권 패스 1회가 차감되었습니다)' : ''}\n추후 '내 예약 조회'에서 확인 및 취소가 가능합니다.`);
+            showModal('예약 신청 완료', `${name} 님의 라운지 이용 예약이 접수되었습니다.${memberId ? `\n(VIP 회원권 ${result.session_count || 0}회 차감 · 사용 ${result.used_passes_after ?? '-'}회)` : ''}\n추후 '내 예약 조회'에서 확인 및 취소가 가능합니다.`);
             setTimeout(() => { location.href = '?'; }, 2000);
           } else {
             throw new Error(result.message || '예약 실패');
@@ -4565,22 +4565,22 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         errEl.style.display = 'none';
         if (!phone || !pin) return (errEl.innerText = '연락처와 PIN을 모두 입력하세요.', errEl.style.display = 'block');
         try {
-          const res = await apiCall('rpc/verify_member_login', 'POST', { p_phone: phone, p_pin: pin });
-          const data = await res.json();
-          if (!data || !data.length) {
+          const res = await apiCall('rpc/create_member_session', 'POST', { p_phone: phone, p_pin: pin });
+          const sessionData = await res.json();
+          if (!res.ok || !sessionData || !sessionData.success || !sessionData.member) {
             clientFailCount++;
             if (clientFailCount >= 5) {
               clientLockUntil = Date.now() + 15 * 60000;
               clientFailCount = 0;
               errEl.innerText = '⚠️ 5회 불일치로 15분간 조회가 잠금되었습니다.';
             } else {
-              errEl.innerText = `일치하는 회원 정보가 없습니다. (${clientFailCount}/5회 실패)`;
+              errEl.innerText = `${(sessionData && sessionData.message) || '일치하는 회원 정보가 없습니다.'} (${clientFailCount}/5회 실패)`;
             }
             errEl.style.display = 'block'; resEl.style.display = 'none';
             return;
           }
           clientFailCount = 0;
-          const m = data[0];
+          const m = sessionData.member;
           const remain = Math.max(0, (parseInt(m.total_passes) || 0) - (parseInt(m.used_passes) || 0));
           try {
             sessionStorage.setItem('la_colonne_member_booking_state', JSON.stringify({
