@@ -1,6 +1,6 @@
 <!--
   La Colonne
-  VERSION: V2.6.23 — CUSTOMER CHANGE SESSION LOAD FIX & CURRENT SESSION STATE
+  VERSION: V2.6.25 — ADMIN SAVE ERROR & WELCOME DEFAULT FIX
   UPDATED: 2026-10-02
 --> 
 <!DOCTYPE html>
@@ -4911,7 +4911,7 @@ body.lc-customer-view #bar-section #btn-submit-bar {
       [vidA, vidB].forEach(v => v.ontimeupdate = () => { if (videoPlaylist.length > 1 && v.duration && (v.duration - v.currentTime <= 0.8)) crossfade(); });
 
       function updateBoard(prefix, name, suffix, msg, bgUrl, bgmUrl, meetingName) {
-        const dName = (name && name.trim()) ? name.trim() : 'Guest';
+        const dName = (name && name.trim()) ? name.trim() : 'Welcome';
         const dMsg = (msg && msg.trim()) ? msg.trim() : '라 콜론에 오신 것을 환영합니다.';
         const dMeeting = (meetingName && meetingName.trim()) ? meetingName.trim() : '';
         const key = `${prefix}|${dName}|${suffix}|${dMeeting}|${dMsg}|${bgUrl}|${bgmUrl}`;
@@ -4926,9 +4926,9 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         const box = document.getElementById('center-box');
         box.style.opacity = '0';
         setTimeout(() => {
-          document.getElementById('guest-prefix').innerText = (dName === 'Guest') ? '' : (prefix || '');
+          document.getElementById('guest-prefix').innerText = (dName === 'Welcome' || dName === 'Guest') ? '' : (prefix || '');
           document.getElementById('guest-name').innerText = dName;
-          document.getElementById('guest-suffix').innerText = (dName === 'Guest') ? '' : (suffix || '');
+          document.getElementById('guest-suffix').innerText = (dName === 'Welcome' || dName === 'Guest') ? '' : (suffix || '');
           const meetingEl = document.getElementById('guest-meeting');
           meetingEl.innerText = dMeeting;
           meetingEl.style.display = dMeeting ? 'block' : 'none';
@@ -5171,7 +5171,7 @@ async function syncTV() {
             await archiveExpiredSchedules();
             const dRes = await apiCall('welcome_screen?select=*&id=eq.1');
             const defs = dRes.ok ? await dRes.json() : [];
-            if (defs && defs.length && defs[0].guest_name !== 'Guest') {
+            if (defs && defs.length && defs[0].guest_name !== 'Welcome' && defs[0].guest_name !== 'Guest') {
               const d = defs[0];
               card.style.borderColor = '#eab308';
               badge.className = 'tag-badge badge-gold'; badge.innerText = `● 수동 표출 중`;
@@ -5184,15 +5184,15 @@ async function syncTV() {
             card.style.borderColor = '#334155';
             badge.className = 'tag-badge badge-blue'; badge.innerText = '○ 대기 중';
             btn.style.display = 'none';
-            title.innerText = 'Guest (기본 라운지 화면)';
-            desc.innerText = '현재 활성화된 일정이 없으며 기본 환영 영상이 대기 중입니다.';
+            title.innerText = 'Welcome (기본 라운지 화면)';
+            desc.innerText = '현재 활성화된 일정이 없으며 기본 Welcome 화면이 대기 중입니다.';
           } catch(e) {}
         }
         setInterval(updateStatus, 4000);
 
         window.resetToGuestScreen = async function() {
           if (isResettingToGuest) return;
-          if (!confirm('현재 표출을 종료(퇴실)하고 기본 대기 화면(Guest)으로 복귀하시겠습니까?')) return;
+          if (!confirm('현재 표출을 종료(퇴실)하고 기본 대기 화면(Welcome)으로 복귀하시겠습니까?')) return;
 
           const btn = document.getElementById('btn-force-guest');
           isResettingToGuest = true;
@@ -5238,12 +5238,12 @@ async function syncTV() {
               currentSchedId = null;
             }
 
-            // 실제 예약이 삭제된 뒤에만 기본 Guest 화면으로 전환한다.
+            // 실제 예약이 삭제된 뒤에만 기본 Welcome 화면으로 전환한다.
             // welcome_screen(id=1)은 이미 존재하는 단일 설정 row이므로
             // upsert(POST) 대신 UPDATE(PATCH)를 사용한다.
             // POST upsert는 INSERT 정책까지 거치면서 401이 발생할 수 있다.
             const guestRes = await apiCall('welcome_screen?id=eq.1', 'PATCH', {
-              prefix: '', guest_name: 'Guest', suffix: '', sub_message: '라 콜론에 오신 것을 환영합니다.',
+              prefix: '', guest_name: 'Welcome', suffix: '', meeting_name: '', sub_message: '라 콜론에 오신 것을 환영합니다.',
               bg_source: 'video1.mp4,video2.mp4', bgm_source: 'jazz1.mp3', member_code: '', member_name: '', updated_at: toISOStringSafe(new Date())
             });
             if (!guestRes.ok) {
@@ -5274,7 +5274,7 @@ async function syncTV() {
           const sel = document.getElementById('u-member-select');
           const opt = sel ? sel.options[sel.selectedIndex] : null;
           const [memberId, memberCode, memberName] = opt && sel.value ? [opt.value, opt.dataset.code, opt.dataset.name] : ['','',''];
-          const name = rawName || (memberName ? memberName : 'Guest');
+          const name = rawName || (memberName ? memberName : 'Welcome');
           return {
             name, memberId, memberCode, memberName,
             meetingName: document.getElementById('u-meeting-input').value.trim(),
@@ -5341,7 +5341,7 @@ async function syncTV() {
           if (nStart >= nEnd) return alert('종료 시각은 시작 시각보다 뒤여야 합니다.');
           
           const f = getFormData();
-          if (!f.name || f.name === 'Guest') return alert('VIP 성함을 입력하세요.');
+          if (!f.name || f.name === 'Guest' || f.name === 'Welcome') return alert('VIP 성함을 입력하세요.');
 
           const cRes = await apiCall(`welcome_schedules?end_time=gte.${toISOStringSafe(new Date())}&select=id,guest_name,start_time,end_time`);
           const existing = cRes.ok ? await cRes.json() : [];
@@ -5365,10 +5365,15 @@ async function syncTV() {
             if (res.ok) {
               showToast(editingId ? '✓ 수정 완료' : '✓ 예약 등록 완료');
               cancelEditSchedule(); loadSchedules(); updateStatus();
-            } else throw new Error();
+            } else {
+              let detail = '';
+              try { detail = (await res.text()).slice(0, 500); } catch (_) {}
+              throw new Error(`저장 실패 (${res.status})${detail ? `\n${detail}` : ''}`);
+            }
           } catch(e) {
             if (!editingId && f.memberId) await callAdminRpc('adjust_admin_member_pass', { p_id: parseInt(f.memberId), p_delta: 1 });
-            alert('저장 실패 (세션 복구됨)');
+            console.error('[일정 예약 저장]', e);
+            alert(`${e && e.message ? e.message : '저장 실패'}\n\n회원 세션은 복구되었습니다.`);
           }
         };
 
@@ -5497,7 +5502,7 @@ async function syncTV() {
 
         document.getElementById('u-member-select').onchange = function() {
           const opt = this.options[this.selectedIndex];
-          document.getElementById('u-name-input').placeholder = (opt && this.value) ? `미입력 시 회원명 '${opt.dataset.name}' 표출` : "비워둘 시 기본값 'Guest' 표출";
+          document.getElementById('u-name-input').placeholder = (opt && this.value) ? `미입력 시 회원명 '${opt.dataset.name}' 표출` : "비워둘 시 기본값 'Welcome' 표출";
         };
         document.getElementById('u-prefix-toggle').onchange = function() {
           document.getElementById('u-prefix-select-box').style.display = this.checked ? 'block' : 'none';
@@ -5662,7 +5667,7 @@ async function syncTV() {
             currentSchedId = null;
             await apiCall(`welcome_schedules?id=eq.${id}`, 'DELETE');
             await apiCall('welcome_screen', 'POST', {
-              id: 1, prefix: '', guest_name: 'Guest', suffix: '', sub_message: '라 콜론에 오신 것을 환영합니다.',
+              id: 1, prefix: '', guest_name: 'Welcome', suffix: '', meeting_name: '', sub_message: '라 콜론에 오신 것을 환영합니다.',
               bg_source: 'video1.mp4,video2.mp4', bgm_source: 'jazz1.mp3', member_code: '', member_name: '', updated_at: toISOStringSafe(new Date())
             }, { 'Prefer': 'resolution=merge-duplicates,return=representation' });
             showToast('✓ 조기 퇴실 처리 완료');
