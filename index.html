@@ -1,6 +1,6 @@
 <!--
   La Colonne
-  VERSION: V2.6.25 — ADMIN SAVE ERROR & WELCOME DEFAULT FIX
+  VERSION: V2.6.26 — CALENDAR LOAD FIX
   UPDATED: 2026-10-02
 --> 
 <!DOCTYPE html>
@@ -3017,8 +3017,6 @@ body.lc-customer-view #bar-section #btn-submit-bar {
         try {
           const res = await apiCall(`welcome_schedules?start_time=gte.${toISOStringSafe(startDateObj)}&start_time=lte.${toISOStringSafe(endDateObj)}&select=id,start_time,end_time,guest_name`);
           const schedules = res.ok ? await res.json() : [];
-          const changeTarget = memberChangeMode ? getMemberBookingById(myChangeId) : null;
-
           let html = '';
           for (let i = 0; i < firstDayIndex; i++) {
             html += `<div style="background: #11100e; border-radius: 8px; min-height: 80px; opacity: 0.15;"></div>`;
